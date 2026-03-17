@@ -1,0 +1,817 @@
+"use client";
+
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+
+import { SkillCategory } from "@/generated/prisma";
+import type { EvaluationItemRow, PositionOptionRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
+
+type SkillCareerSettingEditorProps = {
+  canEdit: boolean;
+  gradeDefaults: SkillGradeRow[];
+  evaluationItemDefaults: EvaluationItemRow[];
+  positionOptions: PositionOptionRow[];
+};
+
+const categoryGuides: Record<
+  SkillCategory,
+  {
+    label: string;
+    subtitle: string;
+    scoreLabel: string;
+    majorCategories: Array<{ name: string; items: string[] }>;
+  }
+> = {
+  [SkillCategory.IT_SKILL]: {
+    label: "自律成長力",
+    subtitle: "自ら学び、考え、行動し、必要とされる存在になる力",
+    scoreLabel: "0: これから習得する段階 / 1: 完全ではないができる / 2: 問題なくできる",
+    majorCategories: [
+      {
+        name: "ITスキル: 基礎理解",
+        items: [
+          "使用技術や業務知識の基礎を理解している",
+          "必要な情報を自分で調べてキャッチアップできる",
+          "既存システムの構成や前提を理解して作業へ入れる",
+        ],
+      },
+      {
+        name: "ITスキル: 設計",
+        items: [
+          "要件や仕様を踏まえて設計方針を整理できる",
+          "データや処理の流れを構造化して設計できる",
+          "保守性や拡張性を意識した設計ができる",
+        ],
+      },
+      {
+        name: "ITスキル: 実装",
+        items: [
+          "設計意図を理解して実装へ落とし込める",
+          "読みやすく保守しやすいコードを書ける",
+          "例外や異常系を考慮して実装できる",
+        ],
+      },
+      {
+        name: "ITスキル: テスト・品質",
+        items: [
+          "必要なテスト観点を洗い出せる",
+          "自分の成果物を見直し品質を担保できる",
+          "不具合の再発防止を考えられる",
+        ],
+      },
+      {
+        name: "ITスキル: 運用保守",
+        items: [
+          "障害や問い合わせに対して適切に一次切り分けできる",
+          "既存システムを理解し安全に改修できる",
+          "運用上の問題を見つけて改善提案できる",
+        ],
+      },
+      {
+        name: "ITスキル: 開発推進・レビュー",
+        items: [
+          "開発上の課題やリスクを早めに共有できる",
+          "他者成果物をレビューし、改善につなげられる",
+          "チーム開発全体を意識して進行できる",
+        ],
+      },
+      {
+        name: "課題解決力",
+        items: [
+          "課題の原因を整理して捉えられる",
+          "対応案を比較して妥当な方法を選べる",
+          "仕様や要件の抜け漏れに気づける",
+        ],
+      },
+      {
+        name: "品質向上力",
+        items: [
+          "自分の成果物を見直し品質を担保できる",
+          "不具合の再発防止を考えられる",
+          "作業手順の改善提案ができる",
+        ],
+      },
+      {
+        name: "対話力",
+        items: [
+          "相手に合わせて必要な情報を整理して伝えられる",
+          "報告・連絡・相談を適切なタイミングで行える",
+          "認識差があるときに確認し、すり合わせできる",
+        ],
+      },
+      {
+        name: "顧客理解力",
+        items: [
+          "顧客や関係者の要望を正しく把握できる",
+          "相手の立場や業務背景を踏まえて会話できる",
+          "要望を整理して分かりやすく返せる",
+        ],
+      },
+      {
+        name: "推進連携力",
+        items: [
+          "周囲と役割分担しながら仕事を進められる",
+          "必要に応じて他メンバーを支援できる",
+          "チーム全体の進行を意識して行動できる",
+        ],
+      },
+      {
+        name: "自己成長力",
+        items: [
+          "自分の課題を認識し、改善に取り組める",
+          "指示待ちではなく次に必要な行動を考えられる",
+          "振り返りを次の行動に活かせる",
+        ],
+      },
+    ],
+  },
+  [SkillCategory.BUSINESS_SKILL]: {
+    label: "協調相乗力",
+    subtitle: "周囲と力を掛け合わせ、他者や組織に価値を広げる力",
+    scoreLabel: "0: 継続実践には至っていない / 1: 継続実践できている",
+    majorCategories: [
+      {
+        name: "育成支援力",
+        items: [
+          "後輩やメンバーへの助言・支援を継続して行っている",
+          "相手の理解度に応じた育成フォローを継続して行っている",
+          "レビューや伴走を通じて他者の成長支援を継続して行っている",
+        ],
+      },
+      {
+        name: "採用貢献力",
+        items: [
+          "採用活動への協力を継続して行っている",
+          "候補者に会社の魅力を伝える行動を継続して行っている",
+          "採用改善につながる提案や協力を継続して行っている",
+        ],
+      },
+      {
+        name: "提案支援力",
+        items: [
+          "提案に必要な整理や支援を継続して行っている",
+          "営業や関係者と連携した提案支援を継続して行っている",
+          "会社の強みを提案機会へつなげる行動を継続して行っている",
+        ],
+      },
+      {
+        name: "顧客拡張力",
+        items: [
+          "顧客との関係深化につながる行動を継続して行っている",
+          "追加提案や相談機会の創出につながる行動を継続して行っている",
+          "取引拡大につながる働きかけを継続して行っている",
+        ],
+      },
+      {
+        name: "仕組み化力",
+        items: [
+          "属人化解消につながる整理を継続して行っている",
+          "手順やテンプレート整備を継続して進めている",
+          "生産性向上につながる仕組みづくりを継続して行っている",
+        ],
+      },
+      {
+        name: "ナレッジ共有力",
+        items: [
+          "自身の知見を周囲へ継続して共有している",
+          "学びや改善事例の展開を継続して行っている",
+          "チーム内の良い習慣づくりに継続して関わっている",
+        ],
+      },
+      {
+        name: "組織貢献力",
+        items: [
+          "組織課題への提案や改善行動を継続して行っている",
+          "部門やチームを越えた改善への関与を継続して行っている",
+          "会社の成長に向けた活動へ継続して関わっている",
+        ],
+      },
+    ],
+  },
+};
+
+function toNumber(value: string) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function categoryLabel(category: SkillCategory) {
+  return categoryGuides[category].label;
+}
+
+function defaultMajorCategory(category: SkillCategory) {
+  return categoryGuides[category].majorCategories[0]?.name ?? "";
+}
+
+function defaultMinorCategory(category: SkillCategory) {
+  return categoryGuides[category].majorCategories[0]?.items[0] ?? "";
+}
+
+function scoreTypeLabel(scoreType: EvaluationItemRow["scoreType"]) {
+  return scoreType === "CONTINUOUS_DONE" ? "0 / 1 継続実践" : "1 / 2 評価";
+}
+
+function weightHint(row: EvaluationItemRow) {
+  if (row.axis === "SYNERGY") {
+    if (row.weight >= 3) return "全社・事業拡大型";
+    if (row.weight >= 2) return "チーム・顧客へ継続価値";
+    return "チーム内の継続協力";
+  }
+  return "加重平均で使用";
+}
+
+function normalizeItemByAxis(row: EvaluationItemRow, axis: EvaluationItemRow["axis"]): EvaluationItemRow {
+  if (axis === "SYNERGY") {
+    return {
+      ...row,
+      axis,
+      scoreType: "CONTINUOUS_DONE",
+      weight: Math.min(3, Math.max(1, Math.round(row.weight || 1))),
+      evidenceRequired: true,
+    };
+  }
+
+  return {
+    ...row,
+    axis,
+    scoreType: "LEVEL_2",
+    weight: row.weight > 0 ? row.weight : 10,
+  };
+}
+
+
+function toRecommendedWeight(category: SkillCategory, majorCategory: string) {
+  if (category === SkillCategory.BUSINESS_SKILL) {
+    if (majorCategory.includes("顧客拡張") || majorCategory.includes("仕組み化") || majorCategory.includes("採用")) {
+      return 3;
+    }
+    if (majorCategory.includes("育成") || majorCategory.includes("提案") || majorCategory.includes("組織")) {
+      return 2;
+    }
+    return 1;
+  }
+
+  if (majorCategory.includes("設計") || majorCategory.includes("実装") || majorCategory.includes("テスト") || majorCategory.includes("運用保守")) {
+    return 20;
+  }
+  return 10;
+}
+
+function buildRecommendedItems(category: SkillCategory, currentItems: EvaluationItemRow[]): EvaluationItemRow[] {
+  const guide = categoryGuides[category];
+  const existingTitles = new Set(
+    currentItems
+      .filter((item) => item.category === category)
+      .map((item) => item.title.trim()),
+  );
+
+  const nextDisplayOrderBase = currentItems.filter((item) => item.category === category).length;
+  let offset = 0;
+
+  return guide.majorCategories.flatMap((majorCategory, majorIndex) =>
+    majorCategory.items.flatMap((itemTitle, minorIndex) => {
+      if (existingTitles.has(itemTitle.trim())) {
+        return [];
+      }
+      offset += 1;
+      const axis = category === SkillCategory.IT_SKILL ? "SELF_GROWTH" : "SYNERGY";
+      return [
+        {
+          id: `recommended-${category}-${crypto.randomUUID()}`,
+          category,
+          axis,
+          scoreType: axis === "SYNERGY" ? "CONTINUOUS_DONE" : "LEVEL_2",
+          majorCategory: majorCategory.name,
+          majorCategoryOrder: (majorIndex + 1) * 10,
+          minorCategory: majorCategory.name,
+          minorCategoryOrder: (minorIndex + 1) * 10,
+          title: itemTitle,
+          description: "",
+          weight: toRecommendedWeight(category, majorCategory.name),
+          displayOrder: nextDisplayOrderBase + offset,
+          isActive: true,
+          evidenceRequired: axis === "SYNERGY",
+          gradeDefinitionId: null,
+        },
+      ];
+    }),
+  );
+}
+
+export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationItemDefaults, positionOptions }: SkillCareerSettingEditorProps) {
+  const router = useRouter();
+  const [grades, setGrades] = useState(gradeDefaults);
+  const [evaluationItems, setEvaluationItems] = useState(evaluationItemDefaults);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isPending, startSaving] = useTransition();
+  const [showPhilosophy, setShowPhilosophy] = useState(false);
+  const [majorCategoryFilters, setMajorCategoryFilters] = useState<Record<SkillCategory, string>>({
+    [SkillCategory.IT_SKILL]: "",
+    [SkillCategory.BUSINESS_SKILL]: "",
+  });
+
+  const majorCategoryOptions = useMemo(() => ({
+    [SkillCategory.IT_SKILL]: Array.from(
+      new Set(
+        evaluationItems
+          .filter((item) => item.category === SkillCategory.IT_SKILL)
+          .map((item) => item.majorCategory.trim())
+          .filter(Boolean),
+      ),
+    ).sort((a, b) => a.localeCompare(b, "ja")),
+    [SkillCategory.BUSINESS_SKILL]: Array.from(
+      new Set(
+        evaluationItems
+          .filter((item) => item.category === SkillCategory.BUSINESS_SKILL)
+          .map((item) => item.majorCategory.trim())
+          .filter(Boolean),
+      ),
+    ).sort((a, b) => a.localeCompare(b, "ja")),
+  }), [evaluationItems]);
+
+  const itemSummary = useMemo(() => {
+    const selfGrowth = evaluationItems.filter((item) => item.axis === "SELF_GROWTH");
+    const synergy = evaluationItems.filter((item) => item.axis === "SYNERGY");
+    return {
+      selfGrowthCount: selfGrowth.length,
+      synergyCount: synergy.length,
+      synergyEvidenceRequiredCount: synergy.filter((item) => item.evidenceRequired).length,
+      synergyHighWeightCount: synergy.filter((item) => item.weight >= 3).length,
+    };
+  }, [evaluationItems]);
+
+  function addGrade(category: SkillCategory) {
+    setGrades((current) => [
+      ...current,
+      {
+        id: `new-grade-${crypto.randomUUID()}`,
+        category,
+        gradeCode: "",
+        gradeName: "",
+        rankOrder: current.filter((row) => row.category === category).length * 10 + 10,
+        description: "",
+        minScore: 1,
+        maxScore: 5,
+        positionId: null,
+        positionName: "全職種共通",
+      },
+    ]);
+  }
+
+  function addEvaluationItem(category: SkillCategory) {
+    setEvaluationItems((current) => [
+      ...current,
+      {
+        id: `new-item-${crypto.randomUUID()}`,
+        category,
+        axis: category === SkillCategory.IT_SKILL ? "SELF_GROWTH" : "SYNERGY",
+        scoreType: category === SkillCategory.IT_SKILL ? "LEVEL_2" : "CONTINUOUS_DONE",
+        majorCategory: defaultMajorCategory(category),
+        majorCategoryOrder: current.filter((row) => row.category === category).length + 1,
+        minorCategory: defaultMinorCategory(category),
+        minorCategoryOrder: 1,
+        title: "",
+        description: "",
+        weight: category === SkillCategory.IT_SKILL ? 10 : 1,
+        displayOrder: current.filter((row) => row.category === category).length + 1,
+        isActive: true,
+        evidenceRequired: category === SkillCategory.BUSINESS_SKILL,
+        gradeDefinitionId: null,
+      },
+    ]);
+  }
+
+  async function handleSave() {
+    setMessage(null);
+
+    startSaving(async () => {
+      const response = await fetch("/api/skill-careers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grades, evaluationItems }),
+      });
+
+      const result = (await response.json()) as { message?: string };
+      setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
+
+      if (response.ok) {
+        router.refresh();
+      }
+    });
+  }
+
+  return (
+    <section className="space-y-6 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+      <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold text-slate-950">評価制度設定</h2>
+            <p className="mt-1 text-sm text-slate-500">等級名称、判定閾値、職種別ルール、評価項目を管理し、半期評価の制度設定として利用します。</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowPhilosophy((current) => !current)}
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700"
+          >
+            {showPhilosophy ? "制度説明を閉じる" : "制度説明を表示"}
+          </button>
+        </div>
+        {showPhilosophy ? (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm leading-7 text-slate-700">
+            <p>当社の評価制度は、理念である「自律的成長によって必要とされる存在となり、協調相乗をもって他者貢献に尽くす。」を軸に、<span className="font-semibold text-slate-950">自律成長力</span>と<span className="font-semibold text-slate-950">協調相乗力</span>の2つの観点から構成します。</p>
+            <p className="mt-2"><span className="font-semibold text-slate-950">自律成長力</span>は、自ら学び、考え、行動し、仕事を通じて必要とされる存在になる力を表します。</p>
+            <p className="mt-2"><span className="font-semibold text-slate-950">協調相乗力</span>は、周囲と力を掛け合わせ、他者や組織により大きな価値を生み出す力を表します。</p>
+          </div>
+        ) : null}
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <article className="rounded-3xl border border-emerald-200 bg-emerald-50/80 p-4">
+          <p className="text-sm text-slate-500">自律成長力項目数</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-950">{itemSummary.selfGrowthCount}</p>
+          <p className="mt-2 text-xs text-slate-500">1 / 2 評価で能力水準を確認します。</p>
+        </article>
+        <article className="rounded-3xl border border-sky-200 bg-sky-50/80 p-4">
+          <p className="text-sm text-slate-500">協調相乗力項目数</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-950">{itemSummary.synergyCount}</p>
+          <p className="mt-2 text-xs text-slate-500">0 / 1 で継続実践を確認します。</p>
+        </article>
+        <article className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-sm text-slate-500">根拠必須項目</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-950">{itemSummary.synergyEvidenceRequiredCount}</p>
+          <p className="mt-2 text-xs text-slate-500">協調相乗力では原則オンを推奨します。</p>
+        </article>
+        <article className="rounded-3xl border border-amber-200 bg-amber-50/80 p-4">
+          <p className="text-sm text-slate-500">重み3の重点項目</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-950">{itemSummary.synergyHighWeightCount}</p>
+          <p className="mt-2 text-xs text-slate-500">全社・事業拡大に効く項目の目安です。</p>
+        </article>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        {([SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL] as SkillCategory[]).map((category) => (
+          <section key={`guide-${category}`} className="rounded-3xl border border-slate-200 p-5">
+            <h3 className="text-lg font-semibold text-slate-950">{categoryLabel(category)}</h3>
+            <p className="mt-1 text-sm text-slate-500">{categoryGuides[category].subtitle}</p>
+            <p className="mt-2 text-sm font-medium text-slate-700">評価方式: {categoryGuides[category].scoreLabel}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {categoryGuides[category].majorCategories.map((section) => (
+                <span key={section.name} className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700">
+                  {section.name}
+                </span>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <section className="rounded-3xl border border-slate-200 p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-950">初期マスタ案</h3>
+            <p className="mt-1 text-sm text-slate-500">大分類ごとに、そのまま評価項目へ展開しやすい小分類候補を並べています。ITスキルは少し詳細に分けてあります。</p>
+          </div>
+          <p className="text-sm text-slate-500">まずは各大分類 2〜4 項目から始めるのがおすすめです。</p>
+        </div>
+        <div className="mt-5 grid gap-6 xl:grid-cols-2">
+          {([SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL] as SkillCategory[]).map((category) => (
+            <section key={`proposal-${category}`} className="rounded-3xl bg-slate-50 p-4">
+              <h4 className="text-base font-semibold text-slate-950">{categoryLabel(category)}</h4>
+              <p className="mt-1 text-sm text-slate-500">{categoryGuides[category].subtitle}</p>
+              <div className="mt-4 space-y-4">
+                {categoryGuides[category].majorCategories.map((section) => (
+                  <article key={`${category}-${section.name}`} className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <h5 className="font-semibold text-slate-950">{section.name}</h5>
+                    <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
+                      {section.items.map((item) => (
+                        <li key={item}>・{item}</li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      {[SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL].map((category) => (
+        <section key={category} className="space-y-4 rounded-3xl border border-slate-200 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="font-semibold text-slate-950">{categoryLabel(category)}等級</h3>
+              <p className="mt-1 text-sm text-slate-500">会社独自の等級名称、職種別判定ルール、点数レンジを管理します。</p>
+            </div>
+            <button type="button" onClick={() => addGrade(category)} disabled={!canEdit || isPending} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 disabled:border-slate-200 disabled:text-slate-400">
+              等級を追加
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-[1380px] text-left text-sm">
+              <thead className="bg-slate-50 text-slate-500">
+                <tr>
+                  <th className="px-4 py-3 font-medium">職種</th>
+                  <th className="px-4 py-3 font-medium">等級コード</th>
+                  <th className="px-4 py-3 font-medium">等級名</th>
+                  <th className="px-4 py-3 font-medium">最小点</th>
+                  <th className="px-4 py-3 font-medium">最大点</th>
+                  <th className="px-4 py-3 font-medium">表示順</th>
+                  <th className="px-4 py-3 font-medium">説明</th>
+                </tr>
+              </thead>
+              <tbody>
+                {grades.filter((row) => row.category === category).map((row) => (
+                  <tr key={row.id} className="border-t border-slate-200">
+                    <td className="px-4 py-3">
+                      <select value={row.positionId ?? ""} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, positionId: event.target.value || null, positionName: positionOptions.find((option) => option.id === event.target.value)?.name ?? "全職種共通" } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
+                        {positionOptions.map((option) => (
+                          <option key={option.id || "common"} value={option.id}>{option.name}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.gradeCode} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, gradeCode: event.target.value } : item))} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.gradeName} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, gradeName: event.target.value } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="number" min={1} max={5} step="0.01" value={row.minScore} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, minScore: toNumber(event.target.value) } : item))} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="number" min={1} max={5} step="0.01" value={row.maxScore} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, maxScore: toNumber(event.target.value) } : item))} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="number" value={row.rankOrder} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, rankOrder: toNumber(event.target.value) } : item))} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.description} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, description: event.target.value } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
+
+      {[SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL].map((category) => (
+        <section key={`${category}-items`} className="space-y-4 rounded-3xl border border-slate-200 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="font-semibold text-slate-950">{categoryLabel(category)}評価項目</h3>
+              <p className="mt-1 text-sm text-slate-500">半期評価で使う項目、採点方式、重み、有効状態を管理します。</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="text-sm text-slate-700">
+                大分類で絞込
+                <select
+                  value={majorCategoryFilters[category]}
+                  onChange={(event) =>
+                    setMajorCategoryFilters((current) => ({
+                      ...current,
+                      [category]: event.target.value,
+                    }))
+                  }
+                  className="mt-2 w-56 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-950 outline-none"
+                >
+                  <option value="">すべて</option>
+                  {majorCategoryOptions[category].map((option) => (
+                    <option key={`${category}-${option}`} value={option}>{option}</option>
+                  ))}
+                </select>
+              </label>
+              <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  const recommendedItems = buildRecommendedItems(category, evaluationItems);
+                  if (recommendedItems.length === 0) {
+                    setMessage(`${categoryLabel(category)}のおすすめ項目はすでに反映済みです`);
+                    return;
+                  }
+                  setEvaluationItems((current) => [...current, ...recommendedItems]);
+                  setMessage(`${categoryLabel(category)}のおすすめ初期項目を ${recommendedItems.length} 件追加しました`);
+                }}
+                disabled={!canEdit || isPending}
+                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 disabled:border-slate-200 disabled:text-slate-400"
+              >
+                おすすめ初期項目を入れる
+              </button>
+              <button type="button" onClick={() => addEvaluationItem(category)} disabled={!canEdit || isPending} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 disabled:border-slate-200 disabled:text-slate-400">
+                項目を追加
+              </button>
+            </div>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-[1780px] text-left text-sm">
+              <thead className="bg-slate-50 text-slate-500">
+                <tr>
+                  <th className="px-4 py-3 font-medium">軸</th>
+                  <th className="px-4 py-3 font-medium">採点方式</th>
+                  <th className="px-4 py-3 font-medium">大分類</th>
+                  <th className="px-4 py-3 font-medium">大分類順</th>
+                  <th className="px-4 py-3 font-medium">小分類</th>
+                  <th className="px-4 py-3 font-medium">小分類順</th>
+                  <th className="px-4 py-3 font-medium">項目名</th>
+                  <th className="px-4 py-3 font-medium">説明</th>
+                  <th className="px-4 py-3 font-medium">重み</th>
+                  <th className="px-4 py-3 font-medium">根拠必須</th>
+                  <th className="px-4 py-3 font-medium">有効</th>
+                </tr>
+              </thead>
+              <tbody>
+                {evaluationItems
+                  .filter((row) => row.category === category)
+                  .filter((row) => !majorCategoryFilters[category] || row.majorCategory === majorCategoryFilters[category])
+                  .sort((left, right) =>
+                    left.majorCategoryOrder - right.majorCategoryOrder ||
+                    left.minorCategoryOrder - right.minorCategoryOrder ||
+                    left.displayOrder - right.displayOrder ||
+                    left.id.localeCompare(right.id, "ja")
+                  )
+                  .map((row) => (
+                  <tr key={row.id} className="border-t border-slate-200 align-top">
+                    <td className="px-4 py-3">
+                      <div className="space-y-2">
+                        <select
+                          value={row.axis}
+                          disabled={!canEdit || isPending}
+                          onChange={(event) =>
+                            setEvaluationItems((current) =>
+                              current.map((item) =>
+                                item.id === row.id
+                                  ? normalizeItemByAxis(item, event.target.value === "SYNERGY" ? "SYNERGY" : "SELF_GROWTH")
+                                  : item,
+                              ),
+                            )
+                          }
+                          className="w-40 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        >
+                          <option value="SELF_GROWTH">自律成長力</option>
+                          <option value="SYNERGY">協調相乗力</option>
+                        </select>
+                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${row.axis === "SYNERGY" ? "bg-sky-100 text-sky-800" : "bg-emerald-100 text-emerald-800"}`}>
+                          {row.axis === "SYNERGY" ? "継続実践を評価" : "能力水準を評価"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="space-y-2">
+                        <select
+                          value={row.scoreType}
+                          disabled={!canEdit || isPending || row.axis === "SYNERGY"}
+                          onChange={(event) =>
+                            setEvaluationItems((current) =>
+                              current.map((item) =>
+                                item.id === row.id
+                                  ? { ...item, scoreType: event.target.value === "CONTINUOUS_DONE" ? "CONTINUOUS_DONE" : "LEVEL_2" }
+                                  : item,
+                              ),
+                            )
+                          }
+                          className="w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        >
+                          <option value="LEVEL_2">1 / 2 評価</option>
+                          <option value="CONTINUOUS_DONE">0 / 1 継続実践</option>
+                        </select>
+                        <p className="text-xs text-slate-500">{scoreTypeLabel(row.scoreType)}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.majorCategory} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, majorCategory: event.target.value } : item))} className="w-40 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input
+                        type="number"
+                        value={row.majorCategoryOrder}
+                        disabled={!canEdit || isPending}
+                        onChange={(event) => {
+                          const nextValue = toNumber(event.target.value);
+                          setEvaluationItems((current) =>
+                            current.map((item) =>
+                              item.id === row.id
+                                ? { ...item, majorCategoryOrder: nextValue }
+                                : item,
+                            ),
+                          );
+                        }}
+                        className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.minorCategory} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, minorCategory: event.target.value } : item))} className="w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input
+                        type="number"
+                        value={row.minorCategoryOrder}
+                        disabled={!canEdit || isPending}
+                        onChange={(event) => {
+                          const nextValue = toNumber(event.target.value);
+                          setEvaluationItems((current) =>
+                            current.map((item) =>
+                              item.id === row.id
+                                ? { ...item, minorCategoryOrder: nextValue }
+                                : item,
+                            ),
+                          );
+                        }}
+                        className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                      />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.title} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, title: event.target.value } : item))} className="w-72 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <input type="text" value={row.description} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, description: event.target.value } : item))} className="w-72 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="space-y-2">
+                        <input
+                          type="number"
+                          min={row.axis === "SYNERGY" ? 1 : 0}
+                          max={row.axis === "SYNERGY" ? 3 : undefined}
+                          step={row.axis === "SYNERGY" ? 1 : 0.01}
+                          value={row.weight}
+                          disabled={!canEdit || isPending}
+                          onChange={(event) =>
+                            setEvaluationItems((current) =>
+                              current.map((item) => {
+                                if (item.id !== row.id) return item;
+                                const nextWeight = toNumber(event.target.value);
+                                return {
+                                  ...item,
+                                  weight: item.axis === "SYNERGY" ? Math.min(3, Math.max(1, Math.round(nextWeight || 1))) : nextWeight,
+                                };
+                              }),
+                            )
+                          }
+                          className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        />
+                        {row.axis === "SYNERGY" ? (
+                          <div className="flex gap-2">
+                            {[1, 2, 3].map((weight) => (
+                              <button
+                                key={weight}
+                                type="button"
+                                disabled={!canEdit || isPending}
+                                onClick={() =>
+                                  setEvaluationItems((current) =>
+                                    current.map((item) => (item.id === row.id ? { ...item, weight } : item)),
+                                  )
+                                }
+                                className={`rounded-full border px-2.5 py-1 text-xs ${row.weight === weight ? "border-slate-950 bg-slate-950 text-white" : "border-slate-300 bg-white text-slate-700"}`}
+                              >
+                                {weight}
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                        <p className="text-xs text-slate-500">{weightHint(row)}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <label className="inline-flex items-center gap-2 text-slate-700">
+                        <input
+                          type="checkbox"
+                          checked={row.evidenceRequired}
+                          disabled={!canEdit || isPending || row.axis === "SYNERGY"}
+                          onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, evidenceRequired: event.target.checked } : item))}
+                          className="h-4 w-4 rounded border-slate-300"
+                        />
+                        {row.axis === "SYNERGY" ? "原則必須" : "根拠入力"}
+                      </label>
+                      <p className="mt-2 text-xs text-slate-500">{row.axis === "SYNERGY" ? "協調相乗力は継続実践の根拠を残す前提です。" : "必要に応じて補足根拠を必須化できます。"}</p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <label className="inline-flex items-center gap-2 text-slate-700">
+                        <input type="checkbox" checked={row.isActive} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, isActive: event.target.checked } : item))} className="h-4 w-4 rounded border-slate-300" />
+                        使用する
+                      </label>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))}
+
+      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        <p className="font-semibold text-slate-900">判定ロジック</p>
+        <p className="mt-2">最終評価時に、自律成長力は 1 / 2、協調相乗力は 0 / 1 の継続実践で集計し、各カテゴリ点を別々に計算します。</p>
+        <p className="mt-1">同じカテゴリに職種別ルールがある場合は、対象社員の職種に一致する設定を優先し、なければ全職種共通ルールを使います。</p>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
+          {isPending ? "処理中..." : "評価制度設定を保存"}
+        </button>
+      </div>
+
+      {message ? <p className="text-sm text-slate-600">{message}</p> : null}
+    </section>
+  );
+}

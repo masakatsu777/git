@@ -1,0 +1,592 @@
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum SkillCategory {
+  IT_SKILL
+  BUSINESS_SKILL
+}
+
+enum EvaluationAxis {
+  SELF_GROWTH
+  SYNERGY
+}
+
+enum EvaluationScoreType {
+  LEVEL_2
+  CONTINUOUS_DONE
+}
+
+enum PeriodType {
+  HALF_YEAR
+  YEAR
+}
+
+enum EvaluationPeriodStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  FINALIZED
+}
+
+enum EvaluationStatus {
+  SELF_REVIEW
+  MANAGER_REVIEW
+  FINAL_REVIEW
+  FINALIZED
+}
+
+enum ReviewType {
+  SELF
+  MANAGER
+  FINAL
+}
+
+enum AssignmentTargetType {
+  EMPLOYEE
+  PARTNER
+}
+
+enum CostTargetType {
+  EMPLOYEE
+  PARTNER
+  TEAM
+}
+
+enum CostCategory {
+  SALARY
+  SOCIAL_INSURANCE
+  OUTSOURCING
+  INDIRECT_COST
+  FIXED_COST_ALLOCATION
+  OTHER
+}
+
+enum FixedCostAllocationMethod {
+  HEADCOUNT
+  SALES_RATIO
+  EQUAL
+}
+
+enum SalarySimulationStatus {
+  DRAFT
+  APPROVED
+  APPLIED
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String                     @id @default(cuid())
+  email                     String                     @unique
+  passwordHash              String                     @map("password_hash")
+  employeeCode              String                     @unique @map("employee_code")
+  name                      String
+  roleId                    String                     @map("role_id")
+  departmentId              String?                    @map("department_id")
+  positionId                String?                    @map("position_id")
+  status                    UserStatus                 @default(ACTIVE)
+  joinedAt                  DateTime                   @map("joined_at")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  role                      Role                       @relation(fields: [roleId], references: [id])
+  department                Department?                @relation(fields: [departmentId], references: [id])
+  position                  Position?                  @relation(fields: [positionId], references: [id])
+  ledTeams                  Team[]                     @relation("TeamLeader")
+  teamMemberships           TeamMembership[]
+  employeeEvaluations       EmployeeEvaluation[]       @relation("EvaluationSubject")
+  finalizedEvaluations      EmployeeEvaluation[]       @relation("EvaluationFinalizer")
+  salaryRecords             SalaryRecord[]
+  salarySimulations         SalaryRevisionSimulation[] @relation("SalarySimulationSubject")
+  approvedSalarySimulations SalaryRevisionSimulation[] @relation("SalarySimulationApprover")
+  monthlyAssignments        MonthlyAssignment[]
+  monthlyCosts              MonthlyCost[]
+  employeeSalesRateSetting  EmployeeSalesRateSetting?
+  approvalLogs              ApprovalLog[]              @relation("ApprovalActor")
+  auditLogs                 AuditLog[]                 @relation("AuditActor")
+
+  @@map("users")
+}
+
+model Role {
+  id              String           @id @default(cuid())
+  code            String           @unique
+  name            String
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  users           User[]
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id              String           @id @default(cuid())
+  code            String           @unique
+  name            String
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Department {
+  id           String       @id @default(cuid())
+  name         String
+  parentId     String?      @map("parent_id")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  parent       Department?  @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children     Department[] @relation("DepartmentHierarchy")
+  users        User[]
+  teams        Team[]
+
+  @@map("departments")
+}
+
+model Position {
+  id                    String                 @id @default(cuid())
+  code                  String                 @unique
+  name                  String
+  sortOrder             Int                    @default(0) @map("sort_order")
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @updatedAt @map("updated_at")
+  users                 User[]
+  skillGradeDefinitions SkillGradeDefinition[]
+
+  @@map("positions")
+}
+
+model Team {
+  id               String               @id @default(cuid())
+  departmentId     String?              @map("department_id")
+  name             String
+  leaderUserId     String?              @map("leader_user_id")
+  isActive         Boolean              @default(true) @map("is_active")
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+  department       Department?          @relation(fields: [departmentId], references: [id])
+  leader           User?                @relation("TeamLeader", fields: [leaderUserId], references: [id])
+  memberships      TeamMembership[]
+  evaluations      EmployeeEvaluation[]
+  assignments      MonthlyAssignment[]
+  costs            MonthlyCost[]
+  teamMonthlyPls   TeamMonthlyPl[]
+  indirectCosts    TeamIndirectCost[]
+  fixedAllocations FixedCostAllocation[]
+  targets          TeamTarget[]
+
+  @@map("teams")
+}
+
+model TeamMembership {
+  id        String    @id @default(cuid())
+  teamId    String    @map("team_id")
+  userId    String    @map("user_id")
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+  isPrimary Boolean   @default(true) @map("is_primary")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId, startDate])
+  @@map("team_memberships")
+}
+
+model SkillGradeDefinition {
+  id                  String               @id @default(cuid())
+  category            SkillCategory
+  gradeCode           String               @map("grade_code")
+  gradeName           String               @map("grade_name")
+  rankOrder           Int                  @map("rank_order")
+  description         String?
+  minScore            Decimal?             @map("min_score") @db.Decimal(4, 2)
+  maxScore            Decimal?             @map("max_score") @db.Decimal(4, 2)
+  positionId          String?              @map("position_id")
+  createdAt           DateTime             @default(now()) @map("created_at")
+  updatedAt           DateTime             @updatedAt @map("updated_at")
+  position            Position?            @relation(fields: [positionId], references: [id])
+  evaluationItems     EvaluationItem[]
+  itSkillEvaluations  EmployeeEvaluation[] @relation("ItSkillGrade")
+  businessEvaluations EmployeeEvaluation[] @relation("BusinessSkillGrade")
+
+  @@unique([category, gradeCode, positionId])
+  @@map("skill_grade_definitions")
+}
+
+model EvaluationPeriod {
+  id                  String                 @id @default(cuid())
+  name                String
+  periodType          PeriodType             @default(HALF_YEAR) @map("period_type")
+  startDate           DateTime               @map("start_date")
+  endDate             DateTime               @map("end_date")
+  status              EvaluationPeriodStatus @default(DRAFT)
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @updatedAt @map("updated_at")
+  employeeEvaluations EmployeeEvaluation[]
+  salaryRevisionRules SalaryRevisionRule[]
+  salarySimulations   SalaryRevisionSimulation[]
+
+  @@map("evaluation_periods")
+}
+
+model EvaluationItem {
+  id                String                @id @default(cuid())
+  category          SkillCategory
+  axis              EvaluationAxis        @default(SELF_GROWTH)
+  scoreType         EvaluationScoreType   @default(LEVEL_2) @map("score_type")
+  majorCategory     String                @default("") @map("major_category")
+  minorCategory     String                @default("") @map("minor_category")
+  title             String
+  description       String?
+  weight            Decimal               @db.Decimal(5, 2)
+  displayOrder      Int                   @default(0) @map("display_order")
+  isActive          Boolean               @default(true) @map("is_active")
+  evidenceRequired  Boolean               @default(false) @map("evidence_required")
+  isCore            Boolean               @default(false) @map("is_core")
+  gradeDefinitionId String?               @map("grade_definition_id")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  gradeDefinition   SkillGradeDefinition? @relation(fields: [gradeDefinitionId], references: [id])
+  scores            EvaluationScore[]
+
+  @@map("evaluation_items")
+}
+
+model EmployeeEvaluation {
+  id                   String                    @id @default(cuid())
+  userId               String                    @map("user_id")
+  evaluationPeriodId   String                    @map("evaluation_period_id")
+  teamId               String                    @map("team_id")
+  status               EvaluationStatus          @default(SELF_REVIEW)
+  selfComment          String?                   @map("self_comment")
+  managerComment       String?                   @map("manager_comment")
+  finalComment         String?                   @map("final_comment")
+  selfScoreTotal       Decimal?                  @map("self_score_total") @db.Decimal(5, 2)
+  managerScoreTotal    Decimal?                  @map("manager_score_total") @db.Decimal(5, 2)
+  finalScoreTotal      Decimal?                  @map("final_score_total") @db.Decimal(5, 2)
+  itSkillGradeId       String?                   @map("it_skill_grade_id")
+  businessSkillGradeId String?                   @map("business_skill_grade_id")
+  finalRating          String?                   @map("final_rating")
+  finalizedBy          String?                   @map("finalized_by")
+  finalizedAt          DateTime?                 @map("finalized_at")
+  createdAt            DateTime                  @default(now()) @map("created_at")
+  updatedAt            DateTime                  @updatedAt @map("updated_at")
+  user                 User                      @relation("EvaluationSubject", fields: [userId], references: [id])
+  evaluationPeriod     EvaluationPeriod          @relation(fields: [evaluationPeriodId], references: [id])
+  team                 Team                      @relation(fields: [teamId], references: [id])
+  itSkillGrade         SkillGradeDefinition?     @relation("ItSkillGrade", fields: [itSkillGradeId], references: [id])
+  businessSkillGrade   SkillGradeDefinition?     @relation("BusinessSkillGrade", fields: [businessSkillGradeId], references: [id])
+  finalizer            User?                     @relation("EvaluationFinalizer", fields: [finalizedBy], references: [id])
+  scores               EvaluationScore[]
+  salaryRevisionSimulations SalaryRevisionSimulation[]
+
+  @@unique([userId, evaluationPeriodId])
+  @@map("employee_evaluations")
+}
+
+model EvaluationScore {
+  id                   String                   @id @default(cuid())
+  employeeEvaluationId String                   @map("employee_evaluation_id")
+  evaluationItemId     String                   @map("evaluation_item_id")
+  reviewType           ReviewType               @map("review_type")
+  score                Decimal                  @db.Decimal(5, 2)
+  comment              String?
+  createdAt            DateTime                 @default(now()) @map("created_at")
+  updatedAt            DateTime                 @updatedAt @map("updated_at")
+  employeeEvaluation   EmployeeEvaluation       @relation(fields: [employeeEvaluationId], references: [id], onDelete: Cascade)
+  evaluationItem       EvaluationItem           @relation(fields: [evaluationItemId], references: [id], onDelete: Cascade)
+  evidences            EvaluationScoreEvidence[]
+
+  @@unique([employeeEvaluationId, evaluationItemId, reviewType])
+  @@map("evaluation_scores")
+}
+
+model EvaluationScoreEvidence {
+  id                String          @id @default(cuid())
+  evaluationScoreId String          @map("evaluation_score_id")
+  summary           String
+  targetName        String?         @map("target_name")
+  periodNote        String?         @map("period_note")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  evaluationScore   EvaluationScore @relation(fields: [evaluationScoreId], references: [id], onDelete: Cascade)
+
+  @@map("evaluation_score_evidences")
+}
+
+model SalaryRecord {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  effectiveFrom  DateTime @map("effective_from")
+  baseSalary     Int      @map("base_salary")
+  allowance      Int      @default(0)
+  socialInsurance Int     @default(0) @map("social_insurance")
+  otherFixedCost Int      @default(0) @map("other_fixed_cost")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, effectiveFrom])
+  @@map("salary_records")
+}
+
+model SalaryRevisionRule {
+  id                 String           @id @default(cuid())
+  evaluationPeriodId String           @map("evaluation_period_id")
+  rating             String
+  minRaise           Decimal          @map("min_raise") @db.Decimal(5, 2)
+  maxRaise           Decimal          @map("max_raise") @db.Decimal(5, 2)
+  defaultRaise       Decimal          @map("default_raise") @db.Decimal(5, 2)
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  evaluationPeriod   EvaluationPeriod @relation(fields: [evaluationPeriodId], references: [id])
+
+  @@unique([evaluationPeriodId, rating])
+  @@map("salary_revision_rules")
+}
+
+model SalaryRevisionSimulation {
+  id                   String                 @id @default(cuid())
+  userId               String                 @map("user_id")
+  evaluationPeriodId   String                 @map("evaluation_period_id")
+  employeeEvaluationId String?                @map("employee_evaluation_id")
+  currentSalary        Int                    @map("current_salary")
+  proposedRaiseAmount  Int                    @map("proposed_raise_amount")
+  proposedRaiseRate    Decimal                @map("proposed_raise_rate") @db.Decimal(5, 2)
+  newSalary            Int                    @map("new_salary")
+  approvedBy           String?                @map("approved_by")
+  approvedAt           DateTime?              @map("approved_at")
+  status               SalarySimulationStatus @default(DRAFT)
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  user                 User                   @relation("SalarySimulationSubject", fields: [userId], references: [id])
+  evaluationPeriod     EvaluationPeriod       @relation(fields: [evaluationPeriodId], references: [id])
+  employeeEvaluation   EmployeeEvaluation?    @relation(fields: [employeeEvaluationId], references: [id])
+  approver             User?                  @relation("SalarySimulationApprover", fields: [approvedBy], references: [id])
+
+  @@unique([userId, evaluationPeriodId])
+  @@map("salary_revision_simulations")
+}
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  companyName String? @map("company_name")
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  monthlyAssignments MonthlyAssignment[]
+  monthlyCosts MonthlyCost[]
+  salesRateSetting PartnerSalesRateSetting?
+  outsourceRateSetting PartnerOutsourceRateSetting?
+
+  @@map("partners")
+}
+
+model MonthlyAssignment {
+  id         String               @id @default(cuid())
+  targetType AssignmentTargetType @map("target_type")
+  userId      String?             @map("user_id")
+  partnerId   String?             @map("partner_id")
+  teamId      String              @map("team_id")
+  yearMonth   String              @map("year_month")
+  unitPrice   Int                 @map("unit_price")
+  salesAmount Int                 @map("sales_amount")
+  workRate    Int                 @default(100) @map("work_rate")
+  remarks     String?
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+  user        User?               @relation(fields: [userId], references: [id])
+  partner     Partner?            @relation(fields: [partnerId], references: [id])
+  team        Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("monthly_assignments")
+}
+
+model MonthlyCost {
+  id           String          @id @default(cuid())
+  targetType   CostTargetType  @map("target_type")
+  userId       String?         @map("user_id")
+  partnerId    String?         @map("partner_id")
+  teamId       String?         @map("team_id")
+  yearMonth    String          @map("year_month")
+  costCategory CostCategory    @map("cost_category")
+  amount       Int
+  remarks      String?
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+  user         User?           @relation(fields: [userId], references: [id])
+  partner      Partner?        @relation(fields: [partnerId], references: [id])
+  team         Team?           @relation(fields: [teamId], references: [id])
+
+  @@map("monthly_costs")
+}
+
+model TeamMonthlyPl {
+  id                    String   @id @default(cuid())
+  teamId                String   @map("team_id")
+  yearMonth             String   @map("year_month")
+  salesTotal            Int      @map("sales_total")
+  directLaborCost       Int      @map("direct_labor_cost")
+  outsourcingCost       Int      @map("outsourcing_cost")
+  grossProfit1          Int      @map("gross_profit_1")
+  indirectCost          Int      @map("indirect_cost")
+  grossProfit2          Int      @map("gross_profit_2")
+  fixedCostAllocation   Int      @map("fixed_cost_allocation")
+  finalGrossProfit      Int      @map("final_gross_profit")
+  targetGrossProfitRate Decimal  @map("target_gross_profit_rate") @db.Decimal(5, 2)
+  actualGrossProfitRate Decimal  @map("actual_gross_profit_rate") @db.Decimal(5, 2)
+  varianceAmount        Int      @map("variance_amount")
+  varianceRate          Decimal  @map("variance_rate") @db.Decimal(5, 2)
+  status                String   @default("DRAFT")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  team                  Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, yearMonth])
+  @@map("team_monthly_pls")
+}
+
+model TeamIndirectCost {
+  id        String   @id @default(cuid())
+  teamId    String   @map("team_id")
+  yearMonth String   @map("year_month")
+  category  String
+  amount    Int
+  remarks   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("team_indirect_costs")
+}
+
+model FixedCostSetting {
+  id               String                    @id @default(cuid())
+  yearMonth        String                    @map("year_month")
+  category         String
+  amount           Int
+  allocationMethod FixedCostAllocationMethod @map("allocation_method")
+  createdAt        DateTime                  @default(now()) @map("created_at")
+  updatedAt        DateTime                  @updatedAt @map("updated_at")
+  allocations      FixedCostAllocation[]
+
+  @@map("fixed_cost_settings")
+}
+
+model FixedCostAllocation {
+  id                 String           @id @default(cuid())
+  teamId             String           @map("team_id")
+  fixedCostSettingId String           @map("fixed_cost_setting_id")
+  yearMonth          String           @map("year_month")
+  allocatedAmount    Int              @map("allocated_amount")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  team               Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  fixedCostSetting   FixedCostSetting @relation(fields: [fixedCostSettingId], references: [id], onDelete: Cascade)
+
+  @@map("fixed_cost_allocations")
+}
+
+model TeamTarget {
+  id                    String   @id @default(cuid())
+  teamId                String   @map("team_id")
+  yearMonth             String   @map("year_month")
+  salesTarget           Int      @map("sales_target")
+  grossProfitTarget     Int      @map("gross_profit_target")
+  grossProfitRateTarget Decimal  @map("gross_profit_rate_target") @db.Decimal(5, 2)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+  team                  Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("team_targets")
+}
+
+model ApprovalLog {
+  id         String   @id @default(cuid())
+  targetType String   @map("target_type")
+  targetId   String   @map("target_id")
+  action     String
+  actedBy    String   @map("acted_by")
+  actedAt    DateTime @default(now()) @map("acted_at")
+  comment    String?
+  actor      User     @relation("ApprovalActor", fields: [actedBy], references: [id])
+
+  @@map("approval_logs")
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String   @map("resource_id")
+  beforeJson   Json?    @map("before_json")
+  afterJson    Json?    @map("after_json")
+  createdAt    DateTime @default(now()) @map("created_at")
+  actor        User     @relation("AuditActor", fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model EmployeeSalesRateSetting {
+  userId          String   @id @map("user_id")
+  unitPrice       Int      @map("unit_price")
+  defaultWorkRate Int      @default(100) @map("default_work_rate")
+  remarks         String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("employee_sales_rate_settings")
+}
+
+model PartnerSalesRateSetting {
+  partnerId        String   @id @map("partner_id")
+  unitPrice        Int      @map("unit_price")
+  defaultWorkRate  Int      @default(100) @map("default_work_rate")
+  remarks          String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  partner          Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("partner_sales_rate_settings")
+}
+
+model PartnerOutsourceRateSetting {
+  partnerId String   @id @map("partner_id")
+  amount    Int
+  remarks   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  partner   Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+
+  @@map("partner_outsource_rate_settings")
+}
+
+
+

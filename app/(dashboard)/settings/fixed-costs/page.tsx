@@ -1,0 +1,56 @@
+import Link from "next/link";
+
+import { CompanyFixedCostEditor } from "@/components/pl/company-fixed-cost-editor";
+import { getSessionUser } from "@/lib/auth/demo-session";
+import { hasPermission } from "@/lib/permissions/check";
+import { PERMISSIONS } from "@/lib/permissions/definitions";
+import { getCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
+
+export default async function FixedCostsPage() {
+  const user = await getSessionUser();
+  const rows = await getCompanyFixedCosts("2026-03");
+  const canEdit = hasPermission(user, PERMISSIONS.masterWrite);
+  const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
+
+  return (
+    <main className="min-h-screen bg-[linear-gradient(180deg,#f4f8ff_0%,#edf3ff_100%)] text-slate-900">
+      <div className="mx-auto max-w-5xl px-6 py-10">
+        <header className="rounded-[2rem] bg-slate-950 px-8 py-7 text-white shadow-[0_30px_80px_rgba(15,23,42,0.22)]">
+          <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Company Overhead</p>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold">全社固定費設定</h1>
+              <p className="mt-2 text-sm text-slate-300">2026-03 の固定費を設定し、各チームへ人数比按分します。</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/pl/monthly" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                月次PLへ戻る
+              </Link>
+              {canManageSalary ? (
+                <>
+                  <Link href="/settings/salary-records" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                    社員コスト設定
+                  </Link>
+                  <Link href="/settings/rates" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                    売上
+                  </Link>
+                </>
+              ) : null}
+            </div>
+          </div>
+        </header>
+
+        <div className="mt-8">
+          <CompanyFixedCostEditor
+            yearMonth="2026-03"
+            canEdit={canEdit}
+            defaults={rows.map((row) => ({ id: row.id, category: row.category, amount: row.amount }))}
+          />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+
+
