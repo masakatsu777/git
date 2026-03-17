@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { SESSION_COOKIE_NAME } from "@/lib/auth/demo-session";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/session-cookie";
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as { redirectTo?: string } | null;

@@ -1,11 +1,11 @@
 import { cookies, headers } from "next/headers";
 
 import { verifyPassword } from "@/lib/auth/password";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/session-cookie";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import type { AppRole } from "@/lib/permissions/definitions";
 import type { SessionUser } from "@/lib/permissions/check";
 
-export const SESSION_COOKIE_NAME = "evaluation_session_user_id";
 
 const demoUsers: Record<AppRole, SessionUser> = {
   employee: {

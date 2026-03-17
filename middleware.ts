@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { SESSION_COOKIE_NAME } from "@/lib/auth/demo-session";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/session-cookie";
 
 const protectedPrefixes = [
   "/menu",

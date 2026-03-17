@@ -7,6 +7,8 @@ import { requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { updateUserProfile } from "@/lib/users/user-management-service";
 
+export const runtime = "nodejs";
+
 export async function POST(request: NextRequest) {
   const user = await getSessionUser();
 
