@@ -336,18 +336,18 @@ export function MonthlyPlDetailEditor({
         <section className="rounded-3xl border border-stone-200 p-4">
           <h3 className="font-semibold">全社固定費按分</h3>
           <p className="mt-1 text-sm text-stone-500">全社入力された固定費を、社員人数比で自動按分しています。</p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            <div className="min-w-0 rounded-2xl bg-stone-50 px-4 py-4">
-              <p className="text-xs text-stone-500">同部署人数</p>
-              <p className="mt-2 text-xl font-semibold">{fixedCostSummary.totalHeadcount} 名</p>
+          <div className="mt-4 grid gap-3 md:grid-cols-[72px_64px_minmax(0,1fr)]">
+            <div className="min-w-0 rounded-2xl bg-stone-50 px-3 py-4">
+              <p className="text-xs text-stone-500">社員数</p>
+              <p className="mt-2 text-sm font-semibold sm:text-base">{fixedCostSummary.totalHeadcount} 名</p>
             </div>
-            <div className="min-w-0 rounded-2xl bg-stone-50 px-4 py-4">
-              <p className="text-xs text-stone-500">チーム人数</p>
-              <p className="mt-2 text-xl font-semibold">{fixedCostSummary.teamHeadcount} 名</p>
+            <div className="min-w-0 rounded-2xl bg-stone-50 px-3 py-4">
+              <p className="text-xs text-stone-500">チーム</p>
+              <p className="mt-2 text-sm font-semibold sm:text-base">{fixedCostSummary.teamHeadcount} 名</p>
             </div>
-            <div className="min-w-0 rounded-2xl bg-stone-50 px-4 py-4 sm:col-span-2 xl:col-span-1">
-              <p className="text-xs text-stone-500">按分合計</p>
-              <p className="mt-2 break-all text-lg font-semibold xl:text-xl">{fixedTotal.toLocaleString("ja-JP")} 円</p>
+            <div className="min-w-0 rounded-2xl bg-stone-50 px-3 py-4">
+              <p className="text-xs text-stone-500">按分額</p>
+              <p className="mt-2 text-sm font-semibold sm:text-[15px]">{fixedTotal.toLocaleString("ja-JP")} 円</p>
             </div>
           </div>
           <div className="mt-4 space-y-2">
