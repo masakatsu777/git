@@ -16,6 +16,7 @@ type AssignmentRow = {
   targetType: "EMPLOYEE" | "PARTNER";
   userId: string | null;
   partnerId: string | null;
+  partnerName: string;
   unitPrice: number;
   salesAmount: number;
   workRate: number;
@@ -25,6 +26,7 @@ type AssignmentRow = {
 type OutsourcingRow = {
   id: string;
   partnerId: string | null;
+  partnerName: string;
   amount: number;
   remarks: string;
 };
@@ -77,6 +79,11 @@ function uid(prefix: string) {
 
 function getSelectedOption(targetType: "EMPLOYEE" | "PARTNER", employeeOptions: Option[], partnerOptions: Option[]) {
   return targetType === "EMPLOYEE" ? employeeOptions[0] : partnerOptions[0];
+}
+
+function findPartnerOptionByName(partnerOptions: Option[], name: string) {
+  const normalized = name.trim();
+  return partnerOptions.find((item) => item.label === normalized);
 }
 
 export function MonthlyPlDetailEditor({
@@ -142,6 +149,7 @@ export function MonthlyPlDetailEditor({
         targetType: "EMPLOYEE",
         userId: option?.id ?? null,
         partnerId: null,
+        partnerName: "",
         unitPrice: option?.defaultUnitPrice ?? 0,
         salesAmount: option?.defaultUnitPrice ?? 0,
         workRate: option?.defaultWorkRate ?? 100,
@@ -157,6 +165,7 @@ export function MonthlyPlDetailEditor({
       {
         id: uid("out"),
         partnerId: option?.id ?? null,
+        partnerName: option?.label ?? "",
         amount: option?.defaultOutsourceAmount ?? 0,
         remarks: "",
       },
@@ -197,6 +206,7 @@ export function MonthlyPlDetailEditor({
                         targetType: nextType,
                         userId: nextType === "EMPLOYEE" ? option?.id ?? null : null,
                         partnerId: nextType === "PARTNER" ? option?.id ?? null : null,
+                        partnerName: nextType === "PARTNER" ? option?.label ?? "" : "",
                         unitPrice: option?.defaultUnitPrice ?? 0,
                         salesAmount: option?.defaultUnitPrice ?? 0,
                         workRate: option?.defaultWorkRate ?? 100,
@@ -207,30 +217,47 @@ export function MonthlyPlDetailEditor({
                     <option value="EMPLOYEE">社員</option>
                     <option value="PARTNER">パートナー</option>
                   </select>
-                  <select
-                    value={row.targetType === "EMPLOYEE" ? row.userId ?? "" : row.partnerId ?? ""}
-                    disabled={!canEdit || isPending}
-                    onChange={(event) => {
-                      const selectedId = event.target.value || null;
-                      const option = (row.targetType === "EMPLOYEE" ? employeeOptions : partnerOptions).find((item) => item.id === selectedId);
-                      setAssignments((current) => current.map((item) => item.id === row.id ? row.targetType === "EMPLOYEE" ? {
-                        ...item,
-                        userId: selectedId,
-                        unitPrice: option?.defaultUnitPrice ?? item.unitPrice,
-                        salesAmount: option?.defaultUnitPrice ?? item.salesAmount,
-                        workRate: option?.defaultWorkRate ?? item.workRate,
-                      } : {
-                        ...item,
-                        partnerId: selectedId,
-                        unitPrice: option?.defaultUnitPrice ?? item.unitPrice,
-                        salesAmount: option?.defaultUnitPrice ?? item.salesAmount,
-                        workRate: option?.defaultWorkRate ?? item.workRate,
-                      } : item));
-                    }}
-                    className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
-                  >
-                    {(row.targetType === "EMPLOYEE" ? employeeOptions : partnerOptions).map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
-                  </select>
+                  {row.targetType === "EMPLOYEE" ? (
+                    <select
+                      value={row.userId ?? ""}
+                      disabled={!canEdit || isPending}
+                      onChange={(event) => {
+                        const selectedId = event.target.value || null;
+                        const option = employeeOptions.find((item) => item.id === selectedId);
+                        setAssignments((current) => current.map((item) => item.id === row.id ? {
+                          ...item,
+                          userId: selectedId,
+                          unitPrice: option?.defaultUnitPrice ?? item.unitPrice,
+                          salesAmount: option?.defaultUnitPrice ?? item.salesAmount,
+                          workRate: option?.defaultWorkRate ?? item.workRate,
+                        } : item));
+                      }}
+                      className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
+                    >
+                      {employeeOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      list="monthly-pl-partner-options"
+                      value={row.partnerName}
+                      disabled={!canEdit || isPending}
+                      onChange={(event) => {
+                        const partnerName = event.target.value;
+                        const option = findPartnerOptionByName(partnerOptions, partnerName);
+                        setAssignments((current) => current.map((item) => item.id === row.id ? {
+                          ...item,
+                          partnerName,
+                          partnerId: option?.id ?? null,
+                          unitPrice: option?.defaultUnitPrice ?? item.unitPrice,
+                          salesAmount: option?.defaultUnitPrice ?? item.salesAmount,
+                          workRate: option?.defaultWorkRate ?? item.workRate,
+                        } : item));
+                      }}
+                      className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
+                      placeholder="パートナー名"
+                    />
+                  )}
                 </div>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <input type="number" value={row.unitPrice} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, unitPrice: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="単価" />
@@ -258,22 +285,24 @@ export function MonthlyPlDetailEditor({
           <div className="mt-4 space-y-3">
             {outsourcingCosts.map((row) => (
               <div key={row.id} className="grid gap-3 rounded-2xl bg-stone-50 p-3 sm:grid-cols-[minmax(0,1fr)_160px]">
-                <select
-                  value={row.partnerId ?? ""}
+                <input
+                  type="text"
+                  list="monthly-pl-partner-options"
+                  value={row.partnerName}
                   disabled={!canEdit || isPending}
                   onChange={(event) => {
-                    const selectedId = event.target.value || null;
-                    const option = partnerOptions.find((item) => item.id === selectedId);
+                    const partnerName = event.target.value;
+                    const option = findPartnerOptionByName(partnerOptions, partnerName);
                     setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? {
                       ...item,
-                      partnerId: selectedId,
+                      partnerName,
+                      partnerId: option?.id ?? null,
                       amount: option?.defaultOutsourceAmount ?? item.amount,
                     } : item));
                   }}
                   className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
-                >
-                  {partnerOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
-                </select>
+                  placeholder="パートナー名"
+                />
                 <input type="number" value={row.amount} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, amount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="金額" />
                 <button type="button" onClick={() => setOutsourcingCosts((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600 sm:col-span-2 sm:justify-self-end">削除</button>
                 <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
@@ -307,18 +336,18 @@ export function MonthlyPlDetailEditor({
         <section className="rounded-3xl border border-stone-200 p-4">
           <h3 className="font-semibold">全社固定費按分</h3>
           <p className="mt-1 text-sm text-stone-500">全社入力された固定費を、社員人数比で自動按分しています。</p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-stone-50 px-4 py-4">
-              <p className="text-xs text-stone-500">全社人数</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="min-w-0 rounded-2xl bg-stone-50 px-4 py-4">
+              <p className="text-xs text-stone-500">同部署人数</p>
               <p className="mt-2 text-xl font-semibold">{fixedCostSummary.totalHeadcount} 名</p>
             </div>
-            <div className="rounded-2xl bg-stone-50 px-4 py-4">
+            <div className="min-w-0 rounded-2xl bg-stone-50 px-4 py-4">
               <p className="text-xs text-stone-500">チーム人数</p>
               <p className="mt-2 text-xl font-semibold">{fixedCostSummary.teamHeadcount} 名</p>
             </div>
-            <div className="rounded-2xl bg-stone-50 px-4 py-4">
+            <div className="min-w-0 rounded-2xl bg-stone-50 px-4 py-4 sm:col-span-2 xl:col-span-1">
               <p className="text-xs text-stone-500">按分合計</p>
-              <p className="mt-2 text-xl font-semibold">{fixedTotal.toLocaleString("ja-JP")} 円</p>
+              <p className="mt-2 break-all text-lg font-semibold xl:text-xl">{fixedTotal.toLocaleString("ja-JP")} 円</p>
             </div>
           </div>
           <div className="mt-4 space-y-2">
@@ -343,6 +372,12 @@ export function MonthlyPlDetailEditor({
           <input type="number" value={targets.grossProfitRateTarget} disabled={!canEdit || isPending} onChange={(event) => setTargets((current) => ({ ...current, grossProfitRateTarget: toNumber(event.target.value) }))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="粗利率目標" />
         </div>
       </section>
+
+      <datalist id="monthly-pl-partner-options">
+        {partnerOptions.map((option) => (
+          <option key={option.id} value={option.label} />
+        ))}
+      </datalist>
 
       <div className="flex flex-wrap gap-3">
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-stone-300">

@@ -138,6 +138,7 @@ export default async function MonthlyPlPage({
                   targetType: row.targetType,
                   userId: row.userId,
                   partnerId: row.partnerId,
+                  partnerName: row.label,
                   unitPrice: row.unitPrice,
                   salesAmount: row.salesAmount,
                   workRate: row.workRate,
@@ -146,6 +147,7 @@ export default async function MonthlyPlPage({
                 outsourcingCosts: details.outsourcingCosts.map((row) => ({
                   id: row.id,
                   partnerId: row.partnerId,
+                  partnerName: row.label,
                   amount: row.amount,
                   remarks: row.remarks,
                 })),

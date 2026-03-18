@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
           targetType: item.targetType === "PARTNER" ? "PARTNER" : "EMPLOYEE",
           userId: typeof item.userId === "string" ? item.userId : null,
           partnerId: typeof item.partnerId === "string" ? item.partnerId : null,
+          partnerName: String(item.partnerName ?? ""),
           unitPrice: toNumber(item.unitPrice),
           salesAmount: toNumber(item.salesAmount),
           workRate: toNumber(item.workRate),
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
         const item = row as Record<string, unknown>;
         return {
           partnerId: typeof item.partnerId === "string" ? item.partnerId : null,
+          partnerName: String(item.partnerName ?? ""),
           amount: toNumber(item.amount),
           remarks: String(item.remarks ?? ""),
         };

@@ -45,7 +45,7 @@ async function getHeadcounts(yearMonth: string) {
   if (!hasDatabaseUrl()) {
     return {
       totalHeadcount: 3,
-      headcounts: [{ teamId: "team-platform", count: 3 }],
+      headcounts: [{ teamId: "team-platform", departmentId: "dept-dev", count: 3 }],
     };
   }
 
@@ -55,6 +55,7 @@ async function getHeadcounts(yearMonth: string) {
     where: { isActive: true },
     select: {
       id: true,
+      departmentId: true,
       memberships: {
         where: {
           isPrimary: true,
@@ -68,6 +69,7 @@ async function getHeadcounts(yearMonth: string) {
 
   const headcounts = teams.map((team) => ({
     teamId: team.id,
+    departmentId: team.departmentId,
     count: team.memberships.length,
   }));
 
@@ -149,24 +151,31 @@ export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): 
 
 export async function getTeamFixedCostAllocationSummary(teamId: string, yearMonth: string): Promise<TeamFixedCostAllocationSummary> {
   try {
-    const [rows, { totalHeadcount, headcounts }] = await Promise.all([
+    const [rows, { totalHeadcount, headcounts }, team] = await Promise.all([
       getCompanyFixedCosts(yearMonth),
       getHeadcounts(yearMonth),
+      prisma.team.findUnique({
+        where: { id: teamId },
+        select: { departmentId: true },
+      }),
     ]);
 
     const teamHeadcount = headcounts.find((row) => row.teamId === teamId)?.count ?? 0;
+    const scopeHeadcount = team?.departmentId
+      ? headcounts.filter((row) => row.departmentId === team.departmentId).reduce((total, row) => total + row.count, 0)
+      : totalHeadcount;
 
     const allocations = rows.map((row) => ({
       id: row.id,
       category: row.category,
       companyAmount: row.amount,
-      allocatedAmount: totalHeadcount === 0 ? 0 : round((row.amount * teamHeadcount) / totalHeadcount),
+      allocatedAmount: scopeHeadcount === 0 ? 0 : round((row.amount * teamHeadcount) / scopeHeadcount),
       allocationMethod: "HEADCOUNT" as const,
     }));
 
     return {
       totalCompanyFixedCost: rows.reduce((total, row) => total + row.amount, 0),
-      totalHeadcount,
+      totalHeadcount: scopeHeadcount,
       teamHeadcount,
       allocations,
     };

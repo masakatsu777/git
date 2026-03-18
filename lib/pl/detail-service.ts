@@ -72,6 +72,7 @@ export type SaveTeamMonthlyDetailsInput = {
     targetType: "EMPLOYEE" | "PARTNER";
     userId: string | null;
     partnerId: string | null;
+    partnerName: string;
     unitPrice: number;
     salesAmount: number;
     workRate: number;
@@ -79,6 +80,7 @@ export type SaveTeamMonthlyDetailsInput = {
   }>;
   outsourcingCosts: Array<{
     partnerId: string | null;
+    partnerName: string;
     amount: number;
     remarks: string;
   }>;
@@ -366,33 +368,75 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
       await tx.teamIndirectCost.deleteMany({ where: { teamId: input.teamId, yearMonth: input.yearMonth } });
       await tx.teamTarget.deleteMany({ where: { teamId: input.teamId, yearMonth: input.yearMonth } });
 
+      const resolvePartnerId = async (partnerId: string | null, partnerName: string) => {
+        const normalizedName = partnerName.trim();
+
+        if (partnerId) {
+          const existingById = await tx.partner.findUnique({
+            where: { id: partnerId },
+            select: { id: true, name: true },
+          });
+
+          if (existingById && (!normalizedName || existingById.name === normalizedName)) {
+            return existingById.id;
+          }
+        }
+
+        if (!normalizedName) {
+          return null;
+        }
+
+        const existingByName = await tx.partner.findFirst({
+          where: { name: normalizedName },
+          orderBy: { createdAt: "asc" },
+          select: { id: true },
+        });
+
+        if (existingByName) {
+          return existingByName.id;
+        }
+
+        const created = await tx.partner.create({
+          data: {
+            name: normalizedName,
+          },
+          select: { id: true },
+        });
+
+        return created.id;
+      };
+
       if (input.assignments.length > 0) {
+        const assignmentRows = await Promise.all(input.assignments.map(async (row) => ({
+          targetType: row.targetType === "EMPLOYEE" ? AssignmentTargetType.EMPLOYEE : AssignmentTargetType.PARTNER,
+          userId: row.targetType === "EMPLOYEE" ? row.userId : null,
+          partnerId: row.targetType === "PARTNER" ? await resolvePartnerId(row.partnerId, row.partnerName) : null,
+          teamId: input.teamId,
+          yearMonth: input.yearMonth,
+          unitPrice: row.unitPrice,
+          salesAmount: row.salesAmount,
+          workRate: row.workRate,
+          remarks: row.remarks || null,
+        })));
+
         await tx.monthlyAssignment.createMany({
-          data: input.assignments.map((row) => ({
-            targetType: row.targetType === "EMPLOYEE" ? AssignmentTargetType.EMPLOYEE : AssignmentTargetType.PARTNER,
-            userId: row.targetType === "EMPLOYEE" ? row.userId : null,
-            partnerId: row.targetType === "PARTNER" ? row.partnerId : null,
-            teamId: input.teamId,
-            yearMonth: input.yearMonth,
-            unitPrice: row.unitPrice,
-            salesAmount: row.salesAmount,
-            workRate: row.workRate,
-            remarks: row.remarks || null,
-          })),
+          data: assignmentRows,
         });
       }
 
       if (input.outsourcingCosts.length > 0) {
+        const outsourcingRows = await Promise.all(input.outsourcingCosts.map(async (row) => ({
+          targetType: CostTargetType.PARTNER,
+          partnerId: await resolvePartnerId(row.partnerId, row.partnerName),
+          teamId: input.teamId,
+          yearMonth: input.yearMonth,
+          costCategory: CostCategory.OUTSOURCING,
+          amount: row.amount,
+          remarks: row.remarks || null,
+        })));
+
         await tx.monthlyCost.createMany({
-          data: input.outsourcingCosts.map((row) => ({
-            targetType: CostTargetType.PARTNER,
-            partnerId: row.partnerId,
-            teamId: input.teamId,
-            yearMonth: input.yearMonth,
-            costCategory: CostCategory.OUTSOURCING,
-            amount: row.amount,
-            remarks: row.remarks || null,
-          })),
+          data: outsourcingRows,
         });
       }
 
