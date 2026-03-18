@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type SalaryRevisionRuleRow = {
   id: string;
@@ -45,7 +45,21 @@ export function deriveRatingFromScore(score: number) {
   return "D";
 }
 
+function buildFallbackBundle(): SalaryRevisionRuleBundle {
+  return {
+    evaluationPeriodId: "period-2025-h2",
+    periodName: "2025年度下期",
+    periods: [{ id: "period-2025-h2", name: "2025年度下期" }],
+    rules: fallbackRules,
+    source: "fallback",
+  };
+}
+
 export async function getSalaryRevisionRuleBundle(): Promise<SalaryRevisionRuleBundle> {
+  if (!hasDatabaseUrl()) {
+    return buildFallbackBundle();
+  }
+
   try {
     const periods = await prisma.evaluationPeriod.findMany({
       orderBy: { startDate: "desc" },
@@ -77,13 +91,7 @@ export async function getSalaryRevisionRuleBundle(): Promise<SalaryRevisionRuleB
       source: ratingRules.length ? "database" : "fallback",
     };
   } catch {
-    return {
-      evaluationPeriodId: "period-2025-h2",
-      periodName: "2025年度下期",
-      periods: [{ id: "period-2025-h2", name: "2025年度下期" }],
-      rules: fallbackRules,
-      source: "fallback",
-    };
+    return buildFallbackBundle();
   }
 }
 

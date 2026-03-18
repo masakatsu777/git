@@ -71,35 +71,42 @@ export default async function TeamEvaluationPage({
                     <Link
                       key={period.id}
                       href={`/evaluations/team?evaluationPeriodId=${period.id}&teamId=${bundle.teamId}${selectedMemberQuery}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-slate-950" : "border border-white/15 text-white"}`}
+                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                     >
-                      {period.name}
+                      <span style={{ color: "#000000" }}>{period.name}</span>
                     </Link>
                   );
                 })}
               </div>
               {teamOptions.length > 0 ? (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {teamOptions.map((team) => {
-                    const active = team.teamId === bundle.teamId;
-                    return (
-                      <Link
-                        key={team.teamId}
-                        href={`/evaluations/team?teamId=${team.teamId}&evaluationPeriodId=${bundle.evaluationPeriodId}${selectedMemberQuery}`}
-                        className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-brand-200 text-slate-950" : "border border-white/15 text-white"}`}
-                      >
-                        {team.teamName}
-                      </Link>
-                    );
-                  })}
-                </div>
+                <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
+                  <input type="hidden" name="evaluationPeriodId" value={bundle.evaluationPeriodId} />
+                  {effectiveMemberId ? <input type="hidden" name="memberId" value={effectiveMemberId} /> : null}
+                  <label className="text-sm text-slate-200">
+                    対象チーム
+                    <select
+                      name="teamId"
+                      defaultValue={bundle.teamId}
+                      className="mt-2 min-w-56 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                    >
+                      {teamOptions.map((team) => (
+                        <option key={team.teamId} value={team.teamId}>
+                          {team.teamName}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="submit" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+                    チーム切替
+                  </button>
+                </form>
               ) : null}
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 ダッシュボードへ
               </Link>
-              <Link href={`/evaluations/my?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/evaluations/my?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 半期自己評価
               </Link>
             </div>

@@ -239,7 +239,7 @@ export function MonthlyPlDetailEditor({
                 </div>
                 <div className="flex gap-3">
                   <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="flex-1 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
-                  <button type="button" onClick={() => setAssignments((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600">削除</button>
+                  <button type="button" onClick={() => setAssignments((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600 sm:col-span-2 sm:justify-self-end">削除</button>
                 </div>
               </div>
             ))}
@@ -257,7 +257,7 @@ export function MonthlyPlDetailEditor({
           </div>
           <div className="mt-4 space-y-3">
             {outsourcingCosts.map((row) => (
-              <div key={row.id} className="grid gap-3 rounded-2xl bg-stone-50 p-3 sm:grid-cols-[1fr_180px_120px]">
+              <div key={row.id} className="grid gap-3 rounded-2xl bg-stone-50 p-3 sm:grid-cols-[minmax(0,1fr)_160px]">
                 <select
                   value={row.partnerId ?? ""}
                   disabled={!canEdit || isPending}
@@ -275,8 +275,8 @@ export function MonthlyPlDetailEditor({
                   {partnerOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
                 </select>
                 <input type="number" value={row.amount} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, amount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="金額" />
-                <button type="button" onClick={() => setOutsourcingCosts((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600">削除</button>
-                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-3 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
+                <button type="button" onClick={() => setOutsourcingCosts((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600 sm:col-span-2 sm:justify-self-end">削除</button>
+                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
               </div>
             ))}
           </div>
@@ -290,14 +290,14 @@ export function MonthlyPlDetailEditor({
           </div>
           <div className="mt-4 space-y-3">
             {teamExpenses.map((row) => (
-              <div key={row.id} className="grid gap-3 rounded-2xl bg-stone-50 p-3 sm:grid-cols-[1fr_180px_120px]">
+              <div key={row.id} className="grid gap-3 rounded-2xl bg-stone-50 p-3 sm:grid-cols-[minmax(0,1fr)_160px]">
                 <select value={row.category} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, category: event.target.value } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm">
                   <option value="採用教育費">採用教育費</option>
                   <option value="その他経費">その他経費</option>
                 </select>
                 <input type="number" value={row.amount} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, amount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="金額" />
                 <button type="button" onClick={() => setTeamExpenses((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600">削除</button>
-                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-3 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
+                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
               </div>
             ))}
           </div>

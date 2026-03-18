@@ -41,13 +41,13 @@ export default async function SkillCareerSettingsPage() {
               <p className="mt-2 text-sm text-slate-300">理念に基づく自律成長力・協調相乗力の等級、職種別閾値、半期評価項目を制度設定として管理します。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
-              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 等級一覧
               </Link>
-              <Link href="/evaluations/finalize" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/evaluations/finalize" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 最終評価へ
               </Link>
             </div>

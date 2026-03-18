@@ -8,7 +8,7 @@ import {
   type SelfReviewScoreType,
 } from "@/lib/evaluations/self-review-service";
 import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type ManagerReviewMember = {
   userId: string;
@@ -147,6 +147,10 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
 }
 
 export async function getManagerReviewBundle(teamId: string, selectedUserId?: string, evaluationPeriodId?: string): Promise<ManagerReviewBundle> {
+  if (!hasDatabaseUrl()) {
+    return buildFallbackBundle(selectedUserId);
+  }
+
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
     const [team, itemRows] = await Promise.all([

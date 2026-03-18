@@ -1,6 +1,6 @@
 import { FixedCostAllocationMethod } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type CompanyFixedCostRow = {
   id: string;
@@ -42,6 +42,13 @@ function round(value: number) {
 }
 
 async function getHeadcounts(yearMonth: string) {
+  if (!hasDatabaseUrl()) {
+    return {
+      totalHeadcount: 3,
+      headcounts: [{ teamId: "team-platform", count: 3 }],
+    };
+  }
+
   const { start, end } = getMonthRange(yearMonth);
 
   const teams = await prisma.team.findMany({
@@ -71,6 +78,17 @@ async function getHeadcounts(yearMonth: string) {
 }
 
 export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFixedCostRow[]> {
+  if (!hasDatabaseUrl()) {
+    return [
+      {
+        id: "fixed-hq-rent",
+        category: "家賃光熱費",
+        amount: 300000,
+        allocationMethod: "HEADCOUNT",
+      },
+    ];
+  }
+
   try {
     const rows = await prisma.fixedCostSetting.findMany({
       where: { yearMonth },

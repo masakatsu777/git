@@ -56,22 +56,22 @@ export default async function SalarySimulationPage({
                     <Link
                       key={period.id}
                       href={`/salary/simulations?evaluationPeriodId=${period.id}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-slate-950" : "border border-white/15 text-white"}`}
+                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                     >
-                      {period.name}
+                      <span style={{ color: "#000000" }}>{period.name}</span>
                     </Link>
                   );
                 })}
               </div>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 ダッシュボードへ
               </Link>
-              <Link href={`/evaluations/finalize?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/evaluations/finalize?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 最終評価
               </Link>
-              <Link href={`/salary/results?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/salary/results?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 昇給結果
               </Link>
             </div>

@@ -41,13 +41,13 @@ export default async function UsersPage({
               <p className="mt-2 text-sm text-slate-300">社員追加、部署・チーム変更、ロール変更、パスワード再設定を行います。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/settings/organization" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/organization" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 組織設定
               </Link>
-              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 等級一覧
               </Link>
-              <Link href="/settings/audit-logs" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/audit-logs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 監査ログ
               </Link>
             </div>

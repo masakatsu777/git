@@ -128,7 +128,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
               href={`/evaluations/team?memberId=${member.userId}`}
               className={`rounded-2xl border px-4 py-3 text-sm ${member.userId === defaults.selectedUserId ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-slate-50 text-slate-800"}`}
             >
-              <p className="font-semibold">{member.name}</p>
+              <p className="font-semibold"><span style={{ color: member.userId === defaults.selectedUserId ? "#ffffff" : "#0f172a" }}>{member.name}</span></p>
               <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>状態: {member.status}</p>
               <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>自己 {member.selfScoreTotal} / 上長 {member.managerScoreTotal}</p>
             </a>

@@ -57,10 +57,10 @@ export default async function OverallGradeSalaryRulesPage() {
               <p className="mt-2 text-sm text-slate-300">総合等級 G1〜G5 ごとの昇給率レンジを管理し、昇給シミュレーションの初期値と推奨レンジに反映します。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
-              <Link href="/salary/simulations" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 昇給シミュレーションへ
               </Link>
             </div>

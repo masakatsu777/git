@@ -1,6 +1,6 @@
 import { EvaluationPeriodStatus, EvaluationStatus } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type PendingEvaluationMember = {
   name: string;
@@ -36,6 +36,10 @@ function buildFallbackBundle(): EvaluationProgressBundle {
 }
 
 export async function getEvaluationProgressBundle(teamIds?: string[]): Promise<EvaluationProgressBundle> {
+  if (!hasDatabaseUrl()) {
+    return buildFallbackBundle();
+  }
+
   try {
     const period = await prisma.evaluationPeriod.findFirstOrThrow({
       where: { status: { in: [EvaluationPeriodStatus.OPEN, EvaluationPeriodStatus.DRAFT, EvaluationPeriodStatus.CLOSED] } },

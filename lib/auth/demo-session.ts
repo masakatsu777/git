@@ -34,16 +34,16 @@ const demoUsers: Record<AppRole, SessionUser> = {
   },
 };
 
-const demoLoginUsers: Array<{ userId: string; employeeCode: string; password: string; name: string; role: AppRole; teamName: string }> = [
-  { userId: "demo-president", employeeCode: "DEMO-1", password: "password", name: "代表 太郎", role: "president", teamName: "全社" },
-  { userId: "demo-admin", employeeCode: "DEMO-2", password: "password", name: "管理 花子", role: "admin", teamName: "プラットフォームチーム" },
-  { userId: "demo-leader", employeeCode: "DEMO-3", password: "password", name: "主任 次郎", role: "leader", teamName: "プラットフォームチーム" },
-  { userId: "demo-employee", employeeCode: "DEMO-4", password: "password", name: "開発 一郎", role: "employee", teamName: "プラットフォームチーム" },
+const demoLoginUsers: Array<{ userId: string; email: string; password: string; name: string; role: AppRole; teamName: string }> = [
+  { userId: "demo-president", email: "president@example.co.jp", password: "password", name: "代表 太郎", role: "president", teamName: "全社" },
+  { userId: "demo-admin", email: "admin@example.co.jp", password: "password", name: "管理 花子", role: "admin", teamName: "プラットフォームチーム" },
+  { userId: "demo-leader", email: "leader@example.co.jp", password: "password", name: "主任 次郎", role: "leader", teamName: "プラットフォームチーム" },
+  { userId: "demo-employee", email: "employee@example.co.jp", password: "password", name: "開発 一郎", role: "employee", teamName: "プラットフォームチーム" },
 ];
 
 export type LoginUserOption = {
   id: string;
-  employeeCode: string;
+  email: string;
   name: string;
   role: AppRole;
   teamName: string;
@@ -101,7 +101,7 @@ async function getFallbackDatabaseUser(): Promise<SessionUser | null> {
   try {
     const user = await prisma.user.findFirst({
       where: { status: "ACTIVE" },
-      orderBy: [{ employeeCode: "asc" }],
+      orderBy: [{ email: "asc" }],
       select: {
         id: true,
         name: true,
@@ -128,7 +128,7 @@ async function getFallbackDatabaseUser(): Promise<SessionUser | null> {
   }
 }
 
-async function findActiveLoginUser(where: { id?: string; employeeCode?: string }) {
+async function findActiveLoginUser(where: { id?: string; email?: string }) {
   if (!hasDatabaseUrl()) {
     return null;
   }
@@ -137,7 +137,7 @@ async function findActiveLoginUser(where: { id?: string; employeeCode?: string }
     where: {
       status: "ACTIVE",
       ...(where.id ? { id: where.id } : {}),
-      ...(where.employeeCode ? { employeeCode: where.employeeCode } : {}),
+      ...(where.email ? { email: where.email } : {}),
     },
     select: {
       id: true,
@@ -155,15 +155,15 @@ function getDemoUserById(userId: string) {
   return demoLoginUsers.find((user) => user.userId === userId) ?? null;
 }
 
-function getDemoUserByEmployeeCode(employeeCode: string) {
-  return demoLoginUsers.find((user) => user.employeeCode === employeeCode) ?? null;
+function getDemoUserByEmail(email: string) {
+  return demoLoginUsers.find((user) => user.email === email) ?? null;
 }
 
 export async function getLoginUserOptions(): Promise<LoginUserOption[]> {
   if (!hasDatabaseUrl()) {
     return demoLoginUsers.map((user) => ({
       id: user.userId,
-      employeeCode: user.employeeCode,
+      email: user.email,
       name: user.name,
       role: user.role,
       teamName: user.teamName,
@@ -173,10 +173,10 @@ export async function getLoginUserOptions(): Promise<LoginUserOption[]> {
   try {
     const users = await prisma.user.findMany({
       where: { status: "ACTIVE" },
-      orderBy: [{ employeeCode: "asc" }],
+      orderBy: [{ email: "asc" }],
       select: {
         id: true,
-        employeeCode: true,
+        email: true,
         name: true,
         role: { select: { code: true } },
         teamMemberships: {
@@ -190,7 +190,7 @@ export async function getLoginUserOptions(): Promise<LoginUserOption[]> {
 
     return users.map((user) => ({
       id: user.id,
-      employeeCode: user.employeeCode,
+      email: user.email,
       name: user.name,
       role: user.role.code as AppRole,
       teamName: user.teamMemberships[0]?.team.name ?? "未所属",
@@ -198,7 +198,7 @@ export async function getLoginUserOptions(): Promise<LoginUserOption[]> {
   } catch {
     return demoLoginUsers.map((user) => ({
       id: user.userId,
-      employeeCode: user.employeeCode,
+      email: user.email,
       name: user.name,
       role: user.role,
       teamName: user.teamName,
@@ -236,18 +236,18 @@ export async function resolveSelectedLoginTarget(input: { userId?: string; redir
 }
 
 export async function resolveCredentialLoginTarget(input: {
-  employeeCode?: string;
+  email?: string;
   password?: string;
   redirectTo?: string;
 }): Promise<ResolvedLoginTarget | null> {
-  const employeeCode = input.employeeCode?.trim();
+  const email = input.email?.trim().toLowerCase();
   const password = input.password ?? "";
 
-  if (!employeeCode || !password) {
+  if (!email || !password) {
     return null;
   }
 
-  const demoUser = getDemoUserByEmployeeCode(employeeCode);
+  const demoUser = getDemoUserByEmail(email);
   if (demoUser && demoUser.password === password) {
     return {
       userId: demoUser.userId,
@@ -256,7 +256,7 @@ export async function resolveCredentialLoginTarget(input: {
   }
 
   try {
-    const user = await findActiveLoginUser({ employeeCode });
+    const user = await findActiveLoginUser({ email });
     if (!user || !verifyPassword(password, user.passwordHash)) {
       return null;
     }

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { calculateGrossProfit, type GrossProfitResult } from "@/lib/pl/calculations";
 import { getTeamFixedCostAllocationSummary } from "@/lib/pl/fixed-cost-service";
 import { getTeamLaborCostSummary } from "@/lib/pl/labor-cost-service";
@@ -134,6 +134,20 @@ async function persistSnapshot(snapshot: TeamMonthlySnapshot, status: TeamMonthl
 }
 
 export async function getTeamMonthlySnapshot(teamId: string, yearMonth: string): Promise<TeamMonthlySnapshot> {
+  if (!hasDatabaseUrl()) {
+    const fallback = fallbackSnapshots.find((snapshot) => snapshot.teamId === teamId && snapshot.yearMonth === yearMonth);
+    if (fallback) return fallback;
+
+    return createSnapshot(teamId, "未登録チーム", yearMonth, "fallback", calculateGrossProfit({
+      salesTotal: 0,
+      directLaborCost: 0,
+      outsourcingCost: 0,
+      indirectCost: 0,
+      fixedCostAllocation: 0,
+      targetGrossProfitRate: 0,
+    }));
+  }
+
   try {
     const teamWithManual = await prisma.team.findUnique({
       where: { id: teamId },
@@ -214,6 +228,10 @@ export async function getTeamMonthlySnapshot(teamId: string, yearMonth: string):
 }
 
 export async function getVisibleTeamMonthlySnapshots(yearMonth: string): Promise<TeamMonthlySnapshot[]> {
+  if (!hasDatabaseUrl()) {
+    return fallbackSnapshots.filter((snapshot) => snapshot.yearMonth === yearMonth);
+  }
+
   try {
     const teams = await prisma.team.findMany({ where: { isActive: true }, select: { id: true }, orderBy: { name: "asc" } });
     if (teams.length === 0) return fallbackSnapshots.filter((snapshot) => snapshot.yearMonth === yearMonth);
@@ -232,6 +250,14 @@ export async function saveTeamMonthlyInput(input: TeamMonthlyInput): Promise<Sav
     fixedCostAllocation: input.fixedCostAllocation,
     targetGrossProfitRate: input.targetGrossProfitRate,
   });
+
+  if (!hasDatabaseUrl()) {
+    const fallback = fallbackSnapshots.find((snapshot) => snapshot.teamId === input.teamId);
+    return {
+      persisted: false,
+      snapshot: createSnapshot(input.teamId, fallback?.teamName ?? "未登録チーム", input.yearMonth, "manual", calculated),
+    };
+  }
 
   try {
     const team = await prisma.team.findUniqueOrThrow({ where: { id: input.teamId }, select: { id: true, name: true } });
@@ -265,11 +291,19 @@ export async function recalculateTeamMonthlyPl(teamId: string, yearMonth: string
 }
 
 export async function recalculateAllTeamMonthlyPl(yearMonth: string): Promise<TeamMonthlySnapshot[]> {
+  if (!hasDatabaseUrl()) {
+    return fallbackSnapshots.filter((snapshot) => snapshot.yearMonth === yearMonth);
+  }
+
   const teams = await prisma.team.findMany({ where: { isActive: true }, select: { id: true } }).catch(() => []);
   return Promise.all(teams.map((team) => recalculateTeamMonthlyPl(team.id, yearMonth)));
 }
 
 export async function getVisibleTeamOptions(teamIds?: string[]): Promise<VisibleTeamOption[]> {
+  if (!hasDatabaseUrl()) {
+    return fallbackSnapshots.map((snapshot) => ({ teamId: snapshot.teamId, teamName: snapshot.teamName }));
+  }
+
   try {
     const teams = await prisma.team.findMany({
       where: {
@@ -289,6 +323,10 @@ export async function getVisibleTeamOptions(teamIds?: string[]): Promise<Visible
 }
 
 export async function getVisibleYearMonthOptions(teamId?: string): Promise<VisibleYearMonthOption[]> {
+  if (!hasDatabaseUrl()) {
+    return Array.from(new Set(fallbackSnapshots.map((snapshot) => snapshot.yearMonth))).sort((a, b) => b.localeCompare(a)).map((yearMonth) => ({ yearMonth }));
+  }
+
   try {
     const [pls, assignments, indirectCosts, targets] = await Promise.all([
       prisma.teamMonthlyPl.findMany({

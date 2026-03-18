@@ -58,66 +58,63 @@ export default async function DashboardPage({
                   <Link
                     key={option.yearMonth}
                     href={`/dashboard?yearMonth=${option.yearMonth}`}
-                    className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-slate-950" : "border border-white/15 text-white"}`}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm" : "border border-slate-200 bg-white text-black shadow-sm"}`}
                   >
-                    {option.yearMonth}
+                    <span style={{ color: "#000000" }}>{option.yearMonth}</span>
                   </Link>
                 );
               })}
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="/" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
-              トップへ戻る
-            </Link>
-            <Link href="/login" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+            <Link href="/login" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               ログイン切替
             </Link>
             <SessionActionButton
               mode="logout"
               redirectTo="/login"
-              className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white"
+              className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
             >
               ログアウト
             </SessionActionButton>
-            <Link href={`/pl/monthly?yearMonth=${yearMonth}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+            <Link href={`/pl/monthly?yearMonth=${yearMonth}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               月次PL詳細
             </Link>
-            <Link href="/executive" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+            <Link href="/executive" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               トップ経営ダッシュボード
             </Link>
-            <Link href="/pl/annual" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+            <Link href="/pl/annual" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               年度ダッシュボード
             </Link>
             {canManageSalary ? (
-              <Link href="/settings/salary-records" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+              <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 社員コスト設定
               </Link>
             ) : null}
             {canManageFixedCosts ? (
               <>
-                <Link href="/settings/rates" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   売上
                 </Link>
-                <Link href="/settings/skill-careers" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/skill-careers" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   評価制度設定
                 </Link>
-                <Link href="/settings/career-statuses" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/career-statuses" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   等級一覧
                 </Link>
-                <Link href="/settings/overall-grade-salary-rules" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/overall-grade-salary-rules" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   総合等級別昇給ルール
                 </Link>
-                <Link href="/settings/salary-revision-rules" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/salary-revision-rules" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   期待充足ランク別昇給ルール
                 </Link>
-                <Link href="/settings/salary-structure" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/salary-structure" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   給与構成
                 </Link>
-                <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   全社固定費設定
                 </Link>
-                <Link href="/operations/preflight" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white">
+                <Link href="/operations/preflight" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   本番前チェック
                 </Link>
               </>

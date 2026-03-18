@@ -1,6 +1,6 @@
 import { UserStatus } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type EmployeeRateRow = {
   userId: string;
@@ -75,6 +75,10 @@ const fallbackBundle: RateSettingsBundle = {
 };
 
 export async function getRateSettingsBundle(): Promise<RateSettingsBundle> {
+  if (!hasDatabaseUrl()) {
+    return fallbackBundle;
+  }
+
   try {
     const [users, partners] = await Promise.all([
       prisma.user.findMany({

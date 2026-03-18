@@ -1,6 +1,6 @@
 import { EvaluationStatus, SalarySimulationStatus } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type AnnualEvaluationPeriodSummary = {
   evaluationPeriodId: string;
@@ -88,6 +88,10 @@ function buildFallbackBundle(fiscalYear: number, fiscalStartMonth: number): Annu
 }
 
 export async function getAnnualEvaluationSummaryBundle(fiscalYear: number, fiscalStartMonth: number, teamIds?: string[]): Promise<AnnualEvaluationSummaryBundle> {
+  if (!hasDatabaseUrl()) {
+    return buildFallbackBundle(fiscalYear, fiscalStartMonth);
+  }
+
   try {
     const range = createDateRange(fiscalYear, fiscalStartMonth);
     const periods = await prisma.evaluationPeriod.findMany({

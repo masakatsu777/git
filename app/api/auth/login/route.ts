@@ -6,17 +6,17 @@ import { SESSION_COOKIE_NAME } from "@/lib/auth/session-cookie";
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as {
     userId?: string;
-    employeeCode?: string;
+    email?: string;
     password?: string;
     redirectTo?: string;
   } | null;
 
   const target = body?.userId
     ? await resolveSelectedLoginTarget({ userId: body.userId, redirectTo: body.redirectTo })
-    : await resolveCredentialLoginTarget({ employeeCode: body?.employeeCode, password: body?.password, redirectTo: body?.redirectTo });
+    : await resolveCredentialLoginTarget({ email: body?.email, password: body?.password, redirectTo: body?.redirectTo });
 
   if (!target) {
-    return NextResponse.json({ message: "社員コードまたはパスワードが正しくありません。" }, { status: 400 });
+    return NextResponse.json({ message: "メールアドレスまたはパスワードが正しくありません。" }, { status: 400 });
   }
 
   const response = NextResponse.json({

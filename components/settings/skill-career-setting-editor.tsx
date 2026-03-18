@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { SkillCategory } from "@/generated/prisma";
+import { downloadCsv } from "@/lib/client/csv";
 import type { EvaluationItemRow, PositionOptionRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
 
 type SkillCareerSettingEditorProps = {
@@ -400,13 +401,68 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     });
   }
 
+  function handleExportGradesCsv() {
+    const rows = grades
+      .slice()
+      .sort((left, right) => left.category.localeCompare(right.category, "ja") || left.rankOrder - right.rankOrder || left.gradeCode.localeCompare(right.gradeCode, "ja"))
+      .map((row) => [
+        categoryLabel(row.category),
+        row.positionName,
+        row.gradeCode,
+        row.gradeName,
+        row.minScore,
+        row.maxScore,
+        row.rankOrder,
+        row.description,
+      ]);
+
+    downloadCsv(
+      "evaluation-settings-grades.csv",
+      ["カテゴリ", "職種", "等級コード", "等級名", "最小点", "最大点", "表示順", "説明"],
+      rows,
+    );
+  }
+
+  function handleExportItemsCsv() {
+    const rows = evaluationItems
+      .slice()
+      .sort(
+        (left, right) =>
+          left.category.localeCompare(right.category, "ja") ||
+          left.majorCategoryOrder - right.majorCategoryOrder ||
+          left.minorCategoryOrder - right.minorCategoryOrder ||
+          left.displayOrder - right.displayOrder ||
+          left.id.localeCompare(right.id, "ja"),
+      )
+      .map((row) => [
+        categoryLabel(row.category),
+        row.axis === "SELF_GROWTH" ? "自律成長力" : "協調相乗力",
+        row.scoreType,
+        row.majorCategory,
+        row.majorCategoryOrder,
+        row.minorCategory,
+        row.minorCategoryOrder,
+        row.title,
+        row.description,
+        row.weight,
+        row.evidenceRequired ? "必須" : "任意",
+        row.isActive ? "有効" : "無効",
+      ]);
+
+    downloadCsv(
+      "evaluation-settings-items.csv",
+      ["カテゴリ", "評価軸", "採点方式", "大分類", "大分類順", "小分類", "小分類順", "項目名", "説明", "重み", "根拠必須", "有効"],
+      rows,
+    );
+  }
+
   return (
     <section className="space-y-6 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
       <div className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold text-slate-950">評価制度設定</h2>
-            <p className="mt-1 text-sm text-slate-500">等級名称、判定閾値、職種別ルール、評価項目を管理し、半期評価の制度設定として利用します。</p>
+            <p className="mt-1 text-sm text-slate-500">等級名称、判定閾値、職種別ルール、評価項目を管理し、半期評価の制度設定として利用します。項目毎に根拠要否、使用有無の設定ができます。</p>
           </div>
           <button
             type="button"
@@ -605,7 +661,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="min-w-[1780px] text-left text-sm">
+            <table className="min-w-[1660px] text-left text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
                   <th className="px-4 py-3 font-medium">軸</th>
@@ -617,8 +673,8 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                   <th className="px-4 py-3 font-medium">項目名</th>
                   <th className="px-4 py-3 font-medium">説明</th>
                   <th className="px-4 py-3 font-medium">重み</th>
-                  <th className="px-4 py-3 font-medium">根拠必須</th>
-                  <th className="px-4 py-3 font-medium">有効</th>
+                  <th className="px-4 py-3 font-medium">根拠</th>
+                  <th className="px-4 py-3 font-medium">使用</th>
                 </tr>
               </thead>
               <tbody>
@@ -781,14 +837,13 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                           onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, evidenceRequired: event.target.checked } : item))}
                           className="h-4 w-4 rounded border-slate-300"
                         />
-                        {row.axis === "SYNERGY" ? "原則必須" : "根拠入力"}
+                        {row.axis === "SYNERGY" ? "必須" : "根拠"}
                       </label>
-                      <p className="mt-2 text-xs text-slate-500">{row.axis === "SYNERGY" ? "協調相乗力は継続実践の根拠を残す前提です。" : "必要に応じて補足根拠を必須化できます。"}</p>
                     </td>
                     <td className="px-4 py-3">
                       <label className="inline-flex items-center gap-2 text-slate-700">
                         <input type="checkbox" checked={row.isActive} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, isActive: event.target.checked } : item))} className="h-4 w-4 rounded border-slate-300" />
-                        使用する
+                        使用
                       </label>
                     </td>
                   </tr>
@@ -806,6 +861,12 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       </div>
 
       <div className="flex flex-wrap gap-3">
+        <button type="button" onClick={handleExportGradesCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
+          等級CSV出力
+        </button>
+        <button type="button" onClick={handleExportItemsCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
+          評価項目CSV出力
+        </button>
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
           {isPending ? "処理中..." : "評価制度設定を保存"}
         </button>

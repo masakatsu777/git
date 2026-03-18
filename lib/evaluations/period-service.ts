@@ -1,13 +1,18 @@
 import { EvaluationPeriodStatus } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type EvaluationPeriodOption = {
   id: string;
   name: string;
 };
 
+const fallbackPeriod = { id: "period-2025-h2", name: "2025年度下期" } satisfies EvaluationPeriodOption;
+
 export async function getEvaluationPeriodOptions(): Promise<EvaluationPeriodOption[]> {
+  if (!hasDatabaseUrl()) {
+    return [fallbackPeriod];
+  }
   try {
     const periods = await prisma.evaluationPeriod.findMany({
       orderBy: { startDate: "desc" },
@@ -19,20 +24,28 @@ export async function getEvaluationPeriodOptions(): Promise<EvaluationPeriodOpti
     }
   } catch {}
 
-  return [{ id: "period-2025-h2", name: "2025年度下期" }];
+  return [fallbackPeriod];
 }
 
 export async function resolveEvaluationPeriod(evaluationPeriodId?: string) {
-  if (evaluationPeriodId) {
-    return prisma.evaluationPeriod.findUniqueOrThrow({
-      where: { id: evaluationPeriodId },
-      select: { id: true, name: true },
-    });
+  if (!hasDatabaseUrl()) {
+    return evaluationPeriodId ? { id: evaluationPeriodId, name: fallbackPeriod.name } : fallbackPeriod;
   }
 
-  return prisma.evaluationPeriod.findFirstOrThrow({
-    where: { status: { in: [EvaluationPeriodStatus.OPEN, EvaluationPeriodStatus.DRAFT] } },
-    orderBy: { startDate: "desc" },
-    select: { id: true, name: true },
-  });
+  try {
+    if (evaluationPeriodId) {
+      return await prisma.evaluationPeriod.findUniqueOrThrow({
+        where: { id: evaluationPeriodId },
+        select: { id: true, name: true },
+      });
+    }
+
+    return await prisma.evaluationPeriod.findFirstOrThrow({
+      where: { status: { in: [EvaluationPeriodStatus.OPEN, EvaluationPeriodStatus.DRAFT] } },
+      orderBy: { startDate: "desc" },
+      select: { id: true, name: true },
+    });
+  } catch {
+    return evaluationPeriodId ? { id: evaluationPeriodId, name: fallbackPeriod.name } : fallbackPeriod;
+  }
 }

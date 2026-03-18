@@ -1,6 +1,6 @@
 import { UserStatus } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type SalaryRecordEditorRow = {
   id: string;
@@ -92,6 +92,10 @@ const fallbackRows: SalaryRecordEditorRow[] = [
 ];
 
 export async function getSalaryRecordBundle(yearMonth: string): Promise<SalaryRecordBundle> {
+  if (!hasDatabaseUrl()) {
+    return { yearMonth, rows: fallbackRows, source: "fallback" };
+  }
+
   try {
     const { start, end } = getMonthRange(yearMonth);
     const defaultEffectiveFrom = `${yearMonth}-01`;

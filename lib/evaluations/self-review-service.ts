@@ -1,7 +1,7 @@
 import { EvaluationStatus, ReviewType } from "@/generated/prisma";
 
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type SelfReviewAxis = "SELF_GROWTH" | "SYNERGY";
 export type SelfReviewScoreType = "LEVEL_2" | "CONTINUOUS_DONE";
@@ -358,6 +358,10 @@ function fallbackBundle(role: string): SelfReviewBundle {
 }
 
 export async function getSelfReviewBundle(userId: string, role: string, evaluationPeriodId?: string): Promise<SelfReviewBundle> {
+  if (!hasDatabaseUrl()) {
+    return fallbackBundle(role);
+  }
+
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
 

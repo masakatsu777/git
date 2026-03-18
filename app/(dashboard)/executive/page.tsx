@@ -73,23 +73,23 @@ export default async function ExecutiveDashboardPage({
               <p className="mt-2 text-sm text-slate-200">月次収益、年度推移、評価、昇給を1画面で俯瞰できます。</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/login" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/login" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ログイン切替
               </Link>
               <SessionActionButton
                 mode="logout"
                 redirectTo="/login"
-                className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium"
+                className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white"
               >
                 ログアウト
               </SessionActionButton>
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 月次ダッシュボードへ
               </Link>
-              <Link href="/pl/annual" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/pl/annual" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 年度ダッシュボードへ
               </Link>
-              <Link href="/salary/simulations" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 昇給シミュレーションへ
               </Link>
             </div>

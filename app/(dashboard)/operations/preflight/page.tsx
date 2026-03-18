@@ -75,8 +75,8 @@ export default async function PreflightPage() {
               <p className="mt-2 text-sm text-slate-300">最終確認に使う主要画面へ、そのまま移動できます。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">ダッシュボード</Link>
-              <Link href="/operations/preflight/checklist" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">チェックリスト</Link>
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">ダッシュボード</Link>
+              <Link href="/operations/preflight/checklist" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">チェックリスト</Link>
             </div>
           </div>
         </header>

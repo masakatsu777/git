@@ -1,6 +1,4 @@
-import Link from "next/link";
-
-import { EmployeeCodeLoginForm } from "@/components/auth/employee-code-login-form";
+import { EmailLoginForm } from "@/components/auth/employee-code-login-form";
 import { SessionActionButton } from "@/components/auth/session-action-button";
 import { SAMPLE_LOGIN_PASSWORD } from "@/lib/auth/password-constants";
 import { getLoginUserOptions, getSessionUser } from "@/lib/auth/demo-session";
@@ -10,6 +8,7 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ redirectTo?: string }>;
 }) {
+  const showQuickLogin = process.env.NODE_ENV !== "production";
   const [users, currentUser, params] = await Promise.all([getLoginUserOptions(), getSessionUser(), searchParams]);
   const redirectTo = params.redirectTo?.trim() || undefined;
 
@@ -20,15 +19,14 @@ export default async function LoginPage({
           <p className="text-sm uppercase tracking-[0.28em] text-brand-200">Session Login</p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-4xl font-semibold tracking-tight">ログインユーザーを選択</h1>
+              <h1 className="text-4xl font-semibold tracking-tight">ログイン</h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-                社員コードとパスワードでログインできます。簡易確認用に、一覧からそのままユーザー選択ログインも残しています。
+                {showQuickLogin
+                  ? "メールアドレスとパスワードでログインできます。開発確認用に、一覧からそのままユーザー選択ログインも残しています。"
+                  : "メールアドレスとパスワードでログインしてください。"}
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/" className="rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white">
-                トップへ戻る
-              </Link>
               <SessionActionButton
                 mode="logout"
                 redirectTo="/login"
@@ -50,43 +48,47 @@ export default async function LoginPage({
               <p className="mt-1 text-sm text-slate-300">
                 ロール: {currentUser.role} / チーム: {currentUser.teamIds.join(", ") || "全社"}
               </p>
-              <p className="mt-4 text-sm text-slate-300">
-                seed直後の確認用パスワード: <span className="font-semibold text-white">{SAMPLE_LOGIN_PASSWORD}</span>
-              </p>
+              {showQuickLogin ? (
+                <p className="mt-4 text-sm text-slate-300">
+                  開発確認用パスワード: <span className="font-semibold text-white">{SAMPLE_LOGIN_PASSWORD}</span>
+                </p>
+              ) : null}
             </div>
-            <EmployeeCodeLoginForm redirectTo={redirectTo} />
+            <EmailLoginForm redirectTo={redirectTo} />
           </div>
         </header>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {users.map((user) => (
-            <article
-              key={user.id}
-              className="rounded-[1.75rem] border border-white/10 bg-white/6 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.18)] backdrop-blur"
-            >
-              <p className="text-xs uppercase tracking-[0.22em] text-brand-200">{user.role}</p>
-              <h2 className="mt-3 text-2xl font-semibold">{user.name}</h2>
-              <dl className="mt-4 space-y-2 text-sm text-slate-300">
-                <div className="flex items-center justify-between gap-3">
-                  <dt>社員コード</dt>
-                  <dd className="font-medium text-white">{user.employeeCode}</dd>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt>所属</dt>
-                  <dd className="text-right font-medium text-white">{user.teamName}</dd>
-                </div>
-              </dl>
-              <SessionActionButton
-                mode="login"
-                userId={user.id}
-                redirectTo={redirectTo || "/menu"}
-                className="mt-6 w-full rounded-full bg-brand-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-brand-300"
+        {showQuickLogin ? (
+          <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {users.map((user) => (
+              <article
+                key={user.id}
+                className="rounded-[1.75rem] border border-white/10 bg-white/6 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.18)] backdrop-blur"
               >
-                このユーザーでログイン
-              </SessionActionButton>
-            </article>
-          ))}
-        </section>
+                <p className="text-xs uppercase tracking-[0.22em] text-brand-200">{user.role}</p>
+                <h2 className="mt-3 text-2xl font-semibold">{user.name}</h2>
+                <dl className="mt-4 space-y-2 text-sm text-slate-300">
+                  <div className="flex items-center justify-between gap-3">
+                    <dt>メール</dt>
+                    <dd className="font-medium text-white">{user.email}</dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <dt>所属</dt>
+                    <dd className="text-right font-medium text-white">{user.teamName}</dd>
+                  </div>
+                </dl>
+                <SessionActionButton
+                  mode="login"
+                  userId={user.id}
+                  redirectTo={redirectTo || "/menu"}
+                  className="mt-6 w-full rounded-full bg-brand-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-brand-300"
+                >
+                  このユーザーでログイン
+                </SessionActionButton>
+              </article>
+            ))}
+          </section>
+        ) : null}
       </div>
     </main>
   );

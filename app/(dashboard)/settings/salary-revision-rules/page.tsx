@@ -41,10 +41,10 @@ export default async function SalaryRevisionRulesPage() {
               <p className="mt-2 text-sm text-slate-300">期待充足ランク S〜D ごとの昇給率レンジを管理します。期待充足ランクは現在の役割期待に対する充足度を見る補助基準で、総合等級ルールが未設定のときに使います。B は低評価ではなく、現在の役割期待を安定して満たしている状態として扱います。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
-              <Link href="/salary/simulations" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 昇給シミュレーションへ
               </Link>
             </div>

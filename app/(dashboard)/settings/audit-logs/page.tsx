@@ -41,10 +41,10 @@ export default async function AuditLogsPage({
               <p className="mt-2 text-sm text-slate-300">最終評価確定、昇給承認、パスワード変更などの操作履歴を確認します。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/settings/users" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/users" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ユーザー管理
               </Link>
-              <Link href="/salary/simulations" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 昇給シミュレーション
               </Link>
             </div>

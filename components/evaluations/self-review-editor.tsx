@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { EvidenceInputList } from "@/components/evaluations/evidence-input-list";
+import { downloadCsv } from "@/lib/client/csv";
 import type { EvaluationEvidence, SelfReviewBundle, SelfReviewItem } from "@/lib/evaluations/self-review-service";
 
 type SelfReviewEditorProps = {
@@ -106,6 +107,37 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         router.refresh();
       }
     });
+  }
+
+  function handleExportCsv() {
+    const rows = items
+      .slice()
+      .sort(
+        (left, right) =>
+          left.majorCategoryOrder - right.majorCategoryOrder ||
+          left.minorCategoryOrder - right.minorCategoryOrder ||
+          left.displayOrder - right.displayOrder ||
+          left.evaluationItemId.localeCompare(right.evaluationItemId, "ja"),
+      )
+      .map((item) => [
+        defaults.periodName,
+        item.axis === "SELF_GROWTH" ? "自律成長力" : "協調相乗力",
+        item.majorCategory,
+        item.minorCategory,
+        item.title,
+        item.score,
+        item.weight,
+        item.comment,
+        item.evidenceRequired ? "必須" : "任意",
+        item.evidences.map((evidence, index) => `${index + 1}. ${evidence.summary} / ${evidence.targetName} / ${evidence.periodNote}`).join(" | "),
+        selfComment,
+      ]);
+
+    downloadCsv(
+      `self-review-${defaults.evaluationPeriodId}.csv`,
+      ["評価期間", "評価軸", "大分類", "小分類", "項目名", "自己評価点", "重み", "コメント", "根拠必須", "根拠一覧", "総括コメント"],
+      rows,
+    );
   }
 
   return (
@@ -313,6 +345,9 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
+        <button type="button" onClick={handleExportCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
+          CSV出力
+        </button>
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
           {isPending ? "処理中..." : "自己評価を保存"}
         </button>

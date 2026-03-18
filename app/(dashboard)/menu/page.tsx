@@ -49,6 +49,12 @@ function buildCards(role: string, visibility: UserMenuVisibility, canManageUsers
     });
   }
 
+  cards.push({
+    title: "パスワード変更",
+    description: "ご自身のログインパスワードを変更します。",
+    href: "/account/password",
+  });
+
   if (canManageUsers) {
     cards.push({
       title: "ユーザー管理",
@@ -78,7 +84,7 @@ export default async function MenuPage() {
                 ログイン後の入口です。ここから各業務メニューへ進めます。
               </p>
             </div>
-            <div className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-slate-100">
+            <div className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               {user.name} / {user.role}
             </div>
           </div>
@@ -110,7 +116,7 @@ export default async function MenuPage() {
                 {card.href ? (
                   <Link
                     href={card.href}
-                    className="inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+                    className="inline-flex rounded-full bg-brand-400 px-5 py-3 text-sm font-bold text-slate-950 shadow-sm transition hover:bg-brand-300"
                   >
                     {card.title}へ進む
                   </Link>

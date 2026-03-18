@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type AuditLogRow = {
   id: string;
@@ -88,6 +88,10 @@ function summarizeAuditComment(action: string, resourceType: string, afterJson: 
 }
 
 export async function getAuditLogBundle(filters?: { kind?: string; actor?: string; action?: string }): Promise<AuditLogBundle> {
+  if (!hasDatabaseUrl()) {
+    return fallbackBundle;
+  }
+
   try {
     const [approvals, audits] = await Promise.all([
       prisma.approvalLog.findMany({

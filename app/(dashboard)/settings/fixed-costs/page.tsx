@@ -23,15 +23,15 @@ export default async function FixedCostsPage() {
               <p className="mt-2 text-sm text-slate-300">2026-03 の固定費を設定し、各チームへ人数比按分します。</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/pl/monthly" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/pl/monthly" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 月次PLへ戻る
               </Link>
               {canManageSalary ? (
                 <>
-                  <Link href="/settings/salary-records" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                  <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                     社員コスト設定
                   </Link>
-                  <Link href="/settings/rates" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                  <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                     売上
                   </Link>
                 </>

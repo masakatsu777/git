@@ -9,7 +9,7 @@ import {
   type SelfReviewScoreType,
 } from "@/lib/evaluations/self-review-service";
 import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { deriveRatingFromScore } from "@/lib/salary-rules/salary-revision-rule-service";
 import { judgeGradeByScore } from "@/lib/skill-careers/grade-judgement-service";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
@@ -281,6 +281,10 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
 }
 
 export async function getFinalReviewBundle(selectedUserId?: string, evaluationPeriodId?: string): Promise<FinalReviewBundle> {
+  if (!hasDatabaseUrl()) {
+    return buildFallbackBundle(selectedUserId);
+  }
+
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
     const [evaluations, itemRows] = await Promise.all([

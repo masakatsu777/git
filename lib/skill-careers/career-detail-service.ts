@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
 
 export type CareerHistoryEvidenceDetailRow = {
@@ -114,6 +114,10 @@ const fallbackBundle: CareerDetailBundle = {
 };
 
 export async function getCareerDetailBundle(userId: string): Promise<CareerDetailBundle> {
+  if (!hasDatabaseUrl()) {
+    return { ...fallbackBundle, userId };
+  }
+
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },

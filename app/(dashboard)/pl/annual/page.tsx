@@ -66,12 +66,12 @@ export default async function AnnualPlPage({
                   fiscalStartMonthLabel={bundle.fiscalStartMonthLabel}
                   rows={bundle.summaries}
                 />
-                <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   月次ダッシュボードへ
                 </Link>
                 <Link
                   href={`/pl/monthly?yearMonth=${bundle.coveredMonths[bundle.coveredMonths.length - 1] ?? `${bundle.fiscalYear}-${String(bundle.fiscalStartMonth).padStart(2, "0")}`}`}
-                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium"
+                  className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
                 >
                   月次PL詳細へ
                 </Link>
@@ -133,9 +133,9 @@ export default async function AnnualPlPage({
                   <Link
                     key={option.fiscalYear}
                     href={`/pl/annual?fiscalYear=${option.fiscalYear}&fiscalStartMonth=${bundle.fiscalStartMonth}`}
-                    className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-emerald-950" : "border border-white/15 text-white"}`}
+                    className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-emerald-950 shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                   >
-                    {option.fiscalYear}年度
+                    <span style={{ color: "#000000" }}>{option.fiscalYear}年度</span>
                   </Link>
                 );
               })}
@@ -198,7 +198,7 @@ export default async function AnnualPlPage({
               {rankingBySales.map((team, index) => (
                 <div key={`${team.teamId}-sales`} className="rounded-2xl bg-slate-50 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-400">#{index + 1}</p>
-                  <p className="mt-1 font-semibold text-slate-950">{team.teamName}</p>
+                  <p className="mt-1 font-semibold text-slate-950"><span style={{ color: "#000000" }}>{team.teamName}</span></p>
                   <p className="mt-2 text-xl font-semibold text-slate-900">{formatNumber(team.salesTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
                   <p className={`mt-1 text-sm font-medium ${team.salesYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>前年同期比 {team.salesYoYRate >= 0 ? "+" : ""}{team.salesYoYRate}%</p>
                 </div>
@@ -212,7 +212,7 @@ export default async function AnnualPlPage({
               {rankingByGrossProfit.map((team, index) => (
                 <div key={`${team.teamId}-gross`} className="rounded-2xl bg-slate-50 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-400">#{index + 1}</p>
-                  <p className="mt-1 font-semibold text-slate-950">{team.teamName}</p>
+                  <p className="mt-1 font-semibold text-slate-950"><span style={{ color: "#000000" }}>{team.teamName}</span></p>
                   <p className="mt-2 text-xl font-semibold text-slate-900">{formatNumber(team.finalGrossProfit)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
                   <p className={`mt-1 text-sm font-medium ${team.grossProfitYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>前年同期比 {team.grossProfitYoYRate >= 0 ? "+" : ""}{team.grossProfitYoYRate}%</p>
                 </div>
@@ -226,7 +226,7 @@ export default async function AnnualPlPage({
               {rankingByVariance.map((team, index) => (
                 <div key={`${team.teamId}-variance`} className="rounded-2xl bg-slate-50 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-400">#{index + 1}</p>
-                  <p className="mt-1 font-semibold text-slate-950">{team.teamName}</p>
+                  <p className="mt-1 font-semibold text-slate-950"><span style={{ color: "#000000" }}>{team.teamName}</span></p>
                   <p className={`mt-2 text-xl font-semibold ${team.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{team.varianceRate >= 0 ? "+" : ""}{team.varianceRate}<span className="ml-2 text-sm font-medium text-slate-500">pt</span></p>
                   <p className="mt-1 text-sm text-slate-500">粗利率 {team.grossProfitRate}% / 目標 {team.targetGrossProfitRate}%</p>
                 </div>

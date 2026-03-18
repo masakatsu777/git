@@ -41,10 +41,10 @@ export default async function CareerStatusDetailPage({ params }: { params: Promi
               <p className="mt-2 text-sm text-slate-300">所属: {bundle.teamName}</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 一覧へ戻る
               </Link>
-              <Link href="/evaluations/finalize" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/evaluations/finalize" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 最終評価へ
               </Link>
             </div>

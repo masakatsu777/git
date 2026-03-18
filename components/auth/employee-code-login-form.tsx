@@ -3,13 +3,13 @@
 import { FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-type EmployeeCodeLoginFormProps = {
+type EmailLoginFormProps = {
   redirectTo?: string;
 };
 
-export function EmployeeCodeLoginForm({ redirectTo }: EmployeeCodeLoginFormProps) {
+export function EmailLoginForm({ redirectTo }: EmailLoginFormProps) {
   const router = useRouter();
-  const [employeeCode, setEmployeeCode] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -21,7 +21,7 @@ export function EmployeeCodeLoginForm({ redirectTo }: EmployeeCodeLoginFormProps
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ employeeCode, password, redirectTo }),
+      body: JSON.stringify({ email, password, redirectTo }),
     });
 
     const payload = (await response.json().catch(() => null)) as { message?: string; redirectTo?: string } | null;
@@ -39,15 +39,16 @@ export function EmployeeCodeLoginForm({ redirectTo }: EmployeeCodeLoginFormProps
 
   return (
     <form onSubmit={handleSubmit} className="rounded-[1.5rem] bg-white/8 p-5">
-      <p className="text-xs uppercase tracking-[0.24em] text-slate-300">社員コードログイン</p>
+      <p className="text-xs uppercase tracking-[0.24em] text-slate-300">Email Login</p>
       <label className="mt-4 block text-sm text-slate-200">
-        社員コード
+        メールアドレス
         <input
-          type="text"
-          value={employeeCode}
-          onChange={(event) => setEmployeeCode(event.target.value)}
-          placeholder="例: E1002"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="例: user@example.co.jp"
           className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+          autoComplete="email"
         />
       </label>
       <label className="mt-4 block text-sm text-slate-200">
@@ -58,6 +59,7 @@ export function EmployeeCodeLoginForm({ redirectTo }: EmployeeCodeLoginFormProps
           onChange={(event) => setPassword(event.target.value)}
           placeholder="パスワード"
           className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+          autoComplete="current-password"
         />
       </label>
       {errorMessage ? <p className="mt-3 text-sm text-rose-300">{errorMessage}</p> : null}
@@ -66,7 +68,7 @@ export function EmployeeCodeLoginForm({ redirectTo }: EmployeeCodeLoginFormProps
         disabled={isPending}
         className="mt-4 w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isPending ? "ログイン中..." : "社員コードでログイン"}
+        {isPending ? "ログイン中..." : "メールアドレスでログイン"}
       </button>
     </form>
   );

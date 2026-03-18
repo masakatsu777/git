@@ -1,6 +1,6 @@
 import { AssignmentTargetType, CostCategory, CostTargetType } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { getTeamFixedCostAllocationSummary } from "@/lib/pl/fixed-cost-service";
 
 export type AssignmentDetail = {
@@ -192,6 +192,16 @@ function num(value: unknown): number {
 }
 
 export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): Promise<TeamMonthlyDetailBundle> {
+  if (!hasDatabaseUrl()) {
+    return {
+      ...fallbackBundle,
+      teamId,
+      yearMonth,
+      fixedCostSummary: teamId === "team-platform" ? fallbackSummary : { ...fallbackSummary, teamHeadcount: 0, allocations: fallbackSummary.allocations.map((row) => ({ ...row, allocatedAmount: 0 })) },
+      source: "fallback",
+    };
+  }
+
   try {
     const [team, partners, fixedCostSummary] = await Promise.all([
       prisma.team.findUniqueOrThrow({

@@ -59,20 +59,26 @@ export default async function MonthlyPlPage({
                 人件費は社員コストと所属情報から自動集計、全社固定費は社員人数比で按分しています。
               </p>
               <div className="mt-4 space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  {teamOptions.map((option) => {
-                    const active = option.teamId === snapshot.teamId;
-                    return (
-                      <Link
-                        key={option.teamId}
-                        href={`/pl/monthly?teamId=${option.teamId}&yearMonth=${snapshot.yearMonth}`}
-                        className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-amber-300 text-stone-950" : "border border-white/15 text-white"}`}
-                      >
-                        {option.teamName}
-                      </Link>
-                    );
-                  })}
-                </div>
+                <form method="get" className="flex flex-wrap items-end gap-3">
+                  <input type="hidden" name="yearMonth" value={snapshot.yearMonth} />
+                  <label className="text-sm text-stone-200">
+                    対象チーム
+                    <select
+                      name="teamId"
+                      defaultValue={snapshot.teamId}
+                      className="mt-2 min-w-56 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                    >
+                      {teamOptions.map((option) => (
+                        <option key={option.teamId} value={option.teamId}>
+                          {option.teamName}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="submit" className="rounded-full bg-amber-300 px-5 py-3 text-sm font-semibold text-stone-950">
+                    チーム切替
+                  </button>
+                </form>
                 <div className="flex flex-wrap gap-2">
                   {yearMonthOptions.map((option) => {
                     const active = option.yearMonth === snapshot.yearMonth;
@@ -80,9 +86,9 @@ export default async function MonthlyPlPage({
                       <Link
                         key={option.yearMonth}
                         href={`/pl/monthly?teamId=${snapshot.teamId}&yearMonth=${option.yearMonth}`}
-                        className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-stone-950" : "border border-white/15 text-white"}`}
+                        className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-stone-950 shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-slate-950"}`}
                       >
-                        {option.yearMonth}
+                        <span style={{ color: "#000000" }}>{option.yearMonth}</span>
                       </Link>
                     );
                   })}
@@ -90,20 +96,20 @@ export default async function MonthlyPlPage({
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
               {canManageSalary ? (
-                <Link href="/settings/salary-records" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                   社員コスト設定
                 </Link>
               ) : null}
               {canManageFixedCosts ? (
                 <>
-                  <Link href="/settings/rates" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                  <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                     売上
                   </Link>
-                  <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+                  <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                     全社固定費設定
                   </Link>
                 </>

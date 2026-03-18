@@ -37,9 +37,9 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300"}`}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white hover:border-slate-300"}`}
               >
-                {item.label}
+                <span style={{ color: active ? "#ffffff" : "#000000" }}>{item.label}</span>
               </Link>
             );
           })}

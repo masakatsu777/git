@@ -1,6 +1,6 @@
 import { SkillCategory } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type EvaluationAxis = "SELF_GROWTH" | "SYNERGY";
 export type EvaluationScoreType = "LEVEL_2" | "CONTINUOUS_DONE";
@@ -254,6 +254,10 @@ function buildEvaluationItemDescription(row: EvaluationItemRow) {
 }
 
 export async function getSkillCareerSettingsBundle(): Promise<SkillCareerSettingsBundle> {
+  if (!hasDatabaseUrl()) {
+    return fallbackBundle;
+  }
+
   try {
     const [grades, evaluationItems, positions] = await Promise.all([
       prisma.skillGradeDefinition.findMany({

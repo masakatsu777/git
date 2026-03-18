@@ -71,19 +71,19 @@ export default async function SalaryResultsPage({
                     <Link
                       key={period.id}
                       href={`/salary/results?evaluationPeriodId=${period.id}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-slate-950" : "border border-white/15 text-white"}`}
+                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                     >
-                      {period.name}
+                      <span style={{ color: "#000000" }}>{period.name}</span>
                     </Link>
                   );
                 })}
               </div>
             </div>
             <div className="flex gap-3">
-              <Link href={`/salary/simulations?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/salary/simulations?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 昇給シミュレーション
               </Link>
-              <Link href="/settings/audit-logs?action=SALARY_SIMULATION" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/audit-logs?action=SALARY_SIMULATION" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 監査ログ
               </Link>
             </div>

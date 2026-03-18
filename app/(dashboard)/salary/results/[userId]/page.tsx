@@ -50,10 +50,10 @@ export default async function SalaryResultDetailPage({
               <p className="mt-2 text-sm text-slate-300">{salaryResult.periodName} / {row.teamName}</p>
             </div>
             <div className="flex gap-3">
-              <Link href={`/salary/results?evaluationPeriodId=${row.evaluationPeriodId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/salary/results?evaluationPeriodId=${row.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 一覧へ戻る
               </Link>
-              <Link href={`/settings/career-statuses/${row.userId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/settings/career-statuses/${row.userId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 等級詳細
               </Link>
             </div>

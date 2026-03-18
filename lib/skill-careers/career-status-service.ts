@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
 
 export type CareerStatusRow = {
@@ -76,6 +76,10 @@ function toLevel(rankOrder?: number | null) {
 }
 
 export async function getCareerStatusBundle(): Promise<CareerStatusBundle> {
+  if (!hasDatabaseUrl()) {
+    return fallbackBundle;
+  }
+
   try {
     const users = await prisma.user.findMany({
       where: { status: "ACTIVE" },

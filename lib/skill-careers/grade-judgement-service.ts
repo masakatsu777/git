@@ -1,6 +1,6 @@
 import { SkillCategory } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 type GradeDefinitionRow = {
   id: string;
@@ -67,6 +67,10 @@ function fallbackGradeDefinitions(category: SkillCategory, positionId?: string |
 }
 
 export async function getGradeDefinitionsByCategory(category: SkillCategory, positionId?: string | null): Promise<GradeDefinitionRow[]> {
+  if (!hasDatabaseUrl()) {
+    return fallbackGradeDefinitions(category, positionId);
+  }
+
   try {
     const rows = await prisma.skillGradeDefinition.findMany({
       where: {

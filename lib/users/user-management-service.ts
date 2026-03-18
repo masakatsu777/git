@@ -1,8 +1,8 @@
 import { UserStatus } from "@/generated/prisma";
-import { createPasswordHash } from "@/lib/auth/password";
+import { SAMPLE_LOGIN_PASSWORD, createPasswordHash, verifyPassword } from "@/lib/auth/password";
 import type { UserMenuVisibility } from "@/lib/menu-visibility/menu-visibility-service";
 import { getUserMenuVisibilityMap, saveUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type UserManagementRow = {
   userId: string;
@@ -96,6 +96,10 @@ const fallbackBundle: UserManagementBundle = {
 };
 
 export async function getUserManagementBundle(): Promise<UserManagementBundle> {
+  if (!hasDatabaseUrl()) {
+    return fallbackBundle;
+  }
+
   try {
     const [users, roles, departments, teams] = await Promise.all([
       prisma.user.findMany({
@@ -175,6 +179,44 @@ export async function updateUserPassword(input: { userId: string; password: stri
   } catch {
     return { success: true as const, source: "fallback" as const };
   }
+}
+
+export async function changeOwnPassword(input: { userId: string; currentPassword: string; newPassword: string }) {
+  if (!input.currentPassword || !input.newPassword) {
+    throw new Error("現在のパスワードと新しいパスワードを入力してください。");
+  }
+
+  if (input.currentPassword === input.newPassword) {
+    throw new Error("新しいパスワードは現在のパスワードと別のものを指定してください。");
+  }
+
+  if (!hasDatabaseUrl()) {
+    if (input.currentPassword !== SAMPLE_LOGIN_PASSWORD) {
+      throw new Error("現在のパスワードが正しくありません。");
+    }
+
+    return { success: true as const, source: "fallback" as const };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: input.userId },
+    select: { id: true, passwordHash: true },
+  });
+
+  if (!user) {
+    throw new Error("ユーザーが見つかりません。");
+  }
+
+  if (!verifyPassword(input.currentPassword, user.passwordHash)) {
+    throw new Error("現在のパスワードが正しくありません。");
+  }
+
+  await prisma.user.update({
+    where: { id: input.userId },
+    data: { passwordHash: createPasswordHash(input.newPassword) },
+  });
+
+  return { success: true as const, source: "database" as const };
 }
 
 export async function updateUserProfile(input: {

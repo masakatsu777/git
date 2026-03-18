@@ -42,13 +42,13 @@ export default async function SalaryRecordsPage() {
               <p className="mt-2 text-sm text-slate-300">2026-03 時点で有効な給与・社保・固定費を設定し、月次PLの人件費へ自動反映します。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
-              <Link href="/pl/monthly" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/pl/monthly" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 月次PLへ
               </Link>
-              <Link href="/settings/rates" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 売上
               </Link>
             </div>

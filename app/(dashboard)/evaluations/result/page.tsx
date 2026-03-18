@@ -81,19 +81,19 @@ export default async function EvaluationResultPage({
                     <Link
                       key={period.id}
                       href={`/evaluations/result?evaluationPeriodId=${period.id}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "bg-white text-slate-950" : "border border-white/15 text-white"}`}
+                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                     >
-                      {period.name}
+                      <span style={{ color: "#000000" }}>{period.name}</span>
                     </Link>
                   );
                 })}
               </div>
             </div>
             <div className="flex gap-3">
-              <Link href="/evaluations/my" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/evaluations/my" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 自己評価
               </Link>
-              <Link href={`/evaluations/finalize?evaluationPeriodId=${finalReview.evaluationPeriodId}`} className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href={`/evaluations/finalize?evaluationPeriodId=${finalReview.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 最終評価詳細
               </Link>
             </div>

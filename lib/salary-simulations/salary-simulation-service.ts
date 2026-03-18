@@ -5,7 +5,7 @@ import { SalarySimulationStatus } from "@/generated/prisma";
 
 import { writeApprovalLog, writeAuditLog } from "@/lib/audit/log-service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { deriveRatingFromScore } from "@/lib/salary-rules/salary-revision-rule-service";
 import { getSalaryStructureBundle } from "@/lib/salary-structure/salary-structure-service";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
@@ -212,6 +212,15 @@ function fallbackBundle(): SalarySimulationBundle {
 
 async function resolvePeriod(evaluationPeriodId?: string) {
   const period = await resolveEvaluationPeriod(evaluationPeriodId);
+
+  if (!hasDatabaseUrl()) {
+    return {
+      id: period.id,
+      name: period.name,
+      endDate: new Date("2026-03-31T00:00:00.000Z"),
+    };
+  }
+
   return prisma.evaluationPeriod.findUniqueOrThrow({
     where: { id: period.id },
     select: { id: true, name: true, endDate: true },
@@ -225,6 +234,11 @@ function getApplyEffectiveFrom(periodEndDate: Date) {
 }
 
 export async function getSalarySimulationBundle(evaluationPeriodId?: string): Promise<SalarySimulationBundle> {
+  if (!hasDatabaseUrl()) {
+    const fallback = fallbackBundle();
+    return evaluationPeriodId ? { ...fallback, evaluationPeriodId } : fallback;
+  }
+
   try {
     const period = await resolvePeriod(evaluationPeriodId);
 

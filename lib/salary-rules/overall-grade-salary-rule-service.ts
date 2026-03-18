@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import type { SalaryRevisionRuleBundle, SalaryRevisionRuleRow } from "@/lib/salary-rules/salary-revision-rule-service";
 
 export type SaveOverallGradeSalaryRuleInput = {
@@ -37,7 +37,21 @@ function ensureAllOverallGrades(rules: SalaryRevisionRuleRow[]) {
   }));
 }
 
+function buildFallbackBundle(): SalaryRevisionRuleBundle {
+  return {
+    evaluationPeriodId: "period-2025-h2",
+    periodName: "2025年度下期",
+    periods: [{ id: "period-2025-h2", name: "2025年度下期" }],
+    rules: fallbackRules,
+    source: "fallback",
+  };
+}
+
 export async function getOverallGradeSalaryRuleBundle(): Promise<SalaryRevisionRuleBundle> {
+  if (!hasDatabaseUrl()) {
+    return buildFallbackBundle();
+  }
+
   try {
     const periods = await prisma.evaluationPeriod.findMany({
       orderBy: { startDate: "desc" },
@@ -74,13 +88,7 @@ export async function getOverallGradeSalaryRuleBundle(): Promise<SalaryRevisionR
       source: rules.length ? "database" : "fallback",
     };
   } catch {
-    return {
-      evaluationPeriodId: "period-2025-h2",
-      periodName: "2025年度下期",
-      periods: [{ id: "period-2025-h2", name: "2025年度下期" }],
-      rules: fallbackRules,
-      source: "fallback",
-    };
+    return buildFallbackBundle();
   }
 }
 

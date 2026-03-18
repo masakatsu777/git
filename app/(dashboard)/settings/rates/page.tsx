@@ -41,10 +41,10 @@ export default async function RateSettingsPage() {
               <p className="mt-2 text-sm text-slate-300">社員売上単価、パートナー売上単価、標準外注費を管理します。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/dashboard" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
-              <Link href="/pl/monthly" className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium">
+              <Link href="/pl/monthly" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 月次PLへ
               </Link>
             </div>
