@@ -82,7 +82,7 @@ const fallbackBundle: UserManagementBundle = {
     { roleId: "role-employee", roleCode: "employee", roleName: "社員" },
     { roleId: "role-leader", roleCode: "leader", roleName: "リーダー" },
     { roleId: "role-admin", roleCode: "admin", roleName: "管理者" },
-    { roleId: "role-president", roleCode: "president", roleName: "社長" },
+    { roleId: "role-president", roleCode: "president", roleName: "役員" },
   ],
   departmentOptions: [
     { departmentId: "dept-dev", departmentName: "開発本部" },

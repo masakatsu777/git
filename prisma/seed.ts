@@ -37,7 +37,7 @@ async function main() {
     { code: "employee", name: "社員" },
     { code: "leader", name: "リーダー" },
     { code: "admin", name: "管理者" },
-    { code: "president", name: "社長" },
+    { code: "president", name: "役員" },
   ] as const;
 
   for (const role of roles) {
@@ -81,7 +81,7 @@ async function main() {
     { code: "member", name: "メンバー", sortOrder: 10 },
     { code: "leader", name: "リーダー", sortOrder: 20 },
     { code: "manager", name: "管理者", sortOrder: 30 },
-    { code: "president", name: "社長", sortOrder: 40 },
+    { code: "president", name: "役員", sortOrder: 40 },
   ];
 
   for (const position of positions) {

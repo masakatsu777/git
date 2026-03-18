@@ -57,7 +57,7 @@ export default async function FinalizeEvaluationPage({
                 {user.role === "employee"
                   ? "自分に対する最終評価内容を確認できます。"
                   : canEdit
-                    ? "管理者・社長が最終評価を確定する画面です。"
+                    ? "管理者・役員が最終評価を確定する画面です。"
                     : "最終評価内容を参照できます。"}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">

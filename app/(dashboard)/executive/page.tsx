@@ -30,7 +30,7 @@ export default async function ExecutiveDashboardPage({
       <main className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#e2e8f0_100%)] px-6 py-16 text-slate-900">
         <div className="mx-auto max-w-3xl rounded-[2rem] bg-white p-10 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
           <h1 className="text-3xl font-semibold">トップ経営ダッシュボード</h1>
-          <p className="mt-3 text-slate-600">この画面は全社閲覧権限を持つ管理者または社長向けです。</p>
+          <p className="mt-3 text-slate-600">この画面は全社閲覧権限を持つ管理者または役員向けです。</p>
           <Link href="/dashboard" className="mt-6 inline-flex rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white">
             月次ダッシュボードへ戻る
           </Link>

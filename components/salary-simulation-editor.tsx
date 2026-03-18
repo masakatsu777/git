@@ -364,7 +364,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
         ) : null}
         {canApprove ? (
           <button type="button" onClick={handleApprove} disabled={isPending} className="rounded-full border border-slate-400 px-5 py-2 text-sm font-semibold text-slate-800 disabled:border-slate-200 disabled:text-slate-300">
-            社長承認
+            役員承認
           </button>
         ) : null}
         {canApply ? (
