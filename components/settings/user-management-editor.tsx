@@ -277,7 +277,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold text-slate-950">ユーザー作成</h2>
-            <p className="mt-1 text-sm text-slate-500">社員コード、所属、初期パスワードを設定して新規ユーザーを登録します。</p>
+            <p className="mt-1 text-sm text-slate-500">社員No.、所属、初期パスワードを設定して新規ユーザーを登録します。</p>
           </div>
           <button type="button" onClick={handleCreateUser} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
             {isPending ? "処理中..." : "ユーザー作成"}
@@ -285,7 +285,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <label className="text-sm text-slate-700">
-            社員コード
+            社員No.
             <input value={createForm.employeeCode} disabled={!canEdit || isPending} onChange={(event) => updateCreateForm("employeeCode", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
           </label>
           <label className="text-sm text-slate-700">
@@ -345,7 +345,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-6 xl:items-end">
           <label className="text-sm text-slate-700 xl:col-span-2">
             検索
-            <input value={keyword} onChange={(event) => setKeyword(event.target.value)} placeholder="社員コード / 氏名 / メール" className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
+            <input value={keyword} onChange={(event) => setKeyword(event.target.value)} placeholder="社員No. / 氏名 / メール" className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
           </label>
           <label className="text-sm text-slate-700">
             在籍状態
@@ -393,13 +393,13 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
           </button>
         </div>
         <p className="mt-4 text-sm text-slate-500">表示件数: {visibleRows.length} / {editableRows.length}</p>
-        <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
-          <table className="min-w-full text-left text-sm">
+        <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
+          <table className="min-w-[1800px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-4 py-3 font-medium">社員コード</th>
-                <th className="px-4 py-3 font-medium">氏名</th>
-                <th className="px-4 py-3 font-medium">メール</th>
+                <th className="px-4 py-3 font-medium">社員No.</th>
+                <th className="w-[240px] px-4 py-3 font-medium">氏名</th>
+                <th className="w-[320px] px-4 py-3 font-medium">メール</th>
                 <th className="px-4 py-3 font-medium">入社日</th>
                 <th className="px-4 py-3 font-medium">ロール</th>
                 <th className="px-4 py-3 font-medium">部署</th>
@@ -415,11 +415,11 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
               {visibleRows.map((row) => (
                 <tr key={row.userId} className="border-t border-slate-200">
                   <td className="px-4 py-3 font-medium text-slate-950">{row.employeeCode}</td>
-                  <td className="px-4 py-3 text-slate-700">
-                    <input value={row.name} disabled={!canEdit || isPending} onChange={(event) => updateEditableRow(row.userId, "name", event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                  <td className="w-[240px] px-4 py-3 text-slate-700">
+                    <input value={row.name} disabled={!canEdit || isPending} onChange={(event) => updateEditableRow(row.userId, "name", event.target.value)} className="w-[220px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    <input type="email" value={row.email} disabled={!canEdit || isPending} onChange={(event) => updateEditableRow(row.userId, "email", event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                  <td className="w-[320px] px-4 py-3 text-slate-700">
+                    <input type="email" value={row.email} disabled={!canEdit || isPending} onChange={(event) => updateEditableRow(row.userId, "email", event.target.value)} className="w-[300px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                   </td>
                   <td className="px-4 py-3 text-slate-700">{row.joinedAt}</td>
                   <td className="px-4 py-3 text-slate-700">
