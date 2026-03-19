@@ -142,6 +142,14 @@ export default async function MonthlyPlPage({
         <section className="mt-8 grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
           <article className="space-y-6">
             <MonthlyPlDetailEditor
+              key={JSON.stringify({
+                teamId: details.teamId,
+                yearMonth: details.yearMonth,
+                assignments: details.assignments,
+                outsourcingCosts: details.outsourcingCosts,
+                teamExpenses: details.teamExpenses,
+                fixedCostAllocations: details.fixedCostSummary.allocations,
+              })}
               teamId={details.teamId}
               yearMonth={details.yearMonth}
               canEdit={canEdit}
@@ -176,6 +184,17 @@ export default async function MonthlyPlPage({
             />
 
             <MonthlyPlEditor
+              key={JSON.stringify({
+                teamId: snapshot.teamId,
+                yearMonth: snapshot.yearMonth,
+                defaults: {
+                  salesTotal: detailSnapshot.salesTotal,
+                  directLaborCost: detailSnapshot.directLaborCost,
+                  outsourcingCost: detailSnapshot.outsourcingCost,
+                  indirectCost: detailSnapshot.indirectCost,
+                  fixedCostAllocation: detailSnapshot.fixedCostAllocation,
+                },
+              })}
               teamId={snapshot.teamId}
               yearMonth={snapshot.yearMonth}
               canEdit={canEdit}
