@@ -62,7 +62,6 @@ export async function POST(request: NextRequest) {
       outsourcingCost: toNumber(body.outsourcingCost),
       indirectCost: toNumber(body.indirectCost),
       fixedCostAllocation: toNumber(body.fixedCostAllocation),
-      targetGrossProfitRate: toNumber(body.targetGrossProfitRate),
     });
 
     return NextResponse.json({

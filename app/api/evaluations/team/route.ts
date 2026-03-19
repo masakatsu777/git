@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
 import { getManagerReviewBundle, saveManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
+import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -31,7 +32,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "上長評価の閲覧権限がありません" }, { status: 403 });
     }
 
-    const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId);
+    const evaluationPeriodId = request.nextUrl.searchParams.get("evaluationPeriodId") ?? undefined;
+    const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId, evaluationPeriodId);
     return NextResponse.json({ data: bundle });
   } catch (error) {
     return NextResponse.json(
@@ -56,6 +58,11 @@ export async function POST(request: NextRequest) {
     const teamId = String(body.teamId ?? user.teamIds[0] ?? "team-platform");
     if (!canEditManagerReview(user, teamId)) {
       return NextResponse.json({ message: "上長評価の入力権限がありません" }, { status: 403 });
+    }
+
+    const period = await resolveEvaluationPeriod(String(body.evaluationPeriodId ?? "period-2025-h2"));
+    if (period.status !== "OPEN") {
+      return NextResponse.json({ message: "この評価期間は閲覧専用です" }, { status: 403 });
     }
 
     const bundle = await saveManagerReviewBundle(teamId, {

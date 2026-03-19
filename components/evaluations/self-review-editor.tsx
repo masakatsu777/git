@@ -147,7 +147,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
           <h2 className="text-xl font-semibold text-slate-950">自己評価入力</h2>
           <p className="mt-1 text-sm text-slate-500">自律成長力と協調相乗力を分けて入力し、半期の自己評価を整理します。</p>
         </div>
-        {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : null}
+        {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">入力受付中</span>}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
@@ -157,7 +157,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">ステータス</p>
-          <p className="mt-2 text-xl font-semibold text-slate-950">{defaults.status}</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{canEdit ? "入力受付中" : "閲覧専用"}</p>
         </div>
         <div className="rounded-2xl bg-emerald-50 px-4 py-4">
           <p className="text-sm text-slate-500">自律成長力達成率</p>

@@ -27,12 +27,19 @@ export type TeamMonthlyInput = {
   outsourcingCost: number;
   indirectCost: number;
   fixedCostAllocation: number;
-  targetGrossProfitRate: number;
 };
 
 export type SaveTeamMonthlyResult = {
   persisted: boolean;
   snapshot: TeamMonthlySnapshot;
+};
+
+export type SaveMonthlyTargetRatesInput = {
+  yearMonth: string;
+  targets: Array<{
+    teamId: string;
+    targetGrossProfitRate: number;
+  }>;
 };
 
 const fallbackSnapshots: TeamMonthlySnapshot[] = [
@@ -76,6 +83,30 @@ const fallbackSnapshots: TeamMonthlySnapshot[] = [
 
 function sumAmount<T extends { amount: unknown }>(rows: T[]): number {
   return rows.reduce((total, row) => total + Number(row.amount), 0);
+}
+
+function formatYearMonth(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${year}-${month}`;
+}
+
+function getRollingYearMonthOptions() {
+  const today = new Date();
+  const values: string[] = [];
+
+  for (let offset = -6; offset <= 1; offset += 1) {
+    const date = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+    values.push(formatYearMonth(date));
+  }
+
+  return values;
+}
+
+function toVisibleYearMonthOptions(values: string[]) {
+  return Array.from(new Set(values))
+    .sort((a, b) => b.localeCompare(a))
+    .map((yearMonth) => ({ yearMonth }));
 }
 
 function createSnapshot(teamId: string, teamName: string, yearMonth: string, source: TeamMonthlySnapshot["source"], values: GrossProfitResult): TeamMonthlySnapshot {
@@ -241,21 +272,46 @@ export async function getVisibleTeamMonthlySnapshots(yearMonth: string): Promise
   }
 }
 
+export async function getCompanyTargetGrossProfitRate(yearMonth: string): Promise<number> {
+  if (!hasDatabaseUrl()) {
+    return fallbackSnapshots.find((snapshot) => snapshot.yearMonth === yearMonth)?.targetGrossProfitRate ?? 0;
+  }
+
+  try {
+    const [target, monthlyPl] = await Promise.all([
+      prisma.teamTarget.findFirst({
+        where: { yearMonth },
+        orderBy: [{ updatedAt: "desc" }],
+        select: { grossProfitRateTarget: true },
+      }),
+      prisma.teamMonthlyPl.findFirst({
+        where: { yearMonth },
+        orderBy: [{ updatedAt: "desc" }],
+        select: { targetGrossProfitRate: true },
+      }),
+    ]);
+
+    return Number(target?.grossProfitRateTarget ?? monthlyPl?.targetGrossProfitRate ?? 0);
+  } catch {
+    return fallbackSnapshots.find((snapshot) => snapshot.yearMonth === yearMonth)?.targetGrossProfitRate ?? 0;
+  }
+}
+
 export async function saveTeamMonthlyInput(input: TeamMonthlyInput): Promise<SaveTeamMonthlyResult> {
+  const currentSnapshot = await getTeamMonthlySnapshot(input.teamId, input.yearMonth);
   const calculated = calculateGrossProfit({
     salesTotal: input.salesTotal,
     directLaborCost: input.directLaborCost,
     outsourcingCost: input.outsourcingCost,
     indirectCost: input.indirectCost,
     fixedCostAllocation: input.fixedCostAllocation,
-    targetGrossProfitRate: input.targetGrossProfitRate,
+    targetGrossProfitRate: currentSnapshot.targetGrossProfitRate,
   });
 
   if (!hasDatabaseUrl()) {
-    const fallback = fallbackSnapshots.find((snapshot) => snapshot.teamId === input.teamId);
     return {
       persisted: false,
-      snapshot: createSnapshot(input.teamId, fallback?.teamName ?? "未登録チーム", input.yearMonth, "manual", calculated),
+      snapshot: createSnapshot(input.teamId, currentSnapshot.teamName, input.yearMonth, "manual", calculated),
     };
   }
 
@@ -265,10 +321,112 @@ export async function saveTeamMonthlyInput(input: TeamMonthlyInput): Promise<Sav
     await persistSnapshot(snapshot, "DRAFT");
     return { persisted: true, snapshot };
   } catch {
-    const fallback = fallbackSnapshots.find((snapshot) => snapshot.teamId === input.teamId);
     return {
       persisted: false,
-      snapshot: createSnapshot(input.teamId, fallback?.teamName ?? "未登録チーム", input.yearMonth, "manual", calculated),
+      snapshot: createSnapshot(input.teamId, currentSnapshot.teamName, input.yearMonth, "manual", calculated),
+    };
+  }
+}
+
+export async function saveMonthlyTargetRates(input: SaveMonthlyTargetRatesInput): Promise<{ persisted: boolean; snapshots: TeamMonthlySnapshot[] }> {
+  const normalizedTargets = input.targets.map((row) => ({
+    teamId: row.teamId,
+    targetGrossProfitRate: Number.isFinite(row.targetGrossProfitRate) ? row.targetGrossProfitRate : 0,
+  }));
+
+  const currentSnapshots = await Promise.all(normalizedTargets.map((row) => getTeamMonthlySnapshot(row.teamId, input.yearMonth)));
+  const calculatedSnapshots = currentSnapshots.map((snapshot, index) => {
+    const targetGrossProfitRate = normalizedTargets[index]?.targetGrossProfitRate ?? 0;
+    return createSnapshot(snapshot.teamId, snapshot.teamName, input.yearMonth, snapshot.source, calculateGrossProfit({
+      salesTotal: snapshot.salesTotal,
+      directLaborCost: snapshot.directLaborCost,
+      outsourcingCost: snapshot.outsourcingCost,
+      indirectCost: snapshot.indirectCost,
+      fixedCostAllocation: snapshot.fixedCostAllocation,
+      targetGrossProfitRate,
+    }));
+  });
+
+  if (!hasDatabaseUrl()) {
+    return {
+      persisted: false,
+      snapshots: calculatedSnapshots,
+    };
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      for (const snapshot of calculatedSnapshots) {
+        const targetGrossProfit = Math.round(snapshot.salesTotal * (snapshot.targetGrossProfitRate / 100));
+
+        await tx.teamTarget.deleteMany({
+          where: {
+            teamId: snapshot.teamId,
+            yearMonth: snapshot.yearMonth,
+          },
+        });
+
+        await tx.teamTarget.create({
+          data: {
+            teamId: snapshot.teamId,
+            yearMonth: snapshot.yearMonth,
+            salesTarget: snapshot.salesTotal,
+            grossProfitTarget: targetGrossProfit,
+            grossProfitRateTarget: snapshot.targetGrossProfitRate,
+          },
+        });
+
+        await tx.teamMonthlyPl.upsert({
+          where: {
+            teamId_yearMonth: {
+              teamId: snapshot.teamId,
+              yearMonth: snapshot.yearMonth,
+            },
+          },
+          update: {
+            salesTotal: snapshot.salesTotal,
+            directLaborCost: snapshot.directLaborCost,
+            outsourcingCost: snapshot.outsourcingCost,
+            grossProfit1: snapshot.grossProfit1,
+            indirectCost: snapshot.indirectCost,
+            grossProfit2: snapshot.grossProfit2,
+            fixedCostAllocation: snapshot.fixedCostAllocation,
+            finalGrossProfit: snapshot.finalGrossProfit,
+            targetGrossProfitRate: snapshot.targetGrossProfitRate,
+            actualGrossProfitRate: snapshot.actualGrossProfitRate,
+            varianceAmount: snapshot.varianceAmount,
+            varianceRate: snapshot.varianceRate,
+            status: "CONFIRMED",
+          },
+          create: {
+            teamId: snapshot.teamId,
+            yearMonth: snapshot.yearMonth,
+            salesTotal: snapshot.salesTotal,
+            directLaborCost: snapshot.directLaborCost,
+            outsourcingCost: snapshot.outsourcingCost,
+            grossProfit1: snapshot.grossProfit1,
+            indirectCost: snapshot.indirectCost,
+            grossProfit2: snapshot.grossProfit2,
+            fixedCostAllocation: snapshot.fixedCostAllocation,
+            finalGrossProfit: snapshot.finalGrossProfit,
+            targetGrossProfitRate: snapshot.targetGrossProfitRate,
+            actualGrossProfitRate: snapshot.actualGrossProfitRate,
+            varianceAmount: snapshot.varianceAmount,
+            varianceRate: snapshot.varianceRate,
+            status: "CONFIRMED",
+          },
+        });
+      }
+    });
+
+    return {
+      persisted: true,
+      snapshots: calculatedSnapshots.map((snapshot) => ({ ...snapshot, source: "manual" })),
+    };
+  } catch {
+    return {
+      persisted: false,
+      snapshots: calculatedSnapshots,
     };
   }
 }
@@ -324,7 +482,7 @@ export async function getVisibleTeamOptions(teamIds?: string[]): Promise<Visible
 
 export async function getVisibleYearMonthOptions(teamId?: string): Promise<VisibleYearMonthOption[]> {
   if (!hasDatabaseUrl()) {
-    return Array.from(new Set(fallbackSnapshots.map((snapshot) => snapshot.yearMonth))).sort((a, b) => b.localeCompare(a)).map((yearMonth) => ({ yearMonth }));
+    return toVisibleYearMonthOptions([...fallbackSnapshots.map((snapshot) => snapshot.yearMonth), ...getRollingYearMonthOptions()]);
   }
 
   try {
@@ -355,14 +513,9 @@ export async function getVisibleYearMonthOptions(teamId?: string): Promise<Visib
       }),
     ]);
 
-    const values = Array.from(
-      new Set([...pls, ...assignments, ...indirectCosts, ...targets].map((row) => row.yearMonth)),
-    ).sort((a, b) => b.localeCompare(a));
-
-    if (values.length > 0) {
-      return values.map((yearMonth) => ({ yearMonth }));
-    }
+    const values = [...pls, ...assignments, ...indirectCosts, ...targets].map((row) => row.yearMonth);
+    return toVisibleYearMonthOptions([...values, ...getRollingYearMonthOptions()]);
   } catch {}
 
-  return Array.from(new Set(fallbackSnapshots.map((snapshot) => snapshot.yearMonth))).sort((a, b) => b.localeCompare(a)).map((yearMonth) => ({ yearMonth }));
+  return toVisibleYearMonthOptions([...fallbackSnapshots.map((snapshot) => snapshot.yearMonth), ...getRollingYearMonthOptions()]);
 }

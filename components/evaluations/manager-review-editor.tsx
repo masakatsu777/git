@@ -97,7 +97,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           <h2 className="text-xl font-semibold text-slate-950">上長評価入力</h2>
           <p className="mt-1 text-sm text-slate-500">自己評価を参照しながら、自律成長力と協調相乗力を上長視点で評価します。</p>
         </div>
-        {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : null}
+        {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">入力受付中</span>}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">
@@ -125,7 +125,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           {defaults.members.map((member) => (
             <a
               key={member.userId}
-              href={`/evaluations/team?memberId=${member.userId}`}
+              href={`/evaluations/team?evaluationPeriodId=${defaults.evaluationPeriodId}&teamId=${defaults.teamId}&memberId=${member.userId}`}
               className={`rounded-2xl border px-4 py-3 text-sm ${member.userId === defaults.selectedUserId ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-slate-50 text-slate-800"}`}
             >
               <p className="font-semibold"><span style={{ color: member.userId === defaults.selectedUserId ? "#ffffff" : "#0f172a" }}>{member.name}</span></p>

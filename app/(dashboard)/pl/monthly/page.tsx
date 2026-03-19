@@ -79,20 +79,26 @@ export default async function MonthlyPlPage({
                     チーム切替
                   </button>
                 </form>
-                <div className="flex flex-wrap gap-2">
-                  {yearMonthOptions.map((option) => {
-                    const active = option.yearMonth === snapshot.yearMonth;
-                    return (
-                      <Link
-                        key={option.yearMonth}
-                        href={`/pl/monthly?teamId=${snapshot.teamId}&yearMonth=${option.yearMonth}`}
-                        className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-stone-950 shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-slate-950"}`}
-                      >
-                        <span style={{ color: "#000000" }}>{option.yearMonth}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
+                <form method="get" className="flex flex-wrap items-end gap-3">
+                  <input type="hidden" name="teamId" value={snapshot.teamId} />
+                  <label className="text-sm text-stone-200">
+                    表示月
+                    <select
+                      name="yearMonth"
+                      defaultValue={snapshot.yearMonth}
+                      className="mt-2 min-w-44 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                    >
+                      {yearMonthOptions.map((option) => (
+                        <option key={option.yearMonth} value={option.yearMonth}>
+                          {option.yearMonth}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="submit" className="rounded-full bg-amber-300 px-5 py-3 text-sm font-semibold text-stone-950">
+                    月切替
+                  </button>
+                </form>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -107,7 +113,7 @@ export default async function MonthlyPlPage({
               {canManageFixedCosts ? (
                 <>
                   <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                    売上
+                    単価
                   </Link>
                   <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                     全社固定費設定
@@ -152,9 +158,10 @@ export default async function MonthlyPlPage({
                   remarks: row.remarks,
                 })),
                 teamExpenses: details.teamExpenses,
-                salesTarget: details.salesTarget,
-                grossProfitTarget: details.grossProfitTarget,
-                grossProfitRateTarget: details.grossProfitRateTarget,
+              }}
+              targetSummary={{
+                grossProfitRateTarget: snapshot.targetGrossProfitRate,
+                grossProfitTarget: Math.round(snapshot.salesTotal * (snapshot.targetGrossProfitRate / 100)),
               }}
             />
 
@@ -168,7 +175,6 @@ export default async function MonthlyPlPage({
                 outsourcingCost: snapshot.outsourcingCost,
                 indirectCost: snapshot.indirectCost,
                 fixedCostAllocation: snapshot.fixedCostAllocation,
-                targetGrossProfitRate: snapshot.targetGrossProfitRate,
               }}
             />
           </article>

@@ -1,4 +1,4 @@
-import { EvaluationStatus, ReviewType } from "@/generated/prisma";
+import { EvaluationPeriodStatus, EvaluationStatus, ReviewType } from "@/generated/prisma";
 
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
@@ -35,6 +35,7 @@ export type SelfReviewItem = {
 export type SelfReviewBundle = {
   evaluationPeriodId: string;
   periodName: string;
+  periodStatus: EvaluationPeriodStatus;
   status: string;
   selfComment: string;
   selfScoreTotal: number;
@@ -347,6 +348,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
   return {
     evaluationPeriodId: "period-2025-h2",
     periodName: "2025年度下期",
+    periodStatus: EvaluationPeriodStatus.OPEN,
     status: "SELF_REVIEW",
     selfComment: role === "leader" ? "自律成長と周囲支援の両面を振り返る。" : "自律成長を中心に、継続実践へつなげる行動を整理する。",
     selfScoreTotal: calculateTotal(items),
@@ -445,6 +447,7 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
     return {
       evaluationPeriodId: period.id,
       periodName: period.name,
+      periodStatus: period.status,
       status: evaluation?.status ?? EvaluationStatus.SELF_REVIEW,
       selfComment: evaluation?.selfComment ?? "",
       selfScoreTotal: items.length > 0 ? calculateTotal(items) : toNumber(evaluation?.selfScoreTotal),
@@ -460,6 +463,11 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
 
 export async function saveSelfReviewBundle(userId: string, role: string, teamId: string | null, input: SaveSelfReviewInput): Promise<SelfReviewBundle> {
   try {
+    const period = await resolveEvaluationPeriod(input.evaluationPeriodId);
+    if (period.status !== EvaluationPeriodStatus.OPEN) {
+      throw new Error("この評価期間は閲覧専用です");
+    }
+
     const itemRows = await prisma.evaluationItem.findMany({
       where: { id: { in: input.items.map((item) => item.evaluationItemId) } },
       select: { id: true, title: true, description: true, category: true, weight: true, axis: true, scoreType: true, majorCategory: true, minorCategory: true, evidenceRequired: true },
@@ -575,6 +583,7 @@ export async function saveSelfReviewBundle(userId: string, role: string, teamId:
     return {
       ...fallback,
       evaluationPeriodId: input.evaluationPeriodId,
+      periodStatus: EvaluationPeriodStatus.OPEN,
       selfComment: input.selfComment,
       items: nextItems,
       selfScoreTotal: calculateTotal(nextItems),

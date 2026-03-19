@@ -4,18 +4,20 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getSelfReviewBundle, saveSelfReviewBundle } from "@/lib/evaluations/self-review-service";
+import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const user = await getSessionUser();
 
   try {
     requirePermission(user, PERMISSIONS.evaluationSelfWrite);
-    const bundle = await getSelfReviewBundle(user.id, user.role);
+    const evaluationPeriodId = request.nextUrl.searchParams.get("evaluationPeriodId") ?? undefined;
+    const bundle = await getSelfReviewBundle(user.id, user.role, evaluationPeriodId);
     return NextResponse.json({ data: bundle });
   } catch (error) {
     return NextResponse.json(
@@ -35,6 +37,11 @@ export async function POST(request: NextRequest) {
       selfComment?: string;
       items?: Array<Record<string, unknown>>;
     };
+
+    const period = await resolveEvaluationPeriod(String(body.evaluationPeriodId ?? "period-2025-h2"));
+    if (period.status !== "OPEN") {
+      return NextResponse.json({ message: "この評価期間は閲覧専用です" }, { status: 403 });
+    }
 
     const bundle = await saveSelfReviewBundle(user.id, user.role, user.teamIds[0] ?? null, {
       evaluationPeriodId: String(body.evaluationPeriodId ?? "period-2025-h2"),

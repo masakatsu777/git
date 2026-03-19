@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { FinalReviewEditor } from "@/components/evaluations/final-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
-import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
+import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
+import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { canViewFinalReview, hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 
@@ -41,9 +41,10 @@ export default async function FinalizeEvaluationPage({
     );
   }
 
-  const canEdit = hasPermission(user, PERMISSIONS.evaluationFinalize);
   const bundle = await getFinalReviewBundle(effectiveMemberId, params.evaluationPeriodId);
   const periods = await getEvaluationPeriodOptions();
+  const canEdit = hasPermission(user, PERMISSIONS.evaluationFinalize) && bundle.periodStatus === "CLOSED";
+  const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4ff_100%)] text-slate-900">
@@ -70,11 +71,13 @@ export default async function FinalizeEvaluationPage({
                       href={`/evaluations/finalize?evaluationPeriodId=${period.id}${memberQuery}`}
                       className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                     >
-                      <span style={{ color: "#000000" }}>{period.name}</span>
+                      <span style={{ color: "#000000" }}>{period.name}（{period.status}）</span>
                     </Link>
                   );
                 })}
               </div>
+              <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
+              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の最終評価は閲覧専用です。</p> : null}
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">

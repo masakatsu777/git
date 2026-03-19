@@ -1,4 +1,4 @@
-import { EvaluationStatus, ReviewType } from "@/generated/prisma";
+import { EvaluationPeriodStatus, EvaluationStatus, ReviewType } from "@/generated/prisma";
 
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 import {
@@ -39,6 +39,7 @@ export type ManagerReviewItem = {
 export type ManagerReviewBundle = {
   evaluationPeriodId: string;
   periodName: string;
+  periodStatus: EvaluationPeriodStatus;
   teamId: string;
   teamName: string;
   members: ManagerReviewMember[];
@@ -129,6 +130,7 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
   return {
     evaluationPeriodId: "period-2025-h2",
     periodName: "2025年度下期",
+    periodStatus: EvaluationPeriodStatus.OPEN,
     teamId: "team-platform",
     teamName: "プラットフォームチーム",
     members,
@@ -239,6 +241,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       return {
         evaluationPeriodId: period.id,
         periodName: period.name,
+        periodStatus: period.status,
         teamId: team.id,
         teamName: team.name,
         members: [],
@@ -283,6 +286,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
     return {
       evaluationPeriodId: period.id,
       periodName: period.name,
+      periodStatus: period.status,
       teamId: team.id,
       teamName: team.name,
       members: members.map((member) => ({
@@ -311,6 +315,11 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
 
 export async function saveManagerReviewBundle(teamId: string, input: SaveManagerReviewInput): Promise<ManagerReviewBundle> {
   try {
+    const period = await resolveEvaluationPeriod(input.evaluationPeriodId);
+    if (period.status !== EvaluationPeriodStatus.OPEN) {
+      throw new Error("この評価期間は閲覧専用です");
+    }
+
     const itemRows = await prisma.evaluationItem.findMany({
       where: { id: { in: input.items.map((item) => item.evaluationItemId) } },
       select: {
@@ -414,6 +423,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
     return {
       ...fallback,
       evaluationPeriodId: input.evaluationPeriodId,
+      periodStatus: EvaluationPeriodStatus.OPEN,
       selectedUserId: input.userId,
       managerComment: input.managerComment,
       items: nextItems,

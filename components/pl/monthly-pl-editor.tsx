@@ -13,7 +13,6 @@ type MonthlyPlEditorProps = {
     outsourcingCost: number;
     indirectCost: number;
     fixedCostAllocation: number;
-    targetGrossProfitRate: number;
   };
 };
 
@@ -97,15 +96,14 @@ export function MonthlyPlEditor({ teamId, yearMonth, canEdit, defaults }: Monthl
     { key: "outsourcingCost", label: "外注費", suffix: "円" },
     { key: "indirectCost", label: "チーム経費", suffix: "円" },
     { key: "fixedCostAllocation", label: "全社固定費按分", suffix: "円", readOnly: true, helper: "全社固定費を社員人数比で按分した結果です。" },
-    { key: "targetGrossProfitRate", label: "目標粗利率", suffix: "%" },
   ];
 
   return (
     <section className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(41,37,36,0.08)]">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold">月次PL入力</h2>
-          <p className="mt-1 text-sm text-stone-500">売上・外注費・チーム経費・目標粗利率の補正用フォームです。人件費と固定費按分は自動計算されます。</p>
+          <h2 className="text-xl font-semibold">月次PL補正入力</h2>
+          <p className="mt-1 text-sm text-stone-500">売上・外注費・チーム経費の補正用フォームです。目標粗利率はトップ経営ダッシュボードで設定し、人件費と固定費按分は自動計算されます。</p>
         </div>
         {!canEdit ? <span className="rounded-full bg-stone-100 px-4 py-2 text-sm text-stone-500">閲覧専用</span> : null}
       </div>

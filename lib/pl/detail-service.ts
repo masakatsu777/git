@@ -99,6 +99,25 @@ export type SaveTeamMonthlyDetailsResult = {
   bundle: TeamMonthlyDetailBundle;
 };
 
+function parseYearMonth(yearMonth: string) {
+  const [yearText, monthText] = yearMonth.split("-");
+  const year = Number(yearText);
+  const month = Number(monthText);
+
+  if (!Number.isInteger(year) || !Number.isInteger(month) || month < 1 || month > 12) {
+    throw new Error("年月の形式が不正です");
+  }
+
+  return { year, month };
+}
+
+export function getPreviousYearMonth(yearMonth: string) {
+  const { year, month } = parseYearMonth(yearMonth);
+  const previousMonth = month === 1 ? 12 : month - 1;
+  const previousYear = month === 1 ? year - 1 : year;
+  return `${previousYear}-${String(previousMonth).padStart(2, "0")}`;
+}
+
 const fallbackSummary = {
   totalCompanyFixedCost: 300000,
   totalHeadcount: 3,
@@ -353,6 +372,74 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
   }
 }
 
+export async function copyPreviousTeamMonthlyDetails(teamId: string, yearMonth: string): Promise<SaveTeamMonthlyDetailsResult> {
+  const previousYearMonth = getPreviousYearMonth(yearMonth);
+  const currentBundle = await getTeamMonthlyDetails(teamId, yearMonth);
+
+  if (!hasDatabaseUrl()) {
+    const previousBundle = await getTeamMonthlyDetails(teamId, previousYearMonth);
+    return {
+      persisted: false,
+      bundle: {
+        ...currentBundle,
+        assignments: previousBundle.assignments,
+        outsourcingCosts: previousBundle.outsourcingCosts,
+        teamExpenses: previousBundle.teamExpenses,
+        salesTarget: previousBundle.salesTarget,
+        grossProfitTarget: previousBundle.grossProfitTarget,
+        grossProfitRateTarget: previousBundle.grossProfitRateTarget,
+      },
+    };
+  }
+
+  const previousCounts = await prisma.$transaction(async (tx) => {
+    const [assignmentCount, outsourcingCount, teamExpenseCount, targetCount] = await Promise.all([
+      tx.monthlyAssignment.count({ where: { teamId, yearMonth: previousYearMonth } }),
+      tx.monthlyCost.count({ where: { teamId, yearMonth: previousYearMonth, costCategory: CostCategory.OUTSOURCING } }),
+      tx.teamIndirectCost.count({ where: { teamId, yearMonth: previousYearMonth } }),
+      tx.teamTarget.count({ where: { teamId, yearMonth: previousYearMonth } }),
+    ]);
+
+    return { assignmentCount, outsourcingCount, teamExpenseCount, targetCount };
+  });
+
+  const hasPreviousData = Object.values(previousCounts).some((count) => count > 0);
+  if (!hasPreviousData) {
+    throw new Error(`前月(${previousYearMonth})の明細データがありません`);
+  }
+
+  const previousBundle = await getTeamMonthlyDetails(teamId, previousYearMonth);
+
+  return saveTeamMonthlyDetails({
+    teamId,
+    yearMonth,
+    assignments: previousBundle.assignments.map((row) => ({
+      targetType: row.targetType,
+      userId: row.userId,
+      partnerId: row.partnerId,
+      partnerName: row.targetType === "PARTNER" ? row.label : "",
+      unitPrice: row.unitPrice,
+      salesAmount: row.salesAmount,
+      workRate: row.workRate,
+      remarks: row.remarks,
+    })),
+    outsourcingCosts: previousBundle.outsourcingCosts.map((row) => ({
+      partnerId: row.partnerId,
+      partnerName: row.label,
+      amount: row.amount,
+      remarks: row.remarks,
+    })),
+    teamExpenses: previousBundle.teamExpenses.map((row) => ({
+      category: row.category,
+      amount: row.amount,
+      remarks: row.remarks,
+    })),
+    salesTarget: previousBundle.salesTarget,
+    grossProfitTarget: previousBundle.grossProfitTarget,
+    grossProfitRateTarget: previousBundle.grossProfitRateTarget,
+  });
+}
+
 export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput): Promise<SaveTeamMonthlyDetailsResult> {
   try {
     const team = await prisma.team.findUniqueOrThrow({
@@ -366,7 +453,6 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
         where: { teamId: input.teamId, yearMonth: input.yearMonth, costCategory: CostCategory.OUTSOURCING },
       });
       await tx.teamIndirectCost.deleteMany({ where: { teamId: input.teamId, yearMonth: input.yearMonth } });
-      await tx.teamTarget.deleteMany({ where: { teamId: input.teamId, yearMonth: input.yearMonth } });
 
       const resolvePartnerId = async (partnerId: string | null, partnerName: string) => {
         const normalizedName = partnerName.trim();
@@ -406,18 +492,52 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
         return created.id;
       };
 
+      const syncPartnerJurisdiction = async (partnerId: string | null, unitPrice: number, workRate: number) => {
+        if (!partnerId) {
+          return;
+        }
+
+        const existing = await tx.partnerSalesRateSetting.findUnique({
+          where: { partnerId },
+          select: { partnerId: true, remarks: true },
+        });
+
+        if (existing) {
+          if (!existing.remarks) {
+            await tx.partnerSalesRateSetting.update({
+              where: { partnerId },
+              data: { remarks: input.teamId },
+            });
+          }
+          return;
+        }
+
+        await tx.partnerSalesRateSetting.create({
+          data: {
+            partnerId,
+            unitPrice,
+            defaultWorkRate: workRate,
+            remarks: input.teamId,
+          },
+        });
+      };
+
       if (input.assignments.length > 0) {
-        const assignmentRows = await Promise.all(input.assignments.map(async (row) => ({
-          targetType: row.targetType === "EMPLOYEE" ? AssignmentTargetType.EMPLOYEE : AssignmentTargetType.PARTNER,
-          userId: row.targetType === "EMPLOYEE" ? row.userId : null,
-          partnerId: row.targetType === "PARTNER" ? await resolvePartnerId(row.partnerId, row.partnerName) : null,
-          teamId: input.teamId,
-          yearMonth: input.yearMonth,
-          unitPrice: row.unitPrice,
-          salesAmount: row.salesAmount,
-          workRate: row.workRate,
-          remarks: row.remarks || null,
-        })));
+        const assignmentRows = await Promise.all(input.assignments.map(async (row) => {
+          const resolvedPartnerId = row.targetType === "PARTNER" ? await resolvePartnerId(row.partnerId, row.partnerName) : null;
+          await syncPartnerJurisdiction(resolvedPartnerId, row.unitPrice, row.workRate);
+          return {
+            targetType: row.targetType === "EMPLOYEE" ? AssignmentTargetType.EMPLOYEE : AssignmentTargetType.PARTNER,
+            userId: row.targetType === "EMPLOYEE" ? row.userId : null,
+            partnerId: resolvedPartnerId,
+            teamId: input.teamId,
+            yearMonth: input.yearMonth,
+            unitPrice: row.unitPrice,
+            salesAmount: row.salesAmount,
+            workRate: row.workRate,
+            remarks: row.remarks || null,
+          };
+        }));
 
         await tx.monthlyAssignment.createMany({
           data: assignmentRows,
@@ -425,15 +545,19 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
       }
 
       if (input.outsourcingCosts.length > 0) {
-        const outsourcingRows = await Promise.all(input.outsourcingCosts.map(async (row) => ({
-          targetType: CostTargetType.PARTNER,
-          partnerId: await resolvePartnerId(row.partnerId, row.partnerName),
-          teamId: input.teamId,
-          yearMonth: input.yearMonth,
-          costCategory: CostCategory.OUTSOURCING,
-          amount: row.amount,
-          remarks: row.remarks || null,
-        })));
+        const outsourcingRows = await Promise.all(input.outsourcingCosts.map(async (row) => {
+          const resolvedPartnerId = await resolvePartnerId(row.partnerId, row.partnerName);
+          await syncPartnerJurisdiction(resolvedPartnerId, 0, 100);
+          return {
+            targetType: CostTargetType.PARTNER,
+            partnerId: resolvedPartnerId,
+            teamId: input.teamId,
+            yearMonth: input.yearMonth,
+            costCategory: CostCategory.OUTSOURCING,
+            amount: row.amount,
+            remarks: row.remarks || null,
+          };
+        }));
 
         await tx.monthlyCost.createMany({
           data: outsourcingRows,
@@ -452,15 +576,6 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
         });
       }
 
-      await tx.teamTarget.create({
-        data: {
-          teamId: input.teamId,
-          yearMonth: input.yearMonth,
-          salesTarget: input.salesTarget,
-          grossProfitTarget: input.grossProfitTarget,
-          grossProfitRateTarget: input.grossProfitRateTarget,
-        },
-      });
     });
 
     return {

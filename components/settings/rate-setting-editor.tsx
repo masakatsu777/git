@@ -3,12 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import type { EmployeeRateRow, PartnerRateRow } from "@/lib/rates/rate-setting-service";
+import type { EmployeeRateRow, PartnerRateRow, TeamOption } from "@/lib/rates/rate-setting-service";
 
 type RateSettingEditorProps = {
   canEdit: boolean;
   employeeDefaults: EmployeeRateRow[];
   partnerDefaults: PartnerRateRow[];
+  teamOptions: TeamOption[];
 };
 
 function toNumber(value: string) {
@@ -16,10 +17,15 @@ function toNumber(value: string) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults }: RateSettingEditorProps) {
+function uid(prefix: string) {
+  return `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults, teamOptions }: RateSettingEditorProps) {
   const router = useRouter();
   const [employeeRates, setEmployeeRates] = useState(employeeDefaults);
   const [partnerRates, setPartnerRates] = useState(partnerDefaults);
+  const [deletedPartnerIds, setDeletedPartnerIds] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
 
@@ -30,16 +36,42 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults }
       const response = await fetch("/api/rate-settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employeeRates, partnerRates }),
+        body: JSON.stringify({ employeeRates, partnerRates, deletedPartnerIds }),
       });
 
       const result = (await response.json()) as { message?: string };
       setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
 
       if (response.ok) {
+        setDeletedPartnerIds([]);
         router.refresh();
       }
     });
+  }
+
+  function addPartner() {
+    const defaultTeam = teamOptions[0];
+    setPartnerRates((current) => [
+      ...current,
+      {
+        partnerId: uid("new-partner"),
+        partnerName: "",
+        jurisdictionTeamId: defaultTeam?.teamId ?? "",
+        jurisdictionTeamName: defaultTeam?.teamName ?? "",
+        salesUnitPrice: 0,
+        defaultWorkRate: 100,
+        outsourceAmount: 0,
+        affiliation: "",
+        note: "",
+      },
+    ]);
+  }
+
+  function removePartner(target: PartnerRateRow) {
+    setPartnerRates((current) => current.filter((row) => row.partnerId !== target.partnerId));
+    if (!target.partnerId.startsWith("new-")) {
+      setDeletedPartnerIds((current) => [...current, target.partnerId]);
+    }
   }
 
   return (
@@ -52,15 +84,15 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults }
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">社員売上単価</h3>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-[920px] text-left text-sm">
+          <table className="min-w-[980px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">社員コード</th>
                 <th className="px-4 py-3 font-medium">氏名</th>
-                <th className="px-4 py-3 font-medium">所属</th>
+                <th className="px-4 py-3 font-medium">チーム</th>
                 <th className="px-4 py-3 font-medium">標準単価</th>
                 <th className="px-4 py-3 font-medium">標準稼働率</th>
-                <th className="px-4 py-3 font-medium">備考</th>
+                <th className="px-4 py-3 font-medium">備考（プロジェクトなど）</th>
               </tr>
             </thead>
             <tbody>
@@ -86,25 +118,52 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults }
       </section>
 
       <section className="rounded-3xl border border-slate-200 p-4">
-        <h3 className="font-semibold text-slate-950">パートナー売上単価・外注費</h3>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-semibold text-slate-950">パートナー単価・外注費</h3>
+          <button type="button" onClick={addPartner} disabled={!canEdit || isPending} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700">
+            パートナー追加
+          </button>
+        </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-[1080px] text-left text-sm">
+          <table className="min-w-[1280px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-4 py-3 font-medium">パートナー</th>
-                <th className="px-4 py-3 font-medium">会社名</th>
+                <th className="px-4 py-3 font-medium">パートナー名</th>
+                <th className="px-4 py-3 font-medium">管轄</th>
                 <th className="px-4 py-3 font-medium">売上単価</th>
                 <th className="px-4 py-3 font-medium">標準稼働率</th>
                 <th className="px-4 py-3 font-medium">外注費</th>
-                <th className="px-4 py-3 font-medium">売上備考</th>
-                <th className="px-4 py-3 font-medium">外注備考</th>
+                <th className="px-4 py-3 font-medium">所属</th>
+                <th className="px-4 py-3 font-medium">備考（プロジェクトなど）</th>
+                <th className="px-4 py-3 font-medium">操作</th>
               </tr>
             </thead>
             <tbody>
               {partnerRates.map((row) => (
                 <tr key={row.partnerId} className="border-t border-slate-200">
-                  <td className="px-4 py-3 font-medium text-slate-950">{row.partnerName}</td>
-                  <td className="px-4 py-3 text-slate-700">{row.companyName}</td>
+                  <td className="px-4 py-3">
+                    <input type="text" value={row.partnerName} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, partnerName: event.target.value } : item))} className="w-48 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={row.jurisdictionTeamId}
+                      disabled={!canEdit || isPending}
+                      onChange={(event) => {
+                        const selected = teamOptions.find((option) => option.teamId === event.target.value);
+                        setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? {
+                          ...item,
+                          jurisdictionTeamId: event.target.value,
+                          jurisdictionTeamName: selected?.teamName ?? "未設定",
+                        } : item));
+                      }}
+                      className="w-44 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                    >
+                      <option value="">未設定</option>
+                      {teamOptions.map((option) => (
+                        <option key={option.teamId} value={option.teamId}>{option.teamName}</option>
+                      ))}
+                    </select>
+                  </td>
                   <td className="px-4 py-3">
                     <input type="number" value={row.salesUnitPrice} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, salesUnitPrice: toNumber(event.target.value) } : item))} className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                   </td>
@@ -115,10 +174,13 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults }
                     <input type="number" value={row.outsourceAmount} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, outsourceAmount: toNumber(event.target.value) } : item))} className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                   </td>
                   <td className="px-4 py-3">
-                    <input type="text" value={row.salesRemarks} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, salesRemarks: event.target.value } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    <input type="text" value={row.affiliation} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, affiliation: event.target.value } : item))} className="w-40 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                   </td>
                   <td className="px-4 py-3">
-                    <input type="text" value={row.outsourceRemarks} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, outsourceRemarks: event.target.value } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    <input type="text" value={row.note} disabled={!canEdit || isPending} onChange={(event) => setPartnerRates((current) => current.map((item) => item.partnerId === row.partnerId ? { ...item, note: event.target.value } : item))} className="w-40 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <button type="button" onClick={() => removePartner(row)} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600">削除</button>
                   </td>
                 </tr>
               ))}
@@ -137,4 +199,3 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults }
     </section>
   );
 }
-

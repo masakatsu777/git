@@ -58,7 +58,7 @@ export default async function AnnualPlPage({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="text-3xl font-semibold">年度ダッシュボード</h1>
-                <p className="mt-2 text-sm text-emerald-100">年度開始月を固定せず、指定年度の累計実績と前年同期比を確認できます。</p>
+                <p className="mt-2 text-sm text-emerald-100">指定年度の累計実績を、前年度同一期間と比較して確認できます。</p>
               </div>
               <div className="flex flex-wrap gap-3">
                 <AnnualDashboardExportButton
@@ -126,20 +126,6 @@ export default async function AnnualPlPage({
               </button>
             </form>
 
-            <div className="flex flex-wrap gap-2">
-              {bundle.options.map((option) => {
-                const active = option.fiscalYear === bundle.fiscalYear;
-                return (
-                  <Link
-                    key={option.fiscalYear}
-                    href={`/pl/annual?fiscalYear=${option.fiscalYear}&fiscalStartMonth=${bundle.fiscalStartMonth}`}
-                    className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-emerald-950 shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
-                  >
-                    <span style={{ color: "#000000" }}>{option.fiscalYear}年度</span>
-                  </Link>
-                );
-              })}
-            </div>
           </div>
         </header>
 
@@ -173,7 +159,7 @@ export default async function AnnualPlPage({
         <section className="mt-8 grid gap-6 xl:grid-cols-2">
           <AnnualTrendChart
             title="全社年度推移"
-            subtitle="売上と最終粗利の推移です。"
+            subtitle="選択年度と前年度同一期間の比較です。"
             primaryLabel="売上"
             secondaryLabel="最終粗利"
             points={companyTrendPoints}
@@ -182,7 +168,7 @@ export default async function AnnualPlPage({
           />
           <AnnualTrendChart
             title="チーム別年度推移"
-            subtitle={`${bundle.selectedTeamName ?? "選択チーム"} の最終粗利と目標差異です。`}
+            subtitle={`${bundle.selectedTeamName ?? "選択チーム"} の前年度同一期間比較です。`}
             primaryLabel="最終粗利"
             secondaryLabel="目標差異"
             points={teamTrendPoints}
@@ -324,8 +310,8 @@ export default async function AnnualPlPage({
         <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-slate-950">年度比較</h2>
-              <p className="mt-1 text-sm text-slate-500">同じ年度開始月で、複数年度の推移を比較できます。</p>
+              <h2 className="text-xl font-semibold text-slate-950">前年度同一期間比較</h2>
+              <p className="mt-1 text-sm text-slate-500">選択年度と前年度の同一期間を比較しています。</p>
             </div>
           </div>
           <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">

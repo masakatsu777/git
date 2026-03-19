@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { requirePermission } from "@/lib/permissions/check";
-import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getRateSettingsBundle, saveRateSettingsBundle } from "@/lib/rates/rate-setting-service";
+import { getRateSettingsBundle, saveRateSettingsBundle, canManageRateSettings } from "@/lib/rates/rate-setting-service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -14,8 +12,11 @@ export async function GET() {
   const user = await getSessionUser();
 
   try {
-    requirePermission(user, PERMISSIONS.masterWrite);
-    const bundle = await getRateSettingsBundle();
+    if (!canManageRateSettings(user)) {
+      throw new Error("この画面を表示する権限がありません。");
+    }
+
+    const bundle = await getRateSettingsBundle(user);
     return NextResponse.json({ data: bundle });
   } catch (error) {
     return NextResponse.json(
@@ -29,10 +30,14 @@ export async function POST(request: Request) {
   const user = await getSessionUser();
 
   try {
-    requirePermission(user, PERMISSIONS.masterWrite);
+    if (!canManageRateSettings(user)) {
+      throw new Error("この画面を更新する権限がありません。");
+    }
+
     const body = (await request.json()) as {
       employeeRates?: Array<Record<string, unknown>>;
       partnerRates?: Array<Record<string, unknown>>;
+      deletedPartnerIds?: unknown[];
     };
 
     const result = await saveRateSettingsBundle({
@@ -40,6 +45,7 @@ export async function POST(request: Request) {
         userId: String(row.userId ?? ""),
         employeeCode: String(row.employeeCode ?? ""),
         employeeName: String(row.employeeName ?? ""),
+        teamId: String(row.teamId ?? ""),
         teamName: String(row.teamName ?? ""),
         unitPrice: toNumber(row.unitPrice),
         defaultWorkRate: toNumber(row.defaultWorkRate),
@@ -48,14 +54,16 @@ export async function POST(request: Request) {
       partnerRates: (body.partnerRates ?? []).map((row) => ({
         partnerId: String(row.partnerId ?? ""),
         partnerName: String(row.partnerName ?? ""),
-        companyName: String(row.companyName ?? ""),
+        jurisdictionTeamId: String(row.jurisdictionTeamId ?? ""),
+        jurisdictionTeamName: String(row.jurisdictionTeamName ?? ""),
         salesUnitPrice: toNumber(row.salesUnitPrice),
         defaultWorkRate: toNumber(row.defaultWorkRate),
         outsourceAmount: toNumber(row.outsourceAmount),
-        salesRemarks: String(row.salesRemarks ?? ""),
-        outsourceRemarks: String(row.outsourceRemarks ?? ""),
+        affiliation: String(row.affiliation ?? ""),
+        note: String(row.note ?? ""),
       })),
-    });
+      deletedPartnerIds: (body.deletedPartnerIds ?? []).map((value) => String(value ?? "")).filter(Boolean),
+    }, user);
 
     return NextResponse.json({
       message: result.source === "database" ? "単価・外注費基準値を保存しました" : "DB未接続のためプレビューのみ更新しました",

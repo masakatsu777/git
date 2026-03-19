@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { ManagerReviewEditor } from "@/components/evaluations/manager-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { getManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
-import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
+import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
+import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
 import { getVisibleTeamOptions } from "@/lib/pl/service";
 
@@ -45,9 +45,10 @@ export default async function TeamEvaluationPage({
   }
 
   const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId);
-  const canEdit = canEditManagerReview(user, bundle.teamId);
+  const canEdit = canEditManagerReview(user, bundle.teamId) && bundle.periodStatus === "OPEN";
   const teamOptions = user.role === "employee" ? [] : await getVisibleTeamOptions(user.role === "leader" ? undefined : user.teamIds);
   const selectedMemberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
+  const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4ff_100%)] text-slate-900">
@@ -73,17 +74,19 @@ export default async function TeamEvaluationPage({
                       href={`/evaluations/team?evaluationPeriodId=${period.id}&teamId=${bundle.teamId}${selectedMemberQuery}`}
                       className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
                     >
-                      <span style={{ color: "#000000" }}>{period.name}</span>
+                      <span style={{ color: "#000000" }}>{period.name}（{period.status}）</span>
                     </Link>
                   );
                 })}
               </div>
+              <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
+              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の上長評価は閲覧専用です。</p> : null}
               {teamOptions.length > 0 ? (
                 <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                   <input type="hidden" name="evaluationPeriodId" value={bundle.evaluationPeriodId} />
                   {effectiveMemberId ? <input type="hidden" name="memberId" value={effectiveMemberId} /> : null}
                   <label className="text-sm text-slate-200">
-                    対象チーム
+                    評価対象チーム
                     <select
                       name="teamId"
                       defaultValue={bundle.teamId}

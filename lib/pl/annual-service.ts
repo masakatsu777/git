@@ -256,25 +256,13 @@ export async function getAnnualDashboardBundle(
   }
 
   const currentYearSummary = await buildYearSummary(resolvedFiscalYear);
-  const comparisonFiscalYears = (fiscalYears.length > 0 ? fiscalYears : [resolvedFiscalYear]).slice(0, 5);
-  if (!comparisonFiscalYears.includes(resolvedFiscalYear)) {
-    comparisonFiscalYears.unshift(resolvedFiscalYear);
-  }
-  const uniqueComparisonYears = Array.from(new Set(comparisonFiscalYears)).sort((a, b) => b - a);
-  const comparisonResults = await Promise.all(
-    uniqueComparisonYears.map(async (targetFiscalYear) => {
-      if (targetFiscalYear === resolvedFiscalYear) {
-        return currentYearSummary;
-      }
-      return buildYearSummary(targetFiscalYear);
-    }),
-  );
+  const previousYearSummary = await buildYearSummary(resolvedFiscalYear - 1);
   const summaries = currentYearSummary.summaries;
   const totals = currentYearSummary.totals;
-  const sortedComparisonResults = comparisonResults.sort((a, b) => b.fiscalYear - a.fiscalYear);
-  const comparisonRows = sortedComparisonResults.map((result) => toComparisonRow(result.fiscalYear, resolvedFiscalStartMonth, result.totals));
+  const comparisonResults = [currentYearSummary, previousYearSummary].sort((a, b) => b.fiscalYear - a.fiscalYear);
+  const comparisonRows = comparisonResults.map((result) => toComparisonRow(result.fiscalYear, resolvedFiscalStartMonth, result.totals));
   const teamComparisonRows = resolvedSelectedTeamId
-    ? sortedComparisonResults
+    ? comparisonResults
         .map((result) => result.summaries.find((row) => row.teamId === resolvedSelectedTeamId))
         .filter((row): row is TeamAnnualSnapshot => Boolean(row))
         .map((row) => toTeamComparisonRow(row.fiscalYear, resolvedFiscalStartMonth, row))

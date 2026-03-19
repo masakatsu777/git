@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { canViewFinalReview, requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getFinalReviewBundle, saveFinalReviewBundle } from "@/lib/evaluations/final-review-service";
+import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -31,7 +32,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "最終評価の閲覧権限がありません" }, { status: 403 });
     }
 
-    const bundle = await getFinalReviewBundle(effectiveMemberId);
+    const evaluationPeriodId = request.nextUrl.searchParams.get("evaluationPeriodId") ?? undefined;
+    const bundle = await getFinalReviewBundle(effectiveMemberId, evaluationPeriodId);
     return NextResponse.json({ data: bundle });
   } catch (error) {
     return NextResponse.json(
@@ -52,6 +54,11 @@ export async function POST(request: NextRequest) {
       finalComment?: string;
       items?: Array<Record<string, unknown>>;
     };
+
+    const period = await resolveEvaluationPeriod(String(body.evaluationPeriodId ?? "period-2025-h2"));
+    if (period.status !== "CLOSED") {
+      return NextResponse.json({ message: "この評価期間は最終評価確定フェーズではありません" }, { status: 403 });
+    }
 
     const bundle = await saveFinalReviewBundle(user.id, {
       evaluationPeriodId: String(body.evaluationPeriodId ?? "period-2025-h2"),

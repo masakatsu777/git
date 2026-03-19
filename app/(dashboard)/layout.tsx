@@ -35,15 +35,20 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     items.unshift({ href: "/executive", label: "経営" });
   }
 
+  if (user.role === "leader" || user.role === "president") {
+    items.push({ href: "/settings/rates", label: "単価" });
+  }
+
   if (hasPermission(user, PERMISSIONS.masterWrite)) {
     items.push(
       { href: "/settings/organization", label: "組織" },
+      { href: "/settings/evaluation-periods", label: "評価期間" },
       { href: "/settings/skill-careers", label: "スキル" },
       { href: "/settings/career-statuses", label: "等級一覧" },
       { href: "/settings/overall-grade-salary-rules", label: "総合等級昇給" },
       { href: "/settings/salary-revision-rules", label: "期待充足ランク昇給" },
       { href: "/settings/salary-structure", label: "給与構成" },
-      { href: "/settings/rates", label: "売上" },
+      { href: "/settings/rates", label: "単価" },
       { href: "/settings/salary-records", label: "社員コスト" },
       { href: "/settings/fixed-costs", label: "固定費" },
       { href: "/settings/users", label: "ユーザー" },

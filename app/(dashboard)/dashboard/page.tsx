@@ -6,6 +6,7 @@ import { getEvaluationProgressBundle } from "@/lib/evaluations/progress-service"
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
+import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat("ja-JP").format(value);
@@ -22,24 +23,35 @@ export default async function DashboardPage({
   const canEditTeam = hasPermission(user, PERMISSIONS.plTeamWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
   const canManageFixedCosts = hasPermission(user, PERMISSIONS.masterWrite);
-  const teamId = user.teamIds[0] ?? "team-platform";
   const yearMonth = params.yearMonth ?? "2026-03";
+  const hasPrimaryTeam = user.teamIds.length > 0;
+  const showPersonalProfit = !canViewAll && !hasPrimaryTeam;
+  const defaultTeamId = hasPrimaryTeam ? user.teamIds[0] : undefined;
 
-  const [snapshots, progress, yearMonthOptions] = await Promise.all([
-    canViewAll
-      ? getVisibleTeamMonthlySnapshots(yearMonth)
-      : Promise.resolve([await getTeamMonthlySnapshot(teamId, yearMonth)]),
+  const [snapshots, personalSummary, progress, yearMonthOptions] = await Promise.all([
+    showPersonalProfit
+      ? Promise.resolve([])
+      : canViewAll
+        ? getVisibleTeamMonthlySnapshots(yearMonth)
+        : Promise.resolve([await getTeamMonthlySnapshot(defaultTeamId!, yearMonth)]),
+    showPersonalProfit ? getUnassignedPersonalProfitByUser(user.id, yearMonth) : Promise.resolve(null),
     getEvaluationProgressBundle(canViewAll ? undefined : user.teamIds),
-    getVisibleYearMonthOptions(canViewAll ? undefined : teamId),
+    getVisibleYearMonthOptions(showPersonalProfit ? undefined : defaultTeamId),
   ]);
 
-  const primary = snapshots[0];
-  const summaryCards = [
-    { label: "売上合計", value: formatNumber(primary?.salesTotal ?? 0), unit: "円" },
-    { label: "1次粗利", value: formatNumber(primary?.grossProfit1 ?? 0), unit: "円" },
-    { label: "最終粗利", value: formatNumber(primary?.finalGrossProfit ?? 0), unit: "円" },
-    { label: "粗利率差異", value: `${primary?.varianceRate ?? 0}`, unit: "pt" },
-  ];
+  const summaryCards = showPersonalProfit
+    ? [
+        { label: "個人売上", value: formatNumber(personalSummary?.salesTotal ?? 0), unit: "円" },
+        { label: "人件費", value: formatNumber(personalSummary?.directLaborCost ?? 0), unit: "円" },
+        { label: "固定費按分", value: formatNumber(personalSummary?.fixedCostAllocation ?? 0), unit: "円" },
+        { label: "最終粗利", value: formatNumber(personalSummary?.finalGrossProfit ?? 0), unit: "円" },
+      ]
+    : [
+        { label: "売上合計", value: formatNumber(snapshots[0]?.salesTotal ?? 0), unit: "円" },
+        { label: "1次粗利", value: formatNumber(snapshots[0]?.grossProfit1 ?? 0), unit: "円" },
+        { label: "最終粗利", value: formatNumber(snapshots[0]?.finalGrossProfit ?? 0), unit: "円" },
+        { label: "粗利率差異", value: `${snapshots[0]?.varianceRate ?? 0}`, unit: "pt" },
+      ];
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f5f7fb_0%,#ecf2ff_100%)] text-slate-900">
@@ -51,20 +63,27 @@ export default async function DashboardPage({
             <p className="mt-2 text-sm text-slate-300">
               {user.name} として表示中 / ロール: {user.role} / 表示月: {yearMonth}
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {yearMonthOptions.map((option) => {
-                const active = option.yearMonth === yearMonth;
-                return (
-                  <Link
-                    key={option.yearMonth}
-                    href={`/dashboard?yearMonth=${option.yearMonth}`}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm" : "border border-slate-200 bg-white text-black shadow-sm"}`}
+            <form method="get" className="mt-4 max-w-xs">
+              <label className="text-sm text-slate-200">
+                表示月
+                <div className="mt-2 flex gap-3">
+                  <select
+                    name="yearMonth"
+                    defaultValue={yearMonth}
+                    className="w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
                   >
-                    <span style={{ color: "#000000" }}>{option.yearMonth}</span>
-                  </Link>
-                );
-              })}
-            </div>
+                    {yearMonthOptions.map((option) => (
+                      <option key={option.yearMonth} value={option.yearMonth}>
+                        {option.yearMonth}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="submit" className="rounded-full bg-brand-300 px-5 py-3 text-sm font-semibold text-slate-950">
+                    更新
+                  </button>
+                </div>
+              </label>
+            </form>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/login" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
@@ -77,9 +96,11 @@ export default async function DashboardPage({
             >
               ログアウト
             </SessionActionButton>
-            <Link href={`/pl/monthly?yearMonth=${yearMonth}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-              月次PL詳細
-            </Link>
+            {!showPersonalProfit ? (
+              <Link href={`/pl/monthly?yearMonth=${yearMonth}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
+                月次PL詳細
+              </Link>
+            ) : null}
             <Link href="/executive" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               トップ経営ダッシュボード
             </Link>
@@ -94,7 +115,7 @@ export default async function DashboardPage({
             {canManageFixedCosts ? (
               <>
                 <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                  売上
+                  単価
                 </Link>
                 <Link href="/settings/skill-careers" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   評価制度設定
@@ -119,7 +140,7 @@ export default async function DashboardPage({
                 </Link>
               </>
             ) : null}
-            {canEditTeam ? (
+            {canEditTeam && !showPersonalProfit ? (
               <span className="rounded-full bg-brand-300 px-4 py-2 text-sm font-semibold text-slate-950">PL入力可能</span>
             ) : null}
           </div>
@@ -141,28 +162,48 @@ export default async function DashboardPage({
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-slate-950">チーム別粗利差異</h2>
+                <h2 className="text-xl font-semibold text-slate-950">{showPersonalProfit ? "個人粗利サマリー" : "チーム別粗利差異"}</h2>
                 <p className="mt-1 text-sm text-slate-500">
-                  {canViewAll ? "全社表示" : "自チームのみ表示"}
+                  {showPersonalProfit ? "未所属社員は1人分の固定費按分を加味した個人粗利を表示します。" : canViewAll ? "全社表示" : "自チームのみ表示"}
                 </p>
               </div>
-              <Link href={`/api/pl/dashboard?yearMonth=${yearMonth}`} className="text-sm font-medium text-brand-600">
-                API確認
-              </Link>
+              {!showPersonalProfit ? (
+                <Link href={`/api/pl/dashboard?yearMonth=${yearMonth}`} className="text-sm font-medium text-brand-600">
+                  API確認
+                </Link>
+              ) : null}
             </div>
             <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
               <table className="min-w-full text-left text-sm">
                 <thead className="bg-slate-50 text-slate-500">
                   <tr>
-                    <th className="px-4 py-3 font-medium">チーム</th>
+                    <th className="px-4 py-3 font-medium">{showPersonalProfit ? "対象" : "チーム"}</th>
                     <th className="px-4 py-3 font-medium">売上</th>
+                    {showPersonalProfit ? <th className="px-4 py-3 font-medium">固定費按分</th> : null}
                     <th className="px-4 py-3 font-medium">目標率</th>
                     <th className="px-4 py-3 font-medium">実績率</th>
                     <th className="px-4 py-3 font-medium">差異</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {snapshots.map((row) => (
+                  {showPersonalProfit ? (
+                    personalSummary ? (
+                      <tr className="border-t border-slate-200">
+                        <td className="px-4 py-3 font-medium text-slate-950">{user.name}</td>
+                        <td className="px-4 py-3 text-slate-700">{formatNumber(personalSummary.salesTotal)}</td>
+                        <td className="px-4 py-3 text-slate-700">{formatNumber(personalSummary.fixedCostAllocation)}</td>
+                        <td className="px-4 py-3 text-slate-700">{personalSummary.targetGrossProfitRate}%</td>
+                        <td className="px-4 py-3 text-slate-700">{personalSummary.actualGrossProfitRate}%</td>
+                        <td className={`px-4 py-3 font-semibold ${personalSummary.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                          {personalSummary.varianceRate >= 0 ? "+" : ""}{personalSummary.varianceRate}pt
+                        </td>
+                      </tr>
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">当月の個人粗利データはまだありません。</td>
+                      </tr>
+                    )
+                  ) : snapshots.map((row) => (
                     <tr key={`${row.teamId}-${row.yearMonth}`} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">
                         <Link href={`/pl/monthly?teamId=${row.teamId}&yearMonth=${yearMonth}`} className="text-brand-700 underline-offset-4 hover:underline">
@@ -219,4 +260,3 @@ export default async function DashboardPage({
     </main>
   );
 }
-

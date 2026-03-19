@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { SelfReviewEditor } from "@/components/evaluations/self-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
-import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
+import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { getSelfReviewBundle } from "@/lib/evaluations/self-review-service";
+import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 
@@ -27,9 +27,10 @@ export default async function MyEvaluationPage({
       </main>
     );
   }
-  const canEdit = hasPermission(user, PERMISSIONS.evaluationSelfWrite);
   const bundle = await getSelfReviewBundle(user.id, user.role, params.evaluationPeriodId);
   const periods = await getEvaluationPeriodOptions();
+  const canEdit = hasPermission(user, PERMISSIONS.evaluationSelfWrite) && bundle.periodStatus === "OPEN";
+  const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4ff_100%)] text-slate-900">
@@ -39,7 +40,7 @@ export default async function MyEvaluationPage({
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">半期自己評価</h1>
-              <p className="mt-2 text-sm text-slate-300">{user.name} の自己評価入力画面です。まずは自己評価から開始します。</p>
+              <p className="mt-2 text-sm text-slate-300">{user.name} の自己評価入力画面です。評価期間を切り替えると過去分も確認できます。</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {periods.map((period) => {
                   const active = period.id === bundle.evaluationPeriodId;
@@ -54,6 +55,8 @@ export default async function MyEvaluationPage({
                   );
                 })}
               </div>
+              <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
+              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間は閲覧専用です。過去分も確認できます。</p> : null}
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">

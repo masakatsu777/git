@@ -62,9 +62,10 @@ type DetailEditorProps = {
     assignments: AssignmentRow[];
     outsourcingCosts: OutsourcingRow[];
     teamExpenses: TeamExpenseRow[];
-    salesTarget: number;
-    grossProfitTarget: number;
+  };
+  targetSummary: {
     grossProfitRateTarget: number;
+    grossProfitTarget: number;
   };
 };
 
@@ -94,6 +95,7 @@ export function MonthlyPlDetailEditor({
   partnerOptions,
   fixedCostSummary,
   defaults,
+  targetSummary,
 }: DetailEditorProps) {
   const router = useRouter();
   const [isPending, startSaving] = useTransition();
@@ -101,11 +103,6 @@ export function MonthlyPlDetailEditor({
   const [assignments, setAssignments] = useState(defaults.assignments);
   const [outsourcingCosts, setOutsourcingCosts] = useState(defaults.outsourcingCosts);
   const [teamExpenses, setTeamExpenses] = useState(defaults.teamExpenses);
-  const [targets, setTargets] = useState({
-    salesTarget: defaults.salesTarget,
-    grossProfitTarget: defaults.grossProfitTarget,
-    grossProfitRateTarget: defaults.grossProfitRateTarget,
-  });
 
   const assignmentSalesTotal = useMemo(() => assignments.reduce((total, row) => total + row.salesAmount, 0), [assignments]);
   const outsourcingTotal = useMemo(() => outsourcingCosts.reduce((total, row) => total + row.amount, 0), [outsourcingCosts]);
@@ -125,12 +122,36 @@ export function MonthlyPlDetailEditor({
           assignments,
           outsourcingCosts,
           teamExpenses,
-          ...targets,
         }),
       });
 
       const result = (await response.json()) as { message?: string };
       setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
+
+      if (response.ok) {
+        startTransition(() => {
+          router.refresh();
+        });
+      }
+    });
+  }
+
+  async function handleCopyPreviousMonth() {
+    setMessage(null);
+
+    startSaving(async () => {
+      const response = await fetch("/api/pl/details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "copyPrevious",
+          teamId,
+          yearMonth,
+        }),
+      });
+
+      const result = (await response.json()) as { message?: string };
+      setMessage(result.message ?? (response.ok ? "前月データをコピーしました" : "前月データのコピーに失敗しました"));
 
       if (response.ok) {
         startTransition(() => {
@@ -179,7 +200,19 @@ export function MonthlyPlDetailEditor({
           <h2 className="text-xl font-semibold">売上・費用明細入力</h2>
           <p className="mt-1 text-sm text-stone-500">固定費は全社入力を人数比で按分し、この画面では採用教育費とその他経費をチーム単位で入力します。</p>
         </div>
-        {!canEdit ? <span className="rounded-full bg-stone-100 px-4 py-2 text-sm text-stone-500">閲覧専用</span> : null}
+        <div className="flex flex-wrap items-center gap-3">
+          {canEdit ? (
+            <button
+              type="button"
+              onClick={handleCopyPreviousMonth}
+              disabled={isPending}
+              className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-400"
+            >
+              {isPending ? "処理中..." : "前月コピー"}
+            </button>
+          ) : null}
+          {!canEdit ? <span className="rounded-full bg-stone-100 px-4 py-2 text-sm text-stone-500">閲覧専用</span> : null}
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
@@ -260,12 +293,21 @@ export function MonthlyPlDetailEditor({
                   )}
                 </div>
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <input type="number" value={row.unitPrice} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, unitPrice: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="単価" />
-                  <input type="number" value={row.salesAmount} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, salesAmount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="売上" />
-                  <input type="number" value={row.workRate} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, workRate: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="稼働率" />
+                  <label className="text-xs text-stone-500">
+                    単価
+                    <input type="number" value={row.unitPrice} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, unitPrice: toNumber(event.target.value) } : item))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" placeholder="単価" />
+                  </label>
+                  <label className="text-xs text-stone-500">
+                    売上額
+                    <input type="number" value={row.salesAmount} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, salesAmount: toNumber(event.target.value) } : item))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" placeholder="売上" />
+                  </label>
+                  <label className="text-xs text-stone-500">
+                    稼働率
+                    <input type="number" value={row.workRate} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, workRate: toNumber(event.target.value) } : item))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" placeholder="稼働率" />
+                  </label>
                 </div>
                 <div className="flex gap-3">
-                  <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="flex-1 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
+                  <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="flex-1 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考特記" />
                   <button type="button" onClick={() => setAssignments((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600 sm:col-span-2 sm:justify-self-end">削除</button>
                 </div>
               </div>
@@ -278,7 +320,7 @@ export function MonthlyPlDetailEditor({
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-semibold">外注費入力</h3>
-              <p className="mt-1 text-xs text-stone-500">パートナー選択時に標準外注費を初期反映します。</p>
+              <p className="mt-1 text-xs text-stone-500">パートナー選択時に標準外注費を初期反映します。売上がない月でも、外注費のみ入力できます。</p>
             </div>
             <button type="button" onClick={addOutsourcing} disabled={!canEdit || isPending} className="rounded-full border border-stone-300 px-3 py-1 text-xs font-medium">行追加</button>
           </div>
@@ -305,7 +347,7 @@ export function MonthlyPlDetailEditor({
                 />
                 <input type="number" value={row.amount} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, amount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="金額" />
                 <button type="button" onClick={() => setOutsourcingCosts((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600 sm:col-span-2 sm:justify-self-end">削除</button>
-                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
+                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setOutsourcingCosts((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="所属" />
               </div>
             ))}
           </div>
@@ -326,7 +368,7 @@ export function MonthlyPlDetailEditor({
                 </select>
                 <input type="number" value={row.amount} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, amount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="金額" />
                 <button type="button" onClick={() => setTeamExpenses((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600">削除</button>
-                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="備考" />
+                <input type="text" value={row.remarks} disabled={!canEdit || isPending} onChange={(event) => setTeamExpenses((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))} className="sm:col-span-2 rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="所属" />
               </div>
             ))}
           </div>
@@ -365,11 +407,17 @@ export function MonthlyPlDetailEditor({
       </div>
 
       <section className="rounded-3xl border border-stone-200 p-4">
-        <h3 className="font-semibold">粗利目標設定</h3>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <input type="number" value={targets.salesTarget} disabled={!canEdit || isPending} onChange={(event) => setTargets((current) => ({ ...current, salesTarget: toNumber(event.target.value) }))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="売上目標" />
-          <input type="number" value={targets.grossProfitTarget} disabled={!canEdit || isPending} onChange={(event) => setTargets((current) => ({ ...current, grossProfitTarget: toNumber(event.target.value) }))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="粗利目標" />
-          <input type="number" value={targets.grossProfitRateTarget} disabled={!canEdit || isPending} onChange={(event) => setTargets((current) => ({ ...current, grossProfitRateTarget: toNumber(event.target.value) }))} className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm" placeholder="粗利率目標" />
+        <h3 className="font-semibold">粗利目標</h3>
+        <p className="mt-1 text-sm text-stone-500">目標粗利率はトップ経営ダッシュボードで設定します。</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
+            <p className="text-sm font-medium text-stone-600">目標粗利率</p>
+            <p className="mt-2 text-xl font-semibold text-stone-950">{targetSummary.grossProfitRateTarget}%</p>
+          </div>
+          <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
+            <p className="text-sm font-medium text-stone-600">目標粗利額</p>
+            <p className="mt-2 text-xl font-semibold text-stone-950">{targetSummary.grossProfitTarget.toLocaleString("ja-JP")} 円</p>
+          </div>
         </div>
       </section>
 

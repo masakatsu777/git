@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SessionActionButton } from "@/components/auth/session-action-button";
+import { MonthlyTargetRateEditor } from "@/components/executive/monthly-target-rate-editor";
 import { AnnualTrendChart } from "@/components/pl/annual-trend-chart";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
@@ -162,9 +163,9 @@ export default async function ExecutiveDashboardPage({
                 <p className="mt-1 text-sm text-slate-600">差異 {bundle.monthlyTeamRows[0]?.varianceRate ?? 0}pt</p>
               </div>
               <div className="rounded-2xl bg-amber-50 p-4">
-                <p className="text-sm font-medium text-amber-700">年度粗利率差異</p>
-                <p className="mt-2 text-lg font-semibold text-slate-950">{bundle.annualTotals.varianceRate} pt</p>
-                <p className="mt-1 text-sm text-slate-600">全社年度の目標との差です。</p>
+                <p className="text-sm font-medium text-amber-700">全社目標粗利率</p>
+                <p className="mt-2 text-lg font-semibold text-slate-950">{bundle.companyTargetGrossProfitRate}%</p>
+                <p className="mt-1 text-sm text-slate-600">月次と未所属社員粗利の共通目標です。</p>
               </div>
               <div className="rounded-2xl bg-sky-50 p-4">
                 <p className="text-sm font-medium text-sky-700">昇給承認状況</p>
@@ -176,45 +177,11 @@ export default async function ExecutiveDashboardPage({
         </section>
 
         <section className="mt-8 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-950">月次チーム差異一覧</h2>
-                <p className="mt-1 text-sm text-slate-500">差異が大きい順に並べています。</p>
-              </div>
-              <Link href={`/dashboard?yearMonth=${bundle.yearMonth}`} className="text-sm font-medium text-orange-700">
-                月次ダッシュボードへ
-              </Link>
-            </div>
-            <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-slate-50 text-slate-500">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">チーム</th>
-                    <th className="px-4 py-3 font-medium">売上</th>
-                    <th className="px-4 py-3 font-medium">最終粗利</th>
-                    <th className="px-4 py-3 font-medium">実績率</th>
-                    <th className="px-4 py-3 font-medium">差異</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bundle.monthlyTeamRows.map((row) => (
-                    <tr key={`${row.teamId}-${bundle.yearMonth}`} className="border-t border-slate-200">
-                      <td className="px-4 py-3 font-medium text-slate-950">
-                        <Link href={`/pl/monthly?teamId=${row.teamId}&yearMonth=${bundle.yearMonth}`} className="text-orange-700 underline-offset-4 hover:underline">
-                          {row.teamName}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.finalGrossProfit)} 円</td>
-                      <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
-                      <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.varianceRate >= 0 ? "+" : ""}{row.varianceRate}pt</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </article>
+          <MonthlyTargetRateEditor
+            yearMonth={bundle.yearMonth}
+            companyTargetGrossProfitRate={bundle.companyTargetGrossProfitRate}
+            rows={bundle.monthlyTeamRows}
+          />
 
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <h2 className="text-xl font-semibold text-slate-950">評価・昇給サマリー</h2>
@@ -242,6 +209,50 @@ export default async function ExecutiveDashboardPage({
                   </div>
                 </div>
               ))}
+            </div>
+          </article>
+        </section>
+
+
+        <section className="mt-8 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-950">未所属社員粗利</h2>
+                <p className="mt-1 text-sm text-slate-500">未所属社員も1人分の固定費按分を加味して表示しています。</p>
+              </div>
+            </div>
+            <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+              <table className="min-w-full text-left text-sm">
+                <thead className="bg-slate-50 text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">社員</th>
+                    <th className="px-4 py-3 font-medium">売上</th>
+                    <th className="px-4 py-3 font-medium">人件費</th>
+                    <th className="px-4 py-3 font-medium">固定費按分</th>
+                    <th className="px-4 py-3 font-medium">最終粗利</th>
+                    <th className="px-4 py-3 font-medium">実績率</th>
+                    <th className="px-4 py-3 font-medium">差異</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bundle.unassignedEmployeeRows.length > 0 ? bundle.unassignedEmployeeRows.map((row) => (
+                    <tr key={row.userId} className="border-t border-slate-200">
+                      <td className="px-4 py-3 font-medium text-slate-950">{row.userName}<span className="ml-2 text-xs font-normal text-slate-500">{row.employeeCode}</span></td>
+                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.directLaborCost)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.fixedCostAllocation)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.finalGrossProfit)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
+                      <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.varianceRate >= 0 ? "+" : ""}{row.varianceRate}pt</td>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-6 text-center text-sm text-slate-500">未所属社員はありません。</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </article>
         </section>

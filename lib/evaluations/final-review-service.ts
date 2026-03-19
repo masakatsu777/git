@@ -1,4 +1,4 @@
-import { EvaluationStatus, ReviewType, SkillCategory } from "@/generated/prisma";
+import { EvaluationPeriodStatus, EvaluationStatus, ReviewType, SkillCategory } from "@/generated/prisma";
 
 import { writeApprovalLog, writeAuditLog } from "@/lib/audit/log-service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
@@ -51,6 +51,7 @@ export type FinalReviewItem = {
 export type FinalReviewBundle = {
   evaluationPeriodId: string;
   periodName: string;
+  periodStatus: EvaluationPeriodStatus;
   members: FinalReviewMember[];
   selectedUserId: string;
   selectedUserName: string;
@@ -253,6 +254,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
   return {
     evaluationPeriodId: "period-2025-h2",
     periodName: "2025年度下期",
+    periodStatus: EvaluationPeriodStatus.CLOSED,
     members,
     selectedUserId: target.userId,
     selectedUserName: target.name,
@@ -375,6 +377,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       return {
         evaluationPeriodId: period.id,
         periodName: period.name,
+        periodStatus: period.status,
         members: [],
         selectedUserId: "",
         selectedUserName: "",
@@ -436,6 +439,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
     return {
       evaluationPeriodId: period.id,
       periodName: period.name,
+      periodStatus: period.status,
       members: members.map((member) => ({
         userId: member.userId,
         name: member.name,
@@ -480,6 +484,11 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
 
 export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFinalReviewInput): Promise<FinalReviewBundle> {
   try {
+    const period = await resolveEvaluationPeriod(input.evaluationPeriodId);
+    if (period.status !== EvaluationPeriodStatus.CLOSED) {
+      throw new Error("この評価期間は最終評価確定フェーズではありません");
+    }
+
     const [itemRows, user] = await Promise.all([
       prisma.evaluationItem.findMany({
         where: { id: { in: input.items.map((item) => item.evaluationItemId) } },
@@ -646,6 +655,7 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
     return {
       ...fallback,
       evaluationPeriodId: input.evaluationPeriodId,
+      periodStatus: EvaluationPeriodStatus.CLOSED,
       selectedUserId: input.userId,
       finalComment: input.finalComment,
       items: nextItems,

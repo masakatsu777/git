@@ -1,4 +1,4 @@
-import { FixedCostAllocationMethod } from "@/generated/prisma";
+import { UserStatus, FixedCostAllocationMethod } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
@@ -30,6 +30,16 @@ export type SaveCompanyFixedCostsInput = {
   }>;
 };
 
+type HeadcountContext = {
+  totalActiveHeadcount: number;
+  unassignedHeadcount: number;
+  headcounts: Array<{
+    teamId: string;
+    departmentId: string | null;
+    count: number;
+  }>;
+};
+
 function getMonthRange(yearMonth: string) {
   const [year, month] = yearMonth.split("-").map(Number);
   const start = new Date(year, month - 1, 1);
@@ -41,31 +51,48 @@ function round(value: number) {
   return Math.round(value * 100) / 100;
 }
 
-async function getHeadcounts(yearMonth: string) {
+async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
   if (!hasDatabaseUrl()) {
     return {
-      totalHeadcount: 3,
+      totalActiveHeadcount: 4,
+      unassignedHeadcount: 1,
       headcounts: [{ teamId: "team-platform", departmentId: "dept-dev", count: 3 }],
     };
   }
 
   const { start, end } = getMonthRange(yearMonth);
 
-  const teams = await prisma.team.findMany({
-    where: { isActive: true },
-    select: {
-      id: true,
-      departmentId: true,
-      memberships: {
-        where: {
-          isPrimary: true,
-          startDate: { lte: end },
-          OR: [{ endDate: null }, { endDate: { gte: start } }],
+  const [teams, unassignedUsers] = await Promise.all([
+    prisma.team.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        departmentId: true,
+        memberships: {
+          where: {
+            isPrimary: true,
+            startDate: { lte: end },
+            OR: [{ endDate: null }, { endDate: { gte: start } }],
+            user: { status: UserStatus.ACTIVE },
+          },
+          select: { userId: true },
         },
-        select: { userId: true },
       },
-    },
-  });
+    }),
+    prisma.user.findMany({
+      where: {
+        status: UserStatus.ACTIVE,
+        teamMemberships: {
+          none: {
+            isPrimary: true,
+            startDate: { lte: end },
+            OR: [{ endDate: null }, { endDate: { gte: start } }],
+          },
+        },
+      },
+      select: { id: true },
+    }),
+  ]);
 
   const headcounts = teams.map((team) => ({
     teamId: team.id,
@@ -73,8 +100,12 @@ async function getHeadcounts(yearMonth: string) {
     count: team.memberships.length,
   }));
 
+  const assignedHeadcount = headcounts.reduce((total, row) => total + row.count, 0);
+  const unassignedHeadcount = unassignedUsers.length;
+
   return {
-    totalHeadcount: headcounts.reduce((total, row) => total + row.count, 0),
+    totalActiveHeadcount: assignedHeadcount + unassignedHeadcount,
+    unassignedHeadcount,
     headcounts,
   };
 }
@@ -149,9 +180,29 @@ export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): 
   return getCompanyFixedCosts(input.yearMonth);
 }
 
+export async function getPerPersonFixedCostAllocation(yearMonth: string): Promise<{
+  totalCompanyFixedCost: number;
+  totalHeadcount: number;
+  perPersonAmount: number;
+}> {
+  const [rows, headcounts] = await Promise.all([
+    getCompanyFixedCosts(yearMonth),
+    getHeadcounts(yearMonth),
+  ]);
+
+  const totalCompanyFixedCost = rows.reduce((total, row) => total + row.amount, 0);
+  const totalHeadcount = headcounts.totalActiveHeadcount;
+
+  return {
+    totalCompanyFixedCost,
+    totalHeadcount,
+    perPersonAmount: totalHeadcount === 0 ? 0 : round(totalCompanyFixedCost / totalHeadcount),
+  };
+}
+
 export async function getTeamFixedCostAllocationSummary(teamId: string, yearMonth: string): Promise<TeamFixedCostAllocationSummary> {
   try {
-    const [rows, { totalHeadcount, headcounts }, team] = await Promise.all([
+    const [rows, { totalActiveHeadcount, headcounts }, team] = await Promise.all([
       getCompanyFixedCosts(yearMonth),
       getHeadcounts(yearMonth),
       prisma.team.findUnique({
@@ -163,7 +214,7 @@ export async function getTeamFixedCostAllocationSummary(teamId: string, yearMont
     const teamHeadcount = headcounts.find((row) => row.teamId === teamId)?.count ?? 0;
     const scopeHeadcount = team?.departmentId
       ? headcounts.filter((row) => row.departmentId === team.departmentId).reduce((total, row) => total + row.count, 0)
-      : totalHeadcount;
+      : totalActiveHeadcount;
 
     const allocations = rows.map((row) => ({
       id: row.id,
@@ -182,14 +233,14 @@ export async function getTeamFixedCostAllocationSummary(teamId: string, yearMont
   } catch {
     return {
       totalCompanyFixedCost: 300000,
-      totalHeadcount: 3,
+      totalHeadcount: 4,
       teamHeadcount: teamId === "team-platform" ? 3 : 0,
       allocations: [
         {
           id: "fixed-hq-rent",
           category: "家賃光熱費",
           companyAmount: 300000,
-          allocatedAmount: teamId === "team-platform" ? 300000 : 0,
+          allocatedAmount: teamId === "team-platform" ? 225000 : 0,
           allocationMethod: "HEADCOUNT",
         },
       ],

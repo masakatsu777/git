@@ -1,7 +1,8 @@
 import { getAnnualEvaluationSummaryBundle } from "@/lib/evaluations/annual-summary-service";
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getAnnualDashboardBundle } from "@/lib/pl/annual-service";
-import { getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
+import { getCompanyTargetGrossProfitRate, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
+import { getUnassignedPersonalProfitRows } from "@/lib/pl/unassigned-profit-service";
 import { getSalarySimulationBundle } from "@/lib/salary-simulations/salary-simulation-service";
 
 export type ExecutiveDashboardBundle = {
@@ -9,6 +10,7 @@ export type ExecutiveDashboardBundle = {
   fiscalYear: number;
   fiscalStartMonth: number;
   evaluationPeriodId: string;
+  companyTargetGrossProfitRate: number;
   monthlyTotals: {
     salesTotal: number;
     finalGrossProfit: number;
@@ -38,6 +40,18 @@ export type ExecutiveDashboardBundle = {
     teamId: string;
     teamName: string;
     salesTotal: number;
+    finalGrossProfit: number;
+    actualGrossProfitRate: number;
+    targetGrossProfitRate: number;
+    varianceRate: number;
+  }>;
+  unassignedEmployeeRows: Array<{
+    userId: string;
+    employeeCode: string;
+    userName: string;
+    salesTotal: number;
+    directLaborCost: number;
+    fixedCostAllocation: number;
     finalGrossProfit: number;
     actualGrossProfitRate: number;
     targetGrossProfitRate: number;
@@ -89,16 +103,17 @@ export async function getExecutiveDashboardBundle(input?: {
   const evaluationPeriodOptions = await getEvaluationPeriodOptions();
   const resolvedEvaluationPeriodId = input?.evaluationPeriodId ?? evaluationPeriodOptions[0]?.id ?? "period-2025-h2";
 
-  const [monthlyRows, annualBundle, evaluationSummary, salaryBundle] = await Promise.all([
+  const [monthlyRows, annualBundle, evaluationSummary, salaryBundle, companyTargetGrossProfitRate, unassignedEmployeeRows] = await Promise.all([
     getVisibleTeamMonthlySnapshots(resolvedYearMonth),
     getAnnualDashboardBundle(resolvedFiscalYear, resolvedFiscalStartMonth),
     getAnnualEvaluationSummaryBundle(resolvedFiscalYear, resolvedFiscalStartMonth),
     getSalarySimulationBundle(resolvedEvaluationPeriodId),
+    getCompanyTargetGrossProfitRate(resolvedYearMonth),
+    getUnassignedPersonalProfitRows(resolvedYearMonth),
   ]);
 
   const monthlySalesTotal = monthlyRows.reduce((sum, row) => sum + row.salesTotal, 0);
   const monthlyFinalGrossProfit = monthlyRows.reduce((sum, row) => sum + row.finalGrossProfit, 0);
-  const monthlyTargetRate = monthlyRows.length > 0 ? monthlyRows.reduce((sum, row) => sum + row.targetGrossProfitRate, 0) / monthlyRows.length : 0;
   const monthlyGrossProfitRate = monthlySalesTotal === 0 ? 0 : round2((monthlyFinalGrossProfit / monthlySalesTotal) * 100);
 
   return {
@@ -106,11 +121,12 @@ export async function getExecutiveDashboardBundle(input?: {
     fiscalYear: annualBundle.fiscalYear,
     fiscalStartMonth: annualBundle.fiscalStartMonth,
     evaluationPeriodId: resolvedEvaluationPeriodId,
+    companyTargetGrossProfitRate,
     monthlyTotals: {
       salesTotal: monthlySalesTotal,
       finalGrossProfit: monthlyFinalGrossProfit,
       grossProfitRate: monthlyGrossProfitRate,
-      varianceRate: round2(monthlyGrossProfitRate - monthlyTargetRate),
+      varianceRate: round2(monthlyGrossProfitRate - companyTargetGrossProfitRate),
     },
     annualTotals: {
       salesTotal: annualBundle.totals.salesTotal,
@@ -138,10 +154,22 @@ export async function getExecutiveDashboardBundle(input?: {
         salesTotal: row.salesTotal,
         finalGrossProfit: row.finalGrossProfit,
         actualGrossProfitRate: row.actualGrossProfitRate,
-        targetGrossProfitRate: row.targetGrossProfitRate,
-        varianceRate: row.varianceRate,
+        targetGrossProfitRate: companyTargetGrossProfitRate,
+        varianceRate: round2(row.actualGrossProfitRate - companyTargetGrossProfitRate),
       }))
       .sort((a, b) => a.varianceRate - b.varianceRate),
+    unassignedEmployeeRows: unassignedEmployeeRows.map((row) => ({
+      userId: row.userId,
+      employeeCode: row.employeeCode,
+      userName: row.userName,
+      salesTotal: row.salesTotal,
+      directLaborCost: row.directLaborCost,
+      fixedCostAllocation: row.fixedCostAllocation,
+      finalGrossProfit: row.finalGrossProfit,
+      actualGrossProfitRate: row.actualGrossProfitRate,
+      targetGrossProfitRate: row.targetGrossProfitRate,
+      varianceRate: row.varianceRate,
+    })),
     annualComparisonRows: annualBundle.comparisonRows.map((row) => ({
       fiscalYear: row.fiscalYear,
       fiscalYearLabel: row.fiscalYearLabel,
