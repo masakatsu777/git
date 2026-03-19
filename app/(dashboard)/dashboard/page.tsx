@@ -63,14 +63,14 @@ export default async function DashboardPage({
             <p className="mt-2 text-sm text-slate-300">
               {user.name} として表示中 / ロール: {user.role} / 表示月: {yearMonth}
             </p>
-            <form method="get" className="mt-4 max-w-xs">
+            <form method="get" className="mt-4 max-w-md">
               <label className="text-sm text-slate-200">
                 表示月
-                <div className="mt-2 flex gap-3">
+                <div className="mt-2 flex flex-wrap gap-3 sm:flex-nowrap">
                   <select
                     name="yearMonth"
                     defaultValue={yearMonth}
-                    className="w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                    className="min-w-[11rem] flex-1 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
                   >
                     {yearMonthOptions.map((option) => (
                       <option key={option.yearMonth} value={option.yearMonth}>

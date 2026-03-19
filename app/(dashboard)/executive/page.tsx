@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { SessionActionButton } from "@/components/auth/session-action-button";
-import { MonthlyTargetRateEditor } from "@/components/executive/monthly-target-rate-editor";
 import { AnnualTrendChart } from "@/components/pl/annual-trend-chart";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
@@ -177,11 +176,37 @@ export default async function ExecutiveDashboardPage({
         </section>
 
         <section className="mt-8 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <MonthlyTargetRateEditor
-            yearMonth={bundle.yearMonth}
-            companyTargetGrossProfitRate={bundle.companyTargetGrossProfitRate}
-            rows={bundle.monthlyTeamRows}
-          />
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-950">全社目標粗利率</h2>
+              <p className="mt-1 text-sm text-slate-500">年度ダッシュボードで設定した目標粗利率を月次と未所属社員粗利へ共通反映しています。</p>
+            </div>
+
+            <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
+              <table className="min-w-full text-left text-sm">
+                <thead className="bg-slate-50 text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">チーム</th>
+                    <th className="px-4 py-3 font-medium">売上</th>
+                    <th className="px-4 py-3 font-medium">目標粗利率</th>
+                    <th className="px-4 py-3 font-medium">実績率</th>
+                    <th className="px-4 py-3 font-medium">差異</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bundle.monthlyTeamRows.map((row) => (
+                    <tr key={`${row.teamId}-${bundle.yearMonth}`} className="border-t border-slate-200">
+                      <td className="px-4 py-3 font-medium text-slate-950">{row.teamName}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
+                      <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
+                      <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.varianceRate >= 0 ? "+" : ""}{row.varianceRate}pt</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </article>
 
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <h2 className="text-xl font-semibold text-slate-950">評価・昇給サマリー</h2>

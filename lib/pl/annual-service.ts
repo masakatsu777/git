@@ -1,4 +1,4 @@
-import { getTeamMonthlySnapshot, getVisibleTeamOptions, getVisibleYearMonthOptions, type TeamMonthlySnapshot } from "@/lib/pl/service";
+import { getTeamMonthlySnapshot, getVisibleTeamOptions, getVisibleYearMonthOptions, saveMonthlyTargetRates, type TeamMonthlySnapshot } from "@/lib/pl/service";
 
 export type FiscalYearOption = {
   fiscalYear: number;
@@ -67,6 +67,13 @@ export type AnnualComparisonRow = {
   varianceRate: number;
   salesYoYRate: number;
   grossProfitYoYRate: number;
+};
+
+
+export type SaveAnnualTargetRateInput = {
+  fiscalYear: number;
+  fiscalStartMonth: number;
+  targetGrossProfitRate: number;
 };
 
 export type AnnualDashboardBundle = {
@@ -289,5 +296,30 @@ export async function getAnnualDashboardBundle(
     selectedTeamId: resolvedSelectedTeamId,
     selectedTeamName: resolvedSelectedTeamName,
     teamComparisonRows,
+  };
+}
+
+export async function saveAnnualTargetRate(input: SaveAnnualTargetRateInput): Promise<{ persisted: boolean }> {
+  const months = buildFiscalYearMonths(input.fiscalYear, input.fiscalStartMonth);
+  const teams = await getVisibleTeamOptions();
+
+  if (teams.length === 0) {
+    return { persisted: false };
+  }
+
+  const results = await Promise.all(
+    months.map((yearMonth) =>
+      saveMonthlyTargetRates({
+        yearMonth,
+        targets: teams.map((team) => ({
+          teamId: team.teamId,
+          targetGrossProfitRate: input.targetGrossProfitRate,
+        })),
+      }),
+    ),
+  );
+
+  return {
+    persisted: results.every((result: { persisted: boolean }) => result.persisted),
   };
 }
