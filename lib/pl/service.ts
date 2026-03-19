@@ -458,6 +458,10 @@ export async function recalculateAllTeamMonthlyPl(yearMonth: string): Promise<Te
 }
 
 export async function getVisibleTeamOptions(teamIds?: string[]): Promise<VisibleTeamOption[]> {
+  if (teamIds && teamIds.length === 0) {
+    return [];
+  }
+
   if (!hasDatabaseUrl()) {
     return fallbackSnapshots.map((snapshot) => ({ teamId: snapshot.teamId, teamName: snapshot.teamName }));
   }
@@ -480,7 +484,7 @@ export async function getVisibleTeamOptions(teamIds?: string[]): Promise<Visible
   return fallbackSnapshots.map((snapshot) => ({ teamId: snapshot.teamId, teamName: snapshot.teamName }));
 }
 
-export async function getVisibleYearMonthOptions(teamId?: string): Promise<VisibleYearMonthOption[]> {
+export async function getVisibleYearMonthOptions(teamIds?: string | string[]): Promise<VisibleYearMonthOption[]> {
   if (!hasDatabaseUrl()) {
     return toVisibleYearMonthOptions([...fallbackSnapshots.map((snapshot) => snapshot.yearMonth), ...getRollingYearMonthOptions()]);
   }
@@ -488,25 +492,25 @@ export async function getVisibleYearMonthOptions(teamId?: string): Promise<Visib
   try {
     const [pls, assignments, indirectCosts, targets] = await Promise.all([
       prisma.teamMonthlyPl.findMany({
-        where: teamId ? { teamId } : undefined,
+        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
         select: { yearMonth: true },
         distinct: ["yearMonth"],
         orderBy: { yearMonth: "desc" },
       }),
       prisma.monthlyAssignment.findMany({
-        where: teamId ? { teamId } : undefined,
+        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
         select: { yearMonth: true },
         distinct: ["yearMonth"],
         orderBy: { yearMonth: "desc" },
       }),
       prisma.teamIndirectCost.findMany({
-        where: teamId ? { teamId } : undefined,
+        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
         select: { yearMonth: true },
         distinct: ["yearMonth"],
         orderBy: { yearMonth: "desc" },
       }),
       prisma.teamTarget.findMany({
-        where: teamId ? { teamId } : undefined,
+        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
         select: { yearMonth: true },
         distinct: ["yearMonth"],
         orderBy: { yearMonth: "desc" },

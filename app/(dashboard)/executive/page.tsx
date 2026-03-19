@@ -20,7 +20,7 @@ function parseNumber(value?: string) {
 export default async function ExecutiveDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ yearMonth?: string; fiscalYear?: string; fiscalStartMonth?: string; evaluationPeriodId?: string }>;
+  searchParams: Promise<{ yearMonth?: string; fiscalYear?: string; fiscalStartMonth?: string; evaluationPeriodId?: string; departmentId?: string }>;
 }) {
   const user = await getSessionUser();
   const canView = hasPermission(user, PERMISSIONS.plAllRead);
@@ -45,7 +45,10 @@ export default async function ExecutiveDashboardPage({
     fiscalYear: parseNumber(params.fiscalYear),
     fiscalStartMonth: parseNumber(params.fiscalStartMonth),
     evaluationPeriodId: params.evaluationPeriodId,
+    departmentId: params.departmentId,
   });
+
+  const scopeLabel = bundle.departmentOptions.find((option) => option.id === bundle.departmentId)?.name ?? "全社";
 
   const annualTrendPoints = bundle.annualComparisonRows.slice().reverse().map((row) => ({
     label: `${row.fiscalYear}年度`,
@@ -95,7 +98,7 @@ export default async function ExecutiveDashboardPage({
             </div>
           </div>
 
-          <form method="get" className="mt-5 grid gap-4 rounded-[1.5rem] bg-white/10 p-4 md:grid-cols-4 md:items-end">
+          <form method="get" className="mt-5 grid gap-4 rounded-[1.5rem] bg-white/10 p-4 md:grid-cols-5 md:items-end">
             <label className="text-sm text-white">
               月次表示月
               <select name="yearMonth" defaultValue={bundle.yearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
@@ -128,7 +131,15 @@ export default async function ExecutiveDashboardPage({
                 ))}
               </select>
             </label>
-            <button type="submit" className="md:col-span-4 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+            <label className="text-sm text-white">
+              部署
+              <select name="departmentId" defaultValue={bundle.departmentId} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
+                {bundle.departmentOptions.map((option) => (
+                  <option key={option.id || "all"} value={option.id}>{option.name}</option>
+                ))}
+              </select>
+            </label>
+            <button type="submit" className="md:col-span-5 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
               表示更新
             </button>
           </form>
@@ -145,7 +156,7 @@ export default async function ExecutiveDashboardPage({
 
         <section className="mt-8 grid gap-6 xl:grid-cols-2">
           <AnnualTrendChart
-            title="全社年度推移"
+            title={`${scopeLabel}年度推移`}
             subtitle="売上と最終粗利の推移です。"
             primaryLabel="売上"
             secondaryLabel="最終粗利"
@@ -157,7 +168,7 @@ export default async function ExecutiveDashboardPage({
             <h2 className="text-xl font-semibold text-slate-950">経営アラート</h2>
             <div className="mt-5 space-y-4">
               <div className="rounded-2xl bg-rose-50 p-4">
-                <p className="text-sm font-medium text-rose-700">月次差異ワーストチーム</p>
+                <p className="text-sm font-medium text-rose-700">{scopeLabel}月次差異ワーストチーム</p>
                 <p className="mt-2 text-lg font-semibold text-slate-950">{bundle.monthlyTeamRows[0]?.teamName ?? "-"}</p>
                 <p className="mt-1 text-sm text-slate-600">差異 {bundle.monthlyTeamRows[0]?.varianceRate ?? 0}pt</p>
               </div>
@@ -178,7 +189,7 @@ export default async function ExecutiveDashboardPage({
         <section className="mt-8 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <div>
-              <h2 className="text-xl font-semibold text-slate-950">全社目標粗利率</h2>
+              <h2 className="text-xl font-semibold text-slate-950">{scopeLabel}目標粗利率</h2>
               <p className="mt-1 text-sm text-slate-500">年度ダッシュボードで設定した目標粗利率を月次と未所属社員粗利へ共通反映しています。</p>
             </div>
 
@@ -252,6 +263,7 @@ export default async function ExecutiveDashboardPage({
                 <thead className="bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-4 py-3 font-medium">社員</th>
+                    <th className="px-4 py-3 font-medium">部署</th>
                     <th className="px-4 py-3 font-medium">売上</th>
                     <th className="px-4 py-3 font-medium">人件費</th>
                     <th className="px-4 py-3 font-medium">固定費按分</th>
@@ -264,6 +276,7 @@ export default async function ExecutiveDashboardPage({
                   {bundle.unassignedEmployeeRows.length > 0 ? bundle.unassignedEmployeeRows.map((row) => (
                     <tr key={row.userId} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">{row.userName}<span className="ml-2 text-xs font-normal text-slate-500">{row.employeeCode}</span></td>
+                      <td className="px-4 py-3 text-slate-700">{row.departmentName}</td>
                       <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
                       <td className="px-4 py-3 text-slate-700">{formatNumber(row.directLaborCost)} 円</td>
                       <td className="px-4 py-3 text-slate-700">{formatNumber(row.fixedCostAllocation)} 円</td>
@@ -273,7 +286,7 @@ export default async function ExecutiveDashboardPage({
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan={7} className="px-4 py-6 text-center text-sm text-slate-500">未所属社員はありません。</td>
+                      <td colSpan={8} className="px-4 py-6 text-center text-sm text-slate-500">未所属社員はありません。</td>
                     </tr>
                   )}
                 </tbody>

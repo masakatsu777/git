@@ -231,7 +231,7 @@ export async function getAnnualDashboardBundle(
   selectedTeamId?: string,
 ): Promise<AnnualDashboardBundle> {
   const resolvedFiscalStartMonth = fiscalStartMonth && fiscalStartMonth >= 1 && fiscalStartMonth <= 12 ? fiscalStartMonth : 4;
-  const yearMonthOptions = await getVisibleYearMonthOptions(visibleTeamIds && visibleTeamIds.length === 1 ? visibleTeamIds[0] : undefined);
+  const yearMonthOptions = await getVisibleYearMonthOptions(visibleTeamIds && visibleTeamIds.length > 0 ? visibleTeamIds : undefined);
   const fiscalYears = Array.from(new Set(yearMonthOptions.map((option) => toFiscalYear(option.yearMonth, resolvedFiscalStartMonth)))).sort((a, b) => b - a);
   const resolvedFiscalYear = fiscalYear ?? fiscalYears[0] ?? new Date().getFullYear();
   const months = buildFiscalYearMonths(resolvedFiscalYear, resolvedFiscalStartMonth);

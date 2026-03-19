@@ -1,5 +1,6 @@
 import { getAnnualEvaluationSummaryBundle } from "@/lib/evaluations/annual-summary-service";
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
+import { getOrganizationBundle } from "@/lib/organization/organization-service";
 import { getAnnualDashboardBundle } from "@/lib/pl/annual-service";
 import { getCompanyTargetGrossProfitRate, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
 import { getUnassignedPersonalProfitRows } from "@/lib/pl/unassigned-profit-service";
@@ -10,6 +11,7 @@ export type ExecutiveDashboardBundle = {
   fiscalYear: number;
   fiscalStartMonth: number;
   evaluationPeriodId: string;
+  departmentId: string;
   companyTargetGrossProfitRate: number;
   monthlyTotals: {
     salesTotal: number;
@@ -49,6 +51,8 @@ export type ExecutiveDashboardBundle = {
     userId: string;
     employeeCode: string;
     userName: string;
+    departmentId: string;
+    departmentName: string;
     salesTotal: number;
     directLaborCost: number;
     fixedCostAllocation: number;
@@ -75,6 +79,7 @@ export type ExecutiveDashboardBundle = {
   }>;
   yearMonthOptions: string[];
   evaluationPeriodOptions: Array<{ id: string; name: string }>;
+  departmentOptions: Array<{ id: string; name: string }>;
   fiscalYearOptions: Array<{ fiscalYear: number; label: string }>;
   fiscalStartMonthOptions: Array<{ month: number; label: string }>;
 };
@@ -95,25 +100,38 @@ export async function getExecutiveDashboardBundle(input?: {
   fiscalYear?: number;
   fiscalStartMonth?: number;
   evaluationPeriodId?: string;
+  departmentId?: string;
 }) : Promise<ExecutiveDashboardBundle> {
   const resolvedFiscalStartMonth = input?.fiscalStartMonth && input.fiscalStartMonth >= 1 && input.fiscalStartMonth <= 12 ? input.fiscalStartMonth : 4;
-  const yearMonthOptions = await getVisibleYearMonthOptions();
-  const resolvedYearMonth = input?.yearMonth ?? yearMonthOptions[0]?.yearMonth ?? "2026-03";
-  const resolvedFiscalYear = input?.fiscalYear ?? parseFiscalYearFromYearMonth(resolvedYearMonth, resolvedFiscalStartMonth);
   const evaluationPeriodOptions = await getEvaluationPeriodOptions();
   const resolvedEvaluationPeriodId = input?.evaluationPeriodId ?? evaluationPeriodOptions[0]?.id ?? "period-2025-h2";
+  const organization = await getOrganizationBundle();
+  const availableDepartmentIds = new Set(organization.departments.map((department) => department.id));
+  const resolvedDepartmentId = input?.departmentId && availableDepartmentIds.has(input.departmentId) ? input.departmentId : "";
+  const visibleTeamIds = resolvedDepartmentId
+    ? organization.teams.filter((team) => team.departmentId === resolvedDepartmentId).map((team) => team.id)
+    : undefined;
+  const yearMonthOptions = await getVisibleYearMonthOptions(visibleTeamIds);
+  const resolvedYearMonth = input?.yearMonth ?? yearMonthOptions[0]?.yearMonth ?? "2026-03";
+  const resolvedFiscalYear = input?.fiscalYear ?? parseFiscalYearFromYearMonth(resolvedYearMonth, resolvedFiscalStartMonth);
 
   const [monthlyRows, annualBundle, evaluationSummary, salaryBundle, companyTargetGrossProfitRate, unassignedEmployeeRows] = await Promise.all([
     getVisibleTeamMonthlySnapshots(resolvedYearMonth),
-    getAnnualDashboardBundle(resolvedFiscalYear, resolvedFiscalStartMonth),
+    getAnnualDashboardBundle(resolvedFiscalYear, resolvedFiscalStartMonth, visibleTeamIds),
     getAnnualEvaluationSummaryBundle(resolvedFiscalYear, resolvedFiscalStartMonth),
     getSalarySimulationBundle(resolvedEvaluationPeriodId),
     getCompanyTargetGrossProfitRate(resolvedYearMonth),
     getUnassignedPersonalProfitRows(resolvedYearMonth),
   ]);
 
-  const monthlySalesTotal = monthlyRows.reduce((sum, row) => sum + row.salesTotal, 0);
-  const monthlyFinalGrossProfit = monthlyRows.reduce((sum, row) => sum + row.finalGrossProfit, 0);
+  const departmentTeamIds = new Set(visibleTeamIds ?? organization.teams.map((team) => team.id));
+  const filteredMonthlyRows = monthlyRows.filter((row) => departmentTeamIds.has(row.teamId));
+  const filteredUnassignedEmployeeRows = resolvedDepartmentId
+    ? unassignedEmployeeRows.filter((row) => row.departmentId === resolvedDepartmentId)
+    : unassignedEmployeeRows;
+
+  const monthlySalesTotal = filteredMonthlyRows.reduce((sum, row) => sum + row.salesTotal, 0) + filteredUnassignedEmployeeRows.reduce((sum, row) => sum + row.salesTotal, 0);
+  const monthlyFinalGrossProfit = filteredMonthlyRows.reduce((sum, row) => sum + row.finalGrossProfit, 0) + filteredUnassignedEmployeeRows.reduce((sum, row) => sum + row.finalGrossProfit, 0);
   const monthlyGrossProfitRate = monthlySalesTotal === 0 ? 0 : round2((monthlyFinalGrossProfit / monthlySalesTotal) * 100);
 
   return {
@@ -121,6 +139,7 @@ export async function getExecutiveDashboardBundle(input?: {
     fiscalYear: annualBundle.fiscalYear,
     fiscalStartMonth: annualBundle.fiscalStartMonth,
     evaluationPeriodId: resolvedEvaluationPeriodId,
+    departmentId: resolvedDepartmentId,
     companyTargetGrossProfitRate,
     monthlyTotals: {
       salesTotal: monthlySalesTotal,
@@ -147,7 +166,7 @@ export async function getExecutiveDashboardBundle(input?: {
       approvedCount: salaryBundle.rows.filter((row) => row.status === "APPROVED").length,
       appliedCount: salaryBundle.rows.filter((row) => row.status === "APPLIED").length,
     },
-    monthlyTeamRows: monthlyRows
+    monthlyTeamRows: filteredMonthlyRows
       .map((row) => ({
         teamId: row.teamId,
         teamName: row.teamName,
@@ -158,10 +177,12 @@ export async function getExecutiveDashboardBundle(input?: {
         varianceRate: round2(row.actualGrossProfitRate - companyTargetGrossProfitRate),
       }))
       .sort((a, b) => a.varianceRate - b.varianceRate),
-    unassignedEmployeeRows: unassignedEmployeeRows.map((row) => ({
+    unassignedEmployeeRows: filteredUnassignedEmployeeRows.map((row) => ({
       userId: row.userId,
       employeeCode: row.employeeCode,
       userName: row.userName,
+      departmentId: row.departmentId,
+      departmentName: row.departmentName,
       salesTotal: row.salesTotal,
       directLaborCost: row.directLaborCost,
       fixedCostAllocation: row.fixedCostAllocation,
@@ -188,6 +209,7 @@ export async function getExecutiveDashboardBundle(input?: {
     })),
     yearMonthOptions: yearMonthOptions.map((option) => option.yearMonth),
     evaluationPeriodOptions,
+    departmentOptions: [{ id: "", name: "全社" }, ...organization.departments.map((department) => ({ id: department.id, name: department.name }))],
     fiscalYearOptions: annualBundle.options,
     fiscalStartMonthOptions: annualBundle.fiscalStartMonthOptions,
   };

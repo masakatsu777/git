@@ -9,6 +9,8 @@ export type UnassignedPersonalProfitRow = {
   userId: string;
   employeeCode: string;
   userName: string;
+  departmentId: string;
+  departmentName: string;
   salesTotal: number;
   directLaborCost: number;
   fixedCostAllocation: number;
@@ -53,6 +55,7 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
         id: true,
         employeeCode: true,
         name: true,
+        department: { select: { id: true, name: true } },
         monthlyAssignments: {
           where: { yearMonth },
           select: { salesAmount: true },
@@ -94,6 +97,8 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
       userId: user.id,
       employeeCode: user.employeeCode,
       userName: user.name,
+      departmentId: user.department?.id ?? "",
+      departmentName: user.department?.name ?? "未設定",
       salesTotal: calculated.salesTotal,
       directLaborCost: calculated.directLaborCost,
       fixedCostAllocation: calculated.fixedCostAllocation,
