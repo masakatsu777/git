@@ -2,6 +2,7 @@ import { AssignmentTargetType, CostCategory, CostTargetType } from "@/generated/
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { getTeamFixedCostAllocationSummary } from "@/lib/pl/fixed-cost-service";
+import { getTeamLaborCostSummary } from "@/lib/pl/labor-cost-service";
 
 export type AssignmentDetail = {
   id: string;
@@ -45,6 +46,7 @@ export type TeamMonthlyDetailBundle = {
   assignments: AssignmentDetail[];
   outsourcingCosts: OutsourcingCostDetail[];
   teamExpenses: TeamExpenseDetail[];
+  directLaborCostTotal: number;
   fixedCostSummary: {
     totalCompanyFixedCost: number;
     totalHeadcount: number;
@@ -195,6 +197,7 @@ const fallbackBundle: TeamMonthlyDetailBundle = {
       remarks: "チーム会食",
     },
   ],
+  directLaborCostTotal: 910000,
   fixedCostSummary: fallbackSummary,
   salesTarget: 2500000,
   grossProfitTarget: 800000,
@@ -224,7 +227,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
   }
 
   try {
-    const [team, partners, fixedCostSummary] = await Promise.all([
+    const [team, partners, fixedCostSummary, laborCostSummary] = await Promise.all([
       prisma.team.findUniqueOrThrow({
         where: { id: teamId },
         select: {
@@ -291,7 +294,14 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
         },
       }),
       prisma.partner.findMany({
-        where: { status: "ACTIVE" },
+        where: {
+          status: "ACTIVE",
+          salesRateSetting: {
+            is: {
+              remarks: teamId,
+            },
+          },
+        },
         orderBy: { name: "asc" },
         select: {
           id: true,
@@ -310,6 +320,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
         },
       }),
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
+      getTeamLaborCostSummary(teamId, yearMonth),
     ]);
 
     const target = team.targets[0];
@@ -342,6 +353,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
         amount: num(row.amount),
         remarks: row.remarks ?? "",
       })),
+      directLaborCostTotal: laborCostSummary.total,
       fixedCostSummary,
       salesTarget: num(target?.salesTarget),
       grossProfitTarget: num(target?.grossProfitTarget),
