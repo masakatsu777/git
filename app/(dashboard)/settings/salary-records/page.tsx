@@ -4,9 +4,14 @@ import { SalaryRecordEditor } from "@/components/settings/salary-record-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
+import { getVisibleYearMonthOptions } from "@/lib/pl/service";
 import { getSalaryRecordBundle } from "@/lib/salary/salary-record-service";
 
-export default async function SalaryRecordsPage() {
+export default async function SalaryRecordsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ yearMonth?: string }>;
+}) {
   const user = await getSessionUser();
   const canView = hasPermission(user, PERMISSIONS.salaryRead);
   const canEdit = hasPermission(user, PERMISSIONS.salaryWrite);
@@ -29,7 +34,10 @@ export default async function SalaryRecordsPage() {
     );
   }
 
-  const bundle = await getSalaryRecordBundle("2026-03");
+  const params = await searchParams;
+  const yearMonthOptions = await getVisibleYearMonthOptions();
+  const selectedYearMonth = params.yearMonth ?? yearMonthOptions[0]?.yearMonth ?? "2026-03";
+  const bundle = await getSalaryRecordBundle(selectedYearMonth);
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef6ff_100%)] text-slate-900">
@@ -39,9 +47,28 @@ export default async function SalaryRecordsPage() {
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">社員コスト設定</h1>
-              <p className="mt-2 text-sm text-slate-300">2026-03 時点で有効な給与・社保・固定費を設定し、月次PLの人件費へ自動反映します。</p>
+              <p className="mt-2 text-sm text-slate-300">{bundle.yearMonth} 月末時点で有効な給与・社保・固定費を表示します。適用開始日の履歴を持ち、対象月に有効な最新レコードが月次PLの人件費へ反映されます。</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap items-end gap-3">
+              <form method="get" className="flex flex-wrap items-end gap-3">
+                <label className="text-sm text-slate-200">
+                  表示月
+                  <select
+                    name="yearMonth"
+                    defaultValue={bundle.yearMonth}
+                    className="mt-2 min-w-44 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  >
+                    {yearMonthOptions.map((option) => (
+                      <option key={option.yearMonth} value={option.yearMonth}>
+                        {option.yearMonth}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="rounded-full bg-brand-200 px-4 py-2 text-sm font-medium text-slate-950">
+                  月切替
+                </button>
+              </form>
               <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
@@ -49,19 +76,16 @@ export default async function SalaryRecordsPage() {
                 月次PLへ
               </Link>
               <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                売上
+                単価
               </Link>
             </div>
           </div>
         </header>
 
         <div className="mt-8">
-          <SalaryRecordEditor yearMonth={bundle.yearMonth} canEdit={canEdit} defaults={bundle.rows} />
+          <SalaryRecordEditor key={bundle.yearMonth} yearMonth={bundle.yearMonth} canEdit={canEdit} defaults={bundle.rows} />
         </div>
       </div>
     </main>
   );
 }
-
-
-
