@@ -4,6 +4,7 @@ import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type CompanyFixedCostRow = {
   id: string;
+  effectiveYearMonth: string;
   category: string;
   amount: number;
   allocationMethod: "HEADCOUNT";
@@ -23,8 +24,8 @@ export type TeamFixedCostAllocationSummary = {
 };
 
 export type SaveCompanyFixedCostsInput = {
-  yearMonth: string;
   rows: Array<{
+    effectiveYearMonth: string;
     category: string;
     amount: number;
   }>;
@@ -51,6 +52,31 @@ function round(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+function compareYearMonth(left: string, right: string) {
+  return left.localeCompare(right);
+}
+
+function fallbackRows(): CompanyFixedCostRow[] {
+  return [
+    {
+      id: "fixed-hq-rent",
+      effectiveYearMonth: "2026-03",
+      category: "家賃光熱費",
+      amount: 300000,
+      allocationMethod: "HEADCOUNT",
+    },
+  ];
+}
+
+function getLatestEffectiveYearMonth(rows: Array<{ yearMonth: string }>, targetYearMonth: string) {
+  const matched = rows
+    .map((row) => row.yearMonth)
+    .filter((yearMonth) => compareYearMonth(yearMonth, targetYearMonth) <= 0)
+    .sort((a, b) => b.localeCompare(a));
+
+  return matched[0] ?? null;
+}
+
 async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
   if (!hasDatabaseUrl()) {
     return {
@@ -73,7 +99,7 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
             isPrimary: true,
             startDate: { lte: end },
             OR: [{ endDate: null }, { endDate: { gte: start } }],
-            user: { status: UserStatus.ACTIVE },
+            user: { is: { status: UserStatus.ACTIVE } },
           },
           select: { userId: true },
         },
@@ -112,22 +138,51 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
 
 export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFixedCostRow[]> {
   if (!hasDatabaseUrl()) {
-    return [
-      {
-        id: "fixed-hq-rent",
-        category: "家賃光熱費",
-        amount: 300000,
-        allocationMethod: "HEADCOUNT",
-      },
-    ];
+    return fallbackRows();
   }
 
   try {
     const rows = await prisma.fixedCostSetting.findMany({
-      where: { yearMonth },
-      orderBy: { createdAt: "asc" },
+      where: { yearMonth: { lte: yearMonth } },
+      orderBy: [{ yearMonth: "desc" }, { createdAt: "asc" }],
       select: {
         id: true,
+        yearMonth: true,
+        category: true,
+        amount: true,
+      },
+    });
+
+    const latestEffectiveYearMonth = getLatestEffectiveYearMonth(rows, yearMonth);
+    if (!latestEffectiveYearMonth) {
+      return [];
+    }
+
+    return rows
+      .filter((row) => row.yearMonth === latestEffectiveYearMonth)
+      .map((row) => ({
+        id: row.id,
+        effectiveYearMonth: row.yearMonth,
+        category: row.category,
+        amount: Number(row.amount),
+        allocationMethod: "HEADCOUNT",
+      }));
+  } catch {
+    return fallbackRows();
+  }
+}
+
+export async function getCompanyFixedCostSettings(): Promise<CompanyFixedCostRow[]> {
+  if (!hasDatabaseUrl()) {
+    return fallbackRows();
+  }
+
+  try {
+    const rows = await prisma.fixedCostSetting.findMany({
+      orderBy: [{ yearMonth: "desc" }, { createdAt: "asc" }],
+      select: {
+        id: true,
+        yearMonth: true,
         category: true,
         amount: true,
       },
@@ -135,32 +190,26 @@ export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFi
 
     return rows.map((row) => ({
       id: row.id,
+      effectiveYearMonth: row.yearMonth,
       category: row.category,
       amount: Number(row.amount),
       allocationMethod: "HEADCOUNT",
     }));
   } catch {
-    return [
-      {
-        id: "fixed-hq-rent",
-        category: "家賃光熱費",
-        amount: 300000,
-        allocationMethod: "HEADCOUNT",
-      },
-    ];
+    return fallbackRows();
   }
 }
 
 export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): Promise<CompanyFixedCostRow[]> {
   try {
     await prisma.$transaction(async (tx) => {
-      await tx.fixedCostAllocation.deleteMany({ where: { yearMonth: input.yearMonth } });
-      await tx.fixedCostSetting.deleteMany({ where: { yearMonth: input.yearMonth } });
+      await tx.fixedCostAllocation.deleteMany();
+      await tx.fixedCostSetting.deleteMany();
 
       if (input.rows.length > 0) {
         await tx.fixedCostSetting.createMany({
           data: input.rows.map((row) => ({
-            yearMonth: input.yearMonth,
+            yearMonth: row.effectiveYearMonth,
             category: row.category,
             amount: row.amount,
             allocationMethod: FixedCostAllocationMethod.HEADCOUNT,
@@ -171,13 +220,14 @@ export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): 
   } catch {
     return input.rows.map((row, index) => ({
       id: `preview-${index}`,
+      effectiveYearMonth: row.effectiveYearMonth,
       category: row.category,
       amount: row.amount,
       allocationMethod: "HEADCOUNT",
     }));
   }
 
-  return getCompanyFixedCosts(input.yearMonth);
+  return getCompanyFixedCostSettings();
 }
 
 export async function getPerPersonFixedCostAllocation(yearMonth: string): Promise<{

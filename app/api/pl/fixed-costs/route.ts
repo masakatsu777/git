@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getCompanyFixedCosts, saveCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
-import { recalculateAllTeamMonthlyPl } from "@/lib/pl/service";
+import { getCompanyFixedCosts, getCompanyFixedCostSettings, saveCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
+import { getVisibleYearMonthOptions, recalculateAllTeamMonthlyPl } from "@/lib/pl/service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   try {
     requirePermission(user, PERMISSIONS.plAllRead);
-    const rows = await getCompanyFixedCosts(yearMonth);
+    const rows = request.nextUrl.searchParams.get("yearMonth") ? await getCompanyFixedCosts(yearMonth) : await getCompanyFixedCostSettings();
     return NextResponse.json({ data: rows });
   } catch (error) {
     return NextResponse.json({ message: error instanceof Error ? error.message : "Failed to load fixed costs" }, { status: 403 });
@@ -30,22 +30,23 @@ export async function POST(request: NextRequest) {
   try {
     requirePermission(user, PERMISSIONS.masterWrite);
     const body = (await request.json()) as Record<string, unknown>;
-    const yearMonth = String(body.yearMonth ?? "");
     const rows = Array.isArray(body.rows)
       ? body.rows.map((row, index) => {
           const item = row as Record<string, unknown>;
           return {
+            effectiveYearMonth: String(item.effectiveYearMonth ?? ""),
             category: String(item.category ?? `固定費-${index + 1}`),
             amount: toNumber(item.amount),
           };
-        })
+        }).filter((row) => row.effectiveYearMonth)
       : [];
 
-    const saved = await saveCompanyFixedCosts({ yearMonth, rows });
-    const snapshots = await recalculateAllTeamMonthlyPl(yearMonth);
+    const saved = await saveCompanyFixedCosts({ rows });
+    const yearMonthOptions = await getVisibleYearMonthOptions();
+    const snapshots = await Promise.all(yearMonthOptions.map((option) => recalculateAllTeamMonthlyPl(option.yearMonth)));
 
     return NextResponse.json({
-      message: "全社固定費を保存し、全チームの月次PLを再計算しました",
+      message: "全社固定費設定を保存し、表示対象月の月次PLを再計算しました",
       data: saved,
       snapshots,
     });

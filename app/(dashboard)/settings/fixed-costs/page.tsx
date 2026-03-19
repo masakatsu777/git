@@ -4,11 +4,11 @@ import { CompanyFixedCostEditor } from "@/components/pl/company-fixed-cost-edito
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
+import { getCompanyFixedCostSettings } from "@/lib/pl/fixed-cost-service";
 
 export default async function FixedCostsPage() {
   const user = await getSessionUser();
-  const rows = await getCompanyFixedCosts("2026-03");
+  const rows = await getCompanyFixedCostSettings();
   const canEdit = hasPermission(user, PERMISSIONS.masterWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
 
@@ -20,7 +20,7 @@ export default async function FixedCostsPage() {
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">全社固定費設定</h1>
-              <p className="mt-2 text-sm text-slate-300">2026-03 の固定費を設定し、各チームへ人数比按分します。</p>
+              <p className="mt-2 text-sm text-slate-300">適用開始年月ごとに固定費を設定し、各月では有効な最新設定を人数比按分します。</p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/pl/monthly" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
@@ -42,15 +42,11 @@ export default async function FixedCostsPage() {
 
         <div className="mt-8">
           <CompanyFixedCostEditor
-            yearMonth="2026-03"
             canEdit={canEdit}
-            defaults={rows.map((row) => ({ id: row.id, category: row.category, amount: row.amount }))}
+            defaults={rows.map((row) => ({ id: row.id, effectiveYearMonth: row.effectiveYearMonth, category: row.category, amount: row.amount }))}
           />
         </div>
       </div>
     </main>
   );
 }
-
-
-
