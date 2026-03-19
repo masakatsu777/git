@@ -1,6 +1,6 @@
 import { UserStatus } from "@/generated/prisma";
 
-import { prisma } from "@/lib/prisma";
+import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type TeamLaborCostMember = {
   userId: string;
@@ -43,6 +43,42 @@ function sumMemberCost(record: {
 }
 
 export async function getTeamLaborCostSummary(teamId: string, yearMonth: string): Promise<TeamLaborCostSummary> {
+  if (!hasDatabaseUrl()) {
+    const fallbackMembers = teamId == "team-platform"
+      ? [
+          {
+            userId: "demo-leader",
+            userName: "主任 次郎",
+            baseSalary: 420000,
+            allowance: 30000,
+            socialInsurance: 70000,
+            otherFixedCost: 20000,
+            total: 540000,
+            hasSalaryRecord: true,
+          },
+          {
+            userId: "demo-member1",
+            userName: "開発 一郎",
+            baseSalary: 280000,
+            allowance: 20000,
+            socialInsurance: 50000,
+            otherFixedCost: 20000,
+            total: 370000,
+            hasSalaryRecord: true,
+          },
+        ]
+      : [];
+
+    return {
+      teamId,
+      yearMonth,
+      memberCount: fallbackMembers.length,
+      total: fallbackMembers.reduce((sum, member) => sum + member.total, 0),
+      members: fallbackMembers,
+      source: "fallback",
+    };
+  }
+
   try {
     const { start, end } = getMonthRange(yearMonth);
     const team = await prisma.team.findUniqueOrThrow({
@@ -54,7 +90,7 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
             isPrimary: true,
             startDate: { lte: end },
             OR: [{ endDate: null }, { endDate: { gte: start } }],
-            user: { status: UserStatus.ACTIVE },
+            user: { is: { status: UserStatus.ACTIVE } },
           },
           orderBy: { createdAt: "asc" },
           select: {

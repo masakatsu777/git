@@ -6,6 +6,7 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { canAccessTeam, hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getTeamMonthlyDetails } from "@/lib/pl/detail-service";
+import { calculateGrossProfit } from "@/lib/pl/calculations";
 import { getTeamMonthlySnapshot, getVisibleTeamOptions, getVisibleYearMonthOptions } from "@/lib/pl/service";
 
 const detailRows = [
@@ -40,6 +41,15 @@ export default async function MonthlyPlPage({
     getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.teamIds),
     getVisibleYearMonthOptions(teamId),
   ]);
+  const detailSnapshot = calculateGrossProfit({
+    salesTotal: details.assignments.reduce((sum, row) => sum + row.salesAmount, 0),
+    directLaborCost: details.directLaborCostTotal,
+    outsourcingCost: details.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
+    indirectCost: details.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
+    fixedCostAllocation: details.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
+    targetGrossProfitRate: snapshot.targetGrossProfitRate,
+  });
+
   const canEdit = hasPermission(user, PERMISSIONS.plTeamWrite);
   const canManageFixedCosts = hasPermission(user, PERMISSIONS.masterWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
@@ -170,11 +180,11 @@ export default async function MonthlyPlPage({
               yearMonth={snapshot.yearMonth}
               canEdit={canEdit}
               defaults={{
-                salesTotal: snapshot.salesTotal,
-                directLaborCost: snapshot.directLaborCost,
-                outsourcingCost: snapshot.outsourcingCost,
-                indirectCost: snapshot.indirectCost,
-                fixedCostAllocation: snapshot.fixedCostAllocation,
+                salesTotal: detailSnapshot.salesTotal,
+                directLaborCost: detailSnapshot.directLaborCost,
+                outsourcingCost: detailSnapshot.outsourcingCost,
+                indirectCost: detailSnapshot.indirectCost,
+                fixedCostAllocation: detailSnapshot.fixedCostAllocation,
               }}
             />
           </article>
@@ -188,7 +198,7 @@ export default async function MonthlyPlPage({
                     {detailRows.map(([label, key]) => (
                       <tr key={key} className="border-t border-stone-200 first:border-t-0">
                         <th className="w-1/2 bg-stone-50 px-4 py-4 font-medium text-stone-600">{label}</th>
-                        <td className="px-4 py-4 font-semibold text-stone-950">{formatCurrency(snapshot[key])} 円</td>
+                        <td className="px-4 py-4 font-semibold text-stone-950">{formatCurrency(detailSnapshot[key])} 円</td>
                       </tr>
                     ))}
                   </tbody>
@@ -201,16 +211,16 @@ export default async function MonthlyPlPage({
               <div className="mt-5 grid gap-4">
                 <div className="rounded-2xl bg-stone-50 px-4 py-4">
                   <p className="text-sm text-stone-500">目標粗利率</p>
-                  <p className="mt-2 text-2xl font-semibold">{snapshot.targetGrossProfitRate}%</p>
+                  <p className="mt-2 text-2xl font-semibold">{detailSnapshot.targetGrossProfitRate}%</p>
                 </div>
                 <div className="rounded-2xl bg-stone-50 px-4 py-4">
                   <p className="text-sm text-stone-500">実績粗利率</p>
-                  <p className="mt-2 text-2xl font-semibold">{snapshot.actualGrossProfitRate}%</p>
+                  <p className="mt-2 text-2xl font-semibold">{detailSnapshot.actualGrossProfitRate}%</p>
                 </div>
                 <div className="rounded-2xl bg-stone-50 px-4 py-4">
                   <p className="text-sm text-stone-500">差異</p>
-                  <p className={`mt-2 text-2xl font-semibold ${snapshot.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                    {snapshot.varianceRate >= 0 ? "+" : ""}{snapshot.varianceRate} pt
+                  <p className={`mt-2 text-2xl font-semibold ${detailSnapshot.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                    {detailSnapshot.varianceRate >= 0 ? "+" : ""}{detailSnapshot.varianceRate} pt
                   </p>
                 </div>
               </div>
