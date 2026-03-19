@@ -227,72 +227,73 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
   }
 
   try {
-    const [team, partners, fixedCostSummary, laborCostSummary] = await Promise.all([
-      prisma.team.findUniqueOrThrow({
-        where: { id: teamId },
-        select: {
-          id: true,
-          name: true,
-          assignments: {
-            where: { yearMonth },
-            orderBy: { createdAt: "asc" },
-            select: {
-              id: true,
-              targetType: true,
-              userId: true,
-              partnerId: true,
-              unitPrice: true,
-              salesAmount: true,
-              workRate: true,
-              remarks: true,
-              user: { select: { name: true } },
-              partner: { select: { name: true } },
-            },
+    const team = await prisma.team.findUniqueOrThrow({
+      where: { id: teamId },
+      select: {
+        id: true,
+        name: true,
+        assignments: {
+          where: { yearMonth },
+          orderBy: { createdAt: "asc" },
+          select: {
+            id: true,
+            targetType: true,
+            userId: true,
+            partnerId: true,
+            unitPrice: true,
+            salesAmount: true,
+            workRate: true,
+            remarks: true,
+            user: { select: { name: true } },
+            partner: { select: { name: true } },
           },
-          costs: {
-            where: { yearMonth, costCategory: CostCategory.OUTSOURCING },
-            orderBy: { createdAt: "asc" },
-            select: {
-              id: true,
-              partnerId: true,
-              amount: true,
-              remarks: true,
-              partner: { select: { name: true } },
-            },
+        },
+        costs: {
+          where: { yearMonth, costCategory: CostCategory.OUTSOURCING },
+          orderBy: { createdAt: "asc" },
+          select: {
+            id: true,
+            partnerId: true,
+            amount: true,
+            remarks: true,
+            partner: { select: { name: true } },
           },
-          indirectCosts: {
-            where: { yearMonth },
-            orderBy: { createdAt: "asc" },
-            select: { id: true, category: true, amount: true, remarks: true },
+        },
+        indirectCosts: {
+          where: { yearMonth },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, category: true, amount: true, remarks: true },
+        },
+        targets: {
+          where: { yearMonth },
+          take: 1,
+          select: {
+            salesTarget: true,
+            grossProfitTarget: true,
+            grossProfitRateTarget: true,
           },
-          targets: {
-            where: { yearMonth },
-            take: 1,
-            select: {
-              salesTarget: true,
-              grossProfitTarget: true,
-              grossProfitRateTarget: true,
-            },
-          },
-          memberships: {
-            where: { endDate: null },
-            select: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  employeeSalesRateSetting: {
-                    select: {
-                      unitPrice: true,
-                      defaultWorkRate: true,
-                    },
+        },
+        memberships: {
+          where: { endDate: null },
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                employeeSalesRateSetting: {
+                  select: {
+                    unitPrice: true,
+                    defaultWorkRate: true,
                   },
                 },
               },
             },
           },
         },
-      }),
+      },
+    });
+
+    const [partnersResult, fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
       prisma.partner.findMany({
         where: {
           status: "ACTIVE",
@@ -322,6 +323,24 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
       getTeamLaborCostSummary(teamId, yearMonth),
     ]);
+
+    if (partnersResult.status === "rejected") {
+      console.error("Failed to load partner options for monthly PL details", { teamId, yearMonth, error: partnersResult.reason });
+    }
+    if (fixedCostSummaryResult.status === "rejected") {
+      console.error("Failed to load fixed cost summary for monthly PL details", { teamId, yearMonth, error: fixedCostSummaryResult.reason });
+    }
+    if (laborCostSummaryResult.status === "rejected") {
+      console.error("Failed to load labor cost summary for monthly PL details", { teamId, yearMonth, error: laborCostSummaryResult.reason });
+    }
+
+    const partners = partnersResult.status === "fulfilled" ? partnersResult.value : [];
+    const fixedCostSummary = fixedCostSummaryResult.status === "fulfilled"
+      ? fixedCostSummaryResult.value
+      : { totalCompanyFixedCost: 0, totalHeadcount: 0, teamHeadcount: 0, allocations: [] };
+    const laborCostSummary = laborCostSummaryResult.status === "fulfilled"
+      ? laborCostSummaryResult.value
+      : { teamId, yearMonth, memberCount: 0, total: 0, members: [], source: "fallback" as const };
 
     const target = team.targets[0];
 
@@ -373,7 +392,8 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
       })),
       source: "database",
     };
-  } catch {
+  } catch (error) {
+    console.error("Failed to load monthly PL detail bundle", { teamId, yearMonth, error });
     return {
       ...fallbackBundle,
       teamId,

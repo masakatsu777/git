@@ -210,21 +210,36 @@ export async function getTeamMonthlySnapshot(teamId: string, yearMonth: string):
       });
     }
 
-    const [team, fixedCostSummary, laborCostSummary] = await Promise.all([
-      prisma.team.findUniqueOrThrow({
-        where: { id: teamId },
-        select: {
-          id: true,
-          name: true,
-          assignments: { where: { yearMonth }, select: { salesAmount: true } },
-          costs: { where: { yearMonth }, select: { amount: true, costCategory: true } },
-          indirectCosts: { where: { yearMonth }, select: { amount: true } },
-          targets: { where: { yearMonth }, select: { grossProfitRateTarget: true }, take: 1 },
-        },
-      }),
+    const team = await prisma.team.findUniqueOrThrow({
+      where: { id: teamId },
+      select: {
+        id: true,
+        name: true,
+        assignments: { where: { yearMonth }, select: { salesAmount: true } },
+        costs: { where: { yearMonth }, select: { amount: true, costCategory: true } },
+        indirectCosts: { where: { yearMonth }, select: { amount: true } },
+        targets: { where: { yearMonth }, select: { grossProfitRateTarget: true }, take: 1 },
+      },
+    });
+
+    const [fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
       getTeamLaborCostSummary(teamId, yearMonth),
     ]);
+
+    if (fixedCostSummaryResult.status === "rejected") {
+      console.error("Failed to load fixed cost summary for monthly snapshot", { teamId, yearMonth, error: fixedCostSummaryResult.reason });
+    }
+    if (laborCostSummaryResult.status === "rejected") {
+      console.error("Failed to load labor cost summary for monthly snapshot", { teamId, yearMonth, error: laborCostSummaryResult.reason });
+    }
+
+    const fixedCostSummary = fixedCostSummaryResult.status === "fulfilled"
+      ? fixedCostSummaryResult.value
+      : { totalCompanyFixedCost: 0, totalHeadcount: 0, teamHeadcount: 0, allocations: [] };
+    const laborCostSummary = laborCostSummaryResult.status === "fulfilled"
+      ? laborCostSummaryResult.value
+      : { teamId, yearMonth, memberCount: 0, total: 0, members: [], source: "fallback" as const };
 
     const salesTotal = team.assignments.reduce((total, row) => total + Number(row.salesAmount), 0);
     const directLaborCost = laborCostSummary.total;
@@ -243,7 +258,8 @@ export async function getTeamMonthlySnapshot(teamId: string, yearMonth: string):
     });
 
     return createSnapshot(team.id, team.name, yearMonth, "database", calculated);
-  } catch {
+  } catch (error) {
+    console.error("Failed to load team monthly snapshot", { teamId, yearMonth, error });
     const fallback = fallbackSnapshots.find((snapshot) => snapshot.teamId === teamId && snapshot.yearMonth === yearMonth);
     if (fallback) return fallback;
 

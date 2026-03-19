@@ -140,38 +140,14 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
       members,
       source: "database",
     };
-  } catch {
-    const fallbackMembers = teamId === "team-platform"
-      ? [
-          {
-            userId: "demo-leader",
-            userName: "主任 次郎",
-            baseSalary: 420000,
-            allowance: 30000,
-            socialInsurance: 70000,
-            otherFixedCost: 20000,
-            total: 540000,
-            hasSalaryRecord: true,
-          },
-          {
-            userId: "demo-member1",
-            userName: "開発 一郎",
-            baseSalary: 280000,
-            allowance: 20000,
-            socialInsurance: 50000,
-            otherFixedCost: 20000,
-            total: 370000,
-            hasSalaryRecord: true,
-          },
-        ]
-      : [];
-
+  } catch (error) {
+    console.error("Failed to load team labor cost summary", { teamId, yearMonth, error });
     return {
       teamId,
       yearMonth,
-      memberCount: fallbackMembers.length,
-      total: fallbackMembers.reduce((sum, member) => sum + member.total, 0),
-      members: fallbackMembers,
+      memberCount: 0,
+      total: 0,
+      members: [],
       source: "fallback",
     };
   }

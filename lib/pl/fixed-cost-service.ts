@@ -167,8 +167,9 @@ export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFi
         amount: Number(row.amount),
         allocationMethod: "HEADCOUNT",
       }));
-  } catch {
-    return fallbackRows();
+  } catch (error) {
+    console.error("Failed to load company fixed costs", { yearMonth, error });
+    return [];
   }
 }
 
@@ -195,8 +196,9 @@ export async function getCompanyFixedCostSettings(): Promise<CompanyFixedCostRow
       amount: Number(row.amount),
       allocationMethod: "HEADCOUNT",
     }));
-  } catch {
-    return fallbackRows();
+  } catch (error) {
+    console.error("Failed to load company fixed cost settings", { error });
+    return [];
   }
 }
 
@@ -217,7 +219,8 @@ export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): 
         });
       }
     });
-  } catch {
+  } catch (error) {
+    console.error("Failed to save company fixed costs", { error });
     return input.rows.map((row, index) => ({
       id: `preview-${index}`,
       effectiveYearMonth: row.effectiveYearMonth,
@@ -280,20 +283,13 @@ export async function getTeamFixedCostAllocationSummary(teamId: string, yearMont
       teamHeadcount,
       allocations,
     };
-  } catch {
+  } catch (error) {
+    console.error("Failed to load team fixed cost allocation summary", { teamId, yearMonth, error });
     return {
-      totalCompanyFixedCost: 300000,
-      totalHeadcount: 4,
-      teamHeadcount: teamId === "team-platform" ? 3 : 0,
-      allocations: [
-        {
-          id: "fixed-hq-rent",
-          category: "家賃光熱費",
-          companyAmount: 300000,
-          allocatedAmount: teamId === "team-platform" ? 225000 : 0,
-          allocationMethod: "HEADCOUNT",
-        },
-      ],
+      totalCompanyFixedCost: 0,
+      totalHeadcount: 0,
+      teamHeadcount: 0,
+      allocations: [],
     };
   }
 }
