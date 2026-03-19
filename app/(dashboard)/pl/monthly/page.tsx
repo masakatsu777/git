@@ -41,7 +41,7 @@ export default async function MonthlyPlPage({
     getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.teamIds),
     getVisibleYearMonthOptions(teamId),
   ]);
-  const detailSnapshot = calculateGrossProfit({
+  const effectiveSnapshot = calculateGrossProfit({
     salesTotal: details.assignments.reduce((sum, row) => sum + row.salesAmount, 0),
     directLaborCost: details.directLaborCostTotal,
     outsourcingCost: details.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
@@ -188,22 +188,22 @@ export default async function MonthlyPlPage({
                 teamId: snapshot.teamId,
                 yearMonth: snapshot.yearMonth,
                 defaults: {
-                  salesTotal: detailSnapshot.salesTotal,
-                  directLaborCost: detailSnapshot.directLaborCost,
-                  outsourcingCost: detailSnapshot.outsourcingCost,
-                  indirectCost: detailSnapshot.indirectCost,
-                  fixedCostAllocation: detailSnapshot.fixedCostAllocation,
+                  salesTotal: effectiveSnapshot.salesTotal,
+                  directLaborCost: effectiveSnapshot.directLaborCost,
+                  outsourcingCost: effectiveSnapshot.outsourcingCost,
+                  indirectCost: effectiveSnapshot.indirectCost,
+                  fixedCostAllocation: effectiveSnapshot.fixedCostAllocation,
                 },
               })}
               teamId={snapshot.teamId}
               yearMonth={snapshot.yearMonth}
               canEdit={canEdit}
               defaults={{
-                salesTotal: detailSnapshot.salesTotal,
-                directLaborCost: detailSnapshot.directLaborCost,
-                outsourcingCost: detailSnapshot.outsourcingCost,
-                indirectCost: detailSnapshot.indirectCost,
-                fixedCostAllocation: detailSnapshot.fixedCostAllocation,
+                salesTotal: effectiveSnapshot.salesTotal,
+                directLaborCost: effectiveSnapshot.directLaborCost,
+                outsourcingCost: effectiveSnapshot.outsourcingCost,
+                indirectCost: effectiveSnapshot.indirectCost,
+                fixedCostAllocation: effectiveSnapshot.fixedCostAllocation,
               }}
             />
           </article>
@@ -217,7 +217,7 @@ export default async function MonthlyPlPage({
                     {detailRows.map(([label, key]) => (
                       <tr key={key} className="border-t border-stone-200 first:border-t-0">
                         <th className="w-1/2 bg-stone-50 px-4 py-4 font-medium text-stone-600">{label}</th>
-                        <td className="px-4 py-4 font-semibold text-stone-950">{formatCurrency(detailSnapshot[key])} 円</td>
+                        <td className="px-4 py-4 font-semibold text-stone-950">{formatCurrency(effectiveSnapshot[key])} 円</td>
                       </tr>
                     ))}
                   </tbody>
@@ -230,16 +230,16 @@ export default async function MonthlyPlPage({
               <div className="mt-5 grid gap-4">
                 <div className="rounded-2xl bg-stone-50 px-4 py-4">
                   <p className="text-sm text-stone-500">目標粗利率</p>
-                  <p className="mt-2 text-2xl font-semibold">{detailSnapshot.targetGrossProfitRate}%</p>
+                  <p className="mt-2 text-2xl font-semibold">{effectiveSnapshot.targetGrossProfitRate}%</p>
                 </div>
                 <div className="rounded-2xl bg-stone-50 px-4 py-4">
                   <p className="text-sm text-stone-500">実績粗利率</p>
-                  <p className="mt-2 text-2xl font-semibold">{detailSnapshot.actualGrossProfitRate}%</p>
+                  <p className="mt-2 text-2xl font-semibold">{effectiveSnapshot.actualGrossProfitRate}%</p>
                 </div>
                 <div className="rounded-2xl bg-stone-50 px-4 py-4">
                   <p className="text-sm text-stone-500">差異</p>
-                  <p className={`mt-2 text-2xl font-semibold ${detailSnapshot.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                    {detailSnapshot.varianceRate >= 0 ? "+" : ""}{detailSnapshot.varianceRate} pt
+                  <p className={`mt-2 text-2xl font-semibold ${effectiveSnapshot.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                    {effectiveSnapshot.varianceRate >= 0 ? "+" : ""}{effectiveSnapshot.varianceRate} pt
                   </p>
                 </div>
               </div>
