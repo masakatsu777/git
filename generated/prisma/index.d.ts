@@ -31050,6 +31050,7 @@ export namespace Prisma {
   export type FixedCostSettingMinAggregateOutputType = {
     id: string | null
     yearMonth: string | null
+    endYearMonth: string | null
     category: string | null
     amount: number | null
     allocationMethod: $Enums.FixedCostAllocationMethod | null
@@ -31060,6 +31061,7 @@ export namespace Prisma {
   export type FixedCostSettingMaxAggregateOutputType = {
     id: string | null
     yearMonth: string | null
+    endYearMonth: string | null
     category: string | null
     amount: number | null
     allocationMethod: $Enums.FixedCostAllocationMethod | null
@@ -31070,6 +31072,7 @@ export namespace Prisma {
   export type FixedCostSettingCountAggregateOutputType = {
     id: number
     yearMonth: number
+    endYearMonth: number
     category: number
     amount: number
     allocationMethod: number
@@ -31090,6 +31093,7 @@ export namespace Prisma {
   export type FixedCostSettingMinAggregateInputType = {
     id?: true
     yearMonth?: true
+    endYearMonth?: true
     category?: true
     amount?: true
     allocationMethod?: true
@@ -31100,6 +31104,7 @@ export namespace Prisma {
   export type FixedCostSettingMaxAggregateInputType = {
     id?: true
     yearMonth?: true
+    endYearMonth?: true
     category?: true
     amount?: true
     allocationMethod?: true
@@ -31110,6 +31115,7 @@ export namespace Prisma {
   export type FixedCostSettingCountAggregateInputType = {
     id?: true
     yearMonth?: true
+    endYearMonth?: true
     category?: true
     amount?: true
     allocationMethod?: true
@@ -31207,6 +31213,7 @@ export namespace Prisma {
   export type FixedCostSettingGroupByOutputType = {
     id: string
     yearMonth: string
+    endYearMonth: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -31236,6 +31243,7 @@ export namespace Prisma {
   export type FixedCostSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     yearMonth?: boolean
+    endYearMonth?: boolean
     category?: boolean
     amount?: boolean
     allocationMethod?: boolean
@@ -31249,6 +31257,7 @@ export namespace Prisma {
   export type FixedCostSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     yearMonth?: boolean
+    endYearMonth?: boolean
     category?: boolean
     amount?: boolean
     allocationMethod?: boolean
@@ -31259,6 +31268,7 @@ export namespace Prisma {
   export type FixedCostSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     yearMonth?: boolean
+    endYearMonth?: boolean
     category?: boolean
     amount?: boolean
     allocationMethod?: boolean
@@ -31269,6 +31279,7 @@ export namespace Prisma {
   export type FixedCostSettingSelectScalar = {
     id?: boolean
     yearMonth?: boolean
+    endYearMonth?: boolean
     category?: boolean
     amount?: boolean
     allocationMethod?: boolean
@@ -31276,7 +31287,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type FixedCostSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "yearMonth" | "category" | "amount" | "allocationMethod" | "createdAt" | "updatedAt", ExtArgs["result"]["fixedCostSetting"]>
+  export type FixedCostSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "yearMonth" | "endYearMonth" | "category" | "amount" | "allocationMethod" | "createdAt" | "updatedAt", ExtArgs["result"]["fixedCostSetting"]>
   export type FixedCostSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | FixedCostSetting$allocationsArgs<ExtArgs>
     departmentAllocations?: boolean | FixedCostSetting$departmentAllocationsArgs<ExtArgs>
@@ -31294,6 +31305,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       yearMonth: string
+      endYearMonth: string | null
       category: string
       amount: number
       allocationMethod: $Enums.FixedCostAllocationMethod
@@ -31726,6 +31738,7 @@ export namespace Prisma {
   interface FixedCostSettingFieldRefs {
     readonly id: FieldRef<"FixedCostSetting", 'String'>
     readonly yearMonth: FieldRef<"FixedCostSetting", 'String'>
+    readonly endYearMonth: FieldRef<"FixedCostSetting", 'String'>
     readonly category: FieldRef<"FixedCostSetting", 'String'>
     readonly amount: FieldRef<"FixedCostSetting", 'Int'>
     readonly allocationMethod: FieldRef<"FixedCostSetting", 'FixedCostAllocationMethod'>
@@ -41399,6 +41412,7 @@ export namespace Prisma {
   export const FixedCostSettingScalarFieldEnum: {
     id: 'id',
     yearMonth: 'yearMonth',
+    endYearMonth: 'endYearMonth',
     category: 'category',
     amount: 'amount',
     allocationMethod: 'allocationMethod',
@@ -43719,6 +43733,7 @@ export namespace Prisma {
     NOT?: FixedCostSettingWhereInput | FixedCostSettingWhereInput[]
     id?: StringFilter<"FixedCostSetting"> | string
     yearMonth?: StringFilter<"FixedCostSetting"> | string
+    endYearMonth?: StringNullableFilter<"FixedCostSetting"> | string | null
     category?: StringFilter<"FixedCostSetting"> | string
     amount?: IntFilter<"FixedCostSetting"> | number
     allocationMethod?: EnumFixedCostAllocationMethodFilter<"FixedCostSetting"> | $Enums.FixedCostAllocationMethod
@@ -43731,6 +43746,7 @@ export namespace Prisma {
   export type FixedCostSettingOrderByWithRelationInput = {
     id?: SortOrder
     yearMonth?: SortOrder
+    endYearMonth?: SortOrderInput | SortOrder
     category?: SortOrder
     amount?: SortOrder
     allocationMethod?: SortOrder
@@ -43746,6 +43762,7 @@ export namespace Prisma {
     OR?: FixedCostSettingWhereInput[]
     NOT?: FixedCostSettingWhereInput | FixedCostSettingWhereInput[]
     yearMonth?: StringFilter<"FixedCostSetting"> | string
+    endYearMonth?: StringNullableFilter<"FixedCostSetting"> | string | null
     category?: StringFilter<"FixedCostSetting"> | string
     amount?: IntFilter<"FixedCostSetting"> | number
     allocationMethod?: EnumFixedCostAllocationMethodFilter<"FixedCostSetting"> | $Enums.FixedCostAllocationMethod
@@ -43758,6 +43775,7 @@ export namespace Prisma {
   export type FixedCostSettingOrderByWithAggregationInput = {
     id?: SortOrder
     yearMonth?: SortOrder
+    endYearMonth?: SortOrderInput | SortOrder
     category?: SortOrder
     amount?: SortOrder
     allocationMethod?: SortOrder
@@ -43776,6 +43794,7 @@ export namespace Prisma {
     NOT?: FixedCostSettingScalarWhereWithAggregatesInput | FixedCostSettingScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"FixedCostSetting"> | string
     yearMonth?: StringWithAggregatesFilter<"FixedCostSetting"> | string
+    endYearMonth?: StringNullableWithAggregatesFilter<"FixedCostSetting"> | string | null
     category?: StringWithAggregatesFilter<"FixedCostSetting"> | string
     amount?: IntWithAggregatesFilter<"FixedCostSetting"> | number
     allocationMethod?: EnumFixedCostAllocationMethodWithAggregatesFilter<"FixedCostSetting"> | $Enums.FixedCostAllocationMethod
@@ -46337,6 +46356,7 @@ export namespace Prisma {
   export type FixedCostSettingCreateInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -46349,6 +46369,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedCreateInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -46361,6 +46382,7 @@ export namespace Prisma {
   export type FixedCostSettingUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -46373,6 +46395,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -46385,6 +46408,7 @@ export namespace Prisma {
   export type FixedCostSettingCreateManyInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -46395,6 +46419,7 @@ export namespace Prisma {
   export type FixedCostSettingUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -46405,6 +46430,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -48686,6 +48712,7 @@ export namespace Prisma {
   export type FixedCostSettingCountOrderByAggregateInput = {
     id?: SortOrder
     yearMonth?: SortOrder
+    endYearMonth?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     allocationMethod?: SortOrder
@@ -48700,6 +48727,7 @@ export namespace Prisma {
   export type FixedCostSettingMaxOrderByAggregateInput = {
     id?: SortOrder
     yearMonth?: SortOrder
+    endYearMonth?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     allocationMethod?: SortOrder
@@ -48710,6 +48738,7 @@ export namespace Prisma {
   export type FixedCostSettingMinOrderByAggregateInput = {
     id?: SortOrder
     yearMonth?: SortOrder
+    endYearMonth?: SortOrder
     category?: SortOrder
     amount?: SortOrder
     allocationMethod?: SortOrder
@@ -57924,6 +57953,7 @@ export namespace Prisma {
   export type FixedCostSettingCreateWithoutDepartmentAllocationsInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -57935,6 +57965,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedCreateWithoutDepartmentAllocationsInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -57989,6 +58020,7 @@ export namespace Prisma {
   export type FixedCostSettingUpdateWithoutDepartmentAllocationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -58000,6 +58032,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedUpdateWithoutDepartmentAllocationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -58083,6 +58116,7 @@ export namespace Prisma {
   export type FixedCostSettingCreateWithoutAllocationsInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -58094,6 +58128,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedCreateWithoutAllocationsInput = {
     id?: string
     yearMonth: string
+    endYearMonth?: string | null
     category: string
     amount: number
     allocationMethod: $Enums.FixedCostAllocationMethod
@@ -58166,6 +58201,7 @@ export namespace Prisma {
   export type FixedCostSettingUpdateWithoutAllocationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod
@@ -58177,6 +58213,7 @@ export namespace Prisma {
   export type FixedCostSettingUncheckedUpdateWithoutAllocationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     yearMonth?: StringFieldUpdateOperationsInput | string
+    endYearMonth?: NullableStringFieldUpdateOperationsInput | string | null
     category?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
     allocationMethod?: EnumFixedCostAllocationMethodFieldUpdateOperationsInput | $Enums.FixedCostAllocationMethod

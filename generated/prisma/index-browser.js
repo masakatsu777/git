@@ -394,6 +394,7 @@ exports.Prisma.TeamIndirectCostScalarFieldEnum = {
 exports.Prisma.FixedCostSettingScalarFieldEnum = {
   id: 'id',
   yearMonth: 'yearMonth',
+  endYearMonth: 'endYearMonth',
   category: 'category',
   amount: 'amount',
   allocationMethod: 'allocationMethod',

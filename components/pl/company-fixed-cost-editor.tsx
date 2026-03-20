@@ -58,7 +58,7 @@ export function CompanyFixedCostEditor({ canEdit, defaults, departmentOptions }:
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">全社固定費設定</h2>
-          <p className="mt-1 text-sm text-slate-500">適用開始年月ごとに全社額を入力し、部署ごとの配賦額へ振り分けます。月次PLでは所属部署の配賦額を同部署人数で按分します。</p>
+          <p className="mt-1 text-sm text-slate-500">適用開始年月と終了年月ごとに全社額を入力し、部署ごとの配賦額へ振り分けます。月次PLでは有効期間内の所属部署配賦額を同部署人数で按分します。</p>
         </div>
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : null}
       </div>
@@ -70,8 +70,9 @@ export function CompanyFixedCostEditor({ canEdit, defaults, departmentOptions }:
 
           return (
             <div key={row.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="grid gap-3 sm:grid-cols-[150px_1fr_180px_120px]">
+              <div className="grid gap-3 sm:grid-cols-[140px_140px_1fr_180px_120px]">
                 <input type="month" value={row.effectiveYearMonth} disabled={!canEdit || isPending} onChange={(event) => setRows((current) => current.map((item) => item.id === row.id ? { ...item, effectiveYearMonth: event.target.value } : item))} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                <input type="month" value={row.effectiveEndYearMonth ?? ""} disabled={!canEdit || isPending} onChange={(event) => setRows((current) => current.map((item) => item.id === row.id ? { ...item, effectiveEndYearMonth: event.target.value || null } : item))} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                 <input type="text" value={row.category} disabled={!canEdit || isPending} onChange={(event) => setRows((current) => current.map((item) => item.id === row.id ? { ...item, category: event.target.value } : item))} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm" placeholder="例: 共通管理費" />
                 <input type="number" value={row.amount} disabled={!canEdit || isPending} onChange={(event) => setRows((current) => current.map((item) => item.id === row.id ? { ...item, amount: toNumber(event.target.value) } : item))} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm" placeholder="全社固定費総額" />
                 <button type="button" onClick={() => setRows((current) => current.filter((item) => item.id !== row.id))} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 px-3 py-2 text-xs text-rose-600">削除</button>
@@ -121,6 +122,7 @@ export function CompanyFixedCostEditor({ canEdit, defaults, departmentOptions }:
           onClick={() => setRows((current) => [...current, {
             id: uid(),
             effectiveYearMonth: "",
+            effectiveEndYearMonth: null,
             category: "全社固定費",
             amount: 0,
             allocationMethod: "HEADCOUNT",

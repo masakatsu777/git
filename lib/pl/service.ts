@@ -95,7 +95,7 @@ function getRollingYearMonthOptions() {
   const today = new Date();
   const values: string[] = [];
 
-  for (let offset = -6; offset <= 1; offset += 1) {
+  for (let offset = -12; offset <= 3; offset += 1) {
     const date = new Date(today.getFullYear(), today.getMonth() + offset, 1);
     values.push(formatYearMonth(date));
   }

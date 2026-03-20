@@ -11,6 +11,7 @@ export type DepartmentAllocationRow = {
 export type CompanyFixedCostRow = {
   id: string;
   effectiveYearMonth: string;
+  effectiveEndYearMonth: string | null;
   category: string;
   amount: number;
   allocationMethod: "HEADCOUNT";
@@ -38,6 +39,7 @@ export type TeamFixedCostAllocationSummary = {
 export type SaveCompanyFixedCostsInput = {
   rows: Array<{
     effectiveYearMonth: string;
+    effectiveEndYearMonth: string | null;
     category: string;
     amount: number;
     departmentAllocations: Array<{
@@ -77,6 +79,7 @@ function fallbackRows(): CompanyFixedCostRow[] {
     {
       id: "fixed-hq-rent",
       effectiveYearMonth: "2026-03",
+      effectiveEndYearMonth: null,
       category: "全社固定費",
       amount: 300000,
       allocationMethod: "HEADCOUNT",
@@ -94,13 +97,16 @@ function fallbackDepartmentOptions() {
   ];
 }
 
-function getLatestEffectiveYearMonth(rows: Array<{ yearMonth: string }>, targetYearMonth: string) {
-  const matched = rows
-    .map((row) => row.yearMonth)
-    .filter((yearMonth) => compareYearMonth(yearMonth, targetYearMonth) <= 0)
-    .sort((a, b) => b.localeCompare(a));
+function isYearMonthActive(startYearMonth: string, endYearMonth: string | null | undefined, targetYearMonth: string) {
+  if (compareYearMonth(startYearMonth, targetYearMonth) > 0) {
+    return false;
+  }
 
-  return matched[0] ?? null;
+  if (endYearMonth && compareYearMonth(targetYearMonth, endYearMonth) > 0) {
+    return false;
+  }
+
+  return true;
 }
 
 async function getDepartmentOptions() {
@@ -191,6 +197,7 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
 function toCompanyFixedCostRows(rows: Array<{
   id: string;
   yearMonth: string;
+  endYearMonth: string | null;
   category: string;
   amount: number;
   departmentAllocations: Array<{ departmentId: string; departmentName: string; amount: number }>;
@@ -198,6 +205,7 @@ function toCompanyFixedCostRows(rows: Array<{
   return rows.map((row) => ({
     id: row.id,
     effectiveYearMonth: row.yearMonth,
+    effectiveEndYearMonth: row.endYearMonth,
     category: row.category,
     amount: row.amount,
     allocationMethod: "HEADCOUNT",
@@ -207,16 +215,16 @@ function toCompanyFixedCostRows(rows: Array<{
 
 export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFixedCostRow[]> {
   if (!hasDatabaseUrl()) {
-    return fallbackRows();
+    return fallbackRows().filter((row) => isYearMonthActive(row.effectiveYearMonth, row.effectiveEndYearMonth, yearMonth));
   }
 
   try {
     const rows = await prisma.fixedCostSetting.findMany({
-      where: { yearMonth: { lte: yearMonth } },
       orderBy: [{ yearMonth: "desc" }, { createdAt: "asc" }],
       select: {
         id: true,
         yearMonth: true,
+        endYearMonth: true,
         category: true,
         amount: true,
         departmentAllocations: {
@@ -230,17 +238,13 @@ export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFi
       },
     });
 
-    const latestEffectiveYearMonth = getLatestEffectiveYearMonth(rows, yearMonth);
-    if (!latestEffectiveYearMonth) {
-      return [];
-    }
-
     return toCompanyFixedCostRows(
       rows
-        .filter((row) => row.yearMonth === latestEffectiveYearMonth)
+        .filter((row) => isYearMonthActive(row.yearMonth, row.endYearMonth, yearMonth))
         .map((row) => ({
           id: row.id,
           yearMonth: row.yearMonth,
+          endYearMonth: row.endYearMonth,
           category: row.category,
           amount: Number(row.amount),
           departmentAllocations: row.departmentAllocations.map((allocation) => ({
@@ -271,6 +275,7 @@ export async function getCompanyFixedCostSettingsBundle(): Promise<CompanyFixedC
         select: {
           id: true,
           yearMonth: true,
+          endYearMonth: true,
           category: true,
           amount: true,
           departmentAllocations: {
@@ -290,6 +295,7 @@ export async function getCompanyFixedCostSettingsBundle(): Promise<CompanyFixedC
       rows: toCompanyFixedCostRows(rows.map((row) => ({
         id: row.id,
         yearMonth: row.yearMonth,
+        endYearMonth: row.endYearMonth,
         category: row.category,
         amount: Number(row.amount),
         departmentAllocations: row.departmentAllocations.map((allocation) => ({
@@ -344,6 +350,7 @@ export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): 
       rows: input.rows.map((row, index) => ({
         id: `preview-${index}`,
         effectiveYearMonth: row.effectiveYearMonth,
+        effectiveEndYearMonth: row.effectiveEndYearMonth,
         category: row.category,
         amount: row.amount,
         allocationMethod: "HEADCOUNT",

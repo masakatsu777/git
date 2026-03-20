@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
           const item = row as Record<string, unknown>;
           return {
             effectiveYearMonth: String(item.effectiveYearMonth ?? ""),
+            effectiveEndYearMonth: item.effectiveEndYearMonth ? String(item.effectiveEndYearMonth) : null,
             category: String(item.category ?? `固定費-${index + 1}`),
             amount: toNumber(item.amount),
             departmentAllocations: Array.isArray(item.departmentAllocations)

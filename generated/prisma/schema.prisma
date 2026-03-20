@@ -490,6 +490,7 @@ model TeamIndirectCost {
 model FixedCostSetting {
   id                    String                          @id @default(cuid())
   yearMonth             String                          @map("year_month")
+  endYearMonth          String?                         @map("end_year_month")
   category              String
   amount                Int
   allocationMethod      FixedCostAllocationMethod       @map("allocation_method")
