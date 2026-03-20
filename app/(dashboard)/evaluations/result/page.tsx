@@ -5,9 +5,10 @@ import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service
 import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getSalaryResultDetailBundle } from "@/lib/salary-simulations/salary-simulation-service";
+import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 
 function formatCurrency(value: number) {
-  return `${value.toLocaleString("ja-JP")} 円`;
+  return formatCurrencyWithUnit(value);
 }
 
 function formatPercent(value: number) {
@@ -137,7 +138,7 @@ export default async function EvaluationResultPage({
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">新月額(参考)</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.finalSalaryReference)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.newSalary)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">差額</p><p className={`mt-3 text-2xl font-semibold ${diffAmount === 0 ? "text-slate-950" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{`${diffAmount > 0 ? "+" : ""}${diffAmount.toLocaleString("ja-JP")} 円`}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">差額</p><p className={`mt-3 text-2xl font-semibold ${diffAmount === 0 ? "text-slate-950" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(diffAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">昇給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.proposedRaiseAmount)}</p><p className="mt-1 text-sm text-slate-500">昇給率 {formatPercent(salaryRow.proposedRaiseRate)}</p></article>
               <div className="xl:col-span-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-700">
                 <p className="font-semibold text-slate-950">調整理由</p>

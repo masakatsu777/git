@@ -7,10 +7,8 @@ import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
 import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
+import { formatCurrency } from "@/lib/format/currency";
 
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default async function DashboardPage({
   searchParams,
@@ -41,15 +39,15 @@ export default async function DashboardPage({
 
   const summaryCards = showPersonalProfit
     ? [
-        { label: "個人売上", value: formatNumber(personalSummary?.salesTotal ?? 0), unit: "円" },
-        { label: "人件費", value: formatNumber(personalSummary?.directLaborCost ?? 0), unit: "円" },
-        { label: "固定費按分", value: formatNumber(personalSummary?.fixedCostAllocation ?? 0), unit: "円" },
-        { label: "最終粗利", value: formatNumber(personalSummary?.finalGrossProfit ?? 0), unit: "円" },
+        { label: "個人売上", value: formatCurrency(personalSummary?.salesTotal ?? 0), unit: "円" },
+        { label: "人件費", value: formatCurrency(personalSummary?.directLaborCost ?? 0), unit: "円" },
+        { label: "固定費按分", value: formatCurrency(personalSummary?.fixedCostAllocation ?? 0), unit: "円" },
+        { label: "最終粗利", value: formatCurrency(personalSummary?.finalGrossProfit ?? 0), unit: "円" },
       ]
     : [
-        { label: "売上合計", value: formatNumber(snapshots[0]?.salesTotal ?? 0), unit: "円" },
-        { label: "1次粗利", value: formatNumber(snapshots[0]?.grossProfit1 ?? 0), unit: "円" },
-        { label: "最終粗利", value: formatNumber(snapshots[0]?.finalGrossProfit ?? 0), unit: "円" },
+        { label: "売上合計", value: formatCurrency(snapshots[0]?.salesTotal ?? 0), unit: "円" },
+        { label: "1次粗利", value: formatCurrency(snapshots[0]?.grossProfit1 ?? 0), unit: "円" },
+        { label: "最終粗利", value: formatCurrency(snapshots[0]?.finalGrossProfit ?? 0), unit: "円" },
         { label: "粗利率差異", value: `${snapshots[0]?.varianceRate ?? 0}`, unit: "pt" },
       ];
 
@@ -190,8 +188,8 @@ export default async function DashboardPage({
                     personalSummary ? (
                       <tr className="border-t border-slate-200">
                         <td className="px-4 py-3 font-medium text-slate-950">{user.name}</td>
-                        <td className="px-4 py-3 text-slate-700">{formatNumber(personalSummary.salesTotal)}</td>
-                        <td className="px-4 py-3 text-slate-700">{formatNumber(personalSummary.fixedCostAllocation)}</td>
+                        <td className="px-4 py-3 text-slate-700">{formatCurrency(personalSummary.salesTotal)}</td>
+                        <td className="px-4 py-3 text-slate-700">{formatCurrency(personalSummary.fixedCostAllocation)}</td>
                         <td className="px-4 py-3 text-slate-700">{personalSummary.targetGrossProfitRate}%</td>
                         <td className="px-4 py-3 text-slate-700">{personalSummary.actualGrossProfitRate}%</td>
                         <td className={`px-4 py-3 font-semibold ${personalSummary.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
@@ -210,7 +208,7 @@ export default async function DashboardPage({
                           {row.teamName}
                         </Link>
                       </td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)}</td>
                       <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
                       <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
                       <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>

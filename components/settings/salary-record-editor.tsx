@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+import { formatCurrencyWithUnit } from "@/lib/format/currency";
+
 import type { SalaryRecordEditorRow } from "@/lib/salary/salary-record-service";
 
 type SalaryRecordEditorProps = {
@@ -127,7 +129,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
                   <td className="px-4 py-3">
                     <input type="number" value={row.otherFixedCost} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "otherFixedCost", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                   </td>
-                  <td className="px-4 py-3 font-semibold text-slate-950">{row.total.toLocaleString("ja-JP")} 円</td>
+                  <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.total)}</td>
                 </tr>
               ))}
             </tbody>
@@ -139,7 +141,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
           {isPending ? "処理中..." : "社員コストを保存"}
         </button>
-        <p className="text-sm text-slate-500">対象月の人件費合計: {total.toLocaleString("ja-JP")} 円</p>
+        <p className="text-sm text-slate-500">対象月の人件費合計: {formatCurrencyWithUnit(total)}</p>
       </div>
 
       {message ? <p className="mt-3 text-sm text-slate-600">{message}</p> : null}

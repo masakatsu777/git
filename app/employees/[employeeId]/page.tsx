@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { getCurrentViewer, canViewEmployeeDetail } from "@/lib/viewer-context";
 import { getEmployeeRecordByCode } from "@/lib/server/employee-records";
+import { formatCurrency, formatSignedCurrency } from "@/lib/format/currency";
 
 type EmployeeDetailPageProps = Readonly<{
   params: Promise<{
@@ -10,16 +11,12 @@ type EmployeeDetailPageProps = Readonly<{
   }>;
 }>;
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: "JPY",
-    maximumFractionDigits: 0,
-  }).format(value);
+function formatYen(value: number) {
+  return `￥${formatCurrency(value)}`;
 }
 
 function formatDelta(value: number) {
-  return `${value > 0 ? "+" : ""}${new Intl.NumberFormat("ja-JP").format(value)}`;
+  return formatSignedCurrency(value);
 }
 
 function formatDate(value: string) {
@@ -134,12 +131,12 @@ export default async function EmployeeDetailPage({ params }: EmployeeDetailPageP
             <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-brand-200">売上</p>
-                <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(employee.teamSummary.sales)}</p>
+                <p className="mt-3 text-2xl font-semibold text-white">{formatYen(employee.teamSummary.sales)}</p>
                 <p className="mt-2 text-sm text-slate-300">目標差分 {formatDelta(salesGap)} 円</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-brand-200">粗利</p>
-                <p className="mt-3 text-2xl font-semibold text-white">{formatCurrency(employee.teamSummary.grossProfit)}</p>
+                <p className="mt-3 text-2xl font-semibold text-white">{formatYen(employee.teamSummary.grossProfit)}</p>
                 <p className="mt-2 text-sm text-slate-300">目標差分 {formatDelta(grossProfitGap)} 円</p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-4">
@@ -156,19 +153,19 @@ export default async function EmployeeDetailPage({ params }: EmployeeDetailPageP
                   <div className="mt-4 space-y-3 text-sm text-slate-300">
                     <div className="flex items-center justify-between gap-4">
                       <span>直接原価</span>
-                      <span className="text-slate-100">{formatCurrency(employee.teamSummary.directCost)}</span>
+                      <span className="text-slate-100">{formatYen(employee.teamSummary.directCost)}</span>
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <span>間接費</span>
-                      <span className="text-slate-100">{formatCurrency(employee.teamSummary.indirectCost)}</span>
+                      <span className="text-slate-100">{formatYen(employee.teamSummary.indirectCost)}</span>
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <span>固定費配賦</span>
-                      <span className="text-slate-100">{formatCurrency(employee.teamSummary.fixedCostAllocation)}</span>
+                      <span className="text-slate-100">{formatYen(employee.teamSummary.fixedCostAllocation)}</span>
                     </div>
                     <div className="flex items-center justify-between gap-4 border-t border-white/10 pt-3">
                       <span>合計コスト</span>
-                      <span className="text-slate-100">{formatCurrency(employee.teamSummary.totalCost)}</span>
+                      <span className="text-slate-100">{formatYen(employee.teamSummary.totalCost)}</span>
                     </div>
                   </div>
                 </div>
@@ -186,11 +183,11 @@ export default async function EmployeeDetailPage({ params }: EmployeeDetailPageP
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <span>売上目標</span>
-                      <span className="text-slate-100">{formatCurrency(employee.teamSummary.salesTarget)}</span>
+                      <span className="text-slate-100">{formatYen(employee.teamSummary.salesTarget)}</span>
                     </div>
                     <div className="flex items-center justify-between gap-4">
                       <span>粗利目標</span>
-                      <span className="text-slate-100">{formatCurrency(employee.teamSummary.grossProfitTarget)}</span>
+                      <span className="text-slate-100">{formatYen(employee.teamSummary.grossProfitTarget)}</span>
                     </div>
                   </div>
                 </div>

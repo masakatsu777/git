@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 
+import { formatCurrency } from "@/lib/format/currency";
+
 type SalaryStructureBand = {
   code: string;
   name: string;
@@ -397,7 +399,7 @@ export function SalaryStructureEditor({ canEdit, defaults }: { canEdit: boolean;
                   <td className="px-3 py-3 font-medium text-slate-900">{selfBand.code}</td>
                   {synergyBands.map((synergyBand) => (
                     <td key={synergyBand.code} className="px-3 py-3 text-slate-700">
-                      ¥{(selfBand.amount + synergyBand.amount).toLocaleString("ja-JP")}
+                      ¥{formatCurrency(selfBand.amount + synergyBand.amount)}
                     </td>
                   ))}
                 </tr>

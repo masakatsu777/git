@@ -3,6 +3,8 @@
 import { startTransition, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+import { formatCurrencyWithUnit } from "@/lib/format/currency";
+
 type Option = {
   id: string;
   label: string;
@@ -313,7 +315,7 @@ export function MonthlyPlDetailEditor({
               </div>
             ))}
           </div>
-          <p className="mt-3 text-sm text-stone-500">売上合計: {assignmentSalesTotal.toLocaleString("ja-JP")} 円</p>
+          <p className="mt-3 text-sm text-stone-500">売上合計: {formatCurrencyWithUnit(assignmentSalesTotal)}</p>
         </section>
 
         <section className="rounded-3xl border border-stone-200 p-4">
@@ -351,7 +353,7 @@ export function MonthlyPlDetailEditor({
               </div>
             ))}
           </div>
-          <p className="mt-3 text-sm text-stone-500">外注費合計: {outsourcingTotal.toLocaleString("ja-JP")} 円</p>
+          <p className="mt-3 text-sm text-stone-500">外注費合計: {formatCurrencyWithUnit(outsourcingTotal)}</p>
         </section>
 
         <section className="rounded-3xl border border-stone-200 p-4">
@@ -372,7 +374,7 @@ export function MonthlyPlDetailEditor({
               </div>
             ))}
           </div>
-          <p className="mt-3 text-sm text-stone-500">チーム経費合計: {teamExpenseTotal.toLocaleString("ja-JP")} 円</p>
+          <p className="mt-3 text-sm text-stone-500">チーム経費合計: {formatCurrencyWithUnit(teamExpenseTotal)}</p>
         </section>
 
         <section className="rounded-3xl border border-stone-200 p-4">
@@ -389,7 +391,7 @@ export function MonthlyPlDetailEditor({
             </div>
             <div className="min-w-0 rounded-2xl bg-stone-50 px-3 py-4">
               <p className="text-xs text-stone-500">按分額</p>
-              <p className="mt-2 text-sm font-semibold sm:text-[15px]">{fixedTotal.toLocaleString("ja-JP")} 円</p>
+              <p className="mt-2 text-sm font-semibold sm:text-[15px]">{formatCurrencyWithUnit(fixedTotal)}</p>
             </div>
           </div>
           <div className="mt-4 space-y-2">
@@ -397,9 +399,9 @@ export function MonthlyPlDetailEditor({
               <div key={row.id} className="flex items-center justify-between rounded-2xl bg-stone-50 px-4 py-3 text-sm">
                 <div>
                   <p className="font-medium text-stone-800">{row.category}</p>
-                  <p className="text-stone-500">全社 {row.companyAmount.toLocaleString("ja-JP")} 円 / 人数比按分</p>
+                  <p className="text-stone-500">全社 {formatCurrencyWithUnit(row.companyAmount)} / 人数比按分</p>
                 </div>
-                <p className="font-semibold text-stone-950">{row.allocatedAmount.toLocaleString("ja-JP")} 円</p>
+                <p className="font-semibold text-stone-950">{formatCurrencyWithUnit(row.allocatedAmount)}</p>
               </div>
             ))}
           </div>
@@ -416,7 +418,7 @@ export function MonthlyPlDetailEditor({
           </div>
           <div className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
             <p className="text-sm font-medium text-stone-600">目標粗利額</p>
-            <p className="mt-2 text-xl font-semibold text-stone-950">{targetSummary.grossProfitTarget.toLocaleString("ja-JP")} 円</p>
+            <p className="mt-2 text-xl font-semibold text-stone-950">{formatCurrencyWithUnit(targetSummary.grossProfitTarget)}</p>
           </div>
         </div>
       </section>

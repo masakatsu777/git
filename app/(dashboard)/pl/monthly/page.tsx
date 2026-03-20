@@ -8,6 +8,7 @@ import { canAccessTeam, hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getTeamMonthlyDetails } from "@/lib/pl/detail-service";
 import { calculateGrossProfit } from "@/lib/pl/calculations";
+import { formatCurrency } from "@/lib/format/currency";
 import { getTeamMonthlySnapshot, getVisibleTeamOptions, getVisibleYearMonthOptions } from "@/lib/pl/service";
 
 const detailRows = [
@@ -21,9 +22,6 @@ const detailRows = [
   ["最終粗利", "finalGrossProfit"],
 ] as const;
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default async function MonthlyPlPage({
   searchParams,
@@ -56,8 +54,21 @@ export default async function MonthlyPlPage({
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
   const canManageUnassignedSales = user.role === "admin" || user.role === "president";
   const unassignedEmployeeIdSet = new Set(details.unassignedEmployeeOptions.map((option) => option.id));
-  const teamAssignments = details.assignments.filter((row) => !row.userId || !unassignedEmployeeIdSet.has(row.userId));
-  const unassignedAssignments = details.assignments.filter((row) => row.userId && unassignedEmployeeIdSet.has(row.userId));
+  const unassignedPartnerIdSet = new Set(details.unassignedPartnerOptions.map((option) => option.id));
+  const teamAssignments = details.assignments.filter((row) => {
+    if (row.targetType === "EMPLOYEE") {
+      return !row.userId || !unassignedEmployeeIdSet.has(row.userId);
+    }
+
+    return !row.partnerId || !unassignedPartnerIdSet.has(row.partnerId);
+  });
+  const unassignedAssignments = details.assignments.filter((row) => {
+    if (row.targetType === "EMPLOYEE") {
+      return Boolean(row.userId) && row.userId !== null && unassignedEmployeeIdSet.has(row.userId);
+    }
+
+    return Boolean(row.partnerId) && row.partnerId !== null && unassignedPartnerIdSet.has(row.partnerId);
+  });
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#f7f2e8_100%)] text-stone-900">
@@ -121,9 +132,14 @@ export default async function MonthlyPlPage({
                 ダッシュボードへ
               </Link>
               {canManageSalary ? (
-                <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                  社員コスト設定
-                </Link>
+                <>
+                  <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
+                    社員コスト設定
+                  </Link>
+                  <Link href="/settings/monthly-labor-adjustments" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
+                    変動人件費
+                  </Link>
+                </>
               ) : null}
               {canManageFixedCosts ? (
                 <>
@@ -199,6 +215,7 @@ export default async function MonthlyPlPage({
                 yearMonth={details.yearMonth}
                 canEdit={canManageUnassignedSales}
                 employeeOptions={details.unassignedEmployeeOptions}
+                partnerOptions={details.unassignedPartnerOptions}
                 defaults={unassignedAssignments.map((row) => ({
                   id: row.id,
                   targetType: row.targetType,

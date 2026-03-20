@@ -75,6 +75,9 @@ export default async function SalaryRecordsPage({
               <Link href="/pl/monthly" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 月次PLへ
               </Link>
+              <Link href="/settings/monthly-labor-adjustments" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
+                変動人件費
+              </Link>
               <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 単価
               </Link>

@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+import { formatCurrencyWithUnit } from "@/lib/format/currency";
+
 type FixedCostRow = {
   id: string;
   effectiveYearMonth: string;
@@ -81,7 +83,7 @@ export function CompanyFixedCostEditor({ canEdit, defaults }: CompanyFixedCostEd
         </button>
       </div>
 
-      <p className="mt-4 text-sm text-slate-500">登録中の固定費合計: {total.toLocaleString("ja-JP")} 円 / 配賦方式: 社員人数比</p>
+      <p className="mt-4 text-sm text-slate-500">登録中の固定費合計: {formatCurrencyWithUnit(total)} / 配賦方式: 社員人数比</p>
       {message ? <p className="mt-2 text-sm text-slate-600">{message}</p> : null}
     </section>
   );

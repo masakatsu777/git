@@ -9,10 +9,8 @@ import { AnnualTrendChart } from "@/components/pl/annual-trend-chart";
 import { AnnualDashboardExportButton } from "@/components/pl/annual-dashboard-export-button";
 import { getAnnualDashboardBundle } from "@/lib/pl/annual-service";
 import { getAnnualEvaluationSummaryBundle } from "@/lib/evaluations/annual-summary-service";
+import { formatCurrency } from "@/lib/format/currency";
 
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 function parseNumber(value?: string) {
   if (!value) return undefined;
@@ -142,14 +140,14 @@ export default async function AnnualPlPage({
         <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <p className="text-sm text-slate-500">年度売上合計</p>
-            <p className="mt-3 text-3xl font-semibold text-slate-950">{formatNumber(bundle.totals.salesTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
+            <p className="mt-3 text-3xl font-semibold text-slate-950">{formatCurrency(bundle.totals.salesTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
             <p className={`mt-2 text-sm font-medium ${bundle.totals.salesYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
               前年同期比 {bundle.totals.salesYoYRate >= 0 ? "+" : ""}{bundle.totals.salesYoYRate}%
             </p>
           </article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <p className="text-sm text-slate-500">年度最終粗利</p>
-            <p className="mt-3 text-3xl font-semibold text-slate-950">{formatNumber(bundle.totals.finalGrossProfit)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
+            <p className="mt-3 text-3xl font-semibold text-slate-950">{formatCurrency(bundle.totals.finalGrossProfit)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
             <p className={`mt-2 text-sm font-medium ${bundle.totals.grossProfitYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
               前年同期比 {bundle.totals.grossProfitYoYRate >= 0 ? "+" : ""}{bundle.totals.grossProfitYoYRate}%
             </p>
@@ -195,7 +193,7 @@ export default async function AnnualPlPage({
                 <div key={`${team.teamId}-sales`} className="rounded-2xl bg-slate-50 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-400">#{index + 1}</p>
                   <p className="mt-1 font-semibold text-slate-950"><span style={{ color: "#000000" }}>{team.teamName}</span></p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900">{formatNumber(team.salesTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
+                  <p className="mt-2 text-xl font-semibold text-slate-900">{formatCurrency(team.salesTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
                   <p className={`mt-1 text-sm font-medium ${team.salesYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>前年同期比 {team.salesYoYRate >= 0 ? "+" : ""}{team.salesYoYRate}%</p>
                 </div>
               ))}
@@ -209,7 +207,7 @@ export default async function AnnualPlPage({
                 <div key={`${team.teamId}-gross`} className="rounded-2xl bg-slate-50 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-400">#{index + 1}</p>
                   <p className="mt-1 font-semibold text-slate-950"><span style={{ color: "#000000" }}>{team.teamName}</span></p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900">{formatNumber(team.finalGrossProfit)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
+                  <p className="mt-2 text-xl font-semibold text-slate-900">{formatCurrency(team.finalGrossProfit)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
                   <p className={`mt-1 text-sm font-medium ${team.grossProfitYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>前年同期比 {team.grossProfitYoYRate >= 0 ? "+" : ""}{team.grossProfitYoYRate}%</p>
                 </div>
               ))}
@@ -264,9 +262,9 @@ export default async function AnnualPlPage({
                         {row.teamName}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                    <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
                     <td className={`px-4 py-3 font-semibold ${row.salesYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.salesYoYRate >= 0 ? "+" : ""}{row.salesYoYRate}%</td>
-                    <td className="px-4 py-3 text-slate-700">{formatNumber(row.finalGrossProfit)} 円</td>
+                    <td className="px-4 py-3 text-slate-700">{formatCurrency(row.finalGrossProfit)} 円</td>
                     <td className={`px-4 py-3 font-semibold ${row.grossProfitYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.grossProfitYoYRate >= 0 ? "+" : ""}{row.grossProfitYoYRate}%</td>
                     <td className="px-4 py-3 text-slate-700">{row.grossProfitRate}%</td>
                     <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
@@ -303,9 +301,9 @@ export default async function AnnualPlPage({
                 {bundle.teamComparisonRows.map((row) => (
                   <tr key={`team-comparison-${row.teamId}-${row.fiscalYear}`} className="border-t border-slate-200">
                     <td className="px-4 py-3 font-medium text-slate-950">{row.fiscalYear}年度</td>
-                    <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                    <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
                     <td className={`px-4 py-3 font-semibold ${row.salesYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.salesYoYRate >= 0 ? "+" : ""}{row.salesYoYRate}%</td>
-                    <td className="px-4 py-3 text-slate-700">{formatNumber(row.finalGrossProfit)} 円</td>
+                    <td className="px-4 py-3 text-slate-700">{formatCurrency(row.finalGrossProfit)} 円</td>
                     <td className={`px-4 py-3 font-semibold ${row.grossProfitYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.grossProfitYoYRate >= 0 ? "+" : ""}{row.grossProfitYoYRate}%</td>
                     <td className="px-4 py-3 text-slate-700">{row.grossProfitRate}%</td>
                     <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
@@ -346,9 +344,9 @@ export default async function AnnualPlPage({
                         {row.fiscalYear}年度
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                    <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
                     <td className={`px-4 py-3 font-semibold ${row.salesYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.salesYoYRate >= 0 ? "+" : ""}{row.salesYoYRate}%</td>
-                    <td className="px-4 py-3 text-slate-700">{formatNumber(row.finalGrossProfit)} 円</td>
+                    <td className="px-4 py-3 text-slate-700">{formatCurrency(row.finalGrossProfit)} 円</td>
                     <td className={`px-4 py-3 font-semibold ${row.grossProfitYoYRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.grossProfitYoYRate >= 0 ? "+" : ""}{row.grossProfitYoYRate}%</td>
                     <td className="px-4 py-3 text-slate-700">{row.grossProfitRate}%</td>
                     <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
@@ -384,11 +382,11 @@ export default async function AnnualPlPage({
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="text-sm text-slate-500">昇給案合計</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{formatNumber(evaluationSummary.proposedRaiseAmountTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">{formatCurrency(evaluationSummary.proposedRaiseAmountTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="text-sm text-slate-500">反映済合計</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{formatNumber(evaluationSummary.appliedRaiseAmountTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">{formatCurrency(evaluationSummary.appliedRaiseAmountTotal)}<span className="ml-2 text-sm font-medium text-slate-500">円</span></p>
               </div>
             </div>
             <div className="mt-5 rounded-2xl border border-slate-200 p-4">
@@ -437,7 +435,7 @@ export default async function AnnualPlPage({
                       <td className="px-4 py-3 text-slate-700">{period.finalizedCount} / {period.totalCount}</td>
                       <td className="px-4 py-3 text-slate-700">{period.averageFinalScore}</td>
                       <td className="px-4 py-3 text-slate-700">{Object.entries(period.ratingCounts).map(([rating, count]) => `${rating}:${count}`).join(" / ") || "-"}</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(period.proposedRaiseAmountTotal)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(period.proposedRaiseAmountTotal)} 円</td>
                       <td className="px-4 py-3 text-slate-700">{Object.entries(period.salarySimulationStatusCounts).map(([status, count]) => `${status}:${count}`).join(" / ") || "未作成"}</td>
                     </tr>
                   ))}

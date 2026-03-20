@@ -4,6 +4,8 @@ import { startTransition, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { formatCurrency } from "@/lib/format/currency";
+
 type MonthlyTargetRow = {
   teamId: string;
   teamName: string;
@@ -20,9 +22,6 @@ type MonthlyTargetRateEditorProps = {
   rows: MonthlyTargetRow[];
 };
 
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 function toNumber(value: string) {
   const parsed = Number(value);
@@ -124,9 +123,9 @@ export function MonthlyTargetRateEditor({ yearMonth, companyTargetGrossProfitRat
                     {row.teamName}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
                 <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
-                <td className="px-4 py-3 text-slate-700">{formatNumber(row.targetGrossProfitAmount)} 円</td>
+                <td className="px-4 py-3 text-slate-700">{formatCurrency(row.targetGrossProfitAmount)} 円</td>
                 <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
                 <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                   {row.varianceRate >= 0 ? '+' : ''}{row.varianceRate}pt

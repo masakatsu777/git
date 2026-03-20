@@ -1,4 +1,4 @@
-import { UserStatus } from "@/generated/prisma";
+import { CostCategory, CostTargetType, UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { getCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
@@ -181,6 +181,17 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
                 otherFixedCost: true,
               },
             },
+            monthlyCosts: {
+              where: {
+                yearMonth: resolvedYearMonth,
+                targetType: CostTargetType.EMPLOYEE,
+                costCategory: { in: [CostCategory.SALARY, CostCategory.OTHER] },
+              },
+              select: {
+                costCategory: true,
+                amount: true,
+              },
+            },
             teamMemberships: {
               where: {
                 isPrimary: true,
@@ -307,9 +318,11 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     const membershipStatus = row.user.teamMemberships.length === 0 ? "UNASSIGNED" : "ASSIGNED";
     const key = `${row.userId}:${row.teamId}`;
     const salaryRecord = row.user.salaryRecords[0];
-    const directLaborCost = salaryRecord
+    const overtimeRow = row.user.monthlyCosts.find((cost) => cost.costCategory === CostCategory.SALARY);
+    const otherRow = row.user.monthlyCosts.find((cost) => cost.costCategory === CostCategory.OTHER);
+    const directLaborCost = (salaryRecord
       ? toNumber(salaryRecord.baseSalary) + toNumber(salaryRecord.allowance) + toNumber(salaryRecord.socialInsurance) + toNumber(salaryRecord.otherFixedCost)
-      : 0;
+      : 0) + toNumber(overtimeRow?.amount) + toNumber(otherRow?.amount);
     const indirectCostAllocation = membershipStatus === "ASSIGNED" && teamContext.teamHeadcount > 0
       ? Math.round(teamContext.indirectCostTotal / teamContext.teamHeadcount)
       : 0;

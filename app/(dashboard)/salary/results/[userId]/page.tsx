@@ -5,6 +5,7 @@ import { getCareerDetailBundle } from "@/lib/skill-careers/career-detail-service
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getSalaryResultDetailBundle } from "@/lib/salary-simulations/salary-simulation-service";
+import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 
 export default async function SalaryResultDetailPage({
   params,
@@ -70,10 +71,10 @@ export default async function SalaryResultDetailPage({
         </section>
 
         <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">新月額(参考)</p><p className="mt-3 text-2xl font-semibold text-slate-950">{row.finalSalaryReference.toLocaleString("ja-JP")} 円</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{row.newSalary.toLocaleString("ja-JP")} 円</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">差額 / 差率</p><p className={`mt-3 text-2xl font-semibold ${diffAmount === 0 ? "text-slate-950" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{(diffAmount > 0 ? "+" : "") + diffAmount.toLocaleString("ja-JP")} 円</p><p className="mt-1 text-sm text-slate-500">{(diffRate > 0 ? "+" : "") + diffRate}%</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">昇給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{row.proposedRaiseAmount.toLocaleString("ja-JP")} 円</p><p className="mt-1 text-sm text-slate-500">昇給率 {row.proposedRaiseRate}%</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">新月額(参考)</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.newSalary)}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">差額 / 差率</p><p className={`mt-3 text-2xl font-semibold ${diffAmount === 0 ? "text-slate-950" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(diffAmount)}</p><p className="mt-1 text-sm text-slate-500">{(diffRate > 0 ? "+" : "") + diffRate}%</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">昇給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.proposedRaiseAmount)}</p><p className="mt-1 text-sm text-slate-500">昇給率 {row.proposedRaiseRate}%</p></article>
         </section>
 
         <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">

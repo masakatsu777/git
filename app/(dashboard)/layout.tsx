@@ -43,6 +43,10 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     items.push({ href: "/settings/rates", label: "単価" });
   }
 
+  if (hasPermission(user, PERMISSIONS.salaryRead)) {
+    items.push({ href: "/settings/monthly-labor-adjustments", label: "変動人件費" });
+  }
+
   if (hasPermission(user, PERMISSIONS.masterWrite)) {
     items.push(
       { href: "/settings/organization", label: "組織" },

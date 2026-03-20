@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import type { SalarySimulationBundle } from "@/lib/salary-simulations/salary-simulation-service";
+import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 
 type SalarySimulationEditorProps = {
   canEdit: boolean;
@@ -211,7 +212,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">昇給総額</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{totalRaise.toLocaleString("ja-JP")} 円</p>
+          <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalRaise)}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">理由未入力</p>
@@ -302,12 +303,12 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                   <td className="px-4 py-3 text-slate-700">{row.overallGradeName}</td>
                   <td className="px-4 py-3 text-slate-700">{row.selfGrowthGradeCode}</td>
                   <td className="px-4 py-3 text-slate-700">{row.synergyGradeCode}</td>
-                  <td className="px-4 py-3 text-slate-700">{row.selfGrowthBaseAmount.toLocaleString("ja-JP")} 円</td>
-                  <td className="px-4 py-3 text-slate-700">{row.synergyBaseAmount.toLocaleString("ja-JP")} 円</td>
-                  <td className="px-4 py-3 text-slate-700">{row.baseSalaryReference.toLocaleString("ja-JP")} 円</td>
+                  <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.selfGrowthBaseAmount)}</td>
+                  <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.synergyBaseAmount)}</td>
+                  <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.baseSalaryReference)}</td>
                   <td className="px-4 py-3 text-slate-700">{row.grossProfitAchievementRate}%</td>
                   <td className="px-4 py-3 text-slate-700">{row.grossProfitMultiplier}</td>
-                  <td className="px-4 py-3 font-semibold text-slate-950">{row.finalSalaryReference.toLocaleString("ja-JP")} 円</td>
+                  <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
                   <td className="px-4 py-3">
                     <input
                       type="number"
@@ -318,7 +319,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                     />
                   </td>
                   <td className={`px-4 py-3 font-semibold ${row.newSalary - row.finalSalaryReference === 0 ? "text-slate-700" : row.newSalary - row.finalSalaryReference > 0 ? "text-emerald-700" : "text-rose-700"}`}>
-                    {(row.newSalary - row.finalSalaryReference > 0 ? "+" : "") + (row.newSalary - row.finalSalaryReference).toLocaleString("ja-JP")} 円
+                    {formatSignedCurrencyWithUnit(row.newSalary - row.finalSalaryReference)}
                   </td>
                   <td className={`px-4 py-3 font-semibold ${row.newSalary - row.finalSalaryReference === 0 ? "text-slate-700" : row.newSalary - row.finalSalaryReference > 0 ? "text-emerald-700" : "text-rose-700"}`}>
                     {(row.finalSalaryReference === 0 ? 0 : round(((row.newSalary - row.finalSalaryReference) / row.finalSalaryReference) * 100)) > 0 ? "+" : ""}
@@ -342,9 +343,9 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                       {row.isWithinRecommendedRange ? "レンジ内" : "レンジ外"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">{row.currentSalary.toLocaleString("ja-JP")} 円</td>
+                  <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
                   <td className="px-4 py-3 text-slate-700">{row.proposedRaiseRate}%</td>
-                  <td className="px-4 py-3 text-slate-700">{row.proposedRaiseAmount.toLocaleString("ja-JP")} 円</td>
+                  <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.proposedRaiseAmount)}</td>
                   <td className="px-4 py-3 text-slate-700">{row.status}</td>
                 </tr>
               ))}

@@ -6,10 +6,8 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getExecutiveDashboardBundle } from "@/lib/executive/executive-dashboard-service";
+import { formatCurrency } from "@/lib/format/currency";
 
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 function parseNumber(value?: string) {
   if (!value) return undefined;
@@ -57,12 +55,12 @@ export default async function ExecutiveDashboardPage({
   }));
 
   const kpis = [
-    { label: `月次売上 (${bundle.yearMonth})`, value: formatNumber(bundle.monthlyTotals.salesTotal), unit: "円" },
-    { label: `月次最終粗利 (${bundle.yearMonth})`, value: formatNumber(bundle.monthlyTotals.finalGrossProfit), unit: "円" },
-    { label: `年度売上 (${bundle.fiscalYear}年度)`, value: formatNumber(bundle.annualTotals.salesTotal), unit: "円" },
-    { label: `年度最終粗利 (${bundle.fiscalYear}年度)`, value: formatNumber(bundle.annualTotals.finalGrossProfit), unit: "円" },
+    { label: `月次売上 (${bundle.yearMonth})`, value: formatCurrency(bundle.monthlyTotals.salesTotal), unit: "円" },
+    { label: `月次最終粗利 (${bundle.yearMonth})`, value: formatCurrency(bundle.monthlyTotals.finalGrossProfit), unit: "円" },
+    { label: `年度売上 (${bundle.fiscalYear}年度)`, value: formatCurrency(bundle.annualTotals.salesTotal), unit: "円" },
+    { label: `年度最終粗利 (${bundle.fiscalYear}年度)`, value: formatCurrency(bundle.annualTotals.finalGrossProfit), unit: "円" },
     { label: "評価確定数", value: `${bundle.evaluationTotals.finalizedCount} / ${bundle.evaluationTotals.totalCount}`, unit: "名" },
-    { label: "昇給案合計", value: formatNumber(bundle.salaryTotals.totalRaiseAmount), unit: "円" },
+    { label: "昇給案合計", value: formatCurrency(bundle.salaryTotals.totalRaiseAmount), unit: "円" },
   ];
 
   return (
@@ -208,7 +206,7 @@ export default async function ExecutiveDashboardPage({
                   {bundle.monthlyTeamRows.map((row) => (
                     <tr key={`${row.teamId}-${bundle.yearMonth}`} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">{row.teamName}</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
                       <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>
                       <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
                       <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.varianceRate >= 0 ? "+" : ""}{row.varianceRate}pt</td>
@@ -240,7 +238,7 @@ export default async function ExecutiveDashboardPage({
                     </div>
                     <div className="rounded-xl bg-white px-3 py-3">
                       <p className="text-slate-500">昇給案合計</p>
-                      <p className="mt-1 font-semibold text-slate-950">{formatNumber(row.proposedRaiseAmountTotal)} 円</p>
+                      <p className="mt-1 font-semibold text-slate-950">{formatCurrency(row.proposedRaiseAmountTotal)} 円</p>
                     </div>
                   </div>
                 </div>
@@ -277,10 +275,10 @@ export default async function ExecutiveDashboardPage({
                     <tr key={row.userId} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">{row.userName}<span className="ml-2 text-xs font-normal text-slate-500">{row.employeeCode}</span></td>
                       <td className="px-4 py-3 text-slate-700">{row.departmentName}</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.salesTotal)} 円</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.directLaborCost)} 円</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.fixedCostAllocation)} 円</td>
-                      <td className="px-4 py-3 text-slate-700">{formatNumber(row.finalGrossProfit)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(row.directLaborCost)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(row.fixedCostAllocation)} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrency(row.finalGrossProfit)} 円</td>
                       <td className="px-4 py-3 text-slate-700">{row.actualGrossProfitRate}%</td>
                       <td className={`px-4 py-3 font-semibold ${row.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{row.varianceRate >= 0 ? "+" : ""}{row.varianceRate}pt</td>
                     </tr>

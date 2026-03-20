@@ -64,6 +64,7 @@ export type TeamMonthlyDetailBundle = {
   grossProfitRateTarget: number;
   employeeOptions: PlDetailOption[];
   unassignedEmployeeOptions: PlDetailOption[];
+  unassignedPartnerOptions: PlDetailOption[];
   partnerOptions: PlDetailOption[];
   source: "database" | "fallback";
 };
@@ -209,6 +210,7 @@ const fallbackBundle: TeamMonthlyDetailBundle = {
     { id: "demo-member2", label: "開発 二郎", defaultUnitPrice: 780000, defaultWorkRate: 100 },
   ],
   unassignedEmployeeOptions: [],
+  unassignedPartnerOptions: [],
   partnerOptions: [{ id: "partner-001", label: "協力会社A", defaultUnitPrice: 700000, defaultWorkRate: 100, defaultOutsourceAmount: 620000 }],
   source: "fallback",
 };
@@ -301,7 +303,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
     const monthStart = new Date(year, month - 1, 1);
     const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
 
-    const [partnersResult, unassignedEmployeesResult, fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
+    const [partnersResult, unassignedEmployeesResult, unassignedPartnersResult, fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
       prisma.partner.findMany({
         where: {
           status: "ACTIVE",
@@ -354,6 +356,29 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
             },
           })
         : Promise.resolve([]),
+      includeUnassignedEmployeeOptions
+        ? prisma.partner.findMany({
+            where: {
+              status: "ACTIVE",
+              OR: [
+                { salesRateSetting: null },
+                { salesRateSetting: { is: { remarks: null } } },
+                { salesRateSetting: { is: { remarks: "" } } },
+              ],
+            },
+            orderBy: { name: "asc" },
+            select: {
+              id: true,
+              name: true,
+              salesRateSetting: {
+                select: {
+                  unitPrice: true,
+                  defaultWorkRate: true,
+                },
+              },
+            },
+          })
+        : Promise.resolve([]),
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
       getTeamLaborCostSummary(teamId, yearMonth),
     ]);
@@ -362,6 +387,9 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
     }
     if (unassignedEmployeesResult.status === "rejected") {
       console.error("Failed to load unassigned employee options for monthly PL details", { teamId, yearMonth, error: unassignedEmployeesResult.reason });
+    }
+    if (unassignedPartnersResult.status === "rejected") {
+      console.error("Failed to load unassigned partner options for monthly PL details", { teamId, yearMonth, error: unassignedPartnersResult.reason });
     }
     if (fixedCostSummaryResult.status === "rejected") {
       console.error("Failed to load fixed cost summary for monthly PL details", { teamId, yearMonth, error: fixedCostSummaryResult.reason });
@@ -372,6 +400,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
 
     const partners = partnersResult.status === "fulfilled" ? partnersResult.value : [];
     const unassignedEmployees = unassignedEmployeesResult.status === "fulfilled" ? unassignedEmployeesResult.value : [];
+    const unassignedPartners = unassignedPartnersResult.status === "fulfilled" ? unassignedPartnersResult.value : [];
     const fixedCostSummary = fixedCostSummaryResult.status === "fulfilled"
       ? fixedCostSummaryResult.value
       : { totalCompanyFixedCost: 0, totalHeadcount: 0, teamHeadcount: 0, allocations: [] };
@@ -425,6 +454,12 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
         label: row.name,
         defaultUnitPrice: num(row.employeeSalesRateSetting?.unitPrice),
         defaultWorkRate: num(row.employeeSalesRateSetting?.defaultWorkRate ?? 100),
+      })),
+      unassignedPartnerOptions: unassignedPartners.map((row) => ({
+        id: row.id,
+        label: row.name,
+        defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
+        defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
       })),
       partnerOptions: partners.map((row) => ({
         id: row.id,
@@ -676,7 +711,10 @@ export type SaveUnassignedMonthlySalesInput = {
   teamId: string;
   yearMonth: string;
   assignments: Array<{
+    targetType: "EMPLOYEE" | "PARTNER";
     userId: string | null;
+    partnerId: string | null;
+    partnerName: string;
     unitPrice: number;
     salesAmount: number;
     workRate: number;
@@ -702,7 +740,8 @@ export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySal
       select: { id: true, departmentId: true },
     });
 
-    const requestedUserIds = input.assignments.map((row) => row.userId).filter((value): value is string => Boolean(value));
+    const requestedUserIds = input.assignments.filter((row) => row.targetType === "EMPLOYEE").map((row) => row.userId).filter((value): value is string => Boolean(value));
+    const requestedPartnerIds = input.assignments.filter((row) => row.targetType === "PARTNER").map((row) => row.partnerId).filter((value): value is string => Boolean(value));
     const eligibleUsers = requestedUserIds.length === 0
       ? []
       : await prisma.user.findMany({
@@ -722,6 +761,21 @@ export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySal
         });
 
     const eligibleUserIds = new Set(eligibleUsers.map((user) => user.id));
+    const eligiblePartners = requestedPartnerIds.length === 0
+      ? []
+      : await prisma.partner.findMany({
+          where: {
+            id: { in: requestedPartnerIds },
+            status: "ACTIVE",
+            OR: [
+              { salesRateSetting: null },
+              { salesRateSetting: { is: { remarks: null } } },
+              { salesRateSetting: { is: { remarks: "" } } },
+            ],
+          },
+          select: { id: true },
+        });
+    const eligiblePartnerIds = new Set(eligiblePartners.map((partner) => partner.id));
 
     await prisma.$transaction(async (tx) => {
       if (team.departmentId) {
@@ -750,9 +804,30 @@ export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySal
         });
       }
 
+      const existingEligiblePartners = await tx.partner.findMany({
+        where: {
+          status: "ACTIVE",
+          OR: [
+            { salesRateSetting: null },
+            { salesRateSetting: { is: { remarks: null } } },
+            { salesRateSetting: { is: { remarks: "" } } },
+          ],
+        },
+        select: { id: true },
+      });
+
+      await tx.monthlyAssignment.deleteMany({
+        where: {
+          teamId: input.teamId,
+          yearMonth: input.yearMonth,
+          targetType: AssignmentTargetType.PARTNER,
+          partnerId: { in: existingEligiblePartners.map((partner) => partner.id) },
+        },
+      });
+
       if (input.assignments.length > 0) {
-        const rows = input.assignments
-          .filter((row): row is typeof row & { userId: string } => Boolean(row.userId) && eligibleUserIds.has(row.userId as string))
+        const employeeRows = input.assignments
+          .filter((row): row is typeof row & { userId: string } => row.targetType === "EMPLOYEE" && Boolean(row.userId) && eligibleUserIds.has(row.userId as string))
           .map((row) => ({
             targetType: AssignmentTargetType.EMPLOYEE,
             userId: row.userId,
@@ -764,6 +839,22 @@ export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySal
             workRate: row.workRate,
             remarks: row.remarks || null,
           }));
+
+        const partnerRows = input.assignments
+          .filter((row): row is typeof row & { partnerId: string } => row.targetType === "PARTNER" && Boolean(row.partnerId) && eligiblePartnerIds.has(row.partnerId as string))
+          .map((row) => ({
+            targetType: AssignmentTargetType.PARTNER,
+            userId: null,
+            partnerId: row.partnerId,
+            teamId: input.teamId,
+            yearMonth: input.yearMonth,
+            unitPrice: row.unitPrice,
+            salesAmount: row.salesAmount,
+            workRate: row.workRate,
+            remarks: row.remarks || null,
+          }));
+
+        const rows = [...employeeRows, ...partnerRows];
 
         if (rows.length > 0) {
           await tx.monthlyAssignment.createMany({ data: rows });

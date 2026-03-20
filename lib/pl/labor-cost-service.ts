@@ -1,4 +1,4 @@
-import { UserStatus } from "@/generated/prisma";
+import { CostCategory, CostTargetType, UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
@@ -9,6 +9,9 @@ export type TeamLaborCostMember = {
   allowance: number;
   socialInsurance: number;
   otherFixedCost: number;
+  overtimeAmount: number;
+  otherMonthlyAdjustment: number;
+  variableCostTotal: number;
   total: number;
   hasSalaryRecord: boolean;
 };
@@ -53,6 +56,9 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
             allowance: 30000,
             socialInsurance: 70000,
             otherFixedCost: 20000,
+            overtimeAmount: 0,
+            otherMonthlyAdjustment: 0,
+            variableCostTotal: 0,
             total: 540000,
             hasSalaryRecord: true,
           },
@@ -63,6 +69,9 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
             allowance: 20000,
             socialInsurance: 50000,
             otherFixedCost: 20000,
+            overtimeAmount: 0,
+            otherMonthlyAdjustment: 0,
+            variableCostTotal: 0,
             total: 370000,
             hasSalaryRecord: true,
           },
@@ -109,6 +118,17 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
                     otherFixedCost: true,
                   },
                 },
+                monthlyCosts: {
+                  where: {
+                    yearMonth,
+                    targetType: CostTargetType.EMPLOYEE,
+                    costCategory: { in: [CostCategory.SALARY, CostCategory.OTHER] },
+                  },
+                  select: {
+                    costCategory: true,
+                    amount: true,
+                  },
+                },
               },
             },
           },
@@ -118,7 +138,13 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
 
     const members = team.memberships.map(({ user }) => {
       const salaryRecord = user.salaryRecords[0];
-      const total = salaryRecord ? sumMemberCost(salaryRecord) : 0;
+      const overtimeRow = user.monthlyCosts.find((row) => row.costCategory === CostCategory.SALARY);
+      const otherRow = user.monthlyCosts.find((row) => row.costCategory === CostCategory.OTHER);
+      const fixedCostTotal = salaryRecord ? sumMemberCost(salaryRecord) : 0;
+      const overtimeAmount = overtimeRow ? toNumber(overtimeRow.amount) : 0;
+      const otherMonthlyAdjustment = otherRow ? toNumber(otherRow.amount) : 0;
+      const variableCostTotal = overtimeAmount + otherMonthlyAdjustment;
+      const total = fixedCostTotal + variableCostTotal;
 
       return {
         userId: user.id,
@@ -127,6 +153,9 @@ export async function getTeamLaborCostSummary(teamId: string, yearMonth: string)
         allowance: salaryRecord ? toNumber(salaryRecord.allowance) : 0,
         socialInsurance: salaryRecord ? toNumber(salaryRecord.socialInsurance) : 0,
         otherFixedCost: salaryRecord ? toNumber(salaryRecord.otherFixedCost) : 0,
+        overtimeAmount,
+        otherMonthlyAdjustment,
+        variableCostTotal,
         total,
         hasSalaryRecord: Boolean(salaryRecord),
       };

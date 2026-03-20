@@ -59,7 +59,10 @@ export async function POST(request: NextRequest) {
           ? body.assignments.map((row) => {
               const item = row as Record<string, unknown>;
               return {
+                targetType: item.targetType === "PARTNER" ? "PARTNER" : "EMPLOYEE",
                 userId: typeof item.userId === "string" ? item.userId : null,
+                partnerId: typeof item.partnerId === "string" ? item.partnerId : null,
+                partnerName: String(item.partnerName ?? ""),
                 unitPrice: toNumber(item.unitPrice),
                 salesAmount: toNumber(item.salesAmount),
                 workRate: toNumber(item.workRate),
@@ -126,8 +129,8 @@ export async function POST(request: NextRequest) {
             : `DB未接続のため前月(${previousYearMonth})コピーはプレビューのみです`
           : action === "saveUnassigned"
             ? result.persisted
-              ? "未所属社員売上を保存し、月次PLを自動再計算しました"
-              : "DB未接続のため未所属社員売上はプレビューのみ保持しました"
+              ? "未所属入力を保存し、月次PLを自動再計算しました"
+              : "DB未接続のため未所属入力はプレビューのみ保持しました"
             : result.persisted
               ? "明細を保存し、月次PLを自動再計算しました"
               : "DB未接続のためプレビューのみ保持しました",

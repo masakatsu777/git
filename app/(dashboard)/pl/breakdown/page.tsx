@@ -2,10 +2,8 @@ import Link from "next/link";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { getProfitBreakdownBundle } from "@/lib/pl/profit-breakdown-service";
+import { formatCurrencyWithUnit } from "@/lib/format/currency";
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("ja-JP").format(value);
-}
 
 export default async function ProfitBreakdownPage({
   searchParams,
@@ -125,7 +123,7 @@ export default async function ProfitBreakdownPage({
           ].map(([label, value]) => (
             <article key={label} className="rounded-[1.5rem] bg-white p-5 shadow-[0_18px_50px_rgba(41,37,36,0.08)]">
               <p className="text-sm text-stone-500">{label}</p>
-              <p className="mt-2 text-2xl font-semibold text-stone-950">{formatCurrency(Number(value))} 円</p>
+              <p className="mt-2 text-2xl font-semibold text-stone-950">{formatCurrencyWithUnit(Number(value))}</p>
             </article>
           ))}
         </section>
@@ -165,12 +163,12 @@ export default async function ProfitBreakdownPage({
                     <td className="px-4 py-3 text-stone-700">
                       {row.membershipStatus === "PARTNER" ? "-" : row.membershipStatus === "UNASSIGNED" ? "未所属" : "所属あり"}
                     </td>
-                    <td className="px-4 py-3 text-stone-700">{formatCurrency(row.salesTotal)} 円</td>
-                    <td className="px-4 py-3 text-stone-700">{formatCurrency(row.directLaborCost)} 円</td>
-                    <td className="px-4 py-3 text-stone-700">{formatCurrency(row.outsourcingCost)} 円</td>
-                    <td className="px-4 py-3 text-stone-700">{formatCurrency(row.indirectCostAllocation)} 円</td>
-                    <td className="px-4 py-3 text-stone-700">{formatCurrency(row.fixedCostAllocation)} 円</td>
-                    <td className={`px-4 py-3 font-semibold ${row.finalGrossProfit >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatCurrency(row.finalGrossProfit)} 円</td>
+                    <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.salesTotal)}</td>
+                    <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.directLaborCost)}</td>
+                    <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.outsourcingCost)}</td>
+                    <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.indirectCostAllocation)}</td>
+                    <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.fixedCostAllocation)}</td>
+                    <td className={`px-4 py-3 font-semibold ${row.finalGrossProfit >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatCurrencyWithUnit(row.finalGrossProfit)}</td>
                     <td className={`px-4 py-3 font-semibold ${row.grossProfitRate >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{row.grossProfitRate}%</td>
                   </tr>
                 ))}

@@ -6,6 +6,7 @@ import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getSalarySimulationBundle } from "@/lib/salary-simulations/salary-simulation-service";
+import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 
 export default async function SalaryResultsPage({
   searchParams,
@@ -52,7 +53,7 @@ export default async function SalaryResultsPage({
     action: row.overallGradeName,
     targetType: row.finalRating,
     targetId: row.teamName,
-    comment: `参考:${row.finalSalaryReference.toLocaleString("ja-JP")}円 / 決定:${row.newSalary.toLocaleString("ja-JP")}円 / 差額:${(row.newSalary - row.finalSalaryReference).toLocaleString("ja-JP")}円 / 理由:${row.adjustmentReason || "-"}`,
+    comment: `参考:${formatCurrencyWithUnit(row.finalSalaryReference)} / 決定:${formatCurrencyWithUnit(row.newSalary)} / 差額:${formatSignedCurrencyWithUnit(row.newSalary - row.finalSalaryReference)} / 理由:${row.adjustmentReason || "-"}`,
   }));
 
   return (
@@ -101,7 +102,7 @@ export default async function SalaryResultsPage({
           </div>
           <div className="rounded-[1.5rem] bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
             <p className="text-sm text-slate-500">昇給総額</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-950">{totalRaise.toLocaleString("ja-JP")} 円</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(totalRaise)}</p>
           </div>
         </section>
 
@@ -159,15 +160,15 @@ export default async function SalaryResultsPage({
                       <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
                       <td className="px-4 py-3 text-slate-700">{row.overallGradeName}</td>
                       <td className="px-4 py-3 text-slate-700">{row.finalRating}</td>
-                      <td className="px-4 py-3 text-slate-700">{row.finalSalaryReference.toLocaleString("ja-JP")} 円</td>
-                      <td className="px-4 py-3 font-semibold text-slate-950">{row.newSalary.toLocaleString("ja-JP")} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
+                      <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.newSalary)}</td>
                       <td className={`px-4 py-3 font-semibold ${diffAmount === 0 ? "text-slate-700" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>
-                        {(diffAmount > 0 ? "+" : "") + diffAmount.toLocaleString("ja-JP")} 円
+                        {formatSignedCurrencyWithUnit(diffAmount)}
                       </td>
                       <td className={`px-4 py-3 font-semibold ${diffAmount === 0 ? "text-slate-700" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>
                         {(diffRate > 0 ? "+" : "") + diffRate}%
                       </td>
-                      <td className="px-4 py-3 text-slate-700">{row.proposedRaiseAmount.toLocaleString("ja-JP")} 円</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.proposedRaiseAmount)}</td>
                       <td className="px-4 py-3 text-slate-700">{row.adjustmentReason || "-"}</td>
                       <td className="px-4 py-3">
                         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${row.status === "APPLIED" ? "bg-emerald-50 text-emerald-700" : row.status === "APPROVED" ? "bg-sky-50 text-sky-700" : "bg-slate-100 text-slate-700"}`}>
