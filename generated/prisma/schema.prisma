@@ -76,8 +76,9 @@ enum SalarySimulationStatus {
 }
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -152,15 +153,16 @@ model RolePermission {
 }
 
 model Department {
-  id        String       @id @default(cuid())
-  name      String
-  parentId  String?      @map("parent_id")
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime     @updatedAt @map("updated_at")
-  parent    Department?  @relation("DepartmentHierarchy", fields: [parentId], references: [id])
-  children  Department[] @relation("DepartmentHierarchy")
-  users     User[]
-  teams     Team[]
+  id                   String                          @id @default(cuid())
+  name                 String
+  parentId             String?                         @map("parent_id")
+  createdAt            DateTime                        @default(now()) @map("created_at")
+  updatedAt            DateTime                        @updatedAt @map("updated_at")
+  parent               Department?                     @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children             Department[]                    @relation("DepartmentHierarchy")
+  users                User[]
+  teams                Team[]
+  fixedCostAllocations DepartmentFixedCostAllocation[]
 
   @@map("departments")
 }
@@ -486,16 +488,31 @@ model TeamIndirectCost {
 }
 
 model FixedCostSetting {
-  id               String                    @id @default(cuid())
-  yearMonth        String                    @map("year_month")
-  category         String
-  amount           Int
-  allocationMethod FixedCostAllocationMethod @map("allocation_method")
-  createdAt        DateTime                  @default(now()) @map("created_at")
-  updatedAt        DateTime                  @updatedAt @map("updated_at")
-  allocations      FixedCostAllocation[]
+  id                    String                          @id @default(cuid())
+  yearMonth             String                          @map("year_month")
+  category              String
+  amount                Int
+  allocationMethod      FixedCostAllocationMethod       @map("allocation_method")
+  createdAt             DateTime                        @default(now()) @map("created_at")
+  updatedAt             DateTime                        @updatedAt @map("updated_at")
+  allocations           FixedCostAllocation[]
+  departmentAllocations DepartmentFixedCostAllocation[]
 
   @@map("fixed_cost_settings")
+}
+
+model DepartmentFixedCostAllocation {
+  id                 String           @id @default(cuid())
+  fixedCostSettingId String           @map("fixed_cost_setting_id")
+  departmentId       String           @map("department_id")
+  amount             Int
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  fixedCostSetting   FixedCostSetting @relation(fields: [fixedCostSettingId], references: [id], onDelete: Cascade)
+  department         Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([fixedCostSettingId, departmentId])
+  @@map("department_fixed_cost_allocations")
 }
 
 model FixedCostAllocation {

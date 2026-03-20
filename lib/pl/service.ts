@@ -473,6 +473,44 @@ export async function recalculateAllTeamMonthlyPl(yearMonth: string): Promise<Te
   return Promise.all(teams.map((team) => recalculateTeamMonthlyPl(team.id, yearMonth)));
 }
 
+export async function getDepartmentScopedTeamIds(teamIds: string[]): Promise<string[]> {
+  if (teamIds.length === 0) {
+    return [];
+  }
+
+  if (!hasDatabaseUrl()) {
+    return Array.from(new Set([...teamIds, ...fallbackSnapshots.map((snapshot) => snapshot.teamId)]));
+  }
+
+  try {
+    const baseTeams = await prisma.team.findMany({
+      where: {
+        id: { in: teamIds },
+        isActive: true,
+      },
+      select: { departmentId: true },
+    });
+
+    const departmentIds = Array.from(new Set(baseTeams.map((team) => team.departmentId).filter((value): value is string => Boolean(value))));
+    if (departmentIds.length === 0) {
+      return teamIds;
+    }
+
+    const scopedTeams = await prisma.team.findMany({
+      where: {
+        isActive: true,
+        departmentId: { in: departmentIds },
+      },
+      orderBy: { name: "asc" },
+      select: { id: true },
+    });
+
+    return scopedTeams.length > 0 ? scopedTeams.map((team) => team.id) : teamIds;
+  } catch {
+    return teamIds;
+  }
+}
+
 export async function getVisibleTeamOptions(teamIds?: string[]): Promise<VisibleTeamOption[]> {
   if (teamIds && teamIds.length === 0) {
     return [];

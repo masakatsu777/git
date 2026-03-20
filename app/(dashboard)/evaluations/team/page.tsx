@@ -6,7 +6,7 @@ import { getManagerReviewBundle } from "@/lib/evaluations/manager-review-service
 import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
-import { getVisibleTeamOptions } from "@/lib/pl/service";
+import { getDepartmentScopedTeamIds, getVisibleTeamOptions } from "@/lib/pl/service";
 
 export default async function TeamEvaluationPage({
   searchParams,
@@ -29,9 +29,11 @@ export default async function TeamEvaluationPage({
   }
   const periods = await getEvaluationPeriodOptions();
 
-  const requestedTeamId = params.teamId ?? user.teamIds[0] ?? "team-platform";
+  const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
+  const requestedTeamId = params.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
   const effectiveMemberId = user.role === "employee" ? user.id : params.memberId;
-  const canView = canViewManagerReview(user, requestedTeamId, effectiveMemberId);
+  const canView = canViewManagerReview(user, requestedTeamId, effectiveMemberId)
+    && (user.role !== "leader" || visibleTeamIds.includes(requestedTeamId));
 
   if (!canView) {
     return (
@@ -46,7 +48,7 @@ export default async function TeamEvaluationPage({
 
   const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId);
   const canEdit = canEditManagerReview(user, bundle.teamId) && bundle.periodStatus === "OPEN";
-  const teamOptions = user.role === "employee" ? [] : await getVisibleTeamOptions(user.role === "leader" ? undefined : user.teamIds);
+  const teamOptions = user.role === "employee" ? [] : await getVisibleTeamOptions(user.role === "leader" ? visibleTeamIds : user.teamIds);
   const selectedMemberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 

@@ -2,12 +2,24 @@ import { UserStatus, FixedCostAllocationMethod } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
+export type DepartmentAllocationRow = {
+  departmentId: string;
+  departmentName: string;
+  amount: number;
+};
+
 export type CompanyFixedCostRow = {
   id: string;
   effectiveYearMonth: string;
   category: string;
   amount: number;
   allocationMethod: "HEADCOUNT";
+  departmentAllocations: DepartmentAllocationRow[];
+};
+
+export type CompanyFixedCostSettingsBundle = {
+  rows: CompanyFixedCostRow[];
+  departmentOptions: Array<{ departmentId: string; departmentName: string }>;
 };
 
 export type TeamFixedCostAllocationSummary = {
@@ -28,12 +40,15 @@ export type SaveCompanyFixedCostsInput = {
     effectiveYearMonth: string;
     category: string;
     amount: number;
+    departmentAllocations: Array<{
+      departmentId: string;
+      amount: number;
+    }>;
   }>;
 };
 
 type HeadcountContext = {
   totalActiveHeadcount: number;
-  unassignedHeadcount: number;
   unassignedHeadcountByDepartment: Record<string, number>;
   headcounts: Array<{
     teamId: string;
@@ -62,10 +77,20 @@ function fallbackRows(): CompanyFixedCostRow[] {
     {
       id: "fixed-hq-rent",
       effectiveYearMonth: "2026-03",
-      category: "家賃光熱費",
+      category: "全社固定費",
       amount: 300000,
       allocationMethod: "HEADCOUNT",
+      departmentAllocations: [
+        { departmentId: "dept-dev", departmentName: "開発本部", amount: 300000 },
+      ],
     },
+  ];
+}
+
+function fallbackDepartmentOptions() {
+  return [
+    { departmentId: "dept-dev", departmentName: "開発本部" },
+    { departmentId: "dept-sales", departmentName: "営業本部" },
   ];
 }
 
@@ -78,11 +103,30 @@ function getLatestEffectiveYearMonth(rows: Array<{ yearMonth: string }>, targetY
   return matched[0] ?? null;
 }
 
+async function getDepartmentOptions() {
+  if (!hasDatabaseUrl()) {
+    return fallbackDepartmentOptions();
+  }
+
+  try {
+    const departments = await prisma.department.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    });
+
+    return departments.map((department) => ({
+      departmentId: department.id,
+      departmentName: department.name,
+    }));
+  } catch {
+    return fallbackDepartmentOptions();
+  }
+}
+
 async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
   if (!hasDatabaseUrl()) {
     return {
       totalActiveHeadcount: 4,
-      unassignedHeadcount: 1,
       unassignedHeadcountByDepartment: { "dept-dev": 1 },
       headcounts: [{ teamId: "team-platform", departmentId: "dept-dev", count: 3 }],
     };
@@ -129,7 +173,6 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
   }));
 
   const assignedHeadcount = headcounts.reduce((total, row) => total + row.count, 0);
-  const unassignedHeadcount = unassignedUsers.length;
   const unassignedHeadcountByDepartment = unassignedUsers.reduce<Record<string, number>>((map, user) => {
     if (!user.departmentId) {
       return map;
@@ -139,11 +182,27 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
   }, {});
 
   return {
-    totalActiveHeadcount: assignedHeadcount + unassignedHeadcount,
-    unassignedHeadcount,
+    totalActiveHeadcount: assignedHeadcount + unassignedUsers.length,
     unassignedHeadcountByDepartment,
     headcounts,
   };
+}
+
+function toCompanyFixedCostRows(rows: Array<{
+  id: string;
+  yearMonth: string;
+  category: string;
+  amount: number;
+  departmentAllocations: Array<{ departmentId: string; departmentName: string; amount: number }>;
+}>): CompanyFixedCostRow[] {
+  return rows.map((row) => ({
+    id: row.id,
+    effectiveYearMonth: row.yearMonth,
+    category: row.category,
+    amount: row.amount,
+    allocationMethod: "HEADCOUNT",
+    departmentAllocations: row.departmentAllocations,
+  }));
 }
 
 export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFixedCostRow[]> {
@@ -160,6 +219,14 @@ export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFi
         yearMonth: true,
         category: true,
         amount: true,
+        departmentAllocations: {
+          select: {
+            departmentId: true,
+            amount: true,
+            department: { select: { name: true } },
+          },
+          orderBy: { department: { name: "asc" } },
+        },
       },
     });
 
@@ -168,79 +235,129 @@ export async function getCompanyFixedCosts(yearMonth: string): Promise<CompanyFi
       return [];
     }
 
-    return rows
-      .filter((row) => row.yearMonth === latestEffectiveYearMonth)
-      .map((row) => ({
-        id: row.id,
-        effectiveYearMonth: row.yearMonth,
-        category: row.category,
-        amount: Number(row.amount),
-        allocationMethod: "HEADCOUNT",
-      }));
+    return toCompanyFixedCostRows(
+      rows
+        .filter((row) => row.yearMonth === latestEffectiveYearMonth)
+        .map((row) => ({
+          id: row.id,
+          yearMonth: row.yearMonth,
+          category: row.category,
+          amount: Number(row.amount),
+          departmentAllocations: row.departmentAllocations.map((allocation) => ({
+            departmentId: allocation.departmentId,
+            departmentName: allocation.department.name,
+            amount: Number(allocation.amount),
+          })),
+        })),
+    );
   } catch (error) {
     console.error("Failed to load company fixed costs", { yearMonth, error });
     return [];
   }
 }
 
-export async function getCompanyFixedCostSettings(): Promise<CompanyFixedCostRow[]> {
+export async function getCompanyFixedCostSettingsBundle(): Promise<CompanyFixedCostSettingsBundle> {
   if (!hasDatabaseUrl()) {
-    return fallbackRows();
+    return {
+      rows: fallbackRows(),
+      departmentOptions: fallbackDepartmentOptions(),
+    };
   }
 
   try {
-    const rows = await prisma.fixedCostSetting.findMany({
-      orderBy: [{ yearMonth: "desc" }, { createdAt: "asc" }],
-      select: {
-        id: true,
-        yearMonth: true,
-        category: true,
-        amount: true,
-      },
-    });
+    const [rows, departmentOptions] = await Promise.all([
+      prisma.fixedCostSetting.findMany({
+        orderBy: [{ yearMonth: "desc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          yearMonth: true,
+          category: true,
+          amount: true,
+          departmentAllocations: {
+            select: {
+              departmentId: true,
+              amount: true,
+              department: { select: { name: true } },
+            },
+            orderBy: { department: { name: "asc" } },
+          },
+        },
+      }),
+      getDepartmentOptions(),
+    ]);
 
-    return rows.map((row) => ({
-      id: row.id,
-      effectiveYearMonth: row.yearMonth,
-      category: row.category,
-      amount: Number(row.amount),
-      allocationMethod: "HEADCOUNT",
-    }));
+    return {
+      rows: toCompanyFixedCostRows(rows.map((row) => ({
+        id: row.id,
+        yearMonth: row.yearMonth,
+        category: row.category,
+        amount: Number(row.amount),
+        departmentAllocations: row.departmentAllocations.map((allocation) => ({
+          departmentId: allocation.departmentId,
+          departmentName: allocation.department.name,
+          amount: Number(allocation.amount),
+        })),
+      }))),
+      departmentOptions,
+    };
   } catch (error) {
     console.error("Failed to load company fixed cost settings", { error });
-    return [];
+    return {
+      rows: [],
+      departmentOptions: await getDepartmentOptions(),
+    };
   }
 }
 
-export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): Promise<CompanyFixedCostRow[]> {
+export async function saveCompanyFixedCosts(input: SaveCompanyFixedCostsInput): Promise<CompanyFixedCostSettingsBundle> {
   try {
     await prisma.$transaction(async (tx) => {
       await tx.fixedCostAllocation.deleteMany();
+      await tx.departmentFixedCostAllocation.deleteMany();
       await tx.fixedCostSetting.deleteMany();
 
-      if (input.rows.length > 0) {
-        await tx.fixedCostSetting.createMany({
-          data: input.rows.map((row) => ({
+      for (const row of input.rows) {
+        const created = await tx.fixedCostSetting.create({
+          data: {
             yearMonth: row.effectiveYearMonth,
             category: row.category,
             amount: row.amount,
             allocationMethod: FixedCostAllocationMethod.HEADCOUNT,
-          })),
+          },
+          select: { id: true },
         });
+
+        if (row.departmentAllocations.length > 0) {
+          await tx.departmentFixedCostAllocation.createMany({
+            data: row.departmentAllocations.map((allocation) => ({
+              fixedCostSettingId: created.id,
+              departmentId: allocation.departmentId,
+              amount: allocation.amount,
+            })),
+          });
+        }
       }
     });
   } catch (error) {
     console.error("Failed to save company fixed costs", { error });
-    return input.rows.map((row, index) => ({
-      id: `preview-${index}`,
-      effectiveYearMonth: row.effectiveYearMonth,
-      category: row.category,
-      amount: row.amount,
-      allocationMethod: "HEADCOUNT",
-    }));
+    return {
+      rows: input.rows.map((row, index) => ({
+        id: `preview-${index}`,
+        effectiveYearMonth: row.effectiveYearMonth,
+        category: row.category,
+        amount: row.amount,
+        allocationMethod: "HEADCOUNT",
+        departmentAllocations: row.departmentAllocations.map((allocation) => ({
+          departmentId: allocation.departmentId,
+          departmentName: allocation.departmentId,
+          amount: allocation.amount,
+        })),
+      })),
+      departmentOptions: await getDepartmentOptions(),
+    };
   }
 
-  return getCompanyFixedCostSettings();
+  return getCompanyFixedCostSettingsBundle();
 }
 
 export async function getPerPersonFixedCostAllocation(yearMonth: string): Promise<{
@@ -280,16 +397,22 @@ export async function getTeamFixedCostAllocationSummary(teamId: string, yearMont
         + (unassignedHeadcountByDepartment[team.departmentId] ?? 0)
       : totalActiveHeadcount;
 
-    const allocations = rows.map((row) => ({
-      id: row.id,
-      category: row.category,
-      companyAmount: row.amount,
-      allocatedAmount: scopeHeadcount === 0 ? 0 : round((row.amount * teamHeadcount) / scopeHeadcount),
-      allocationMethod: "HEADCOUNT" as const,
-    }));
+    const allocations = rows.map((row) => {
+      const departmentAmount = team?.departmentId
+        ? row.departmentAllocations.find((allocation) => allocation.departmentId === team.departmentId)?.amount ?? 0
+        : row.amount;
+
+      return {
+        id: row.id,
+        category: row.category,
+        companyAmount: departmentAmount,
+        allocatedAmount: scopeHeadcount === 0 ? 0 : round((departmentAmount * teamHeadcount) / scopeHeadcount),
+        allocationMethod: "HEADCOUNT" as const,
+      };
+    });
 
     return {
-      totalCompanyFixedCost: rows.reduce((total, row) => total + row.amount, 0),
+      totalCompanyFixedCost: allocations.reduce((total, row) => total + row.companyAmount, 0),
       totalHeadcount: scopeHeadcount,
       teamHeadcount,
       allocations,

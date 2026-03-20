@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getCompanyFixedCosts, getCompanyFixedCostSettings, saveCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
+import { getCompanyFixedCosts, getCompanyFixedCostSettingsBundle, saveCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
 import { getVisibleYearMonthOptions, recalculateAllTeamMonthlyPl } from "@/lib/pl/service";
 
 function toNumber(value: unknown) {
@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
 
   try {
     requirePermission(user, PERMISSIONS.plAllRead);
-    const rows = request.nextUrl.searchParams.get("yearMonth") ? await getCompanyFixedCosts(yearMonth) : await getCompanyFixedCostSettings();
-    return NextResponse.json({ data: rows });
+    const data = request.nextUrl.searchParams.get("yearMonth") ? await getCompanyFixedCosts(yearMonth) : await getCompanyFixedCostSettingsBundle();
+    return NextResponse.json({ data });
   } catch (error) {
     return NextResponse.json({ message: error instanceof Error ? error.message : "Failed to load fixed costs" }, { status: 403 });
   }
@@ -37,6 +37,15 @@ export async function POST(request: NextRequest) {
             effectiveYearMonth: String(item.effectiveYearMonth ?? ""),
             category: String(item.category ?? `固定費-${index + 1}`),
             amount: toNumber(item.amount),
+            departmentAllocations: Array.isArray(item.departmentAllocations)
+              ? item.departmentAllocations.map((allocation) => {
+                  const allocationItem = allocation as Record<string, unknown>;
+                  return {
+                    departmentId: String(allocationItem.departmentId ?? ""),
+                    amount: toNumber(allocationItem.amount),
+                  };
+                }).filter((allocation) => allocation.departmentId)
+              : [],
           };
         }).filter((row) => row.effectiveYearMonth)
       : [];

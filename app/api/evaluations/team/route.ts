@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
 import { getManagerReviewBundle, saveManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
+import { getDepartmentScopedTeamIds } from "@/lib/pl/service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 
 function toNumber(value: unknown) {
@@ -23,11 +24,16 @@ function normalizeEvidences(value: unknown) {
 
 export async function GET(request: NextRequest) {
   const user = await getSessionUser();
-  const requestedTeamId = request.nextUrl.searchParams.get("teamId") ?? user.teamIds[0] ?? "team-platform";
+  const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
+  const requestedTeamId = request.nextUrl.searchParams.get("teamId") ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
   const requestedMemberId = request.nextUrl.searchParams.get("memberId") ?? undefined;
   const effectiveMemberId = user.role === "employee" ? user.id : requestedMemberId;
 
   try {
+    if (user.role === "leader" && !visibleTeamIds.includes(requestedTeamId)) {
+      return NextResponse.json({ message: "同部署のチームのみ参照できます" }, { status: 403 });
+    }
+
     if (!canViewManagerReview(user, requestedTeamId, effectiveMemberId)) {
       return NextResponse.json({ message: "上長評価の閲覧権限がありません" }, { status: 403 });
     }
@@ -55,7 +61,11 @@ export async function POST(request: NextRequest) {
       items?: Array<Record<string, unknown>>;
     };
 
-    const teamId = String(body.teamId ?? user.teamIds[0] ?? "team-platform");
+    const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
+    const teamId = String(body.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform");
+    if (user.role === "leader" && !visibleTeamIds.includes(teamId)) {
+      return NextResponse.json({ message: "同部署のチームのみ参照できます" }, { status: 403 });
+    }
     if (!canEditManagerReview(user, teamId)) {
       return NextResponse.json({ message: "上長評価の入力権限がありません" }, { status: 403 });
     }

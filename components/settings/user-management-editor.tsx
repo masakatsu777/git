@@ -37,6 +37,7 @@ type CreateUserForm = {
 
 type TeamAssignmentForm = {
   userId: string;
+  departmentId: string;
   teamId: string;
   startDate: string;
 };
@@ -61,6 +62,7 @@ const emptyCreateForm: CreateUserForm = {
 
 const emptyAssignmentForm: TeamAssignmentForm = {
   userId: "",
+  departmentId: "",
   teamId: "",
   startDate: "",
 };
@@ -207,10 +209,22 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
   }
 
   function updateAssignmentForm<K extends keyof TeamAssignmentForm>(key: K, value: TeamAssignmentForm[K]) {
-    setAssignmentForm((current) => ({
-      ...current,
-      [key]: value,
-    }));
+    setAssignmentForm((current) => {
+      if (key === "departmentId") {
+        const nextDepartmentId = String(value);
+        const availableTeams = getTeamsForDepartment(nextDepartmentId);
+        const keepTeam = availableTeams.some((option) => option.teamId === current.teamId);
+        return {
+          ...current,
+          departmentId: nextDepartmentId,
+          teamId: keepTeam ? current.teamId : "",
+        };
+      }
+      return {
+        ...current,
+        [key]: value,
+      };
+    });
   }
 
 
@@ -605,7 +619,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
             {isPending ? "処理中..." : "所属変更"}
           </button>
         </div>
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <div className="mt-5 grid gap-4 md:grid-cols-4">
           <label className="text-sm text-slate-700">
             対象ユーザー
             <select value={assignmentForm.userId} disabled={!canEdit || isPending} onChange={(event) => updateAssignmentForm("userId", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
@@ -615,10 +629,19 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
             </select>
           </label>
           <label className="text-sm text-slate-700">
+            部署
+            <select value={assignmentForm.departmentId} disabled={!canEdit || isPending} onChange={(event) => updateAssignmentForm("departmentId", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
+              <option value="">選択してください</option>
+              {departmentOptions.map((option) => (
+                <option key={option.departmentId} value={option.departmentId}>{option.departmentName}</option>
+              ))}
+            </select>
+          </label>
+          <label className="text-sm text-slate-700">
             新所属チーム
             <select value={assignmentForm.teamId} disabled={!canEdit || isPending} onChange={(event) => updateAssignmentForm("teamId", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
               <option value="">選択してください</option>
-              {teamOptions.map((option) => (
+              {getTeamsForDepartment(assignmentForm.departmentId).map((option) => (
                 <option key={option.teamId} value={option.teamId}>{option.teamName}</option>
               ))}
             </select>
