@@ -34,6 +34,7 @@ export type SaveCompanyFixedCostsInput = {
 type HeadcountContext = {
   totalActiveHeadcount: number;
   unassignedHeadcount: number;
+  unassignedHeadcountByDepartment: Record<string, number>;
   headcounts: Array<{
     teamId: string;
     departmentId: string | null;
@@ -82,6 +83,7 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
     return {
       totalActiveHeadcount: 4,
       unassignedHeadcount: 1,
+      unassignedHeadcountByDepartment: { "dept-dev": 1 },
       headcounts: [{ teamId: "team-platform", departmentId: "dept-dev", count: 3 }],
     };
   }
@@ -116,7 +118,7 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
           },
         },
       },
-      select: { id: true },
+      select: { id: true, departmentId: true },
     }),
   ]);
 
@@ -128,10 +130,18 @@ async function getHeadcounts(yearMonth: string): Promise<HeadcountContext> {
 
   const assignedHeadcount = headcounts.reduce((total, row) => total + row.count, 0);
   const unassignedHeadcount = unassignedUsers.length;
+  const unassignedHeadcountByDepartment = unassignedUsers.reduce<Record<string, number>>((map, user) => {
+    if (!user.departmentId) {
+      return map;
+    }
+    map[user.departmentId] = (map[user.departmentId] ?? 0) + 1;
+    return map;
+  }, {});
 
   return {
     totalActiveHeadcount: assignedHeadcount + unassignedHeadcount,
     unassignedHeadcount,
+    unassignedHeadcountByDepartment,
     headcounts,
   };
 }
@@ -255,7 +265,7 @@ export async function getPerPersonFixedCostAllocation(yearMonth: string): Promis
 
 export async function getTeamFixedCostAllocationSummary(teamId: string, yearMonth: string): Promise<TeamFixedCostAllocationSummary> {
   try {
-    const [rows, { totalActiveHeadcount, headcounts }, team] = await Promise.all([
+    const [rows, { totalActiveHeadcount, headcounts, unassignedHeadcountByDepartment }, team] = await Promise.all([
       getCompanyFixedCosts(yearMonth),
       getHeadcounts(yearMonth),
       prisma.team.findUnique({
@@ -267,6 +277,7 @@ export async function getTeamFixedCostAllocationSummary(teamId: string, yearMont
     const teamHeadcount = headcounts.find((row) => row.teamId === teamId)?.count ?? 0;
     const scopeHeadcount = team?.departmentId
       ? headcounts.filter((row) => row.departmentId === team.departmentId).reduce((total, row) => total + row.count, 0)
+        + (unassignedHeadcountByDepartment[team.departmentId] ?? 0)
       : totalActiveHeadcount;
 
     const allocations = rows.map((row) => ({

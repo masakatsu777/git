@@ -241,6 +241,9 @@ export default async function MonthlyPlPage({
                   <p className={`mt-2 text-2xl font-semibold ${effectiveSnapshot.varianceRate >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                     {effectiveSnapshot.varianceRate >= 0 ? "+" : ""}{effectiveSnapshot.varianceRate} pt
                   </p>
+                  <p className={`mt-2 text-sm font-semibold ${effectiveSnapshot.varianceAmount >= 0 ? "text-emerald-700" : "text-rose-700"}`}>
+                    差異額 {effectiveSnapshot.varianceAmount >= 0 ? "+" : ""}{formatCurrency(effectiveSnapshot.varianceAmount)} 円
+                  </p>
                 </div>
               </div>
             </section>
