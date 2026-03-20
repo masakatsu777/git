@@ -14,22 +14,24 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as {
       userId?: string;
       teamId?: string;
+      startDate?: string;
     };
 
     const userId = String(body.userId ?? "").trim();
     const teamId = String(body.teamId ?? "").trim();
+    const startDate = String(body.startDate ?? "").trim();
 
-    if (!userId || !teamId) {
-      return NextResponse.json({ message: "対象ユーザーとチームを指定してください" }, { status: 400 });
+    if (!userId || !teamId || !startDate) {
+      return NextResponse.json({ message: "対象ユーザー、チーム、所属開始日を指定してください" }, { status: 400 });
     }
 
-    const result = await assignUserToTeam({ userId, teamId });
+    const result = await assignUserToTeam({ userId, teamId, startDate });
     await writeAuditLog({
       userId: user.id,
       action: "ASSIGN_USER_TEAM",
       resourceType: "user",
       resourceId: userId,
-      afterJson: { teamId, source: result.source },
+      afterJson: { teamId, startDate, source: result.source },
     });
 
     return NextResponse.json({ message: "チーム所属を更新しました" });

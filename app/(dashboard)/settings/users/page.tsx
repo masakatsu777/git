@@ -59,6 +59,7 @@ export default async function UsersPage({
             roleOptions={bundle.roleOptions}
             departmentOptions={bundle.departmentOptions}
             teamOptions={bundle.teamOptions}
+            membershipHistoryMap={bundle.membershipHistoryMap}
             initialDepartmentId={params.departmentId ?? ""}
             initialTeamId={params.teamId ?? ""}
             initialUnassignedOnly={params.unassigned === "1"}

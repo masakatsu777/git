@@ -1,4 +1,4 @@
-import { UserStatus } from "@/generated/prisma";
+import { Prisma, UserStatus } from "@/generated/prisma";
 import { SAMPLE_LOGIN_PASSWORD, createPasswordHash, verifyPassword } from "@/lib/auth/password";
 import type { UserMenuVisibility } from "@/lib/menu-visibility/menu-visibility-service";
 import { getUserMenuVisibilityMap, saveUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
@@ -38,11 +38,24 @@ export type UserTeamOption = {
   departmentId: string;
 };
 
+export type UserMembershipHistoryRow = {
+  membershipId: string;
+  teamId: string;
+  departmentName: string;
+  teamName: string;
+  startDate: string;
+  endDate: string;
+  startDateValue: string;
+  endDateValue: string;
+  isPrimary: boolean;
+};
+
 export type UserManagementBundle = {
   rows: UserManagementRow[];
   roleOptions: UserRoleOption[];
   departmentOptions: UserDepartmentOption[];
   teamOptions: UserTeamOption[];
+  membershipHistoryMap: Record<string, UserMembershipHistoryRow[]>;
   source: "database" | "fallback";
 };
 
@@ -53,6 +66,17 @@ function formatDate(date: Date) {
     day: "2-digit",
   }).format(date);
 }
+
+function formatDateInput(date: Date | null) {
+  if (!date) {
+    return "";
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 
 const fallbackBundle: UserManagementBundle = {
   rows: [
@@ -92,6 +116,21 @@ const fallbackBundle: UserManagementBundle = {
     { teamId: "team-platform", teamName: "プラットフォームチーム", departmentId: "dept-dev" },
     { teamId: "team-solution", teamName: "ソリューションチーム", departmentId: "dept-dev" },
   ],
+  membershipHistoryMap: {
+    "demo-admin": [
+      {
+        membershipId: "membership-demo-admin",
+        teamId: "team-platform",
+        departmentName: "開発本部",
+        teamName: "プラットフォームチーム",
+        startDate: "2024/04/01",
+        endDate: "現在",
+        startDateValue: "2024-04-01",
+        endDateValue: "",
+        isPrimary: true,
+      },
+    ],
+  },
   source: "fallback",
 };
 
@@ -114,10 +153,20 @@ export async function getUserManagementBundle(): Promise<UserManagementBundle> {
           role: { select: { id: true, code: true, name: true } },
           department: { select: { id: true, name: true } },
           teamMemberships: {
-            where: { isPrimary: true },
             orderBy: { startDate: "desc" },
-            take: 1,
-            select: { team: { select: { id: true, name: true } } },
+            select: {
+              id: true,
+              startDate: true,
+              endDate: true,
+              isPrimary: true,
+              team: {
+                select: {
+                  id: true,
+                  name: true,
+                  department: { select: { name: true } },
+                },
+              },
+            },
           },
         },
       }),
@@ -150,8 +199,8 @@ export async function getUserManagementBundle(): Promise<UserManagementBundle> {
         roleName: user.role.name,
         departmentId: user.department?.id ?? "",
         departmentName: user.department?.name ?? "-",
-        teamId: user.teamMemberships[0]?.team.id ?? "",
-        teamName: user.teamMemberships[0]?.team.name ?? "未所属",
+        teamId: user.teamMemberships.find((membership) => membership.isPrimary && !membership.endDate)?.team.id ?? user.teamMemberships[0]?.team.id ?? "",
+        teamName: user.teamMemberships.find((membership) => membership.isPrimary && !membership.endDate)?.team.name ?? user.teamMemberships[0]?.team.name ?? "未所属",
         status: user.status,
         menuVisibility: menuVisibilityMap[user.id],
       })),
@@ -161,6 +210,22 @@ export async function getUserManagementBundle(): Promise<UserManagementBundle> {
         departmentName: department.name,
       })),
       teamOptions: teams.map((team) => ({ teamId: team.id, teamName: team.name, departmentId: team.departmentId ?? "" })),
+      membershipHistoryMap: Object.fromEntries(
+        users.map((user) => [
+          user.id,
+          user.teamMemberships.map((membership) => ({
+            membershipId: membership.id,
+            teamId: membership.team.id,
+            departmentName: membership.team.department?.name ?? "-",
+            teamName: membership.team.name,
+            startDate: formatDate(membership.startDate),
+            endDate: membership.endDate ? formatDate(membership.endDate) : "現在",
+            startDateValue: formatDateInput(membership.startDate),
+            endDateValue: formatDateInput(membership.endDate),
+            isPrimary: membership.isPrimary,
+          })),
+        ]),
+      ),
       source: "database",
     };
   } catch {
@@ -304,7 +369,11 @@ export async function updateUserProfile(input: {
   }
 }
 
-export async function assignUserToTeam(input: { userId: string; teamId: string }) {
+export async function assignUserToTeam(input: { userId: string; teamId: string; startDate: string }) {
+  const membershipStartDate = new Date(`${input.startDate}T00:00:00`);
+  const previousEndDate = new Date(membershipStartDate);
+  previousEndDate.setDate(previousEndDate.getDate() - 1);
+
   try {
     await prisma.$transaction(async (tx) => {
       const team = await tx.team.findUnique({
@@ -341,7 +410,7 @@ export async function assignUserToTeam(input: { userId: string; teamId: string }
           where: { id: currentMembership.id },
           data: {
             isPrimary: false,
-            endDate: new Date(),
+            endDate: previousEndDate,
           },
         });
       }
@@ -350,7 +419,7 @@ export async function assignUserToTeam(input: { userId: string; teamId: string }
         data: {
           teamId: input.teamId,
           userId: input.userId,
-          startDate: new Date(),
+          startDate: membershipStartDate,
           isPrimary: true,
         },
       });
@@ -369,9 +438,13 @@ export async function createUser(input: {
   roleId: string;
   departmentId?: string;
   teamId?: string;
+  joinedAt: string;
+  membershipStartDate?: string;
   password: string;
 }) {
   const passwordHash = createPasswordHash(input.password);
+  const joinedAt = new Date(`${input.joinedAt}T00:00:00`);
+  const membershipStartDate = new Date(`${(input.membershipStartDate || input.joinedAt)}T00:00:00`);
 
   try {
     const user = await prisma.$transaction(async (tx) => {
@@ -383,7 +456,7 @@ export async function createUser(input: {
           passwordHash,
           roleId: input.roleId,
           departmentId: input.departmentId || null,
-          joinedAt: new Date(),
+          joinedAt,
           status: UserStatus.ACTIVE,
         },
       });
@@ -393,7 +466,7 @@ export async function createUser(input: {
           data: {
             userId: createdUser.id,
             teamId: input.teamId,
-            startDate: new Date(),
+            startDate: membershipStartDate,
             isPrimary: true,
           },
         });
@@ -405,5 +478,68 @@ export async function createUser(input: {
     return { success: true as const, source: "database" as const, userId: user.id };
   } catch {
     return { success: true as const, source: "fallback" as const, userId: `fallback-${input.employeeCode}` };
+  }
+}
+
+async function syncUserDepartmentFromActiveMembership(tx: Prisma.TransactionClient, userId: string) {
+  const today = new Date();
+  const activeMembership = await tx.teamMembership.findFirst({
+    where: {
+      userId,
+      isPrimary: true,
+      startDate: { lte: today },
+      OR: [{ endDate: null }, { endDate: { gte: today } }],
+    },
+    orderBy: { startDate: "desc" },
+    select: { team: { select: { departmentId: true } } },
+  });
+
+  await tx.user.update({
+    where: { id: userId },
+    data: { departmentId: activeMembership?.team.departmentId ?? null },
+  });
+}
+
+export async function updateMembershipHistory(input: { membershipId: string; startDate: string; endDate?: string }) {
+  const startDate = new Date(`${input.startDate}T00:00:00`);
+  const endDate = input.endDate ? new Date(`${input.endDate}T00:00:00`) : null;
+
+  if (Number.isNaN(startDate.getTime())) {
+    throw new Error("所属開始日が不正です。");
+  }
+
+  if (endDate && Number.isNaN(endDate.getTime())) {
+    throw new Error("所属終了日が不正です。");
+  }
+
+  if (endDate && endDate < startDate) {
+    throw new Error("所属終了日は所属開始日以降を指定してください。");
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const membership = await tx.teamMembership.findUnique({
+        where: { id: input.membershipId },
+        select: { id: true, userId: true },
+      });
+
+      if (!membership) {
+        throw new Error("所属履歴が見つかりません。");
+      }
+
+      await tx.teamMembership.update({
+        where: { id: input.membershipId },
+        data: { startDate, endDate },
+      });
+
+      await syncUserDepartmentFromActiveMembership(tx, membership.userId);
+    });
+
+    return { success: true as const, source: "database" as const };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    return { success: true as const, source: "fallback" as const };
   }
 }

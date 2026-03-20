@@ -18,6 +18,8 @@ export async function POST(request: NextRequest) {
       roleId?: string;
       departmentId?: string;
       teamId?: string;
+      joinedAt?: string;
+      membershipStartDate?: string;
       password?: string;
     };
 
@@ -27,20 +29,26 @@ export async function POST(request: NextRequest) {
     const roleId = String(body.roleId ?? "").trim();
     const departmentId = String(body.departmentId ?? "").trim();
     const teamId = String(body.teamId ?? "").trim();
+    const joinedAt = String(body.joinedAt ?? "").trim();
+    const membershipStartDate = String(body.membershipStartDate ?? "").trim();
     const password = String(body.password ?? "");
 
-    if (!employeeCode || !name || !email || !roleId || !password) {
-      return NextResponse.json({ message: "社員コード、氏名、メール、ロール、初期パスワードを入力してください。" }, { status: 400 });
+    if (!employeeCode || !name || !email || !roleId || !password || !joinedAt) {
+      return NextResponse.json({ message: "社員コード、氏名、メール、ロール、入社日、初期パスワードを入力してください。" }, { status: 400 });
     }
 
-    const result = await createUser({ employeeCode, name, email, roleId, departmentId, teamId, password });
+    if (teamId && !membershipStartDate) {
+      return NextResponse.json({ message: "初期所属チームを設定する場合は所属開始日を入力してください。" }, { status: 400 });
+    }
+
+    const result = await createUser({ employeeCode, name, email, roleId, departmentId, teamId, joinedAt, membershipStartDate, password });
 
     await writeAuditLog({
       userId: user.id,
       action: "CREATE_USER",
       resourceType: "user",
       resourceId: result.userId,
-      afterJson: { employeeCode, name, email, roleId, departmentId, teamId, source: result.source },
+      afterJson: { employeeCode, name, email, roleId, departmentId, teamId, joinedAt, membershipStartDate, source: result.source },
     });
 
     return NextResponse.json({

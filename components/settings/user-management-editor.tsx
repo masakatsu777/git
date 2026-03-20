@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type {
   UserDepartmentOption,
   UserManagementRow,
+  UserMembershipHistoryRow,
   UserRoleOption,
   UserTeamOption,
 } from "@/lib/users/user-management-service";
@@ -15,6 +16,7 @@ type UserManagementEditorProps = {
   roleOptions: UserRoleOption[];
   departmentOptions: UserDepartmentOption[];
   teamOptions: UserTeamOption[];
+  membershipHistoryMap: Record<string, UserMembershipHistoryRow[]>;
   initialDepartmentId?: string;
   initialTeamId?: string;
   initialUnassignedOnly?: boolean;
@@ -28,7 +30,21 @@ type CreateUserForm = {
   roleId: string;
   departmentId: string;
   teamId: string;
+  joinedAt: string;
+  membershipStartDate: string;
   password: string;
+};
+
+type TeamAssignmentForm = {
+  userId: string;
+  teamId: string;
+  startDate: string;
+};
+
+type MembershipEditForm = {
+  membershipId: string;
+  startDate: string;
+  endDate: string;
 };
 
 const emptyCreateForm: CreateUserForm = {
@@ -38,8 +54,31 @@ const emptyCreateForm: CreateUserForm = {
   roleId: "",
   departmentId: "",
   teamId: "",
+  joinedAt: "",
+  membershipStartDate: "",
   password: "",
 };
+
+const emptyAssignmentForm: TeamAssignmentForm = {
+  userId: "",
+  teamId: "",
+  startDate: "",
+};
+
+function buildMembershipEditMap(historyMap: Record<string, UserMembershipHistoryRow[]>) {
+  return Object.fromEntries(
+    Object.values(historyMap)
+      .flat()
+      .map((row) => [
+        row.membershipId,
+        {
+          membershipId: row.membershipId,
+          startDate: row.startDateValue,
+          endDate: row.endDateValue,
+        },
+      ]),
+  ) as Record<string, MembershipEditForm>;
+}
 
 type MenuVisibilityKey = keyof UserManagementRow["menuVisibility"];
 
@@ -47,7 +86,7 @@ function normalize(value: string) {
   return value.trim().toLowerCase();
 }
 
-export function UserManagementEditor({ rows, roleOptions, departmentOptions, teamOptions, initialDepartmentId = "", initialTeamId = "", initialUnassignedOnly = false, canEdit }: UserManagementEditorProps) {
+export function UserManagementEditor({ rows, roleOptions, departmentOptions, teamOptions, membershipHistoryMap, initialDepartmentId = "", initialTeamId = "", initialUnassignedOnly = false, canEdit }: UserManagementEditorProps) {
   const router = useRouter();
   const [selectedUserId, setSelectedUserId] = useState(rows[0]?.userId ?? "");
   const [password, setPassword] = useState("");
@@ -64,6 +103,13 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
     ...emptyCreateForm,
     roleId: roleOptions[0]?.roleId ?? "",
   });
+  const [assignmentForm, setAssignmentForm] = useState<TeamAssignmentForm>({
+    ...emptyAssignmentForm,
+    userId: rows[0]?.userId ?? "",
+  });
+  const [membershipEditMap, setMembershipEditMap] = useState<Record<string, MembershipEditForm>>(
+    buildMembershipEditMap(membershipHistoryMap),
+  );
 
   const teamOptionsByDepartment = useMemo(() => {
     const grouped = new Map<string, UserTeamOption[]>();
@@ -73,6 +119,8 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
     }
     return grouped;
   }, [teamOptions]);
+
+
 
   const visibleRows = useMemo(() => {
     const normalizedKeyword = normalize(keyword);
@@ -104,7 +152,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
     return teamOptionsByDepartment.get(departmentId) ?? [];
   }
 
-  function updateEditableRow(userId: string, key: "name" | "email" | "roleId" | "status" | "departmentId" | "teamId", value: string) {
+  function updateEditableRow(userId: string, key: "name" | "email" | "roleId" | "status", value: string) {
     setEditableRows((current) => current.map((row) => {
       if (row.userId !== userId) return row;
       if (key === "name" || key === "email") {
@@ -120,26 +168,6 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
           roleId: value,
           roleCode: role?.roleCode ?? row.roleCode,
           roleName: role?.roleName ?? row.roleName,
-        };
-      }
-      if (key === "departmentId") {
-        const department = departmentOptions.find((option) => option.departmentId === value);
-        const availableTeams = getTeamsForDepartment(value);
-        const keepTeam = availableTeams.some((option) => option.teamId === row.teamId);
-        return {
-          ...row,
-          departmentId: value,
-          departmentName: department?.departmentName ?? "-",
-          teamId: keepTeam ? row.teamId : "",
-          teamName: keepTeam ? row.teamName : "未所属",
-        };
-      }
-      if (key === "teamId") {
-        const team = teamOptions.find((option) => option.teamId === value);
-        return {
-          ...row,
-          teamId: value,
-          teamName: team?.teamName ?? "未所属",
         };
       }
       return {
@@ -163,11 +191,37 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
           teamId: keepTeam ? current.teamId : "",
         };
       }
+      if (key === "joinedAt") {
+        const nextJoinedAt = String(value);
+        return {
+          ...current,
+          joinedAt: nextJoinedAt,
+          membershipStartDate: current.membershipStartDate || !current.teamId ? nextJoinedAt : current.membershipStartDate,
+        };
+      }
       return {
         ...current,
         [key]: value,
       };
     });
+  }
+
+  function updateAssignmentForm<K extends keyof TeamAssignmentForm>(key: K, value: TeamAssignmentForm[K]) {
+    setAssignmentForm((current) => ({
+      ...current,
+      [key]: value,
+    }));
+  }
+
+
+  function updateMembershipEdit(membershipId: string, key: "startDate" | "endDate", value: string) {
+    setMembershipEditMap((current) => ({
+      ...current,
+      [membershipId]: {
+        ...(current[membershipId] ?? { membershipId, startDate: "", endDate: "" }),
+        [key]: value,
+      },
+    }));
   }
 
   function toggleMenuVisibility(userId: string, key: MenuVisibilityKey, checked: boolean) {
@@ -245,9 +299,69 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
     });
   }
 
+  async function handleAssignmentChange() {
+    if (!assignmentForm.userId || !assignmentForm.teamId || !assignmentForm.startDate) {
+      setMessage("所属変更の対象ユーザー、チーム、所属開始日を入力してください。");
+      return;
+    }
+
+    setMessage(null);
+    startTransition(async () => {
+      const response = await fetch("/api/users/assign-team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assignmentForm),
+      });
+
+      const payload = (await response.json()) as { message?: string };
+      setMessage(payload.message ?? (response.ok ? "所属を変更しました" : "所属変更に失敗しました"));
+      if (response.ok) {
+        setAssignmentForm({
+          ...emptyAssignmentForm,
+          userId: assignmentForm.userId,
+        });
+        router.refresh();
+      }
+    });
+  }
+
+  async function handleMembershipHistorySave(membershipId: string, forceEndDate?: string) {
+    const edit = membershipEditMap[membershipId];
+    const payload = {
+      membershipId,
+      startDate: edit?.startDate ?? "",
+      endDate: forceEndDate ?? edit?.endDate ?? "",
+    };
+
+    if (!payload.startDate) {
+      setMessage("所属開始日を入力してください。");
+      return;
+    }
+
+    setMessage(null);
+    startTransition(async () => {
+      const response = await fetch("/api/users/membership-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const responsePayload = (await response.json()) as { message?: string };
+      setMessage(responsePayload.message ?? (response.ok ? "所属履歴を更新しました" : "所属履歴の更新に失敗しました"));
+      if (response.ok) {
+        router.refresh();
+      }
+    });
+  }
+
   async function handleCreateUser() {
-    if (!createForm.employeeCode || !createForm.name || !createForm.email || !createForm.roleId || !createForm.password) {
+    if (!createForm.employeeCode || !createForm.name || !createForm.email || !createForm.roleId || !createForm.password || !createForm.joinedAt) {
       setMessage("新規ユーザーの必須項目を入力してください。");
+      return;
+    }
+
+    if (createForm.teamId && !createForm.membershipStartDate) {
+      setMessage("初期所属チームを設定する場合は所属開始日を入力してください。");
       return;
     }
 
@@ -297,6 +411,10 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
             <input type="email" value={createForm.email} disabled={!canEdit || isPending} onChange={(event) => updateCreateForm("email", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
           </label>
           <label className="text-sm text-slate-700">
+            入社日
+            <input type="date" value={createForm.joinedAt} disabled={!canEdit || isPending} onChange={(event) => updateCreateForm("joinedAt", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
+          </label>
+          <label className="text-sm text-slate-700">
             初期パスワード
             <input type="password" value={createForm.password} disabled={!canEdit || isPending} onChange={(event) => updateCreateForm("password", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
           </label>
@@ -326,6 +444,10 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
               ))}
             </select>
           </label>
+          <label className="text-sm text-slate-700">
+            所属開始日
+            <input type="date" value={createForm.membershipStartDate} disabled={!canEdit || isPending || !createForm.teamId} onChange={(event) => updateCreateForm("membershipStartDate", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none disabled:bg-slate-100" />
+          </label>
         </div>
       </article>
 
@@ -333,7 +455,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold text-slate-950">ユーザー一覧</h2>
-            <p className="mt-1 text-sm text-slate-500">検索、在籍状態、部署、ロールで絞り込みながら、ユーザー情報を更新できます。</p>
+            <p className="mt-1 text-sm text-slate-500">検索しながら、基本情報と表示設定を更新できます。所属は下の専用入力と所属履歴で管理します。</p>
           </div>
           <div className="flex items-center gap-3">
             {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : null}
@@ -429,22 +551,8 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    <select value={row.departmentId} disabled={!canEdit || isPending} onChange={(event) => updateEditableRow(row.userId, "departmentId", event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
-                      <option value="">未設定</option>
-                      {departmentOptions.map((option) => (
-                        <option key={option.departmentId} value={option.departmentId}>{option.departmentName}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    <select value={row.teamId} disabled={!canEdit || isPending || row.status === "INACTIVE"} onChange={(event) => updateEditableRow(row.userId, "teamId", event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm disabled:bg-slate-100">
-                      <option value="">{row.status === "INACTIVE" ? "退職" : "未所属"}</option>
-                      {getTeamsForDepartment(row.departmentId).map((option) => (
-                        <option key={option.teamId} value={option.teamId}>{option.teamName}</option>
-                      ))}
-                    </select>
-                  </td>
+                  <td className="px-4 py-3 text-slate-700">{row.departmentName}</td>
+                  <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
                   <td className="px-4 py-3 text-slate-700">
                     <label className="inline-flex items-center gap-2 text-sm">
                       <input type="checkbox" checked={row.menuVisibility.philosophyPractice} disabled={!canEdit || isPending} onChange={(event) => toggleMenuVisibility(row.userId, "philosophyPractice", event.target.checked)} />
@@ -480,6 +588,110 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
               {visibleRows.length === 0 ? (
                 <tr className="border-t border-slate-200">
                   <td colSpan={12} className="px-4 py-8 text-center text-slate-500">条件に一致するユーザーがいません。</td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-slate-950">所属変更</h2>
+            <p className="mt-1 text-sm text-slate-500">異動時は専用入力から所属開始日を指定して更新します。旧所属は開始日の前日で終了します。</p>
+          </div>
+          <button type="button" onClick={handleAssignmentChange} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+            {isPending ? "処理中..." : "所属変更"}
+          </button>
+        </div>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          <label className="text-sm text-slate-700">
+            対象ユーザー
+            <select value={assignmentForm.userId} disabled={!canEdit || isPending} onChange={(event) => updateAssignmentForm("userId", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
+              {rows.filter((row) => row.status === "ACTIVE").map((row) => (
+                <option key={row.userId} value={row.userId}>{row.employeeCode} / {row.name}</option>
+              ))}
+            </select>
+          </label>
+          <label className="text-sm text-slate-700">
+            新所属チーム
+            <select value={assignmentForm.teamId} disabled={!canEdit || isPending} onChange={(event) => updateAssignmentForm("teamId", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
+              <option value="">選択してください</option>
+              {teamOptions.map((option) => (
+                <option key={option.teamId} value={option.teamId}>{option.teamName}</option>
+              ))}
+            </select>
+          </label>
+          <label className="text-sm text-slate-700">
+            所属開始日
+            <input type="date" value={assignmentForm.startDate} disabled={!canEdit || isPending} onChange={(event) => updateAssignmentForm("startDate", event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
+          </label>
+        </div>
+      </article>
+
+      <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+        <h2 className="text-xl font-semibold text-slate-950">所属履歴</h2>
+        <p className="mt-1 text-sm text-slate-500">対象ユーザーの所属開始日・終了日を確認できます。異動は上の専用入力から追加してください。</p>
+        <div className="mt-5 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+          <label className="text-sm text-slate-700">
+            対象ユーザー
+            <select value={selectedUserId} disabled={isPending} onChange={(event) => setSelectedUserId(event.target.value)} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
+              {rows.map((row) => (
+                <option key={row.userId} value={row.userId}>{row.employeeCode} / {row.name}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
+          <table className="min-w-[720px] text-left text-sm">
+            <thead className="bg-slate-50 text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">部署</th>
+                <th className="px-4 py-3 font-medium">チーム</th>
+                <th className="px-4 py-3 font-medium">所属開始日</th>
+                <th className="px-4 py-3 font-medium">所属終了日</th>
+                <th className="px-4 py-3 font-medium">主所属</th>
+                <th className="px-4 py-3 font-medium">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(membershipHistoryMap[selectedUserId] ?? []).map((history) => {
+                const edit = membershipEditMap[history.membershipId] ?? {
+                  membershipId: history.membershipId,
+                  startDate: history.startDateValue,
+                  endDate: history.endDateValue,
+                };
+
+                return (
+                  <tr key={history.membershipId} className="border-t border-slate-200">
+                    <td className="px-4 py-3 text-slate-700">{history.departmentName}</td>
+                    <td className="px-4 py-3 text-slate-700">{history.teamName}</td>
+                    <td className="px-4 py-3 text-slate-700">
+                      <input type="date" value={edit.startDate} disabled={!canEdit || isPending} onChange={(event) => updateMembershipEdit(history.membershipId, "startDate", event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3 text-slate-700">
+                      <input type="date" value={edit.endDate} disabled={!canEdit || isPending} onChange={(event) => updateMembershipEdit(history.membershipId, "endDate", event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                    </td>
+                    <td className="px-4 py-3 text-slate-700">{history.isPrimary ? "主所属" : "-"}</td>
+                    <td className="px-4 py-3 text-slate-700">
+                      <div className="flex flex-wrap gap-2">
+                        <button type="button" onClick={() => handleMembershipHistorySave(history.membershipId)} disabled={!canEdit || isPending} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 disabled:opacity-60">
+                          保存
+                        </button>
+                        {!edit.endDate ? (
+                          <button type="button" onClick={() => handleMembershipHistorySave(history.membershipId, "2026-03-20")} disabled={!canEdit || isPending} className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-800 disabled:opacity-60">
+                            未所属にする
+                          </button>
+                        ) : null}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+              {(membershipHistoryMap[selectedUserId] ?? []).length === 0 ? (
+                <tr className="border-t border-slate-200">
+                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500">所属履歴がありません。</td>
                 </tr>
               ) : null}
             </tbody>
