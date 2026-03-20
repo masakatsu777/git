@@ -8,7 +8,8 @@ type SubjectTypeFilter = "ALL" | "EMPLOYEE" | "PARTNER";
 type MembershipFilter = "ALL" | "ASSIGNED" | "UNASSIGNED";
 
 export type ProfitBreakdownFilters = {
-  yearMonth?: string;
+  rangeStartYearMonth?: string;
+  rangeEndYearMonth?: string;
   departmentId?: string;
   teamId?: string;
   subjectType?: SubjectTypeFilter;
@@ -37,7 +38,8 @@ export type ProfitBreakdownRow = {
 };
 
 export type ProfitBreakdownBundle = {
-  yearMonth: string;
+  rangeStartYearMonth: string;
+  rangeEndYearMonth: string;
   filters: {
     departmentId: string;
     teamId: string;
@@ -67,6 +69,37 @@ function getMonthRange(yearMonth: string) {
   };
 }
 
+function sortYearMonthsAscending(values: string[]) {
+  return [...values].sort((left, right) => left.localeCompare(right));
+}
+
+function normalizeRange(startYearMonth: string | undefined, endYearMonth: string | undefined, options: Array<{ yearMonth: string }>) {
+  const ascending = sortYearMonthsAscending(options.map((option) => option.yearMonth));
+  const fallbackStart = ascending[0] ?? "2026-03";
+  const fallbackEnd = ascending[ascending.length - 1] ?? fallbackStart;
+  const requestedStart = startYearMonth && ascending.includes(startYearMonth) ? startYearMonth : fallbackStart;
+  const requestedEnd = endYearMonth && ascending.includes(endYearMonth) ? endYearMonth : fallbackEnd;
+
+  return requestedStart.localeCompare(requestedEnd) <= 0
+    ? { startYearMonth: requestedStart, endYearMonth: requestedEnd }
+    : { startYearMonth: requestedEnd, endYearMonth: requestedStart };
+}
+
+function getYearMonthsInRange(startYearMonth: string, endYearMonth: string) {
+  const values: string[] = [];
+  const [startYear, startMonth] = startYearMonth.split("-").map(Number);
+  const [endYear, endMonth] = endYearMonth.split("-").map(Number);
+  const cursor = new Date(startYear, startMonth - 1, 1);
+  const limit = new Date(endYear, endMonth - 1, 1);
+
+  while (cursor.getTime() <= limit.getTime()) {
+    values.push(`${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`);
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return values;
+}
+
 function toNumber(value: unknown) {
   return Number(value ?? 0);
 }
@@ -75,22 +108,26 @@ function round2(value: number) {
   return Math.round(value * 100) / 100;
 }
 
-function latestYearMonth(options: Array<{ yearMonth: string }>) {
-  return options[0]?.yearMonth ?? "2026-03";
-}
-
 export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): Promise<ProfitBreakdownBundle> {
   const yearMonthOptions = await getVisibleYearMonthOptions();
-  const resolvedYearMonth = input?.yearMonth ?? latestYearMonth(yearMonthOptions);
+  const { startYearMonth: resolvedRangeStartYearMonth, endYearMonth: resolvedRangeEndYearMonth } = normalizeRange(
+    input?.rangeStartYearMonth,
+    input?.rangeEndYearMonth,
+    yearMonthOptions,
+  );
   const resolvedDepartmentId = input?.departmentId ?? "";
   const resolvedTeamId = input?.teamId ?? "";
   const resolvedSubjectType = input?.subjectType ?? "ALL";
   const resolvedMembershipFilter = input?.membershipFilter ?? "ALL";
   const resolvedKeyword = input?.keyword?.trim() ?? "";
+  const rangeYearMonths = getYearMonthsInRange(resolvedRangeStartYearMonth, resolvedRangeEndYearMonth);
+  const rangeStart = getMonthRange(resolvedRangeStartYearMonth).start;
+  const rangeEnd = getMonthRange(resolvedRangeEndYearMonth).end;
 
   if (!hasDatabaseUrl()) {
     return {
-      yearMonth: resolvedYearMonth,
+      rangeStartYearMonth: resolvedRangeStartYearMonth,
+      rangeEndYearMonth: resolvedRangeEndYearMonth,
       filters: {
         departmentId: resolvedDepartmentId,
         teamId: resolvedTeamId,
@@ -113,9 +150,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     };
   }
 
-  const { start, end } = getMonthRange(resolvedYearMonth);
-
-  const [departments, teams, employeeAssignments, partnerAssignments, partnerCosts, users, fixedCosts] = await Promise.all([
+  const [departments, teams, employeeAssignments, partnerAssignments, partnerCosts, users, fixedCostsByMonth] = await Promise.all([
     prisma.department.findMany({
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true },
@@ -134,21 +169,21 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         memberships: {
           where: {
             isPrimary: true,
-            startDate: { lte: end },
-            OR: [{ endDate: null }, { endDate: { gte: start } }],
+            startDate: { lte: rangeEnd },
+            OR: [{ endDate: null }, { endDate: { gte: rangeStart } }],
             user: { is: { status: UserStatus.ACTIVE } },
           },
           select: { userId: true },
         },
         indirectCosts: {
-          where: { yearMonth: resolvedYearMonth },
-          select: { amount: true },
+          where: { yearMonth: { in: rangeYearMonths } },
+          select: { amount: true, yearMonth: true },
         },
       },
     }),
     prisma.monthlyAssignment.findMany({
       where: {
-        yearMonth: resolvedYearMonth,
+        yearMonth: { in: rangeYearMonths },
         targetType: "EMPLOYEE",
         ...(resolvedTeamId ? { teamId: resolvedTeamId } : {}),
         ...(resolvedDepartmentId ? { team: { departmentId: resolvedDepartmentId } } : {}),
@@ -156,25 +191,18 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       select: {
         userId: true,
         teamId: true,
+        yearMonth: true,
         salesAmount: true,
-        team: {
-          select: {
-            id: true,
-            name: true,
-            departmentId: true,
-            department: { select: { id: true, name: true } },
-          },
-        },
         user: {
           select: {
             id: true,
             employeeCode: true,
             name: true,
             salaryRecords: {
-              where: { effectiveFrom: { lte: end } },
+              where: { effectiveFrom: { lte: rangeEnd } },
               orderBy: { effectiveFrom: "desc" },
-              take: 1,
               select: {
+                effectiveFrom: true,
                 baseSalary: true,
                 allowance: true,
                 socialInsurance: true,
@@ -183,11 +211,12 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
             },
             monthlyCosts: {
               where: {
-                yearMonth: resolvedYearMonth,
+                yearMonth: { in: rangeYearMonths },
                 targetType: CostTargetType.EMPLOYEE,
                 costCategory: { in: [CostCategory.SALARY, CostCategory.OTHER] },
               },
               select: {
+                yearMonth: true,
                 costCategory: true,
                 amount: true,
               },
@@ -195,10 +224,10 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
             teamMemberships: {
               where: {
                 isPrimary: true,
-                startDate: { lte: end },
-                OR: [{ endDate: null }, { endDate: { gte: start } }],
+                startDate: { lte: rangeEnd },
+                OR: [{ endDate: null }, { endDate: { gte: rangeStart } }],
               },
-              select: { teamId: true },
+              select: { teamId: true, startDate: true, endDate: true },
             },
           },
         },
@@ -206,7 +235,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     }),
     prisma.monthlyAssignment.findMany({
       where: {
-        yearMonth: resolvedYearMonth,
+        yearMonth: { in: rangeYearMonths },
         targetType: "PARTNER",
         ...(resolvedTeamId ? { teamId: resolvedTeamId } : {}),
         ...(resolvedDepartmentId ? { team: { departmentId: resolvedDepartmentId } } : {}),
@@ -215,14 +244,6 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         partnerId: true,
         teamId: true,
         salesAmount: true,
-        team: {
-          select: {
-            id: true,
-            name: true,
-            departmentId: true,
-            department: { select: { id: true, name: true } },
-          },
-        },
         partner: {
           select: {
             id: true,
@@ -234,7 +255,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     }),
     prisma.monthlyCost.findMany({
       where: {
-        yearMonth: resolvedYearMonth,
+        yearMonth: { in: rangeYearMonths },
         costCategory: "OUTSOURCING",
         targetType: "PARTNER",
         ...(resolvedTeamId ? { teamId: resolvedTeamId } : {}),
@@ -257,20 +278,25 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         teamMemberships: {
           where: {
             isPrimary: true,
-            startDate: { lte: end },
-            OR: [{ endDate: null }, { endDate: { gte: start } }],
+            startDate: { lte: rangeEnd },
+            OR: [{ endDate: null }, { endDate: { gte: rangeStart } }],
           },
           select: { teamId: true },
         },
       },
     }),
-    getCompanyFixedCosts(resolvedYearMonth),
+    Promise.all(rangeYearMonths.map(async (yearMonth) => ({
+      yearMonth,
+      rows: await getCompanyFixedCosts(yearMonth),
+    }))),
   ]);
 
   const departmentOptions = [{ id: "", name: "全社" }, ...departments.map((department) => ({ id: department.id, name: department.name }))];
   const teamOptions = teams.map((team) => ({ id: team.id, name: team.name, departmentId: team.departmentId ?? "" }));
 
-  const totalCompanyFixedCost = fixedCosts.reduce((sum, row) => sum + row.amount, 0);
+  const fixedCostTotalByMonth = new Map(
+    fixedCostsByMonth.map((entry) => [entry.yearMonth, entry.rows.reduce((sum, row) => sum + row.amount, 0)]),
+  );
   const teamContextMap = new Map(
     teams.map((team) => [
       team.id,
@@ -280,7 +306,10 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         departmentId: team.departmentId ?? "",
         departmentName: team.department?.name ?? "未設定",
         teamHeadcount: team.memberships.length,
-        indirectCostTotal: team.indirectCosts.reduce((sum, row) => sum + toNumber(row.amount), 0),
+        indirectCostTotalByMonth: team.indirectCosts.reduce((map, row) => {
+          map.set(row.yearMonth, (map.get(row.yearMonth) ?? 0) + toNumber(row.amount));
+          return map;
+        }, new Map<string, number>()),
       },
     ]),
   );
@@ -311,23 +340,34 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     if (!row.userId || !row.user) {
       continue;
     }
+    const user = row.user;
     const teamContext = teamContextMap.get(row.teamId);
     if (!teamContext) {
       continue;
     }
-    const membershipStatus = row.user.teamMemberships.length === 0 ? "UNASSIGNED" : "ASSIGNED";
+    const membershipStatus = user.teamMemberships.length === 0 ? "UNASSIGNED" : "ASSIGNED";
     const key = `${row.userId}:${row.teamId}`;
-    const salaryRecord = row.user.salaryRecords[0];
-    const overtimeRow = row.user.monthlyCosts.find((cost) => cost.costCategory === CostCategory.SALARY);
-    const otherRow = row.user.monthlyCosts.find((cost) => cost.costCategory === CostCategory.OTHER);
-    const directLaborCost = (salaryRecord
-      ? toNumber(salaryRecord.baseSalary) + toNumber(salaryRecord.allowance) + toNumber(salaryRecord.socialInsurance) + toNumber(salaryRecord.otherFixedCost)
-      : 0) + toNumber(overtimeRow?.amount) + toNumber(otherRow?.amount);
+    const monthlyCostMap = new Map(user.monthlyCosts.map((cost) => [`${cost.yearMonth}:${cost.costCategory}`, toNumber(cost.amount)]));
+    const directLaborCost = rangeYearMonths.reduce((sum, currentYearMonth) => {
+      const monthEnd = getMonthRange(currentYearMonth).end;
+      const salaryRecord = user.salaryRecords.find((record) => new Date(record.effectiveFrom).getTime() <= monthEnd.getTime());
+      const fixedLaborCost = salaryRecord
+        ? toNumber(salaryRecord.baseSalary) + toNumber(salaryRecord.allowance) + toNumber(salaryRecord.socialInsurance) + toNumber(salaryRecord.otherFixedCost)
+        : 0;
+      const overtimeAmount = monthlyCostMap.get(`${currentYearMonth}:${CostCategory.SALARY}`) ?? 0;
+      const otherAmount = monthlyCostMap.get(`${currentYearMonth}:${CostCategory.OTHER}`) ?? 0;
+      return sum + fixedLaborCost + overtimeAmount + otherAmount;
+    }, 0);
     const indirectCostAllocation = membershipStatus === "ASSIGNED" && teamContext.teamHeadcount > 0
-      ? Math.round(teamContext.indirectCostTotal / teamContext.teamHeadcount)
+      ? rangeYearMonths.reduce((sum, currentYearMonth) => {
+          const monthlyIndirectCostTotal = teamContext.indirectCostTotalByMonth.get(currentYearMonth) ?? 0;
+          return sum + Math.round(monthlyIndirectCostTotal / teamContext.teamHeadcount);
+        }, 0)
       : 0;
     const departmentHeadcount = departmentHeadcountMap.get(teamContext.departmentId) ?? 0;
-    const fixedCostAllocation = departmentHeadcount > 0 ? Math.round(totalCompanyFixedCost / departmentHeadcount) : 0;
+    const fixedCostAllocation = departmentHeadcount > 0
+      ? rangeYearMonths.reduce((sum, currentYearMonth) => sum + Math.round((fixedCostTotalByMonth.get(currentYearMonth) ?? 0) / departmentHeadcount), 0)
+      : 0;
 
     const existing = employeeRows.get(key);
     if (existing) {
@@ -339,9 +379,9 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       key,
       subjectType: "EMPLOYEE",
       membershipStatus,
-      entityId: row.user.id,
-      displayName: row.user.name,
-      secondaryLabel: row.user.employeeCode,
+      entityId: user.id,
+      displayName: user.name,
+      secondaryLabel: user.employeeCode,
       departmentId: teamContext.departmentId,
       departmentName: teamContext.departmentName,
       teamId: teamContext.teamId,
@@ -456,7 +496,8 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
   );
 
   return {
-    yearMonth: resolvedYearMonth,
+    rangeStartYearMonth: resolvedRangeStartYearMonth,
+    rangeEndYearMonth: resolvedRangeEndYearMonth,
     filters: {
       departmentId: resolvedDepartmentId,
       teamId: resolvedTeamId,

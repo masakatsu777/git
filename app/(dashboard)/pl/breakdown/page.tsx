@@ -9,7 +9,8 @@ export default async function ProfitBreakdownPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    yearMonth?: string;
+    rangeStartYearMonth?: string;
+    rangeEndYearMonth?: string;
     departmentId?: string;
     teamId?: string;
     subjectType?: "ALL" | "EMPLOYEE" | "PARTNER";
@@ -44,11 +45,11 @@ export default async function ProfitBreakdownPage({
     <main className="min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#f7f2e8_100%)] text-stone-900">
       <div className="mx-auto max-w-7xl px-6 py-10">
         <header className="rounded-[2rem] bg-stone-950 px-8 py-7 text-stone-50 shadow-[0_30px_80px_rgba(41,37,36,0.22)]">
-          <p className="text-sm uppercase tracking-[0.25em] text-amber-200">Monthly Breakdown</p>
+          <p className="text-sm uppercase tracking-[0.25em] text-amber-200">Profit Breakdown</p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">月次粗利内訳一覧</h1>
-              <p className="mt-2 text-sm text-stone-300">社員とパートナーを 1 件ずつの粗利単位で確認できます。</p>
+              <h1 className="text-3xl font-semibold">粗利内訳一覧</h1>
+              <p className="mt-2 text-sm text-stone-300">開始月から終了月までの累計で、社員とパートナーを 1 件ずつ確認できます。</p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link href="/executive" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
@@ -62,10 +63,18 @@ export default async function ProfitBreakdownPage({
 
           <form method="get" className="mt-5 grid gap-4 rounded-[1.5rem] bg-white/10 p-4 md:grid-cols-3 xl:grid-cols-6 xl:items-end">
             <label className="text-sm text-white">
-              年月
-              <select name="yearMonth" defaultValue={bundle.yearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
+              開始月
+              <select name="rangeStartYearMonth" defaultValue={bundle.rangeStartYearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
                 {bundle.yearMonthOptions.map((option) => (
-                  <option key={option.yearMonth} value={option.yearMonth}>{option.yearMonth}</option>
+                  <option key={`start-${option.yearMonth}`} value={option.yearMonth}>{option.yearMonth}</option>
+                ))}
+              </select>
+            </label>
+            <label className="text-sm text-white">
+              終了月
+              <select name="rangeEndYearMonth" defaultValue={bundle.rangeEndYearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
+                {bundle.yearMonthOptions.map((option) => (
+                  <option key={`end-${option.yearMonth}`} value={option.yearMonth}>{option.yearMonth}</option>
                 ))}
               </select>
             </label>
