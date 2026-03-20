@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { MonthlyPlDetailEditor } from "@/components/pl/monthly-pl-detail-editor";
 import { MonthlyPlEditor } from "@/components/pl/monthly-pl-editor";
+import { UnassignedSalesEditor } from "@/components/pl/unassigned-sales-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canAccessTeam, hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
@@ -37,7 +38,7 @@ export default async function MonthlyPlPage({
   const teamId = canAccessTeam(user, requestedTeamId) ? requestedTeamId : defaultTeamId;
   const [snapshot, details, teamOptions, yearMonthOptions] = await Promise.all([
     getTeamMonthlySnapshot(teamId, yearMonth),
-    getTeamMonthlyDetails(teamId, yearMonth),
+    getTeamMonthlyDetails(teamId, yearMonth, { includeUnassignedEmployeeOptions: user.role === "admin" || user.role === "president" }),
     getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.teamIds),
     getVisibleYearMonthOptions(teamId),
   ]);
@@ -53,6 +54,10 @@ export default async function MonthlyPlPage({
   const canEdit = hasPermission(user, PERMISSIONS.plTeamWrite);
   const canManageFixedCosts = hasPermission(user, PERMISSIONS.masterWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
+  const canManageUnassignedSales = user.role === "admin" || user.role === "president";
+  const unassignedEmployeeIdSet = new Set(details.unassignedEmployeeOptions.map((option) => option.id));
+  const teamAssignments = details.assignments.filter((row) => !row.userId || !unassignedEmployeeIdSet.has(row.userId));
+  const unassignedAssignments = details.assignments.filter((row) => row.userId && unassignedEmployeeIdSet.has(row.userId));
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#f7f2e8_100%)] text-stone-900">
@@ -145,7 +150,7 @@ export default async function MonthlyPlPage({
               key={JSON.stringify({
                 teamId: details.teamId,
                 yearMonth: details.yearMonth,
-                assignments: details.assignments,
+                assignments: teamAssignments,
                 outsourcingCosts: details.outsourcingCosts,
                 teamExpenses: details.teamExpenses,
                 fixedCostAllocations: details.fixedCostSummary.allocations,
@@ -157,7 +162,7 @@ export default async function MonthlyPlPage({
               partnerOptions={details.partnerOptions}
               fixedCostSummary={details.fixedCostSummary}
               defaults={{
-                assignments: details.assignments.map((row) => ({
+                assignments: teamAssignments.map((row) => ({
                   id: row.id,
                   targetType: row.targetType,
                   userId: row.userId,
@@ -182,6 +187,31 @@ export default async function MonthlyPlPage({
                 grossProfitTarget: Math.round(snapshot.salesTotal * (snapshot.targetGrossProfitRate / 100)),
               }}
             />
+
+            {canManageUnassignedSales ? (
+              <UnassignedSalesEditor
+                key={JSON.stringify({
+                  teamId: details.teamId,
+                  yearMonth: details.yearMonth,
+                  assignments: unassignedAssignments,
+                })}
+                teamId={details.teamId}
+                yearMonth={details.yearMonth}
+                canEdit={canManageUnassignedSales}
+                employeeOptions={details.unassignedEmployeeOptions}
+                defaults={unassignedAssignments.map((row) => ({
+                  id: row.id,
+                  targetType: row.targetType,
+                  userId: row.userId,
+                  partnerId: row.partnerId,
+                  partnerName: row.label,
+                  unitPrice: row.unitPrice,
+                  salesAmount: row.salesAmount,
+                  workRate: row.workRate,
+                  remarks: row.remarks,
+                }))}
+              />
+            ) : null}
 
             <MonthlyPlEditor
               key={JSON.stringify({
@@ -248,25 +278,28 @@ export default async function MonthlyPlPage({
               </div>
             </section>
 
-            <section className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(41,37,36,0.08)]">
-              <h2 className="text-xl font-semibold">APIエンドポイント</h2>
-              <div className="mt-4 space-y-3 text-sm text-stone-600">
-                <p>`GET /api/salary-records?yearMonth=2026-03`</p>
-                <p>`POST /api/salary-records`</p>
-                <p>`GET /api/pl/fixed-costs?yearMonth={snapshot.yearMonth}`</p>
-                <p>`POST /api/pl/fixed-costs`</p>
-                <p>`GET /api/pl/details?teamId={snapshot.teamId}&yearMonth={snapshot.yearMonth}`</p>
-                <p>`POST /api/pl/details`</p>
-                <p>`GET /api/pl/monthly?teamId={snapshot.teamId}&yearMonth={snapshot.yearMonth}`</p>
-                <p>`POST /api/pl/recalculate/{snapshot.teamId}?yearMonth={snapshot.yearMonth}`</p>
-              </div>
-            </section>
+{process.env.NODE_ENV !== "production" ? (
+              <section className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(41,37,36,0.08)]">
+                <h2 className="text-xl font-semibold">APIエンドポイント</h2>
+                <div className="mt-4 space-y-3 text-sm text-stone-600">
+                  <p>`GET /api/salary-records?yearMonth=2026-03`</p>
+                  <p>`POST /api/salary-records`</p>
+                  <p>`GET /api/pl/fixed-costs?yearMonth={snapshot.yearMonth}`</p>
+                  <p>`POST /api/pl/fixed-costs`</p>
+                  <p>`GET /api/pl/details?teamId={snapshot.teamId}&yearMonth={snapshot.yearMonth}`</p>
+                  <p>`POST /api/pl/details`</p>
+                  <p>`GET /api/pl/monthly?teamId={snapshot.teamId}&yearMonth={snapshot.yearMonth}`</p>
+                  <p>`POST /api/pl/recalculate/{snapshot.teamId}?yearMonth={snapshot.yearMonth}`</p>
+                </div>
+              </section>
+            ) : null}
           </article>
         </section>
       </div>
     </main>
   );
 }
+
 
 
 

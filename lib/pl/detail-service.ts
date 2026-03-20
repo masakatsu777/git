@@ -63,6 +63,7 @@ export type TeamMonthlyDetailBundle = {
   grossProfitTarget: number;
   grossProfitRateTarget: number;
   employeeOptions: PlDetailOption[];
+  unassignedEmployeeOptions: PlDetailOption[];
   partnerOptions: PlDetailOption[];
   source: "database" | "fallback";
 };
@@ -207,6 +208,7 @@ const fallbackBundle: TeamMonthlyDetailBundle = {
     { id: "demo-member1", label: "開発 一郎", defaultUnitPrice: 800000, defaultWorkRate: 100 },
     { id: "demo-member2", label: "開発 二郎", defaultUnitPrice: 780000, defaultWorkRate: 100 },
   ],
+  unassignedEmployeeOptions: [],
   partnerOptions: [{ id: "partner-001", label: "協力会社A", defaultUnitPrice: 700000, defaultWorkRate: 100, defaultOutsourceAmount: 620000 }],
   source: "fallback",
 };
@@ -215,7 +217,7 @@ function num(value: unknown): number {
   return Number(value ?? 0);
 }
 
-export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): Promise<TeamMonthlyDetailBundle> {
+export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, options?: { includeUnassignedEmployeeOptions?: boolean }): Promise<TeamMonthlyDetailBundle> {
   if (!hasDatabaseUrl()) {
     return {
       ...fallbackBundle,
@@ -232,6 +234,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
       select: {
         id: true,
         name: true,
+        departmentId: true,
         assignments: {
           where: { yearMonth },
           orderBy: { createdAt: "asc" },
@@ -293,7 +296,12 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
       },
     });
 
-    const [partnersResult, fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
+    const includeUnassignedEmployeeOptions = options?.includeUnassignedEmployeeOptions ?? false;
+    const { year, month } = parseYearMonth(yearMonth);
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const [partnersResult, unassignedEmployeesResult, fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
       prisma.partner.findMany({
         where: {
           status: "ACTIVE",
@@ -320,12 +328,40 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
           },
         },
       }),
+      includeUnassignedEmployeeOptions && team.departmentId
+        ? prisma.user.findMany({
+            where: {
+              status: "ACTIVE",
+              departmentId: team.departmentId,
+              teamMemberships: {
+                none: {
+                  isPrimary: true,
+                  startDate: { lte: monthEnd },
+                  OR: [{ endDate: null }, { endDate: { gte: monthStart } }],
+                },
+              },
+            },
+            orderBy: [{ employeeCode: "asc" }],
+            select: {
+              id: true,
+              name: true,
+              employeeSalesRateSetting: {
+                select: {
+                  unitPrice: true,
+                  defaultWorkRate: true,
+                },
+              },
+            },
+          })
+        : Promise.resolve([]),
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
       getTeamLaborCostSummary(teamId, yearMonth),
     ]);
-
     if (partnersResult.status === "rejected") {
       console.error("Failed to load partner options for monthly PL details", { teamId, yearMonth, error: partnersResult.reason });
+    }
+    if (unassignedEmployeesResult.status === "rejected") {
+      console.error("Failed to load unassigned employee options for monthly PL details", { teamId, yearMonth, error: unassignedEmployeesResult.reason });
     }
     if (fixedCostSummaryResult.status === "rejected") {
       console.error("Failed to load fixed cost summary for monthly PL details", { teamId, yearMonth, error: fixedCostSummaryResult.reason });
@@ -335,6 +371,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
     }
 
     const partners = partnersResult.status === "fulfilled" ? partnersResult.value : [];
+    const unassignedEmployees = unassignedEmployeesResult.status === "fulfilled" ? unassignedEmployeesResult.value : [];
     const fixedCostSummary = fixedCostSummaryResult.status === "fulfilled"
       ? fixedCostSummaryResult.value
       : { totalCompanyFixedCost: 0, totalHeadcount: 0, teamHeadcount: 0, allocations: [] };
@@ -382,6 +419,12 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string): 
         label: row.user.name,
         defaultUnitPrice: num(row.user.employeeSalesRateSetting?.unitPrice),
         defaultWorkRate: num(row.user.employeeSalesRateSetting?.defaultWorkRate ?? 100),
+      })),
+      unassignedEmployeeOptions: unassignedEmployees.map((row) => ({
+        id: row.id,
+        label: row.name,
+        defaultUnitPrice: num(row.employeeSalesRateSetting?.unitPrice),
+        defaultWorkRate: num(row.employeeSalesRateSetting?.defaultWorkRate ?? 100),
       })),
       partnerOptions: partners.map((row) => ({
         id: row.id,
@@ -619,6 +662,123 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
     return {
       persisted: false,
       bundle: fallback,
+    };
+  }
+}
+
+
+
+
+
+
+
+export type SaveUnassignedMonthlySalesInput = {
+  teamId: string;
+  yearMonth: string;
+  assignments: Array<{
+    userId: string | null;
+    unitPrice: number;
+    salesAmount: number;
+    workRate: number;
+    remarks: string;
+  }>;
+};
+
+export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySalesInput): Promise<SaveTeamMonthlyDetailsResult> {
+  if (!hasDatabaseUrl()) {
+    return {
+      persisted: false,
+      bundle: await getTeamMonthlyDetails(input.teamId, input.yearMonth, { includeUnassignedEmployeeOptions: true }),
+    };
+  }
+
+  const { year, month } = parseYearMonth(input.yearMonth);
+  const monthStart = new Date(year, month - 1, 1);
+  const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
+
+  try {
+    const team = await prisma.team.findUniqueOrThrow({
+      where: { id: input.teamId },
+      select: { id: true, departmentId: true },
+    });
+
+    const requestedUserIds = input.assignments.map((row) => row.userId).filter((value): value is string => Boolean(value));
+    const eligibleUsers = requestedUserIds.length === 0
+      ? []
+      : await prisma.user.findMany({
+          where: {
+            id: { in: requestedUserIds },
+            status: "ACTIVE",
+            departmentId: team.departmentId,
+            teamMemberships: {
+              none: {
+                isPrimary: true,
+                startDate: { lte: monthEnd },
+                OR: [{ endDate: null }, { endDate: { gte: monthStart } }],
+              },
+            },
+          },
+          select: { id: true },
+        });
+
+    const eligibleUserIds = new Set(eligibleUsers.map((user) => user.id));
+
+    await prisma.$transaction(async (tx) => {
+      if (team.departmentId) {
+        const existingEligibleUsers = await tx.user.findMany({
+          where: {
+            status: "ACTIVE",
+            departmentId: team.departmentId,
+            teamMemberships: {
+              none: {
+                isPrimary: true,
+                startDate: { lte: monthEnd },
+                OR: [{ endDate: null }, { endDate: { gte: monthStart } }],
+              },
+            },
+          },
+          select: { id: true },
+        });
+
+        await tx.monthlyAssignment.deleteMany({
+          where: {
+            teamId: input.teamId,
+            yearMonth: input.yearMonth,
+            targetType: AssignmentTargetType.EMPLOYEE,
+            userId: { in: existingEligibleUsers.map((user) => user.id) },
+          },
+        });
+      }
+
+      if (input.assignments.length > 0) {
+        const rows = input.assignments
+          .filter((row): row is typeof row & { userId: string } => Boolean(row.userId) && eligibleUserIds.has(row.userId as string))
+          .map((row) => ({
+            targetType: AssignmentTargetType.EMPLOYEE,
+            userId: row.userId,
+            partnerId: null,
+            teamId: input.teamId,
+            yearMonth: input.yearMonth,
+            unitPrice: row.unitPrice,
+            salesAmount: row.salesAmount,
+            workRate: row.workRate,
+            remarks: row.remarks || null,
+          }));
+
+        if (rows.length > 0) {
+          await tx.monthlyAssignment.createMany({ data: rows });
+        }
+      }
+    });
+
+    return {
+      persisted: true,
+      bundle: await getTeamMonthlyDetails(input.teamId, input.yearMonth, { includeUnassignedEmployeeOptions: true }),
+    };
+  } catch {
+    return {
+      persisted: false,
+      bundle: await getTeamMonthlyDetails(input.teamId, input.yearMonth, { includeUnassignedEmployeeOptions: true }),
     };
   }
 }
