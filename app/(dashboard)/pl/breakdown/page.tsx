@@ -121,7 +121,7 @@ export default async function ProfitBreakdownPage({
           </form>
         </header>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+        <section className="mt-8 grid gap-4 md:grid-cols-3 xl:grid-cols-8">
           {[
             ["売上", bundle.totals.salesTotal],
             ["人件費", bundle.totals.directLaborCost],
@@ -129,10 +129,12 @@ export default async function ProfitBreakdownPage({
             ["チーム経費按分", bundle.totals.indirectCostAllocation],
             ["全社固定費按分", bundle.totals.fixedCostAllocation],
             ["最終粗利", bundle.totals.finalGrossProfit],
+            ["その他コスト", bundle.totals.otherCostTotal],
+            ["調整後最終粗利", bundle.totals.adjustedFinalGrossProfit],
           ].map(([label, value]) => (
             <article key={label} className="rounded-[1.5rem] bg-white p-5 shadow-[0_18px_50px_rgba(41,37,36,0.08)]">
               <p className="text-sm text-stone-500">{label}</p>
-              <p className="mt-2 text-2xl font-semibold text-stone-950">{formatCurrencyWithUnit(Number(value))}</p>
+              <p className="mt-2 text-lg font-semibold leading-tight text-stone-950 xl:text-xl">{formatCurrencyWithUnit(Number(value))}</p>
             </article>
           ))}
         </section>

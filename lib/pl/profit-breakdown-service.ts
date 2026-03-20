@@ -1,6 +1,7 @@
 import { CostCategory, CostTargetType, UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
+import { getDepartmentMonthlyOtherCostMap } from "@/lib/pl/department-monthly-other-cost-service";
 import { getCompanyFixedCosts } from "@/lib/pl/fixed-cost-service";
 import { getVisibleYearMonthOptions } from "@/lib/pl/service";
 
@@ -55,6 +56,8 @@ export type ProfitBreakdownBundle = {
     indirectCostAllocation: number;
     fixedCostAllocation: number;
     finalGrossProfit: number;
+    otherCostTotal: number;
+    adjustedFinalGrossProfit: number;
   };
   yearMonthOptions: Array<{ yearMonth: string }>;
   departmentOptions: Array<{ id: string; name: string }>;
@@ -143,6 +146,8 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         indirectCostAllocation: 0,
         fixedCostAllocation: 0,
         finalGrossProfit: 0,
+        otherCostTotal: 0,
+        adjustedFinalGrossProfit: 0,
       },
       yearMonthOptions,
       departmentOptions: [{ id: "", name: "全社" }],
@@ -150,7 +155,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     };
   }
 
-  const [departments, teams, employeeAssignments, partnerAssignments, partnerCosts, users, fixedCostsByMonth] = await Promise.all([
+  const [departments, teams, employeeAssignments, partnerAssignments, partnerCosts, users, fixedCostsByMonth, otherCostMapByMonth] = await Promise.all([
     prisma.department.findMany({
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true },
@@ -289,6 +294,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       yearMonth,
       rows: await getCompanyFixedCosts(yearMonth),
     }))),
+    getDepartmentMonthlyOtherCostMap(rangeYearMonths),
   ]);
 
   const departmentOptions = [{ id: "", name: "全社" }, ...departments.map((department) => ({ id: department.id, name: department.name }))];
@@ -512,6 +518,19 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     },
   );
 
+  const otherCostTotal = rangeYearMonths.reduce((sum, currentYearMonth) => {
+    const departmentMap = otherCostMapByMonth.get(currentYearMonth) ?? new Map<string, number>();
+    if (resolvedDepartmentId) {
+      return sum + (departmentMap.get(resolvedDepartmentId) ?? 0);
+    }
+    if (resolvedTeamId) {
+      const team = teams.find((row) => row.id === resolvedTeamId);
+      const departmentId = team?.departmentId ?? "";
+      return sum + (departmentId ? (departmentMap.get(departmentId) ?? 0) : 0);
+    }
+    return sum + Array.from(departmentMap.values()).reduce((monthSum, amount) => monthSum + amount, 0);
+  }, 0);
+
   return {
     rangeStartYearMonth: resolvedRangeStartYearMonth,
     rangeEndYearMonth: resolvedRangeEndYearMonth,
@@ -523,7 +542,11 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       keyword: resolvedKeyword,
     },
     rows,
-    totals,
+    totals: {
+      ...totals,
+      otherCostTotal,
+      adjustedFinalGrossProfit: totals.finalGrossProfit - otherCostTotal,
+    },
     yearMonthOptions,
     departmentOptions,
     teamOptions,

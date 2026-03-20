@@ -36,7 +36,10 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   }
 
   if (user.role === "admin" || user.role === "president") {
-    items.push({ href: "/pl/breakdown", label: "粗利内訳" });
+    items.push(
+      { href: "/pl/breakdown", label: "粗利内訳" },
+      { href: "/settings/other-costs", label: "その他コスト" },
+    );
   }
 
   if (user.role === "leader" || user.role === "president") {

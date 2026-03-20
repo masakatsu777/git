@@ -411,6 +411,16 @@ exports.Prisma.DepartmentFixedCostAllocationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DepartmentMonthlyOtherCostScalarFieldEnum = {
+  id: 'id',
+  departmentId: 'departmentId',
+  yearMonth: 'yearMonth',
+  amount: 'amount',
+  remarks: 'remarks',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.FixedCostAllocationScalarFieldEnum = {
   id: 'id',
   teamId: 'teamId',
@@ -606,6 +616,7 @@ exports.Prisma.ModelName = {
   TeamIndirectCost: 'TeamIndirectCost',
   FixedCostSetting: 'FixedCostSetting',
   DepartmentFixedCostAllocation: 'DepartmentFixedCostAllocation',
+  DepartmentMonthlyOtherCost: 'DepartmentMonthlyOtherCost',
   FixedCostAllocation: 'FixedCostAllocation',
   TeamTarget: 'TeamTarget',
   ApprovalLog: 'ApprovalLog',

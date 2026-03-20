@@ -41,19 +41,19 @@ export default async function LoginPage({
               ログイン後は <span className="font-semibold">{redirectTo}</span> へ戻ります。
             </div>
           ) : null}
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="rounded-[1.5rem] bg-white/8 px-5 py-4">
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-300">現在のセッション</p>
-              <p className="mt-2 text-lg font-semibold">{currentUser.name}</p>
-              <p className="mt-1 text-sm text-slate-300">
-                ロール: {currentUser.role} / チーム: {currentUser.teamIds.join(", ") || "全社"}
-              </p>
-              {showQuickLogin ? (
+          <div className={`mt-6 grid gap-4 ${showQuickLogin ? "lg:grid-cols-[1.2fr_0.8fr]" : "lg:grid-cols-1"}`}>
+            {showQuickLogin ? (
+              <div className="rounded-[1.5rem] bg-white/8 px-5 py-4">
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-300">現在のセッション</p>
+                <p className="mt-2 text-lg font-semibold">{currentUser.name}</p>
+                <p className="mt-1 text-sm text-slate-300">
+                  ロール: {currentUser.role} / チーム: {currentUser.teamIds.join(", ") || "全社"}
+                </p>
                 <p className="mt-4 text-sm text-slate-300">
                   開発確認用パスワード: <span className="font-semibold text-white">{SAMPLE_LOGIN_PASSWORD}</span>
                 </p>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
             <EmailLoginForm redirectTo={redirectTo} />
           </div>
         </header>

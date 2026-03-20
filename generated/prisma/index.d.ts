@@ -134,6 +134,11 @@ export type FixedCostSetting = $Result.DefaultSelection<Prisma.$FixedCostSetting
  */
 export type DepartmentFixedCostAllocation = $Result.DefaultSelection<Prisma.$DepartmentFixedCostAllocationPayload>
 /**
+ * Model DepartmentMonthlyOtherCost
+ * 
+ */
+export type DepartmentMonthlyOtherCost = $Result.DefaultSelection<Prisma.$DepartmentMonthlyOtherCostPayload>
+/**
  * Model FixedCostAllocation
  * 
  */
@@ -701,6 +706,16 @@ export class PrismaClient<
   get departmentFixedCostAllocation(): Prisma.DepartmentFixedCostAllocationDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.departmentMonthlyOtherCost`: Exposes CRUD operations for the **DepartmentMonthlyOtherCost** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DepartmentMonthlyOtherCosts
+    * const departmentMonthlyOtherCosts = await prisma.departmentMonthlyOtherCost.findMany()
+    * ```
+    */
+  get departmentMonthlyOtherCost(): Prisma.DepartmentMonthlyOtherCostDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.fixedCostAllocation`: Exposes CRUD operations for the **FixedCostAllocation** model.
     * Example usage:
     * ```ts
@@ -1234,6 +1249,7 @@ export namespace Prisma {
     TeamIndirectCost: 'TeamIndirectCost',
     FixedCostSetting: 'FixedCostSetting',
     DepartmentFixedCostAllocation: 'DepartmentFixedCostAllocation',
+    DepartmentMonthlyOtherCost: 'DepartmentMonthlyOtherCost',
     FixedCostAllocation: 'FixedCostAllocation',
     TeamTarget: 'TeamTarget',
     ApprovalLog: 'ApprovalLog',
@@ -1259,7 +1275,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "role" | "permission" | "rolePermission" | "department" | "position" | "team" | "teamMembership" | "skillGradeDefinition" | "evaluationPeriod" | "evaluationItem" | "employeeEvaluation" | "evaluationScore" | "evaluationScoreEvidence" | "salaryRecord" | "salaryRevisionRule" | "salaryRevisionSimulation" | "partner" | "monthlyAssignment" | "monthlyCost" | "teamMonthlyPl" | "teamIndirectCost" | "fixedCostSetting" | "departmentFixedCostAllocation" | "fixedCostAllocation" | "teamTarget" | "approvalLog" | "auditLog" | "employeeSalesRateSetting" | "partnerSalesRateSetting" | "partnerOutsourceRateSetting"
+      modelProps: "user" | "role" | "permission" | "rolePermission" | "department" | "position" | "team" | "teamMembership" | "skillGradeDefinition" | "evaluationPeriod" | "evaluationItem" | "employeeEvaluation" | "evaluationScore" | "evaluationScoreEvidence" | "salaryRecord" | "salaryRevisionRule" | "salaryRevisionSimulation" | "partner" | "monthlyAssignment" | "monthlyCost" | "teamMonthlyPl" | "teamIndirectCost" | "fixedCostSetting" | "departmentFixedCostAllocation" | "departmentMonthlyOtherCost" | "fixedCostAllocation" | "teamTarget" | "approvalLog" | "auditLog" | "employeeSalesRateSetting" | "partnerSalesRateSetting" | "partnerOutsourceRateSetting"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3039,6 +3055,80 @@ export namespace Prisma {
           }
         }
       }
+      DepartmentMonthlyOtherCost: {
+        payload: Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>
+        fields: Prisma.DepartmentMonthlyOtherCostFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DepartmentMonthlyOtherCostFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DepartmentMonthlyOtherCostFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>
+          }
+          findFirst: {
+            args: Prisma.DepartmentMonthlyOtherCostFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DepartmentMonthlyOtherCostFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>
+          }
+          findMany: {
+            args: Prisma.DepartmentMonthlyOtherCostFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>[]
+          }
+          create: {
+            args: Prisma.DepartmentMonthlyOtherCostCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>
+          }
+          createMany: {
+            args: Prisma.DepartmentMonthlyOtherCostCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DepartmentMonthlyOtherCostCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>[]
+          }
+          delete: {
+            args: Prisma.DepartmentMonthlyOtherCostDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>
+          }
+          update: {
+            args: Prisma.DepartmentMonthlyOtherCostUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>
+          }
+          deleteMany: {
+            args: Prisma.DepartmentMonthlyOtherCostDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DepartmentMonthlyOtherCostUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DepartmentMonthlyOtherCostUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>[]
+          }
+          upsert: {
+            args: Prisma.DepartmentMonthlyOtherCostUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentMonthlyOtherCostPayload>
+          }
+          aggregate: {
+            args: Prisma.DepartmentMonthlyOtherCostAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDepartmentMonthlyOtherCost>
+          }
+          groupBy: {
+            args: Prisma.DepartmentMonthlyOtherCostGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentMonthlyOtherCostGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DepartmentMonthlyOtherCostCountArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentMonthlyOtherCostCountAggregateOutputType> | number
+          }
+        }
+      }
       FixedCostAllocation: {
         payload: Prisma.$FixedCostAllocationPayload<ExtArgs>
         fields: Prisma.FixedCostAllocationFieldRefs
@@ -3677,6 +3767,7 @@ export namespace Prisma {
     teamIndirectCost?: TeamIndirectCostOmit
     fixedCostSetting?: FixedCostSettingOmit
     departmentFixedCostAllocation?: DepartmentFixedCostAllocationOmit
+    departmentMonthlyOtherCost?: DepartmentMonthlyOtherCostOmit
     fixedCostAllocation?: FixedCostAllocationOmit
     teamTarget?: TeamTargetOmit
     approvalLog?: ApprovalLogOmit
@@ -3960,6 +4051,7 @@ export namespace Prisma {
     users: number
     teams: number
     fixedCostAllocations: number
+    monthlyOtherCosts: number
   }
 
   export type DepartmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3967,6 +4059,7 @@ export namespace Prisma {
     users?: boolean | DepartmentCountOutputTypeCountUsersArgs
     teams?: boolean | DepartmentCountOutputTypeCountTeamsArgs
     fixedCostAllocations?: boolean | DepartmentCountOutputTypeCountFixedCostAllocationsArgs
+    monthlyOtherCosts?: boolean | DepartmentCountOutputTypeCountMonthlyOtherCostsArgs
   }
 
   // Custom InputTypes
@@ -4006,6 +4099,13 @@ export namespace Prisma {
    */
   export type DepartmentCountOutputTypeCountFixedCostAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DepartmentFixedCostAllocationWhereInput
+  }
+
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeCountMonthlyOtherCostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentMonthlyOtherCostWhereInput
   }
 
 
@@ -9340,6 +9440,7 @@ export namespace Prisma {
     users?: boolean | Department$usersArgs<ExtArgs>
     teams?: boolean | Department$teamsArgs<ExtArgs>
     fixedCostAllocations?: boolean | Department$fixedCostAllocationsArgs<ExtArgs>
+    monthlyOtherCosts?: boolean | Department$monthlyOtherCostsArgs<ExtArgs>
     _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["department"]>
 
@@ -9376,6 +9477,7 @@ export namespace Prisma {
     users?: boolean | Department$usersArgs<ExtArgs>
     teams?: boolean | Department$teamsArgs<ExtArgs>
     fixedCostAllocations?: boolean | Department$fixedCostAllocationsArgs<ExtArgs>
+    monthlyOtherCosts?: boolean | Department$monthlyOtherCostsArgs<ExtArgs>
     _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DepartmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9393,6 +9495,7 @@ export namespace Prisma {
       users: Prisma.$UserPayload<ExtArgs>[]
       teams: Prisma.$TeamPayload<ExtArgs>[]
       fixedCostAllocations: Prisma.$DepartmentFixedCostAllocationPayload<ExtArgs>[]
+      monthlyOtherCosts: Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9799,6 +9902,7 @@ export namespace Prisma {
     users<T extends Department$usersArgs<ExtArgs> = {}>(args?: Subset<T, Department$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teams<T extends Department$teamsArgs<ExtArgs> = {}>(args?: Subset<T, Department$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fixedCostAllocations<T extends Department$fixedCostAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, Department$fixedCostAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentFixedCostAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    monthlyOtherCosts<T extends Department$monthlyOtherCostsArgs<ExtArgs> = {}>(args?: Subset<T, Department$monthlyOtherCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10341,6 +10445,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DepartmentFixedCostAllocationScalarFieldEnum | DepartmentFixedCostAllocationScalarFieldEnum[]
+  }
+
+  /**
+   * Department.monthlyOtherCosts
+   */
+  export type Department$monthlyOtherCostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    where?: DepartmentMonthlyOtherCostWhereInput
+    orderBy?: DepartmentMonthlyOtherCostOrderByWithRelationInput | DepartmentMonthlyOtherCostOrderByWithRelationInput[]
+    cursor?: DepartmentMonthlyOtherCostWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DepartmentMonthlyOtherCostScalarFieldEnum | DepartmentMonthlyOtherCostScalarFieldEnum[]
   }
 
   /**
@@ -33312,6 +33440,1124 @@ export namespace Prisma {
 
 
   /**
+   * Model DepartmentMonthlyOtherCost
+   */
+
+  export type AggregateDepartmentMonthlyOtherCost = {
+    _count: DepartmentMonthlyOtherCostCountAggregateOutputType | null
+    _avg: DepartmentMonthlyOtherCostAvgAggregateOutputType | null
+    _sum: DepartmentMonthlyOtherCostSumAggregateOutputType | null
+    _min: DepartmentMonthlyOtherCostMinAggregateOutputType | null
+    _max: DepartmentMonthlyOtherCostMaxAggregateOutputType | null
+  }
+
+  export type DepartmentMonthlyOtherCostAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type DepartmentMonthlyOtherCostSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type DepartmentMonthlyOtherCostMinAggregateOutputType = {
+    id: string | null
+    departmentId: string | null
+    yearMonth: string | null
+    amount: number | null
+    remarks: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DepartmentMonthlyOtherCostMaxAggregateOutputType = {
+    id: string | null
+    departmentId: string | null
+    yearMonth: string | null
+    amount: number | null
+    remarks: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DepartmentMonthlyOtherCostCountAggregateOutputType = {
+    id: number
+    departmentId: number
+    yearMonth: number
+    amount: number
+    remarks: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DepartmentMonthlyOtherCostAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type DepartmentMonthlyOtherCostSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type DepartmentMonthlyOtherCostMinAggregateInputType = {
+    id?: true
+    departmentId?: true
+    yearMonth?: true
+    amount?: true
+    remarks?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DepartmentMonthlyOtherCostMaxAggregateInputType = {
+    id?: true
+    departmentId?: true
+    yearMonth?: true
+    amount?: true
+    remarks?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DepartmentMonthlyOtherCostCountAggregateInputType = {
+    id?: true
+    departmentId?: true
+    yearMonth?: true
+    amount?: true
+    remarks?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DepartmentMonthlyOtherCostAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DepartmentMonthlyOtherCost to aggregate.
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentMonthlyOtherCosts to fetch.
+     */
+    orderBy?: DepartmentMonthlyOtherCostOrderByWithRelationInput | DepartmentMonthlyOtherCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DepartmentMonthlyOtherCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentMonthlyOtherCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentMonthlyOtherCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DepartmentMonthlyOtherCosts
+    **/
+    _count?: true | DepartmentMonthlyOtherCostCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DepartmentMonthlyOtherCostAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DepartmentMonthlyOtherCostSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DepartmentMonthlyOtherCostMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DepartmentMonthlyOtherCostMaxAggregateInputType
+  }
+
+  export type GetDepartmentMonthlyOtherCostAggregateType<T extends DepartmentMonthlyOtherCostAggregateArgs> = {
+        [P in keyof T & keyof AggregateDepartmentMonthlyOtherCost]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDepartmentMonthlyOtherCost[P]>
+      : GetScalarType<T[P], AggregateDepartmentMonthlyOtherCost[P]>
+  }
+
+
+
+
+  export type DepartmentMonthlyOtherCostGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentMonthlyOtherCostWhereInput
+    orderBy?: DepartmentMonthlyOtherCostOrderByWithAggregationInput | DepartmentMonthlyOtherCostOrderByWithAggregationInput[]
+    by: DepartmentMonthlyOtherCostScalarFieldEnum[] | DepartmentMonthlyOtherCostScalarFieldEnum
+    having?: DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DepartmentMonthlyOtherCostCountAggregateInputType | true
+    _avg?: DepartmentMonthlyOtherCostAvgAggregateInputType
+    _sum?: DepartmentMonthlyOtherCostSumAggregateInputType
+    _min?: DepartmentMonthlyOtherCostMinAggregateInputType
+    _max?: DepartmentMonthlyOtherCostMaxAggregateInputType
+  }
+
+  export type DepartmentMonthlyOtherCostGroupByOutputType = {
+    id: string
+    departmentId: string
+    yearMonth: string
+    amount: number
+    remarks: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: DepartmentMonthlyOtherCostCountAggregateOutputType | null
+    _avg: DepartmentMonthlyOtherCostAvgAggregateOutputType | null
+    _sum: DepartmentMonthlyOtherCostSumAggregateOutputType | null
+    _min: DepartmentMonthlyOtherCostMinAggregateOutputType | null
+    _max: DepartmentMonthlyOtherCostMaxAggregateOutputType | null
+  }
+
+  type GetDepartmentMonthlyOtherCostGroupByPayload<T extends DepartmentMonthlyOtherCostGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DepartmentMonthlyOtherCostGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DepartmentMonthlyOtherCostGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DepartmentMonthlyOtherCostGroupByOutputType[P]>
+            : GetScalarType<T[P], DepartmentMonthlyOtherCostGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DepartmentMonthlyOtherCostSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    amount?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["departmentMonthlyOtherCost"]>
+
+  export type DepartmentMonthlyOtherCostSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    amount?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["departmentMonthlyOtherCost"]>
+
+  export type DepartmentMonthlyOtherCostSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    amount?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["departmentMonthlyOtherCost"]>
+
+  export type DepartmentMonthlyOtherCostSelectScalar = {
+    id?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    amount?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DepartmentMonthlyOtherCostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "departmentId" | "yearMonth" | "amount" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["departmentMonthlyOtherCost"]>
+  export type DepartmentMonthlyOtherCostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }
+  export type DepartmentMonthlyOtherCostIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }
+  export type DepartmentMonthlyOtherCostIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }
+
+  export type $DepartmentMonthlyOtherCostPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DepartmentMonthlyOtherCost"
+    objects: {
+      department: Prisma.$DepartmentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      departmentId: string
+      yearMonth: string
+      amount: number
+      remarks: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["departmentMonthlyOtherCost"]>
+    composites: {}
+  }
+
+  type DepartmentMonthlyOtherCostGetPayload<S extends boolean | null | undefined | DepartmentMonthlyOtherCostDefaultArgs> = $Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload, S>
+
+  type DepartmentMonthlyOtherCostCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DepartmentMonthlyOtherCostFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DepartmentMonthlyOtherCostCountAggregateInputType | true
+    }
+
+  export interface DepartmentMonthlyOtherCostDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DepartmentMonthlyOtherCost'], meta: { name: 'DepartmentMonthlyOtherCost' } }
+    /**
+     * Find zero or one DepartmentMonthlyOtherCost that matches the filter.
+     * @param {DepartmentMonthlyOtherCostFindUniqueArgs} args - Arguments to find a DepartmentMonthlyOtherCost
+     * @example
+     * // Get one DepartmentMonthlyOtherCost
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DepartmentMonthlyOtherCostFindUniqueArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostFindUniqueArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DepartmentMonthlyOtherCost that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DepartmentMonthlyOtherCostFindUniqueOrThrowArgs} args - Arguments to find a DepartmentMonthlyOtherCost
+     * @example
+     * // Get one DepartmentMonthlyOtherCost
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DepartmentMonthlyOtherCostFindUniqueOrThrowArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DepartmentMonthlyOtherCost that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostFindFirstArgs} args - Arguments to find a DepartmentMonthlyOtherCost
+     * @example
+     * // Get one DepartmentMonthlyOtherCost
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DepartmentMonthlyOtherCostFindFirstArgs>(args?: SelectSubset<T, DepartmentMonthlyOtherCostFindFirstArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DepartmentMonthlyOtherCost that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostFindFirstOrThrowArgs} args - Arguments to find a DepartmentMonthlyOtherCost
+     * @example
+     * // Get one DepartmentMonthlyOtherCost
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DepartmentMonthlyOtherCostFindFirstOrThrowArgs>(args?: SelectSubset<T, DepartmentMonthlyOtherCostFindFirstOrThrowArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DepartmentMonthlyOtherCosts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DepartmentMonthlyOtherCosts
+     * const departmentMonthlyOtherCosts = await prisma.departmentMonthlyOtherCost.findMany()
+     * 
+     * // Get first 10 DepartmentMonthlyOtherCosts
+     * const departmentMonthlyOtherCosts = await prisma.departmentMonthlyOtherCost.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const departmentMonthlyOtherCostWithIdOnly = await prisma.departmentMonthlyOtherCost.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DepartmentMonthlyOtherCostFindManyArgs>(args?: SelectSubset<T, DepartmentMonthlyOtherCostFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DepartmentMonthlyOtherCost.
+     * @param {DepartmentMonthlyOtherCostCreateArgs} args - Arguments to create a DepartmentMonthlyOtherCost.
+     * @example
+     * // Create one DepartmentMonthlyOtherCost
+     * const DepartmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.create({
+     *   data: {
+     *     // ... data to create a DepartmentMonthlyOtherCost
+     *   }
+     * })
+     * 
+     */
+    create<T extends DepartmentMonthlyOtherCostCreateArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostCreateArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DepartmentMonthlyOtherCosts.
+     * @param {DepartmentMonthlyOtherCostCreateManyArgs} args - Arguments to create many DepartmentMonthlyOtherCosts.
+     * @example
+     * // Create many DepartmentMonthlyOtherCosts
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DepartmentMonthlyOtherCostCreateManyArgs>(args?: SelectSubset<T, DepartmentMonthlyOtherCostCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DepartmentMonthlyOtherCosts and returns the data saved in the database.
+     * @param {DepartmentMonthlyOtherCostCreateManyAndReturnArgs} args - Arguments to create many DepartmentMonthlyOtherCosts.
+     * @example
+     * // Create many DepartmentMonthlyOtherCosts
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DepartmentMonthlyOtherCosts and only return the `id`
+     * const departmentMonthlyOtherCostWithIdOnly = await prisma.departmentMonthlyOtherCost.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DepartmentMonthlyOtherCostCreateManyAndReturnArgs>(args?: SelectSubset<T, DepartmentMonthlyOtherCostCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DepartmentMonthlyOtherCost.
+     * @param {DepartmentMonthlyOtherCostDeleteArgs} args - Arguments to delete one DepartmentMonthlyOtherCost.
+     * @example
+     * // Delete one DepartmentMonthlyOtherCost
+     * const DepartmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.delete({
+     *   where: {
+     *     // ... filter to delete one DepartmentMonthlyOtherCost
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DepartmentMonthlyOtherCostDeleteArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostDeleteArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DepartmentMonthlyOtherCost.
+     * @param {DepartmentMonthlyOtherCostUpdateArgs} args - Arguments to update one DepartmentMonthlyOtherCost.
+     * @example
+     * // Update one DepartmentMonthlyOtherCost
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DepartmentMonthlyOtherCostUpdateArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostUpdateArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DepartmentMonthlyOtherCosts.
+     * @param {DepartmentMonthlyOtherCostDeleteManyArgs} args - Arguments to filter DepartmentMonthlyOtherCosts to delete.
+     * @example
+     * // Delete a few DepartmentMonthlyOtherCosts
+     * const { count } = await prisma.departmentMonthlyOtherCost.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DepartmentMonthlyOtherCostDeleteManyArgs>(args?: SelectSubset<T, DepartmentMonthlyOtherCostDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DepartmentMonthlyOtherCosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DepartmentMonthlyOtherCosts
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DepartmentMonthlyOtherCostUpdateManyArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DepartmentMonthlyOtherCosts and returns the data updated in the database.
+     * @param {DepartmentMonthlyOtherCostUpdateManyAndReturnArgs} args - Arguments to update many DepartmentMonthlyOtherCosts.
+     * @example
+     * // Update many DepartmentMonthlyOtherCosts
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DepartmentMonthlyOtherCosts and only return the `id`
+     * const departmentMonthlyOtherCostWithIdOnly = await prisma.departmentMonthlyOtherCost.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DepartmentMonthlyOtherCostUpdateManyAndReturnArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DepartmentMonthlyOtherCost.
+     * @param {DepartmentMonthlyOtherCostUpsertArgs} args - Arguments to update or create a DepartmentMonthlyOtherCost.
+     * @example
+     * // Update or create a DepartmentMonthlyOtherCost
+     * const departmentMonthlyOtherCost = await prisma.departmentMonthlyOtherCost.upsert({
+     *   create: {
+     *     // ... data to create a DepartmentMonthlyOtherCost
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DepartmentMonthlyOtherCost we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DepartmentMonthlyOtherCostUpsertArgs>(args: SelectSubset<T, DepartmentMonthlyOtherCostUpsertArgs<ExtArgs>>): Prisma__DepartmentMonthlyOtherCostClient<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DepartmentMonthlyOtherCosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostCountArgs} args - Arguments to filter DepartmentMonthlyOtherCosts to count.
+     * @example
+     * // Count the number of DepartmentMonthlyOtherCosts
+     * const count = await prisma.departmentMonthlyOtherCost.count({
+     *   where: {
+     *     // ... the filter for the DepartmentMonthlyOtherCosts we want to count
+     *   }
+     * })
+    **/
+    count<T extends DepartmentMonthlyOtherCostCountArgs>(
+      args?: Subset<T, DepartmentMonthlyOtherCostCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DepartmentMonthlyOtherCostCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DepartmentMonthlyOtherCost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DepartmentMonthlyOtherCostAggregateArgs>(args: Subset<T, DepartmentMonthlyOtherCostAggregateArgs>): Prisma.PrismaPromise<GetDepartmentMonthlyOtherCostAggregateType<T>>
+
+    /**
+     * Group by DepartmentMonthlyOtherCost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentMonthlyOtherCostGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DepartmentMonthlyOtherCostGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DepartmentMonthlyOtherCostGroupByArgs['orderBy'] }
+        : { orderBy?: DepartmentMonthlyOtherCostGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DepartmentMonthlyOtherCostGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDepartmentMonthlyOtherCostGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DepartmentMonthlyOtherCost model
+   */
+  readonly fields: DepartmentMonthlyOtherCostFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DepartmentMonthlyOtherCost.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DepartmentMonthlyOtherCostClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    department<T extends DepartmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DepartmentDefaultArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DepartmentMonthlyOtherCost model
+   */
+  interface DepartmentMonthlyOtherCostFieldRefs {
+    readonly id: FieldRef<"DepartmentMonthlyOtherCost", 'String'>
+    readonly departmentId: FieldRef<"DepartmentMonthlyOtherCost", 'String'>
+    readonly yearMonth: FieldRef<"DepartmentMonthlyOtherCost", 'String'>
+    readonly amount: FieldRef<"DepartmentMonthlyOtherCost", 'Int'>
+    readonly remarks: FieldRef<"DepartmentMonthlyOtherCost", 'String'>
+    readonly createdAt: FieldRef<"DepartmentMonthlyOtherCost", 'DateTime'>
+    readonly updatedAt: FieldRef<"DepartmentMonthlyOtherCost", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DepartmentMonthlyOtherCost findUnique
+   */
+  export type DepartmentMonthlyOtherCostFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentMonthlyOtherCost to fetch.
+     */
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost findUniqueOrThrow
+   */
+  export type DepartmentMonthlyOtherCostFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentMonthlyOtherCost to fetch.
+     */
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost findFirst
+   */
+  export type DepartmentMonthlyOtherCostFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentMonthlyOtherCost to fetch.
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentMonthlyOtherCosts to fetch.
+     */
+    orderBy?: DepartmentMonthlyOtherCostOrderByWithRelationInput | DepartmentMonthlyOtherCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DepartmentMonthlyOtherCosts.
+     */
+    cursor?: DepartmentMonthlyOtherCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentMonthlyOtherCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentMonthlyOtherCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DepartmentMonthlyOtherCosts.
+     */
+    distinct?: DepartmentMonthlyOtherCostScalarFieldEnum | DepartmentMonthlyOtherCostScalarFieldEnum[]
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost findFirstOrThrow
+   */
+  export type DepartmentMonthlyOtherCostFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentMonthlyOtherCost to fetch.
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentMonthlyOtherCosts to fetch.
+     */
+    orderBy?: DepartmentMonthlyOtherCostOrderByWithRelationInput | DepartmentMonthlyOtherCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DepartmentMonthlyOtherCosts.
+     */
+    cursor?: DepartmentMonthlyOtherCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentMonthlyOtherCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentMonthlyOtherCosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DepartmentMonthlyOtherCosts.
+     */
+    distinct?: DepartmentMonthlyOtherCostScalarFieldEnum | DepartmentMonthlyOtherCostScalarFieldEnum[]
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost findMany
+   */
+  export type DepartmentMonthlyOtherCostFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentMonthlyOtherCosts to fetch.
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentMonthlyOtherCosts to fetch.
+     */
+    orderBy?: DepartmentMonthlyOtherCostOrderByWithRelationInput | DepartmentMonthlyOtherCostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DepartmentMonthlyOtherCosts.
+     */
+    cursor?: DepartmentMonthlyOtherCostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentMonthlyOtherCosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentMonthlyOtherCosts.
+     */
+    skip?: number
+    distinct?: DepartmentMonthlyOtherCostScalarFieldEnum | DepartmentMonthlyOtherCostScalarFieldEnum[]
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost create
+   */
+  export type DepartmentMonthlyOtherCostCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DepartmentMonthlyOtherCost.
+     */
+    data: XOR<DepartmentMonthlyOtherCostCreateInput, DepartmentMonthlyOtherCostUncheckedCreateInput>
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost createMany
+   */
+  export type DepartmentMonthlyOtherCostCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DepartmentMonthlyOtherCosts.
+     */
+    data: DepartmentMonthlyOtherCostCreateManyInput | DepartmentMonthlyOtherCostCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost createManyAndReturn
+   */
+  export type DepartmentMonthlyOtherCostCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * The data used to create many DepartmentMonthlyOtherCosts.
+     */
+    data: DepartmentMonthlyOtherCostCreateManyInput | DepartmentMonthlyOtherCostCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost update
+   */
+  export type DepartmentMonthlyOtherCostUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DepartmentMonthlyOtherCost.
+     */
+    data: XOR<DepartmentMonthlyOtherCostUpdateInput, DepartmentMonthlyOtherCostUncheckedUpdateInput>
+    /**
+     * Choose, which DepartmentMonthlyOtherCost to update.
+     */
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost updateMany
+   */
+  export type DepartmentMonthlyOtherCostUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DepartmentMonthlyOtherCosts.
+     */
+    data: XOR<DepartmentMonthlyOtherCostUpdateManyMutationInput, DepartmentMonthlyOtherCostUncheckedUpdateManyInput>
+    /**
+     * Filter which DepartmentMonthlyOtherCosts to update
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * Limit how many DepartmentMonthlyOtherCosts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost updateManyAndReturn
+   */
+  export type DepartmentMonthlyOtherCostUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * The data used to update DepartmentMonthlyOtherCosts.
+     */
+    data: XOR<DepartmentMonthlyOtherCostUpdateManyMutationInput, DepartmentMonthlyOtherCostUncheckedUpdateManyInput>
+    /**
+     * Filter which DepartmentMonthlyOtherCosts to update
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * Limit how many DepartmentMonthlyOtherCosts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost upsert
+   */
+  export type DepartmentMonthlyOtherCostUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DepartmentMonthlyOtherCost to update in case it exists.
+     */
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+    /**
+     * In case the DepartmentMonthlyOtherCost found by the `where` argument doesn't exist, create a new DepartmentMonthlyOtherCost with this data.
+     */
+    create: XOR<DepartmentMonthlyOtherCostCreateInput, DepartmentMonthlyOtherCostUncheckedCreateInput>
+    /**
+     * In case the DepartmentMonthlyOtherCost was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DepartmentMonthlyOtherCostUpdateInput, DepartmentMonthlyOtherCostUncheckedUpdateInput>
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost delete
+   */
+  export type DepartmentMonthlyOtherCostDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+    /**
+     * Filter which DepartmentMonthlyOtherCost to delete.
+     */
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost deleteMany
+   */
+  export type DepartmentMonthlyOtherCostDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DepartmentMonthlyOtherCosts to delete
+     */
+    where?: DepartmentMonthlyOtherCostWhereInput
+    /**
+     * Limit how many DepartmentMonthlyOtherCosts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DepartmentMonthlyOtherCost without action
+   */
+  export type DepartmentMonthlyOtherCostDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentMonthlyOtherCost
+     */
+    select?: DepartmentMonthlyOtherCostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentMonthlyOtherCost
+     */
+    omit?: DepartmentMonthlyOtherCostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentMonthlyOtherCostInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model FixedCostAllocation
    */
 
@@ -41435,6 +42681,19 @@ export namespace Prisma {
   export type DepartmentFixedCostAllocationScalarFieldEnum = (typeof DepartmentFixedCostAllocationScalarFieldEnum)[keyof typeof DepartmentFixedCostAllocationScalarFieldEnum]
 
 
+  export const DepartmentMonthlyOtherCostScalarFieldEnum: {
+    id: 'id',
+    departmentId: 'departmentId',
+    yearMonth: 'yearMonth',
+    amount: 'amount',
+    remarks: 'remarks',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DepartmentMonthlyOtherCostScalarFieldEnum = (typeof DepartmentMonthlyOtherCostScalarFieldEnum)[keyof typeof DepartmentMonthlyOtherCostScalarFieldEnum]
+
+
   export const FixedCostAllocationScalarFieldEnum: {
     id: 'id',
     teamId: 'teamId',
@@ -42154,6 +43413,7 @@ export namespace Prisma {
     users?: UserListRelationFilter
     teams?: TeamListRelationFilter
     fixedCostAllocations?: DepartmentFixedCostAllocationListRelationFilter
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostListRelationFilter
   }
 
   export type DepartmentOrderByWithRelationInput = {
@@ -42167,6 +43427,7 @@ export namespace Prisma {
     users?: UserOrderByRelationAggregateInput
     teams?: TeamOrderByRelationAggregateInput
     fixedCostAllocations?: DepartmentFixedCostAllocationOrderByRelationAggregateInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostOrderByRelationAggregateInput
   }
 
   export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
@@ -42183,6 +43444,7 @@ export namespace Prisma {
     users?: UserListRelationFilter
     teams?: TeamListRelationFilter
     fixedCostAllocations?: DepartmentFixedCostAllocationListRelationFilter
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostListRelationFilter
   }, "id">
 
   export type DepartmentOrderByWithAggregationInput = {
@@ -43868,6 +45130,74 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"DepartmentFixedCostAllocation"> | Date | string
   }
 
+  export type DepartmentMonthlyOtherCostWhereInput = {
+    AND?: DepartmentMonthlyOtherCostWhereInput | DepartmentMonthlyOtherCostWhereInput[]
+    OR?: DepartmentMonthlyOtherCostWhereInput[]
+    NOT?: DepartmentMonthlyOtherCostWhereInput | DepartmentMonthlyOtherCostWhereInput[]
+    id?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    departmentId?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    yearMonth?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    amount?: IntFilter<"DepartmentMonthlyOtherCost"> | number
+    remarks?: StringNullableFilter<"DepartmentMonthlyOtherCost"> | string | null
+    createdAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
+    updatedAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
+    department?: XOR<DepartmentScalarRelationFilter, DepartmentWhereInput>
+  }
+
+  export type DepartmentMonthlyOtherCostOrderByWithRelationInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    amount?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    department?: DepartmentOrderByWithRelationInput
+  }
+
+  export type DepartmentMonthlyOtherCostWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    departmentId_yearMonth?: DepartmentMonthlyOtherCostDepartmentIdYearMonthCompoundUniqueInput
+    AND?: DepartmentMonthlyOtherCostWhereInput | DepartmentMonthlyOtherCostWhereInput[]
+    OR?: DepartmentMonthlyOtherCostWhereInput[]
+    NOT?: DepartmentMonthlyOtherCostWhereInput | DepartmentMonthlyOtherCostWhereInput[]
+    departmentId?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    yearMonth?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    amount?: IntFilter<"DepartmentMonthlyOtherCost"> | number
+    remarks?: StringNullableFilter<"DepartmentMonthlyOtherCost"> | string | null
+    createdAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
+    updatedAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
+    department?: XOR<DepartmentScalarRelationFilter, DepartmentWhereInput>
+  }, "id" | "departmentId_yearMonth">
+
+  export type DepartmentMonthlyOtherCostOrderByWithAggregationInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    amount?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DepartmentMonthlyOtherCostCountOrderByAggregateInput
+    _avg?: DepartmentMonthlyOtherCostAvgOrderByAggregateInput
+    _max?: DepartmentMonthlyOtherCostMaxOrderByAggregateInput
+    _min?: DepartmentMonthlyOtherCostMinOrderByAggregateInput
+    _sum?: DepartmentMonthlyOtherCostSumOrderByAggregateInput
+  }
+
+  export type DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput = {
+    AND?: DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput | DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput[]
+    OR?: DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput[]
+    NOT?: DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput | DepartmentMonthlyOtherCostScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | string
+    departmentId?: StringWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | string
+    yearMonth?: StringWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | string
+    amount?: IntWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | number
+    remarks?: StringNullableWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DepartmentMonthlyOtherCost"> | Date | string
+  }
+
   export type FixedCostAllocationWhereInput = {
     AND?: FixedCostAllocationWhereInput | FixedCostAllocationWhereInput[]
     OR?: FixedCostAllocationWhereInput[]
@@ -44650,6 +45980,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutDepartmentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateInput = {
@@ -44662,6 +45993,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUpdateInput = {
@@ -44674,6 +46006,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateInput = {
@@ -44686,6 +46019,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentCreateManyInput = {
@@ -46499,6 +47833,75 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DepartmentMonthlyOtherCostCreateInput = {
+    id?: string
+    yearMonth: string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    department: DepartmentCreateNestedOneWithoutMonthlyOtherCostsInput
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedCreateInput = {
+    id?: string
+    departmentId: string
+    yearMonth: string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    department?: DepartmentUpdateOneRequiredWithoutMonthlyOtherCostsNestedInput
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostCreateManyInput = {
+    id?: string
+    departmentId: string
+    yearMonth: string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type FixedCostAllocationCreateInput = {
     id?: string
     yearMonth: string
@@ -47343,11 +48746,21 @@ export namespace Prisma {
     none?: DepartmentFixedCostAllocationWhereInput
   }
 
+  export type DepartmentMonthlyOtherCostListRelationFilter = {
+    every?: DepartmentMonthlyOtherCostWhereInput
+    some?: DepartmentMonthlyOtherCostWhereInput
+    none?: DepartmentMonthlyOtherCostWhereInput
+  }
+
   export type DepartmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type DepartmentFixedCostAllocationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DepartmentMonthlyOtherCostOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -48810,6 +50223,49 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type DepartmentMonthlyOtherCostDepartmentIdYearMonthCompoundUniqueInput = {
+    departmentId: string
+    yearMonth: string
+  }
+
+  export type DepartmentMonthlyOtherCostCountOrderByAggregateInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    amount?: SortOrder
+    remarks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentMonthlyOtherCostAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type DepartmentMonthlyOtherCostMaxOrderByAggregateInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    amount?: SortOrder
+    remarks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentMonthlyOtherCostMinOrderByAggregateInput = {
+    id?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    amount?: SortOrder
+    remarks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentMonthlyOtherCostSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
   export type FixedCostAllocationCountOrderByAggregateInput = {
     id?: SortOrder
     teamId?: SortOrder
@@ -49856,6 +51312,13 @@ export namespace Prisma {
     connect?: DepartmentFixedCostAllocationWhereUniqueInput | DepartmentFixedCostAllocationWhereUniqueInput[]
   }
 
+  export type DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<DepartmentMonthlyOtherCostCreateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput> | DepartmentMonthlyOtherCostCreateWithoutDepartmentInput[] | DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput | DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput[]
+    createMany?: DepartmentMonthlyOtherCostCreateManyDepartmentInputEnvelope
+    connect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+  }
+
   export type DepartmentUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<DepartmentCreateWithoutParentInput, DepartmentUncheckedCreateWithoutParentInput> | DepartmentCreateWithoutParentInput[] | DepartmentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: DepartmentCreateOrConnectWithoutParentInput | DepartmentCreateOrConnectWithoutParentInput[]
@@ -49882,6 +51345,13 @@ export namespace Prisma {
     connectOrCreate?: DepartmentFixedCostAllocationCreateOrConnectWithoutDepartmentInput | DepartmentFixedCostAllocationCreateOrConnectWithoutDepartmentInput[]
     createMany?: DepartmentFixedCostAllocationCreateManyDepartmentInputEnvelope
     connect?: DepartmentFixedCostAllocationWhereUniqueInput | DepartmentFixedCostAllocationWhereUniqueInput[]
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<DepartmentMonthlyOtherCostCreateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput> | DepartmentMonthlyOtherCostCreateWithoutDepartmentInput[] | DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput | DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput[]
+    createMany?: DepartmentMonthlyOtherCostCreateManyDepartmentInputEnvelope
+    connect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
   }
 
   export type DepartmentUpdateOneWithoutChildrenNestedInput = {
@@ -49950,6 +51420,20 @@ export namespace Prisma {
     deleteMany?: DepartmentFixedCostAllocationScalarWhereInput | DepartmentFixedCostAllocationScalarWhereInput[]
   }
 
+  export type DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<DepartmentMonthlyOtherCostCreateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput> | DepartmentMonthlyOtherCostCreateWithoutDepartmentInput[] | DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput | DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput[]
+    upsert?: DepartmentMonthlyOtherCostUpsertWithWhereUniqueWithoutDepartmentInput | DepartmentMonthlyOtherCostUpsertWithWhereUniqueWithoutDepartmentInput[]
+    createMany?: DepartmentMonthlyOtherCostCreateManyDepartmentInputEnvelope
+    set?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    disconnect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    delete?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    connect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    update?: DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput | DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput[]
+    updateMany?: DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput | DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput[]
+    deleteMany?: DepartmentMonthlyOtherCostScalarWhereInput | DepartmentMonthlyOtherCostScalarWhereInput[]
+  }
+
   export type DepartmentUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<DepartmentCreateWithoutParentInput, DepartmentUncheckedCreateWithoutParentInput> | DepartmentCreateWithoutParentInput[] | DepartmentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: DepartmentCreateOrConnectWithoutParentInput | DepartmentCreateOrConnectWithoutParentInput[]
@@ -50004,6 +51488,20 @@ export namespace Prisma {
     update?: DepartmentFixedCostAllocationUpdateWithWhereUniqueWithoutDepartmentInput | DepartmentFixedCostAllocationUpdateWithWhereUniqueWithoutDepartmentInput[]
     updateMany?: DepartmentFixedCostAllocationUpdateManyWithWhereWithoutDepartmentInput | DepartmentFixedCostAllocationUpdateManyWithWhereWithoutDepartmentInput[]
     deleteMany?: DepartmentFixedCostAllocationScalarWhereInput | DepartmentFixedCostAllocationScalarWhereInput[]
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<DepartmentMonthlyOtherCostCreateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput> | DepartmentMonthlyOtherCostCreateWithoutDepartmentInput[] | DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput | DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput[]
+    upsert?: DepartmentMonthlyOtherCostUpsertWithWhereUniqueWithoutDepartmentInput | DepartmentMonthlyOtherCostUpsertWithWhereUniqueWithoutDepartmentInput[]
+    createMany?: DepartmentMonthlyOtherCostCreateManyDepartmentInputEnvelope
+    set?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    disconnect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    delete?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    connect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+    update?: DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput | DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput[]
+    updateMany?: DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput | DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput[]
+    deleteMany?: DepartmentMonthlyOtherCostScalarWhereInput | DepartmentMonthlyOtherCostScalarWhereInput[]
   }
 
   export type UserCreateNestedManyWithoutPositionInput = {
@@ -51620,6 +53118,20 @@ export namespace Prisma {
     update?: XOR<XOR<DepartmentUpdateToOneWithWhereWithoutFixedCostAllocationsInput, DepartmentUpdateWithoutFixedCostAllocationsInput>, DepartmentUncheckedUpdateWithoutFixedCostAllocationsInput>
   }
 
+  export type DepartmentCreateNestedOneWithoutMonthlyOtherCostsInput = {
+    create?: XOR<DepartmentCreateWithoutMonthlyOtherCostsInput, DepartmentUncheckedCreateWithoutMonthlyOtherCostsInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutMonthlyOtherCostsInput
+    connect?: DepartmentWhereUniqueInput
+  }
+
+  export type DepartmentUpdateOneRequiredWithoutMonthlyOtherCostsNestedInput = {
+    create?: XOR<DepartmentCreateWithoutMonthlyOtherCostsInput, DepartmentUncheckedCreateWithoutMonthlyOtherCostsInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutMonthlyOtherCostsInput
+    upsert?: DepartmentUpsertWithoutMonthlyOtherCostsInput
+    connect?: DepartmentWhereUniqueInput
+    update?: XOR<XOR<DepartmentUpdateToOneWithWhereWithoutMonthlyOtherCostsInput, DepartmentUpdateWithoutMonthlyOtherCostsInput>, DepartmentUncheckedUpdateWithoutMonthlyOtherCostsInput>
+  }
+
   export type TeamCreateNestedOneWithoutFixedAllocationsInput = {
     create?: XOR<TeamCreateWithoutFixedAllocationsInput, TeamUncheckedCreateWithoutFixedAllocationsInput>
     connectOrCreate?: TeamCreateOrConnectWithoutFixedAllocationsInput
@@ -52236,6 +53748,7 @@ export namespace Prisma {
     children?: DepartmentCreateNestedManyWithoutParentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutUsersInput = {
@@ -52247,6 +53760,7 @@ export namespace Prisma {
     children?: DepartmentUncheckedCreateNestedManyWithoutParentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutUsersInput = {
@@ -52775,6 +54289,7 @@ export namespace Prisma {
     children?: DepartmentUpdateManyWithoutParentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutUsersInput = {
@@ -52786,6 +54301,7 @@ export namespace Prisma {
     children?: DepartmentUncheckedUpdateManyWithoutParentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type PositionUpsertWithoutUsersInput = {
@@ -53455,6 +54971,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutDepartmentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutChildrenInput = {
@@ -53466,6 +54983,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutChildrenInput = {
@@ -53482,6 +55000,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutDepartmentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutParentInput = {
@@ -53493,6 +55012,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutParentInput = {
@@ -53637,6 +55157,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DepartmentMonthlyOtherCostCreateWithoutDepartmentInput = {
+    id?: string
+    yearMonth: string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput = {
+    id?: string
+    yearMonth: string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput = {
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+    create: XOR<DepartmentMonthlyOtherCostCreateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type DepartmentMonthlyOtherCostCreateManyDepartmentInputEnvelope = {
+    data: DepartmentMonthlyOtherCostCreateManyDepartmentInput | DepartmentMonthlyOtherCostCreateManyDepartmentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type DepartmentUpsertWithoutChildrenInput = {
     update: XOR<DepartmentUpdateWithoutChildrenInput, DepartmentUncheckedUpdateWithoutChildrenInput>
     create: XOR<DepartmentCreateWithoutChildrenInput, DepartmentUncheckedCreateWithoutChildrenInput>
@@ -53657,6 +55205,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutChildrenInput = {
@@ -53668,6 +55217,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUpsertWithWhereUniqueWithoutParentInput = {
@@ -53755,6 +55305,35 @@ export namespace Prisma {
     amount?: IntFilter<"DepartmentFixedCostAllocation"> | number
     createdAt?: DateTimeFilter<"DepartmentFixedCostAllocation"> | Date | string
     updatedAt?: DateTimeFilter<"DepartmentFixedCostAllocation"> | Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUpsertWithWhereUniqueWithoutDepartmentInput = {
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+    update: XOR<DepartmentMonthlyOtherCostUpdateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedUpdateWithoutDepartmentInput>
+    create: XOR<DepartmentMonthlyOtherCostCreateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput = {
+    where: DepartmentMonthlyOtherCostWhereUniqueInput
+    data: XOR<DepartmentMonthlyOtherCostUpdateWithoutDepartmentInput, DepartmentMonthlyOtherCostUncheckedUpdateWithoutDepartmentInput>
+  }
+
+  export type DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput = {
+    where: DepartmentMonthlyOtherCostScalarWhereInput
+    data: XOR<DepartmentMonthlyOtherCostUpdateManyMutationInput, DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentInput>
+  }
+
+  export type DepartmentMonthlyOtherCostScalarWhereInput = {
+    AND?: DepartmentMonthlyOtherCostScalarWhereInput | DepartmentMonthlyOtherCostScalarWhereInput[]
+    OR?: DepartmentMonthlyOtherCostScalarWhereInput[]
+    NOT?: DepartmentMonthlyOtherCostScalarWhereInput | DepartmentMonthlyOtherCostScalarWhereInput[]
+    id?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    departmentId?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    yearMonth?: StringFilter<"DepartmentMonthlyOtherCost"> | string
+    amount?: IntFilter<"DepartmentMonthlyOtherCost"> | number
+    remarks?: StringNullableFilter<"DepartmentMonthlyOtherCost"> | string | null
+    createdAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
+    updatedAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
   }
 
   export type UserCreateWithoutPositionInput = {
@@ -53919,6 +55498,7 @@ export namespace Prisma {
     children?: DepartmentCreateNestedManyWithoutParentInput
     users?: UserCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutTeamsInput = {
@@ -53930,6 +55510,7 @@ export namespace Prisma {
     children?: DepartmentUncheckedCreateNestedManyWithoutParentInput
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutTeamsInput = {
@@ -54310,6 +55891,7 @@ export namespace Prisma {
     children?: DepartmentUpdateManyWithoutParentNestedInput
     users?: UserUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutTeamsInput = {
@@ -54321,6 +55903,7 @@ export namespace Prisma {
     children?: DepartmentUncheckedUpdateManyWithoutParentNestedInput
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type UserUpsertWithoutLedTeamsInput = {
@@ -57988,6 +59571,7 @@ export namespace Prisma {
     children?: DepartmentCreateNestedManyWithoutParentInput
     users?: UserCreateNestedManyWithoutDepartmentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutFixedCostAllocationsInput = {
@@ -57999,6 +59583,7 @@ export namespace Prisma {
     children?: DepartmentUncheckedCreateNestedManyWithoutParentInput
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutFixedCostAllocationsInput = {
@@ -58061,6 +59646,7 @@ export namespace Prisma {
     children?: DepartmentUpdateManyWithoutParentNestedInput
     users?: UserUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutFixedCostAllocationsInput = {
@@ -58072,6 +59658,71 @@ export namespace Prisma {
     children?: DepartmentUncheckedUpdateManyWithoutParentNestedInput
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentCreateWithoutMonthlyOtherCostsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parent?: DepartmentCreateNestedOneWithoutChildrenInput
+    children?: DepartmentCreateNestedManyWithoutParentInput
+    users?: UserCreateNestedManyWithoutDepartmentInput
+    teams?: TeamCreateNestedManyWithoutDepartmentInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentUncheckedCreateWithoutMonthlyOtherCostsInput = {
+    id?: string
+    name: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: DepartmentUncheckedCreateNestedManyWithoutParentInput
+    users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
+    teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentCreateOrConnectWithoutMonthlyOtherCostsInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutMonthlyOtherCostsInput, DepartmentUncheckedCreateWithoutMonthlyOtherCostsInput>
+  }
+
+  export type DepartmentUpsertWithoutMonthlyOtherCostsInput = {
+    update: XOR<DepartmentUpdateWithoutMonthlyOtherCostsInput, DepartmentUncheckedUpdateWithoutMonthlyOtherCostsInput>
+    create: XOR<DepartmentCreateWithoutMonthlyOtherCostsInput, DepartmentUncheckedCreateWithoutMonthlyOtherCostsInput>
+    where?: DepartmentWhereInput
+  }
+
+  export type DepartmentUpdateToOneWithWhereWithoutMonthlyOtherCostsInput = {
+    where?: DepartmentWhereInput
+    data: XOR<DepartmentUpdateWithoutMonthlyOtherCostsInput, DepartmentUncheckedUpdateWithoutMonthlyOtherCostsInput>
+  }
+
+  export type DepartmentUpdateWithoutMonthlyOtherCostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: DepartmentUpdateOneWithoutChildrenNestedInput
+    children?: DepartmentUpdateManyWithoutParentNestedInput
+    users?: UserUpdateManyWithoutDepartmentNestedInput
+    teams?: TeamUpdateManyWithoutDepartmentNestedInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateWithoutMonthlyOtherCostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: DepartmentUncheckedUpdateManyWithoutParentNestedInput
+    users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type TeamCreateWithoutFixedAllocationsInput = {
@@ -59560,6 +61211,15 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DepartmentMonthlyOtherCostCreateManyDepartmentInput = {
+    id?: string
+    yearMonth: string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type DepartmentUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -59569,6 +61229,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutParentInput = {
@@ -59580,6 +61241,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateManyWithoutParentInput = {
@@ -59718,6 +61380,33 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     fixedCostSettingId?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUpdateWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedUpdateWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
