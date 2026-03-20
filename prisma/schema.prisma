@@ -163,6 +163,7 @@ model Department {
   users                User[]
   teams                Team[]
   fixedCostAllocations DepartmentFixedCostAllocation[]
+  monthlyOtherCosts    DepartmentMonthlyOtherCost[]
 
   @@map("departments")
 }
@@ -514,6 +515,20 @@ model DepartmentFixedCostAllocation {
 
   @@unique([fixedCostSettingId, departmentId])
   @@map("department_fixed_cost_allocations")
+}
+
+model DepartmentMonthlyOtherCost {
+  id           String     @id @default(cuid())
+  departmentId String     @map("department_id")
+  yearMonth    String     @map("year_month")
+  amount       Int
+  remarks      String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@index([departmentId, yearMonth])
+  @@map("department_monthly_other_costs")
 }
 
 model FixedCostAllocation {
