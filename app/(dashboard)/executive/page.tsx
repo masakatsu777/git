@@ -18,7 +18,7 @@ function parseNumber(value?: string) {
 export default async function ExecutiveDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ yearMonth?: string; fiscalYear?: string; fiscalStartMonth?: string; evaluationPeriodId?: string; departmentId?: string }>;
+  searchParams: Promise<{ rangeStartYearMonth?: string; rangeEndYearMonth?: string; fiscalYear?: string; fiscalStartMonth?: string; evaluationPeriodId?: string; departmentId?: string }>;
 }) {
   const user = await getSessionUser();
   const canView = hasPermission(user, PERMISSIONS.plAllRead);
@@ -39,7 +39,8 @@ export default async function ExecutiveDashboardPage({
 
   const params = await searchParams;
   const bundle = await getExecutiveDashboardBundle({
-    yearMonth: params.yearMonth,
+    rangeStartYearMonth: params.rangeStartYearMonth,
+    rangeEndYearMonth: params.rangeEndYearMonth,
     fiscalYear: parseNumber(params.fiscalYear),
     fiscalStartMonth: parseNumber(params.fiscalStartMonth),
     evaluationPeriodId: params.evaluationPeriodId,
@@ -55,8 +56,8 @@ export default async function ExecutiveDashboardPage({
   }));
 
   const kpis = [
-    { label: `月次売上 (${bundle.yearMonth})`, value: formatCurrency(bundle.monthlyTotals.salesTotal), unit: "円" },
-    { label: `月次最終粗利 (${bundle.yearMonth})`, value: formatCurrency(bundle.monthlyTotals.finalGrossProfit), unit: "円" },
+    { label: `対象期間売上 (${bundle.rangeStartYearMonth}〜${bundle.rangeEndYearMonth})`, value: formatCurrency(bundle.monthlyTotals.salesTotal), unit: "円" },
+    { label: `対象期間最終粗利 (${bundle.rangeStartYearMonth}〜${bundle.rangeEndYearMonth})`, value: formatCurrency(bundle.monthlyTotals.finalGrossProfit), unit: "円" },
     { label: `年度売上 (${bundle.fiscalYear}年度)`, value: formatCurrency(bundle.annualTotals.salesTotal), unit: "円" },
     { label: `年度最終粗利 (${bundle.fiscalYear}年度)`, value: formatCurrency(bundle.annualTotals.finalGrossProfit), unit: "円" },
     { label: "評価確定数", value: `${bundle.evaluationTotals.finalizedCount} / ${bundle.evaluationTotals.totalCount}`, unit: "名" },
@@ -96,12 +97,20 @@ export default async function ExecutiveDashboardPage({
             </div>
           </div>
 
-          <form method="get" className="mt-5 grid gap-4 rounded-[1.5rem] bg-white/10 p-4 md:grid-cols-5 md:items-end">
+          <form method="get" className="mt-5 grid gap-4 rounded-[1.5rem] bg-white/10 p-4 md:grid-cols-6 md:items-end">
             <label className="text-sm text-white">
-              月次表示月
-              <select name="yearMonth" defaultValue={bundle.yearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
+              開始月
+              <select name="rangeStartYearMonth" defaultValue={bundle.rangeStartYearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
                 {bundle.yearMonthOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
+                  <option key={`start-${option}`} value={option}>{option}</option>
+                ))}
+              </select>
+            </label>
+            <label className="text-sm text-white">
+              終了月
+              <select name="rangeEndYearMonth" defaultValue={bundle.rangeEndYearMonth} className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none">
+                {bundle.yearMonthOptions.map((option) => (
+                  <option key={`end-${option}`} value={option}>{option}</option>
                 ))}
               </select>
             </label>
@@ -137,7 +146,7 @@ export default async function ExecutiveDashboardPage({
                 ))}
               </select>
             </label>
-            <button type="submit" className="md:col-span-5 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+            <button type="submit" className="md:col-span-6 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
               表示更新
             </button>
           </form>
@@ -166,7 +175,7 @@ export default async function ExecutiveDashboardPage({
             <h2 className="text-xl font-semibold text-slate-950">経営アラート</h2>
             <div className="mt-5 space-y-4">
               <div className="rounded-2xl bg-rose-50 p-4">
-                <p className="text-sm font-medium text-rose-700">{scopeLabel}月次差異ワーストチーム</p>
+                <p className="text-sm font-medium text-rose-700">{scopeLabel}対象期間差異ワーストチーム</p>
                 <p className="mt-2 text-lg font-semibold text-slate-950">{bundle.monthlyTeamRows[0]?.teamName ?? "-"}</p>
                 <p className="mt-1 text-sm text-slate-600">差異 {bundle.monthlyTeamRows[0]?.varianceRate ?? 0}pt</p>
               </div>
@@ -204,7 +213,7 @@ export default async function ExecutiveDashboardPage({
                 </thead>
                 <tbody>
                   {bundle.monthlyTeamRows.map((row) => (
-                    <tr key={`${row.teamId}-${bundle.yearMonth}`} className="border-t border-slate-200">
+                    <tr key={`${row.teamId}-${bundle.rangeStartYearMonth}-${bundle.rangeEndYearMonth}`} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">{row.teamName}</td>
                       <td className="px-4 py-3 text-slate-700">{formatCurrency(row.salesTotal)} 円</td>
                       <td className="px-4 py-3 text-slate-700">{row.targetGrossProfitRate}%</td>

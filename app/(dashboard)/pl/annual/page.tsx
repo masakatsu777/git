@@ -21,7 +21,7 @@ function parseNumber(value?: string) {
 export default async function AnnualPlPage({
   searchParams,
 }: {
-  searchParams: Promise<{ fiscalYear?: string; fiscalStartMonth?: string; selectedTeamId?: string }>;
+  searchParams: Promise<{ fiscalYear?: string; fiscalStartMonth?: string; selectedTeamId?: string; rangeStartYearMonth?: string; rangeEndYearMonth?: string }>;
 }) {
   const user = await getSessionUser();
   const params = await searchParams;
@@ -32,6 +32,8 @@ export default async function AnnualPlPage({
     parseNumber(params.fiscalStartMonth),
     visibleTeamIds,
     params.selectedTeamId,
+    params.rangeStartYearMonth,
+    params.rangeEndYearMonth,
   );
   const evaluationSummary = await getAnnualEvaluationSummaryBundle(bundle.fiscalYear, bundle.fiscalStartMonth, visibleTeamIds);
   const rankingBySales = [...bundle.summaries].sort((a, b) => b.salesTotal - a.salesTotal).slice(0, 3);
@@ -77,7 +79,7 @@ export default async function AnnualPlPage({
               </div>
             </div>
 
-            <form method="get" className="grid gap-4 rounded-[1.5rem] bg-white/10 p-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+            <form method="get" className="grid gap-4 rounded-[1.5rem] bg-white/10 p-4 sm:grid-cols-[1fr_1fr_1fr_1fr_1fr_auto] sm:items-end">
               <label className="text-sm text-emerald-50">
                 年度
                 <select
@@ -102,6 +104,34 @@ export default async function AnnualPlPage({
                   {bundle.fiscalStartMonthOptions.map((option) => (
                     <option key={option.month} value={option.month}>
                       {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm text-emerald-50">
+                開始月
+                <select
+                  name="rangeStartYearMonth"
+                  defaultValue={bundle.rangeStartYearMonth}
+                  className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                >
+                  {bundle.rangeOptions.map((option) => (
+                    <option key={`start-${option}`} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm text-emerald-50">
+                終了月
+                <select
+                  name="rangeEndYearMonth"
+                  defaultValue={bundle.rangeEndYearMonth}
+                  className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                >
+                  {bundle.rangeOptions.map((option) => (
+                    <option key={`end-${option}`} value={option}>
+                      {option}
                     </option>
                   ))}
                 </select>
@@ -233,7 +263,7 @@ export default async function AnnualPlPage({
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-slate-950">チーム別年度サマリー</h2>
-              <p className="mt-1 text-sm text-slate-500">対象月: {bundle.coveredMonths.join(" / ")}</p>
+              <p className="mt-1 text-sm text-slate-500">対象月: {bundle.rangeStartYearMonth} 〜 {bundle.rangeEndYearMonth}</p>
               <p className="mt-1 text-sm text-slate-500">前年同期: {bundle.previousCoveredMonths.join(" / ")}</p>
             </div>
           </div>

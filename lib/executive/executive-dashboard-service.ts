@@ -7,7 +7,8 @@ import { getUnassignedPersonalProfitRows } from "@/lib/pl/unassigned-profit-serv
 import { getSalarySimulationBundle } from "@/lib/salary-simulations/salary-simulation-service";
 
 export type ExecutiveDashboardBundle = {
-  yearMonth: string;
+  rangeStartYearMonth: string;
+  rangeEndYearMonth: string;
   fiscalYear: number;
   fiscalStartMonth: number;
   evaluationPeriodId: string;
@@ -95,8 +96,27 @@ function parseFiscalYearFromYearMonth(yearMonth: string, fiscalStartMonth: numbe
   return month >= fiscalStartMonth ? year : year - 1;
 }
 
+function normalizeRange(options: string[], requestedStart?: string, requestedEnd?: string) {
+  const sortedOptions = [...options].sort((a, b) => a.localeCompare(b));
+  const fallbackStart = sortedOptions[0] ?? new Date().toISOString().slice(0, 7);
+  const fallbackEnd = sortedOptions[sortedOptions.length - 1] ?? fallbackStart;
+  let start = requestedStart && sortedOptions.includes(requestedStart) ? requestedStart : fallbackStart;
+  let end = requestedEnd && sortedOptions.includes(requestedEnd) ? requestedEnd : fallbackEnd;
+  if (start.localeCompare(end) > 0) {
+    [start, end] = [end, start];
+  }
+  const months = sortedOptions.filter((yearMonth) => yearMonth.localeCompare(start) >= 0 && yearMonth.localeCompare(end) <= 0);
+  return {
+    start: months[0] ?? start,
+    end: months[months.length - 1] ?? end,
+    months: months.length > 0 ? months : [start],
+  };
+}
+
+
 export async function getExecutiveDashboardBundle(input?: {
-  yearMonth?: string;
+  rangeStartYearMonth?: string;
+  rangeEndYearMonth?: string;
   fiscalYear?: number;
   fiscalStartMonth?: number;
   evaluationPeriodId?: string;
@@ -112,30 +132,78 @@ export async function getExecutiveDashboardBundle(input?: {
     ? organization.teams.filter((team) => team.departmentId === resolvedDepartmentId).map((team) => team.id)
     : undefined;
   const yearMonthOptions = await getVisibleYearMonthOptions(visibleTeamIds);
-  const resolvedYearMonth = input?.yearMonth ?? yearMonthOptions[0]?.yearMonth ?? "2026-03";
-  const resolvedFiscalYear = input?.fiscalYear ?? parseFiscalYearFromYearMonth(resolvedYearMonth, resolvedFiscalStartMonth);
+  const normalizedRange = normalizeRange(yearMonthOptions.map((option) => option.yearMonth), input?.rangeStartYearMonth, input?.rangeEndYearMonth);
+  const resolvedFiscalYear = input?.fiscalYear ?? parseFiscalYearFromYearMonth(normalizedRange.end, resolvedFiscalStartMonth);
 
-  const [monthlyRows, annualBundle, evaluationSummary, salaryBundle, companyTargetGrossProfitRate, unassignedEmployeeRows] = await Promise.all([
-    getVisibleTeamMonthlySnapshots(resolvedYearMonth),
-    getAnnualDashboardBundle(resolvedFiscalYear, resolvedFiscalStartMonth, visibleTeamIds),
+  const [monthlyRowsByMonth, annualBundle, evaluationSummary, salaryBundle, companyTargetGrossProfitRate, unassignedRowsByMonth] = await Promise.all([
+    Promise.all(normalizedRange.months.map((yearMonth) => getVisibleTeamMonthlySnapshots(yearMonth))),
+    getAnnualDashboardBundle(resolvedFiscalYear, resolvedFiscalStartMonth, visibleTeamIds, undefined, normalizedRange.start, normalizedRange.end),
     getAnnualEvaluationSummaryBundle(resolvedFiscalYear, resolvedFiscalStartMonth),
     getSalarySimulationBundle(resolvedEvaluationPeriodId),
-    getCompanyTargetGrossProfitRate(resolvedYearMonth),
-    getUnassignedPersonalProfitRows(resolvedYearMonth),
+    getCompanyTargetGrossProfitRate(normalizedRange.end),
+    Promise.all(normalizedRange.months.map((yearMonth) => getUnassignedPersonalProfitRows(yearMonth))),
   ]);
 
   const departmentTeamIds = new Set(visibleTeamIds ?? organization.teams.map((team) => team.id));
-  const filteredMonthlyRows = monthlyRows.filter((row) => departmentTeamIds.has(row.teamId));
-  const filteredUnassignedEmployeeRows = resolvedDepartmentId
-    ? unassignedEmployeeRows.filter((row) => row.departmentId === resolvedDepartmentId)
-    : unassignedEmployeeRows;
+  const monthlyRowMap = new Map<string, { teamId: string; teamName: string; salesTotal: number; finalGrossProfit: number }>();
+  for (const rows of monthlyRowsByMonth) {
+    for (const row of rows) {
+      if (!departmentTeamIds.has(row.teamId)) continue;
+      const current = monthlyRowMap.get(row.teamId) ?? { teamId: row.teamId, teamName: row.teamName, salesTotal: 0, finalGrossProfit: 0 };
+      current.salesTotal += row.salesTotal;
+      current.finalGrossProfit += row.finalGrossProfit;
+      monthlyRowMap.set(row.teamId, current);
+    }
+  }
+  const filteredMonthlyRows = Array.from(monthlyRowMap.values()).map((row) => ({
+    teamId: row.teamId,
+    teamName: row.teamName,
+    salesTotal: row.salesTotal,
+    finalGrossProfit: row.finalGrossProfit,
+    actualGrossProfitRate: row.salesTotal === 0 ? 0 : round2((row.finalGrossProfit / row.salesTotal) * 100),
+    targetGrossProfitRate: companyTargetGrossProfitRate,
+    varianceRate: row.salesTotal === 0 ? round2(0 - companyTargetGrossProfitRate) : round2((row.finalGrossProfit / row.salesTotal) * 100 - companyTargetGrossProfitRate),
+  })).sort((a, b) => a.varianceRate - b.varianceRate);
+
+  const unassignedMap = new Map<string, ExecutiveDashboardBundle["unassignedEmployeeRows"][number]>();
+  for (const rows of unassignedRowsByMonth) {
+    for (const row of rows) {
+      if (resolvedDepartmentId && row.departmentId !== resolvedDepartmentId) continue;
+      const current = unassignedMap.get(row.userId) ?? {
+        userId: row.userId,
+        employeeCode: row.employeeCode,
+        userName: row.userName,
+        departmentId: row.departmentId,
+        departmentName: row.departmentName,
+        salesTotal: 0,
+        directLaborCost: 0,
+        fixedCostAllocation: 0,
+        finalGrossProfit: 0,
+        actualGrossProfitRate: 0,
+        targetGrossProfitRate: companyTargetGrossProfitRate,
+        varianceRate: 0,
+      };
+      current.salesTotal += row.salesTotal;
+      current.directLaborCost += row.directLaborCost;
+      current.fixedCostAllocation += row.fixedCostAllocation;
+      current.finalGrossProfit += row.finalGrossProfit;
+      unassignedMap.set(row.userId, current);
+    }
+  }
+  const filteredUnassignedEmployeeRows = Array.from(unassignedMap.values()).map((row) => ({
+    ...row,
+    actualGrossProfitRate: row.salesTotal === 0 ? 0 : round2((row.finalGrossProfit / row.salesTotal) * 100),
+    targetGrossProfitRate: companyTargetGrossProfitRate,
+    varianceRate: row.salesTotal === 0 ? round2(0 - companyTargetGrossProfitRate) : round2((row.finalGrossProfit / row.salesTotal) * 100 - companyTargetGrossProfitRate),
+  }));
 
   const monthlySalesTotal = filteredMonthlyRows.reduce((sum, row) => sum + row.salesTotal, 0) + filteredUnassignedEmployeeRows.reduce((sum, row) => sum + row.salesTotal, 0);
   const monthlyFinalGrossProfit = filteredMonthlyRows.reduce((sum, row) => sum + row.finalGrossProfit, 0) + filteredUnassignedEmployeeRows.reduce((sum, row) => sum + row.finalGrossProfit, 0);
   const monthlyGrossProfitRate = monthlySalesTotal === 0 ? 0 : round2((monthlyFinalGrossProfit / monthlySalesTotal) * 100);
 
   return {
-    yearMonth: resolvedYearMonth,
+    rangeStartYearMonth: normalizedRange.start,
+    rangeEndYearMonth: normalizedRange.end,
     fiscalYear: annualBundle.fiscalYear,
     fiscalStartMonth: annualBundle.fiscalStartMonth,
     evaluationPeriodId: resolvedEvaluationPeriodId,

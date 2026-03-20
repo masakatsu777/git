@@ -91,6 +91,9 @@ export type AnnualDashboardBundle = {
   selectedTeamId: string | null;
   selectedTeamName: string | null;
   teamComparisonRows: TeamAnnualComparisonRow[];
+  rangeStartYearMonth: string;
+  rangeEndYearMonth: string;
+  rangeOptions: string[];
 };
 
 function round2(value: number) {
@@ -129,6 +132,28 @@ function buildFiscalYearMonths(fiscalYear: number, fiscalStartMonth: number) {
     months.push(`${year}-${String(month).padStart(2, "0")}`);
   }
   return months;
+}
+
+function shiftYearMonth(yearMonth: string, yearDelta: number) {
+  const [yearText, monthText] = yearMonth.split("-");
+  return `${Number(yearText) + yearDelta}-${monthText}`;
+}
+
+function normalizeRange(options: string[], requestedStart?: string, requestedEnd?: string) {
+  const sortedOptions = [...options].sort((a, b) => a.localeCompare(b));
+  const fallbackStart = sortedOptions[0] ?? new Date().toISOString().slice(0, 7);
+  const fallbackEnd = sortedOptions[sortedOptions.length - 1] ?? fallbackStart;
+  let start = requestedStart && sortedOptions.includes(requestedStart) ? requestedStart : fallbackStart;
+  let end = requestedEnd && sortedOptions.includes(requestedEnd) ? requestedEnd : fallbackEnd;
+  if (start.localeCompare(end) > 0) {
+    [start, end] = [end, start];
+  }
+  const months = sortedOptions.filter((yearMonth) => yearMonth.localeCompare(start) >= 0 && yearMonth.localeCompare(end) <= 0);
+  return {
+    start: months[0] ?? start,
+    end: months[months.length - 1] ?? end,
+    months: months.length > 0 ? months : [start],
+  };
 }
 
 function sumSnapshots(
@@ -229,20 +254,23 @@ export async function getAnnualDashboardBundle(
   fiscalStartMonth?: number,
   visibleTeamIds?: string[],
   selectedTeamId?: string,
+  rangeStartYearMonth?: string,
+  rangeEndYearMonth?: string,
 ): Promise<AnnualDashboardBundle> {
   const resolvedFiscalStartMonth = fiscalStartMonth && fiscalStartMonth >= 1 && fiscalStartMonth <= 12 ? fiscalStartMonth : 4;
   const yearMonthOptions = await getVisibleYearMonthOptions(visibleTeamIds && visibleTeamIds.length > 0 ? visibleTeamIds : undefined);
   const fiscalYears = Array.from(new Set(yearMonthOptions.map((option) => toFiscalYear(option.yearMonth, resolvedFiscalStartMonth)))).sort((a, b) => b - a);
   const resolvedFiscalYear = fiscalYear ?? fiscalYears[0] ?? new Date().getFullYear();
-  const months = buildFiscalYearMonths(resolvedFiscalYear, resolvedFiscalStartMonth);
-  const previousMonths = buildFiscalYearMonths(resolvedFiscalYear - 1, resolvedFiscalStartMonth);
+  const fiscalMonths = buildFiscalYearMonths(resolvedFiscalYear, resolvedFiscalStartMonth);
+  const normalizedRange = normalizeRange(fiscalMonths, rangeStartYearMonth, rangeEndYearMonth);
+  const months = normalizedRange.months;
+  const previousMonths = months.map((yearMonth) => shiftYearMonth(yearMonth, -1));
+  const previousPreviousMonths = months.map((yearMonth) => shiftYearMonth(yearMonth, -2));
   const teams = await getVisibleTeamOptions(visibleTeamIds);
   const resolvedSelectedTeamId = selectedTeamId && teams.some((team) => team.teamId === selectedTeamId) ? selectedTeamId : teams[0]?.teamId ?? null;
   const resolvedSelectedTeamName = resolvedSelectedTeamId ? teams.find((team) => team.teamId === resolvedSelectedTeamId)?.teamName ?? null : null;
 
-  async function buildYearSummary(targetFiscalYear: number) {
-    const targetMonths = buildFiscalYearMonths(targetFiscalYear, resolvedFiscalStartMonth);
-    const targetPreviousMonths = buildFiscalYearMonths(targetFiscalYear - 1, resolvedFiscalStartMonth);
+  async function buildRangeSummary(targetFiscalYear: number, targetMonths: string[], targetPreviousMonths: string[]) {
     const yearSummaries = await Promise.all(
       teams.map(async (team) => {
         const [snapshots, previousSnapshots] = await Promise.all([
@@ -262,8 +290,8 @@ export async function getAnnualDashboardBundle(
     };
   }
 
-  const currentYearSummary = await buildYearSummary(resolvedFiscalYear);
-  const previousYearSummary = await buildYearSummary(resolvedFiscalYear - 1);
+  const currentYearSummary = await buildRangeSummary(resolvedFiscalYear, months, previousMonths);
+  const previousYearSummary = await buildRangeSummary(resolvedFiscalYear - 1, previousMonths, previousPreviousMonths);
   const summaries = currentYearSummary.summaries;
   const totals = currentYearSummary.totals;
   const comparisonResults = [currentYearSummary, previousYearSummary].sort((a, b) => b.fiscalYear - a.fiscalYear);
@@ -296,6 +324,9 @@ export async function getAnnualDashboardBundle(
     selectedTeamId: resolvedSelectedTeamId,
     selectedTeamName: resolvedSelectedTeamName,
     teamComparisonRows,
+    rangeStartYearMonth: normalizedRange.start,
+    rangeEndYearMonth: normalizedRange.end,
+    rangeOptions: fiscalMonths,
   };
 }
 
