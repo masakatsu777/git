@@ -99,7 +99,7 @@ function validateRows(rows: SaveEvaluationPeriodsInput["rows"]) {
     throw new Error("入力受付中 (OPEN) の評価期間は1件だけにしてください。");
   }
 
-  normalizedRows.forEach((row, index) => {
+  const parsedRows = normalizedRows.map((row, index) => {
     if (!row.name) {
       throw new Error(`評価期間${index + 1}件目の期間名を入力してください。`);
     }
@@ -116,7 +116,33 @@ function validateRows(rows: SaveEvaluationPeriodsInput["rows"]) {
     if (start.getTime() > end.getTime()) {
       throw new Error(`評価期間${index + 1}件目は終了日を開始日以降にしてください。`);
     }
+
+    return {
+      ...row,
+      start,
+      end,
+      index,
+    };
   });
+
+  for (let leftIndex = 0; leftIndex < parsedRows.length; leftIndex += 1) {
+    for (let rightIndex = leftIndex + 1; rightIndex < parsedRows.length; rightIndex += 1) {
+      const left = parsedRows[leftIndex];
+      const right = parsedRows[rightIndex];
+
+      if (left.periodType !== right.periodType) {
+        continue;
+      }
+
+      const overlaps = left.start.getTime() <= right.end.getTime() && right.start.getTime() <= left.end.getTime();
+      if (overlaps) {
+        throw new Error(
+          `${left.periodType === PeriodType.HALF_YEAR ? "半期評価" : "年度評価"}は同じ種別同士で期間を重複登録できません。` +
+            ` ${left.index + 1}件目と${right.index + 1}件目の期間を見直してください。`,
+        );
+      }
+    }
+  }
 
   return normalizedRows;
 }
