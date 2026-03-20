@@ -539,41 +539,15 @@ export async function getVisibleTeamOptions(teamIds?: string[]): Promise<Visible
 }
 
 export async function getVisibleYearMonthOptions(teamIds?: string | string[]): Promise<VisibleYearMonthOption[]> {
+  void teamIds;
+
   if (!hasDatabaseUrl()) {
-    return toVisibleYearMonthOptions([...fallbackSnapshots.map((snapshot) => snapshot.yearMonth), ...getRollingYearMonthOptions()]);
+    return toVisibleYearMonthOptions(getRollingYearMonthOptions());
   }
 
   try {
-    const [pls, assignments, indirectCosts, targets] = await Promise.all([
-      prisma.teamMonthlyPl.findMany({
-        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
-        select: { yearMonth: true },
-        distinct: ["yearMonth"],
-        orderBy: { yearMonth: "desc" },
-      }),
-      prisma.monthlyAssignment.findMany({
-        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
-        select: { yearMonth: true },
-        distinct: ["yearMonth"],
-        orderBy: { yearMonth: "desc" },
-      }),
-      prisma.teamIndirectCost.findMany({
-        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
-        select: { yearMonth: true },
-        distinct: ["yearMonth"],
-        orderBy: { yearMonth: "desc" },
-      }),
-      prisma.teamTarget.findMany({
-        where: teamIds ? { teamId: { in: Array.isArray(teamIds) ? teamIds : [teamIds] } } : undefined,
-        select: { yearMonth: true },
-        distinct: ["yearMonth"],
-        orderBy: { yearMonth: "desc" },
-      }),
-    ]);
-
-    const values = [...pls, ...assignments, ...indirectCosts, ...targets].map((row) => row.yearMonth);
-    return toVisibleYearMonthOptions([...values, ...getRollingYearMonthOptions()]);
+    return toVisibleYearMonthOptions(getRollingYearMonthOptions());
   } catch {}
 
-  return toVisibleYearMonthOptions([...fallbackSnapshots.map((snapshot) => snapshot.yearMonth), ...getRollingYearMonthOptions()]);
+  return toVisibleYearMonthOptions(getRollingYearMonthOptions());
 }
