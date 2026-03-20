@@ -39,7 +39,7 @@ export default async function MyEvaluationPage({
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Self Review</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">半期自己評価</h1>
+              <h1 className="text-3xl font-semibold">自己評価</h1>
               <p className="mt-2 text-sm text-slate-300">{user.name} の自己評価入力画面です。評価期間を切り替えると過去分も確認できます。</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {periods.map((period) => {
