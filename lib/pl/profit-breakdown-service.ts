@@ -294,8 +294,19 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
   const departmentOptions = [{ id: "", name: "全社" }, ...departments.map((department) => ({ id: department.id, name: department.name }))];
   const teamOptions = teams.map((team) => ({ id: team.id, name: team.name, departmentId: team.departmentId ?? "" }));
 
-  const fixedCostTotalByMonth = new Map(
-    fixedCostsByMonth.map((entry) => [entry.yearMonth, entry.rows.reduce((sum, row) => sum + row.amount, 0)]),
+  const fixedCostContextByMonth = new Map(
+    fixedCostsByMonth.map((entry) => [
+      entry.yearMonth,
+      {
+        totalAmount: entry.rows.reduce((sum, row) => sum + row.amount, 0),
+        departmentAmounts: entry.rows.reduce((map, row) => {
+          for (const allocation of row.departmentAllocations) {
+            map.set(allocation.departmentId, (map.get(allocation.departmentId) ?? 0) + allocation.amount);
+          }
+          return map;
+        }, new Map<string, number>()),
+      },
+    ]),
   );
   const teamContextMap = new Map(
     teams.map((team) => [
@@ -366,7 +377,13 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       : 0;
     const departmentHeadcount = departmentHeadcountMap.get(teamContext.departmentId) ?? 0;
     const fixedCostAllocation = departmentHeadcount > 0
-      ? rangeYearMonths.reduce((sum, currentYearMonth) => sum + Math.round((fixedCostTotalByMonth.get(currentYearMonth) ?? 0) / departmentHeadcount), 0)
+      ? rangeYearMonths.reduce((sum, currentYearMonth) => {
+          const fixedCostContext = fixedCostContextByMonth.get(currentYearMonth);
+          const departmentAmount = teamContext.departmentId
+            ? (fixedCostContext?.departmentAmounts.get(teamContext.departmentId) ?? 0)
+            : (fixedCostContext?.totalAmount ?? 0);
+          return sum + Math.round(departmentAmount / departmentHeadcount);
+        }, 0)
       : 0;
 
     const existing = employeeRows.get(key);
