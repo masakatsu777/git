@@ -442,6 +442,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
   });
   const [csvImportPreview, setCsvImportPreview] = useState<CsvImportPreview | null>(null);
   const csvPreviewRef = useRef<HTMLElement | null>(null);
+  const csvFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const majorCategoryOptions = useMemo(() => ({
     [SkillCategory.IT_SKILL]: Array.from(
@@ -1061,10 +1062,22 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         <button type="button" onClick={handleExportItemsCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
           評価項目CSV出力
         </button>
-        <label className="inline-flex cursor-pointer items-center rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
+        <button
+          type="button"
+          onClick={() => csvFileInputRef.current?.click()}
+          disabled={!canEdit || isPending}
+          className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 disabled:border-slate-200 disabled:text-slate-400"
+        >
           評価項目CSV取込
-          <input type="file" accept=".csv,text/csv" onChange={handleImportItemsCsv} disabled={!canEdit || isPending} className="hidden" />
-        </label>
+        </button>
+        <input
+          ref={csvFileInputRef}
+          type="file"
+          accept=".csv,text/csv"
+          onChange={handleImportItemsCsv}
+          disabled={!canEdit || isPending}
+          className="hidden"
+        />
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
           {isPending ? "処理中..." : "評価制度設定を保存"}
         </button>
