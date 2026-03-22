@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useMemo, useState, useTransition } from "react";
+import { ChangeEvent, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { SkillCategory } from "@/generated/prisma";
@@ -441,6 +441,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     [SkillCategory.BUSINESS_SKILL]: "",
   });
   const [csvImportPreview, setCsvImportPreview] = useState<CsvImportPreview | null>(null);
+  const csvPreviewRef = useRef<HTMLElement | null>(null);
 
   const majorCategoryOptions = useMemo(() => ({
     [SkillCategory.IT_SKILL]: Array.from(
@@ -601,12 +602,16 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     const preview = parseEvaluationItemsCsv(await file.text(), evaluationItems);
     setCsvImportPreview(preview);
 
+    requestAnimationFrame(() => {
+      csvPreviewRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
     if (preview.errorMessages.length > 0 && preview.rows.length === 0) {
       setMessage(preview.errorMessages.join(" / "));
       return;
     }
 
-    setMessage(`CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。`);
+    setMessage(`CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。画面下のプレビューを確認してください。`);
   }
 
   async function handleApplyItemsCsv() {
@@ -1024,7 +1029,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       </div>
 
       {csvImportPreview ? (
-        <section className="rounded-3xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-slate-700">
+        <section ref={csvPreviewRef} className="rounded-3xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-slate-700">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="font-semibold text-slate-950">CSV取込プレビュー</p>
