@@ -194,14 +194,23 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         </div>
         <div className="mt-6 space-y-4">
           {groupByMajorCategory(visibleSelfGrowthItems).map(([majorCategory, groupedItems]) => (
-            <section key={majorCategory} className="rounded-3xl border border-slate-200 p-4">
-              <h3 className="text-lg font-semibold text-slate-950">{majorCategory}</h3>
+            <section key={majorCategory} className="rounded-3xl border border-sky-200/80 bg-white/75 p-4">
+              <div className="flex items-center gap-3">
+                <span className="h-8 w-1.5 rounded-full bg-sky-400" aria-hidden />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">協調相乗力</p>
+                  <h3 className="text-lg font-semibold text-slate-950">{majorCategory}</h3>
+                </div>
+              </div>
               <div className="mt-4 space-y-4">
                 {groupedItems.map((item) => (
-                  <article key={item.evaluationItemId} className="rounded-2xl bg-slate-50 p-4">
+                  <article key={item.evaluationItemId} className="rounded-2xl border border-sky-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(240,249,255,0.88))] p-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="max-w-3xl">
-                        <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.minorCategory}</p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center rounded-full bg-sky-100 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-sky-700">継続実践</span>
+                          <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">{item.minorCategory}</p>
+                        </div>
                         <h4 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h4>
                         <p className="mt-1 text-sm text-slate-500">重み {item.weight}</p>
                       </div>
@@ -250,9 +259,14 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-4">
-        <h3 className="font-semibold text-slate-950">協調相乗力</h3>
-        <p className="mt-1 text-sm text-slate-600">周囲と力を掛け合わせ、他者や組織に価値を広げる力を確認します。</p>
+      <section className="rounded-3xl border border-sky-300 bg-[linear-gradient(135deg,rgba(240,249,255,0.98),rgba(224,242,254,0.88))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <span className="inline-flex items-center rounded-full border border-sky-300 bg-white/85 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-sky-700">協調相乗力 / 継続実践評価</span>
+            <h3 className="mt-3 font-semibold text-slate-950">協調相乗力</h3>
+            <p className="mt-1 text-sm text-slate-600">周囲と力を掛け合わせ、他者や組織に価値を広げる力を確認します。</p>
+          </div>
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {synergyGuide.map((guide) => (
             <article key={guide.score} className="rounded-2xl border border-sky-200 bg-white px-4 py-4 text-sm text-slate-700">
@@ -268,10 +282,13 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
               <h3 className="text-lg font-semibold text-slate-950">{majorCategory}</h3>
               <div className="mt-4 space-y-4">
                 {groupedItems.map((item) => (
-                  <article key={item.evaluationItemId} className="rounded-2xl bg-slate-50 p-4">
+                  <article key={item.evaluationItemId} className="rounded-2xl border border-sky-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(240,249,255,0.88))] p-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="max-w-3xl">
-                        <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.minorCategory}</p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center rounded-full bg-sky-100 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-sky-700">継続実践</span>
+                          <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">{item.minorCategory}</p>
+                        </div>
                         <h4 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h4>
                         <p className="mt-1 text-sm text-slate-500">重み {item.weight} / 継続実践を評価{item.evidenceRequired ? " / 根拠コメント必須" : ""}</p>
                       </div>
