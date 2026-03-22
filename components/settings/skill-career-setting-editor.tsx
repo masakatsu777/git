@@ -21,6 +21,8 @@ type CsvImportPreview = {
   errorMessages: string[];
 };
 
+type CsvImportMode = "merge" | "replace-category" | "replace-all";
+
 const categoryGuides: Record<
   SkillCategory,
   {
@@ -396,6 +398,24 @@ function mergeImportedEvaluationItems(currentItems: EvaluationItemRow[], importe
   return [...merged, ...newRows];
 }
 
+function replaceImportedEvaluationItemsByCategory(currentItems: EvaluationItemRow[], importedRows: EvaluationItemRow[]) {
+  const importedCategories = new Set(importedRows.map((row) => row.category));
+  const remaining = currentItems.filter((row) => !importedCategories.has(row.category));
+  return [...remaining, ...importedRows];
+}
+
+function applyImportedEvaluationItems(currentItems: EvaluationItemRow[], importedRows: EvaluationItemRow[], mode: CsvImportMode) {
+  if (mode === "replace-all") return importedRows;
+  if (mode === "replace-category") return replaceImportedEvaluationItemsByCategory(currentItems, importedRows);
+  return mergeImportedEvaluationItems(currentItems, importedRows);
+}
+
+function csvImportModeLabel(mode: CsvImportMode) {
+  if (mode === "replace-category") return "カテゴリ単位置換";
+  if (mode === "replace-all") return "全件置換";
+  return "追加 / 更新";
+}
+
 function readCsvFile(file: File) {
   if (typeof file.text === "function") {
     return file.text();
@@ -462,6 +482,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     [SkillCategory.BUSINESS_SKILL]: "",
   });
   const [csvImportPreview, setCsvImportPreview] = useState<CsvImportPreview | null>(null);
+  const [csvImportMode, setCsvImportMode] = useState<CsvImportMode>("merge");
   const [csvImportStatus, setCsvImportStatus] = useState<string | null>(null);
   const csvPreviewRef = useRef<HTMLElement | null>(null);
   const csvFileInputRef = useRef<HTMLInputElement | null>(null);
@@ -632,6 +653,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       const text = await readCsvFile(file);
       const preview = parseEvaluationItemsCsv(text, evaluationItems);
       setCsvImportPreview(preview);
+      setCsvImportMode("merge");
 
       requestAnimationFrame(() => {
         csvPreviewRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -660,8 +682,11 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       return;
     }
 
-    const mergedItems = mergeImportedEvaluationItems(evaluationItems, csvImportPreview.rows);
-    await saveSkillCareerSettings(mergedItems, `CSV取込を反映しました（新規 ${csvImportPreview.newCount} 件、更新 ${csvImportPreview.updateCount} 件）`);
+    const nextItems = applyImportedEvaluationItems(evaluationItems, csvImportPreview.rows, csvImportMode);
+    await saveSkillCareerSettings(
+      nextItems,
+      `CSV取込を反映しました（${csvImportModeLabel(csvImportMode)} / 新規 ${csvImportPreview.newCount} 件 / 更新 ${csvImportPreview.updateCount} 件）`,
+    );
   }
 
   return (
