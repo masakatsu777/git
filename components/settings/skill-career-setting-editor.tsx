@@ -388,6 +388,19 @@ function mergeImportedEvaluationItems(currentItems: EvaluationItemRow[], importe
   return [...merged, ...newRows];
 }
 
+function readCsvFile(file: File) {
+  if (typeof file.text === "function") {
+    return file.text();
+  }
+
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => reject(reader.error ?? new Error("CSVファイルの読み込みに失敗しました"));
+    reader.readAsText(file, "utf-8");
+  });
+}
+
 function buildRecommendedItems(category: SkillCategory, currentItems: EvaluationItemRow[]): EvaluationItemRow[] {
   const guide = categoryGuides[category];
   const existingTitles = new Set(
@@ -600,19 +613,26 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     event.target.value = "";
     if (!file) return;
 
-    const preview = parseEvaluationItemsCsv(await file.text(), evaluationItems);
-    setCsvImportPreview(preview);
+    try {
+      const text = await readCsvFile(file);
+      const preview = parseEvaluationItemsCsv(text, evaluationItems);
+      setCsvImportPreview(preview);
 
-    requestAnimationFrame(() => {
-      csvPreviewRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
+      requestAnimationFrame(() => {
+        csvPreviewRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
 
-    if (preview.errorMessages.length > 0 && preview.rows.length === 0) {
-      setMessage(preview.errorMessages.join(" / "));
-      return;
+      if (preview.errorMessages.length > 0 && preview.rows.length === 0) {
+        setMessage(preview.errorMessages.join(" / "));
+        return;
+      }
+
+      setMessage(`CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。画面下のプレビューを確認してください。`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "CSVの読み込みに失敗しました";
+      setCsvImportPreview(null);
+      setMessage(message);
     }
-
-    setMessage(`CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。画面下のプレビューを確認してください。`);
   }
 
   async function handleApplyItemsCsv() {
