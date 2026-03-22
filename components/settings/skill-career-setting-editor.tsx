@@ -454,6 +454,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     [SkillCategory.BUSINESS_SKILL]: "",
   });
   const [csvImportPreview, setCsvImportPreview] = useState<CsvImportPreview | null>(null);
+  const [csvImportStatus, setCsvImportStatus] = useState<string | null>(null);
   const csvPreviewRef = useRef<HTMLElement | null>(null);
   const csvFileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -611,7 +612,13 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
   async function handleImportItemsCsv(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file) return;
+    if (!file) {
+      setCsvImportStatus("ファイル選択がキャンセルされました");
+      return;
+    }
+
+    setCsvImportStatus(`選択ファイル: ${file.name}`);
+    setMessage(`CSVファイル ${file.name} を読み込み中です...`);
 
     try {
       const text = await readCsvFile(file);
@@ -623,14 +630,18 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       });
 
       if (preview.errorMessages.length > 0 && preview.rows.length === 0) {
+        setCsvImportStatus(`読込失敗: ${preview.errorMessages.join(" / ")}`);
         setMessage(preview.errorMessages.join(" / "));
         return;
       }
 
-      setMessage(`CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。画面下のプレビューを確認してください。`);
+      const nextMessage = `CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。画面下のプレビューを確認してください。`;
+      setCsvImportStatus(nextMessage);
+      setMessage(nextMessage);
     } catch (error) {
       const message = error instanceof Error ? error.message : "CSVの読み込みに失敗しました";
       setCsvImportPreview(null);
+      setCsvImportStatus(`読込例外: ${message}`);
       setMessage(message);
     }
   }
@@ -1103,6 +1114,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         </button>
       </div>
 
+      {csvImportStatus ? <p className="text-sm text-sky-700">{csvImportStatus}</p> : null}
       {message ? <p className="text-sm text-slate-600">{message}</p> : null}
     </section>
   );
