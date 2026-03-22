@@ -150,40 +150,34 @@ export function resolveStoredItemMeta(
     storedMeta && typeof storedMeta === "object"
       ? storedMeta
       : { description: storedMeta ?? null };
+  const displayOrder = Number(metaObject.displayOrder ?? 0) || 0;
 
-  if (metaObject.axis || metaObject.scoreType || metaObject.majorCategory || metaObject.minorCategory) {
-    const displayOrder = Number(metaObject.displayOrder ?? 0) || 0;
-    return {
-      axis: metaObject.axis === "SYNERGY" ? "SYNERGY" : fallback.axis,
-      scoreType: metaObject.scoreType === "CONTINUOUS_DONE" ? "CONTINUOUS_DONE" : fallback.scoreType,
-      majorCategory: String(metaObject.majorCategory || fallback.majorCategory),
-      majorCategoryOrder: Number(metaObject.majorCategoryOrder ?? fallback.majorCategoryOrder ?? displayOrder),
-      minorCategory: String(metaObject.minorCategory || fallback.minorCategory),
-      minorCategoryOrder: Number(metaObject.minorCategoryOrder ?? fallback.minorCategoryOrder ?? displayOrder),
-    };
-  }
-
+  let descriptionMeta: Partial<ItemMeta> = {};
   const description = metaObject.description;
-  if (!description || !description.startsWith(META_PREFIX)) {
-    return fallback;
+  if (description && description.startsWith(META_PREFIX)) {
+    const newLineIndex = description.indexOf("\n");
+    const metaPayload = newLineIndex >= 0 ? description.slice(META_PREFIX.length, newLineIndex) : description.slice(META_PREFIX.length);
+
+    try {
+      descriptionMeta = JSON.parse(metaPayload) as Partial<ItemMeta>;
+    } catch {
+      descriptionMeta = {};
+    }
   }
 
-  const newLineIndex = description.indexOf("\n");
-  const metaPayload = newLineIndex >= 0 ? description.slice(META_PREFIX.length, newLineIndex) : description.slice(META_PREFIX.length);
-
-  try {
-    const parsed = JSON.parse(metaPayload) as Partial<ItemMeta>;
-    return {
-      axis: parsed.axis === "SYNERGY" ? "SYNERGY" : fallback.axis,
-      scoreType: parsed.scoreType === "CONTINUOUS_DONE" ? "CONTINUOUS_DONE" : fallback.scoreType,
-      majorCategory: parsed.majorCategory || fallback.majorCategory,
-      majorCategoryOrder: Number(parsed.majorCategoryOrder ?? fallback.majorCategoryOrder),
-      minorCategory: parsed.minorCategory || fallback.minorCategory,
-      minorCategoryOrder: Number(parsed.minorCategoryOrder ?? fallback.minorCategoryOrder),
-    };
-  } catch {
-    return fallback;
-  }
+  return {
+    axis: metaObject.axis === "SYNERGY" ? "SYNERGY" : descriptionMeta.axis === "SYNERGY" ? "SYNERGY" : fallback.axis,
+    scoreType:
+      metaObject.scoreType === "CONTINUOUS_DONE"
+        ? "CONTINUOUS_DONE"
+        : descriptionMeta.scoreType === "CONTINUOUS_DONE"
+          ? "CONTINUOUS_DONE"
+          : fallback.scoreType,
+    majorCategory: String(metaObject.majorCategory || descriptionMeta.majorCategory || fallback.majorCategory),
+    majorCategoryOrder: Number(metaObject.majorCategoryOrder ?? descriptionMeta.majorCategoryOrder ?? fallback.majorCategoryOrder ?? displayOrder),
+    minorCategory: String(metaObject.minorCategory || descriptionMeta.minorCategory || fallback.minorCategory),
+    minorCategoryOrder: Number(metaObject.minorCategoryOrder ?? descriptionMeta.minorCategoryOrder ?? fallback.minorCategoryOrder ?? displayOrder),
+  };
 }
 
 export function resolveStoredItemMetaFromRow(row: {
@@ -470,7 +464,18 @@ export async function saveSelfReviewBundle(userId: string, role: string, teamId:
 
     const itemRows = await prisma.evaluationItem.findMany({
       where: { id: { in: input.items.map((item) => item.evaluationItemId) } },
-      select: { id: true, title: true, description: true, category: true, weight: true, axis: true, scoreType: true, majorCategory: true, minorCategory: true, evidenceRequired: true },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+        weight: true,
+        axis: true,
+        scoreType: true,
+        majorCategory: true,
+        minorCategory: true,
+        evidenceRequired: true,
+      },
     });
     const itemMap = new Map(itemRows.map((item) => [item.id, item]));
     const total = calculateTotal(
