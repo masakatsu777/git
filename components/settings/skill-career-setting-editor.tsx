@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { ChangeEvent, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { SkillCategory } from "@/generated/prisma";
-import { downloadCsv } from "@/lib/client/csv";
+import { downloadCsv, parseCsv } from "@/lib/client/csv";
 import type { EvaluationItemRow, PositionOptionRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
 
 type SkillCareerSettingEditorProps = {
@@ -12,6 +12,13 @@ type SkillCareerSettingEditorProps = {
   gradeDefaults: SkillGradeRow[];
   evaluationItemDefaults: EvaluationItemRow[];
   positionOptions: PositionOptionRow[];
+};
+
+type CsvImportPreview = {
+  rows: EvaluationItemRow[];
+  newCount: number;
+  updateCount: number;
+  errorMessages: string[];
 };
 
 const categoryGuides: Record<
@@ -258,6 +265,112 @@ function toRecommendedWeight(category: SkillCategory, majorCategory: string) {
   return 10;
 }
 
+function normalizeCsvHeader(header: string) {
+  return header.trim().replace(/^﻿/, "");
+}
+
+function parseBoolean(value: string) {
+  const normalized = value.trim().toLowerCase();
+  return normalized === "true" || normalized == "1" || normalized == "yes" || normalized == "on" || normalized === "有効" || normalized === "必須";
+}
+
+function parseCategory(value: string): SkillCategory | null {
+  const normalized = value.trim();
+  if (["IT_SKILL", "自律成長力", "ITスキル"].includes(normalized)) return SkillCategory.IT_SKILL;
+  if (["BUSINESS_SKILL", "協調相乗力", "ビジネススキル"].includes(normalized)) return SkillCategory.BUSINESS_SKILL;
+  return null;
+}
+
+function parseAxis(value: string): EvaluationItemRow["axis"] | null {
+  const normalized = value.trim();
+  if (["SELF_GROWTH", "自律成長力"].includes(normalized)) return "SELF_GROWTH";
+  if (["SYNERGY", "協調相乗力"].includes(normalized)) return "SYNERGY";
+  return null;
+}
+
+function parseScoreType(value: string): EvaluationItemRow["scoreType"] | null {
+  const normalized = value.trim();
+  if (["LEVEL_2", "1 / 2 評価"].includes(normalized)) return "LEVEL_2";
+  if (["CONTINUOUS_DONE", "0 / 1 継続実践"].includes(normalized)) return "CONTINUOUS_DONE";
+  return null;
+}
+
+function buildItemIdentity(row: Pick<EvaluationItemRow, "category" | "majorCategory" | "minorCategory" | "title">) {
+  return [row.category, row.majorCategory.trim(), row.minorCategory.trim(), row.title.trim()].join("::");
+}
+
+function parseEvaluationItemsCsv(text: string, currentItems: EvaluationItemRow[]): CsvImportPreview {
+  const rows = parseCsv(text);
+  if (rows.length <= 1) {
+    return { rows: [], newCount: 0, updateCount: 0, errorMessages: ["CSVにデータ行がありません"] };
+  }
+
+  const header = rows[0].map(normalizeCsvHeader);
+  const indexByName = new Map(header.map((value, index) => [value, index]));
+  const required = ["category", "axis", "scoreType", "majorCategory", "majorCategoryOrder", "minorCategory", "minorCategoryOrder", "title", "description", "weight", "displayOrder", "evidenceRequired", "isActive"];
+  const missing = required.filter((key) => !indexByName.has(key));
+  if (missing.length > 0) {
+    return { rows: [], newCount: 0, updateCount: 0, errorMessages: [`CSVヘッダーが不足しています: ${missing.join(", ")}`] };
+  }
+
+  const currentMap = new Map(currentItems.map((row) => [buildItemIdentity(row), row]));
+  const importedRows: EvaluationItemRow[] = [];
+  const errorMessages: string[] = [];
+  let newCount = 0;
+  let updateCount = 0;
+
+  for (let lineIndex = 1; lineIndex < rows.length; lineIndex += 1) {
+    const csvRow = rows[lineIndex];
+    if (csvRow.every((cell) => cell.trim() === "")) continue;
+
+    const category = parseCategory(csvRow[indexByName.get("category")! ] ?? "");
+    const axis = parseAxis(csvRow[indexByName.get("axis")! ] ?? "");
+    const scoreType = parseScoreType(csvRow[indexByName.get("scoreType")! ] ?? "");
+    const majorCategory = (csvRow[indexByName.get("majorCategory")! ] ?? "").trim();
+    const minorCategory = (csvRow[indexByName.get("minorCategory")! ] ?? "").trim();
+    const title = (csvRow[indexByName.get("title")! ] ?? "").trim();
+
+    if (!category || !axis || !scoreType || !majorCategory || !minorCategory || !title) {
+      errorMessages.push(`${lineIndex + 1}行目: 必須列の値が不足しています`);
+      continue;
+    }
+
+    const identity = buildItemIdentity({ category, majorCategory, minorCategory, title });
+    const existing = currentMap.get(identity);
+    const row: EvaluationItemRow = {
+      id: existing?.id ?? `new-item-${crypto.randomUUID()}`,
+      category,
+      axis,
+      scoreType,
+      majorCategory,
+      majorCategoryOrder: toNumber(csvRow[indexByName.get("majorCategoryOrder")! ] ?? "0"),
+      minorCategory,
+      minorCategoryOrder: toNumber(csvRow[indexByName.get("minorCategoryOrder")! ] ?? "0"),
+      title,
+      description: String(csvRow[indexByName.get("description")! ] ?? ""),
+      weight: toNumber(csvRow[indexByName.get("weight")! ] ?? "0"),
+      displayOrder: toNumber(csvRow[indexByName.get("displayOrder")! ] ?? "0"),
+      evidenceRequired: parseBoolean(String(csvRow[indexByName.get("evidenceRequired")! ] ?? "")),
+      isActive: parseBoolean(String(csvRow[indexByName.get("isActive")! ] ?? "")),
+      gradeDefinitionId: existing?.gradeDefinitionId ?? null,
+    };
+
+    importedRows.push(axis === "SYNERGY" ? normalizeItemByAxis(row, "SYNERGY") : normalizeItemByAxis(row, "SELF_GROWTH"));
+    if (existing) updateCount += 1
+    else newCount += 1
+  }
+
+  return { rows: importedRows, newCount, updateCount, errorMessages };
+}
+
+function mergeImportedEvaluationItems(currentItems: EvaluationItemRow[], importedRows: EvaluationItemRow[]) {
+  const importedMap = new Map(importedRows.map((row) => [buildItemIdentity(row), row]));
+  const merged = currentItems.map((row) => importedMap.get(buildItemIdentity(row)) ?? row);
+  const existingKeys = new Set(currentItems.map((row) => buildItemIdentity(row)));
+  const newRows = importedRows.filter((row) => !existingKeys.has(buildItemIdentity(row)));
+  return [...merged, ...newRows];
+}
+
 function buildRecommendedItems(category: SkillCategory, currentItems: EvaluationItemRow[]): EvaluationItemRow[] {
   const guide = categoryGuides[category];
   const existingTitles = new Set(
@@ -310,6 +423,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     [SkillCategory.IT_SKILL]: "",
     [SkillCategory.BUSINESS_SKILL]: "",
   });
+  const [csvImportPreview, setCsvImportPreview] = useState<CsvImportPreview | null>(null);
 
   const majorCategoryOptions = useMemo(() => ({
     [SkillCategory.IT_SKILL]: Array.from(
@@ -382,23 +496,29 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     ]);
   }
 
-  async function handleSave() {
+  async function saveSkillCareerSettings(nextEvaluationItems = evaluationItems, successMessage = "評価制度設定を保存しました") {
     setMessage(null);
 
     startSaving(async () => {
       const response = await fetch("/api/skill-careers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ grades, evaluationItems }),
+        body: JSON.stringify({ grades, evaluationItems: nextEvaluationItems }),
       });
 
       const result = (await response.json()) as { message?: string };
-      setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
+      setMessage(result.message ?? (response.ok ? successMessage : "保存に失敗しました"));
 
       if (response.ok) {
+        setEvaluationItems(nextEvaluationItems);
+        setCsvImportPreview(null);
         router.refresh();
       }
     });
+  }
+
+  async function handleSave() {
+    await saveSkillCareerSettings(evaluationItems, "評価制度設定を保存しました");
   }
 
   function handleExportGradesCsv() {
@@ -435,8 +555,8 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
           left.id.localeCompare(right.id, "ja"),
       )
       .map((row) => [
-        categoryLabel(row.category),
-        row.axis === "SELF_GROWTH" ? "自律成長力" : "協調相乗力",
+        row.category,
+        row.axis,
         row.scoreType,
         row.majorCategory,
         row.majorCategoryOrder,
@@ -445,15 +565,41 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         row.title,
         row.description,
         row.weight,
-        row.evidenceRequired ? "必須" : "任意",
-        row.isActive ? "有効" : "無効",
+        row.evidenceRequired,
+        row.isActive,
       ]);
 
     downloadCsv(
       "evaluation-settings-items.csv",
-      ["カテゴリ", "評価軸", "採点方式", "大分類", "大分類順", "小分類", "小分類順", "項目名", "説明", "重み", "根拠必須", "有効"],
+      ["category", "axis", "scoreType", "majorCategory", "majorCategoryOrder", "minorCategory", "minorCategoryOrder", "title", "description", "weight", "evidenceRequired", "isActive"],
       rows,
     );
+  }
+
+  async function handleImportItemsCsv(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    const preview = parseEvaluationItemsCsv(await file.text(), evaluationItems);
+    setCsvImportPreview(preview);
+
+    if (preview.errorMessages.length > 0 && preview.rows.length === 0) {
+      setMessage(preview.errorMessages.join(" / "));
+      return;
+    }
+
+    setMessage(`CSVを読み込みました。新規 ${preview.newCount} 件、更新 ${preview.updateCount} 件です。`);
+  }
+
+  async function handleApplyItemsCsv() {
+    if (!csvImportPreview || csvImportPreview.rows.length === 0) {
+      setMessage("反映するCSVプレビューがありません");
+      return;
+    }
+
+    const mergedItems = mergeImportedEvaluationItems(evaluationItems, csvImportPreview.rows);
+    await saveSkillCareerSettings(mergedItems, `CSV取込を反映しました（新規 ${csvImportPreview.newCount} 件、更新 ${csvImportPreview.updateCount} 件）`);
   }
 
   return (
@@ -860,6 +1006,32 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         <p className="mt-1">同じカテゴリに職種別ルールがある場合は、対象社員の職種に一致する設定を優先し、なければ全職種共通ルールを使います。</p>
       </div>
 
+      {csvImportPreview ? (
+        <section className="rounded-3xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-slate-700">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="font-semibold text-slate-950">CSV取込プレビュー</p>
+              <p className="mt-1">新規 {csvImportPreview.newCount} 件 / 更新 {csvImportPreview.updateCount} 件 / エラー {csvImportPreview.errorMessages.length} 件</p>
+            </div>
+            <div className="flex gap-3">
+              <button type="button" onClick={handleApplyItemsCsv} disabled={!canEdit || isPending || csvImportPreview.rows.length === 0} className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
+                CSVを反映
+              </button>
+              <button type="button" onClick={() => setCsvImportPreview(null)} className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700">
+                プレビューを閉じる
+              </button>
+            </div>
+          </div>
+          {csvImportPreview.errorMessages.length > 0 ? (
+            <ul className="mt-3 space-y-1 text-rose-700">
+              {csvImportPreview.errorMessages.slice(0, 10).map((error) => (
+                <li key={error}>・{error}</li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+      ) : null}
+
       <div className="flex flex-wrap gap-3">
         <button type="button" onClick={handleExportGradesCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
           等級CSV出力
@@ -867,6 +1039,10 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         <button type="button" onClick={handleExportItemsCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
           評価項目CSV出力
         </button>
+        <label className="inline-flex cursor-pointer items-center rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
+          評価項目CSV取込
+          <input type="file" accept=".csv,text/csv" onChange={handleImportItemsCsv} disabled={!canEdit || isPending} className="hidden" />
+        </label>
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
           {isPending ? "処理中..." : "評価制度設定を保存"}
         </button>
