@@ -265,6 +265,14 @@ function toRecommendedWeight(category: SkillCategory, majorCategory: string) {
   return 10;
 }
 
+function createClientId(prefix: string) {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `${prefix}-${crypto.randomUUID()}`;
+  }
+
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 function normalizeCsvHeader(header: string) {
   const normalized = header.trim().replace(/^﻿/, "");
   const aliasMap: Record<string, string> = {
@@ -355,7 +363,7 @@ function parseEvaluationItemsCsv(text: string, currentItems: EvaluationItemRow[]
     const identity = buildItemIdentity({ category, majorCategory, minorCategory, title });
     const existing = currentMap.get(identity);
     const row: EvaluationItemRow = {
-      id: existing?.id ?? `new-item-${crypto.randomUUID()}`,
+      id: existing?.id ?? createClientId("new-item"),
       category,
       axis,
       scoreType,
@@ -421,7 +429,7 @@ function buildRecommendedItems(category: SkillCategory, currentItems: Evaluation
       const axis = category === SkillCategory.IT_SKILL ? "SELF_GROWTH" : "SYNERGY";
       return [
         {
-          id: `recommended-${category}-${crypto.randomUUID()}`,
+          id: createClientId(`recommended-${category}`),
           category,
           axis,
           scoreType: axis === "SYNERGY" ? "CONTINUOUS_DONE" : "LEVEL_2",
@@ -510,7 +518,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     setEvaluationItems((current) => [
       ...current,
       {
-        id: `new-item-${crypto.randomUUID()}`,
+        id: createClientId("new-item"),
         category,
         axis: category === SkillCategory.IT_SKILL ? "SELF_GROWTH" : "SYNERGY",
         scoreType: category === SkillCategory.IT_SKILL ? "LEVEL_2" : "CONTINUOUS_DONE",
