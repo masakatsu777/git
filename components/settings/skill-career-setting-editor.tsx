@@ -266,7 +266,24 @@ function toRecommendedWeight(category: SkillCategory, majorCategory: string) {
 }
 
 function normalizeCsvHeader(header: string) {
-  return header.trim().replace(/^﻿/, "");
+  const normalized = header.trim().replace(/^﻿/, "");
+  const aliasMap: Record<string, string> = {
+    カテゴリ: "category",
+    軸: "axis",
+    採点方式: "scoreType",
+    大分類: "majorCategory",
+    大分類順: "majorCategoryOrder",
+    小分類: "minorCategory",
+    小分類順: "minorCategoryOrder",
+    項目名: "title",
+    説明: "description",
+    重み: "weight",
+    表示順: "displayOrder",
+    根拠必須: "evidenceRequired",
+    使用: "isActive",
+  };
+
+  return aliasMap[normalized] ?? normalized;
 }
 
 function parseBoolean(value: string) {
