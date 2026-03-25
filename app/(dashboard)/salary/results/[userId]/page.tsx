@@ -67,14 +67,28 @@ export default async function SalaryResultDetailPage({
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗等級</p><p className="mt-3 text-2xl font-semibold text-slate-950">{careerDetail.latestBusinessSkillGradeName}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">期待充足ランク</p><p className="mt-3 text-2xl font-semibold text-slate-950">{row.finalRating}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">参考評価点</p><p className="mt-3 text-2xl font-semibold text-slate-950">{row.finalScoreTotal}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長力</p><p className="mt-3 text-2xl font-semibold text-slate-950">S{row.selfGrowthPoint}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗力</p><p className="mt-3 text-2xl font-semibold text-slate-950">B{row.synergyPoint}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">総合評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">G{row.totalGradePoint}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">状態</p><p className="mt-3 text-2xl font-semibold text-slate-950">{row.status}</p></article>
         </section>
 
         <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">ベース金額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.gradeBaseAmount)}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">1点金額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.pointUnitAmount)}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">等級計算金額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.gradeCalculationAmount)}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">新方式本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.gradeSalaryAmount)}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">新月額(参考)</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.newSalary)}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">差額 / 差率</p><p className={`mt-3 text-2xl font-semibold ${diffAmount === 0 ? "text-slate-950" : diffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(diffAmount)}</p><p className="mt-1 text-sm text-slate-500">{(diffRate > 0 ? "+" : "") + diffRate}%</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">昇給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(row.proposedRaiseAmount)}</p><p className="mt-1 text-sm text-slate-500">昇給率 {row.proposedRaiseRate}%</p></article>
+        </section>
+
+        <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+          <h2 className="text-xl font-semibold text-slate-950">新しい等級・給与計算</h2>
+          <div className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700">
+            ベース金額 {formatCurrencyWithUnit(row.gradeBaseAmount)} + (G{row.totalGradePoint} × {formatCurrencyWithUnit(row.pointUnitAmount)}) = <span className="font-semibold text-slate-950">{formatCurrencyWithUnit(row.gradeSalaryAmount)}</span>
+          </div>
         </section>
 
         <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">

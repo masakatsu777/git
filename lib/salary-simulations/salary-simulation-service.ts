@@ -1,13 +1,14 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { SalarySimulationStatus } from "@/generated/prisma";
+import { ReviewType, SalarySimulationStatus } from "@/generated/prisma";
 
 import { writeApprovalLog, writeAuditLog } from "@/lib/audit/log-service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { deriveRatingFromScore } from "@/lib/salary-rules/salary-revision-rule-service";
 import { getSalaryStructureBundle } from "@/lib/salary-structure/salary-structure-service";
+import { getGradeSalarySettingBundle } from "@/lib/grade-salary/grade-salary-setting-service";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
 import { getTeamMonthlySnapshot } from "@/lib/pl/service";
 
@@ -37,6 +38,13 @@ export type SalarySimulationRow = {
   newSalary: number;
   adjustmentReason: string;
   status: string;
+  selfGrowthPoint: number;
+  synergyPoint: number;
+  totalGradePoint: number;
+  gradeBaseAmount: number;
+  pointUnitAmount: number;
+  gradeCalculationAmount: number;
+  gradeSalaryAmount: number;
 };
 
 export type SalarySimulationBundle = {
@@ -67,6 +75,32 @@ function toNumber(value: unknown) {
 
 function round(value: number) {
   return Math.round(value * 100) / 100;
+}
+
+function roundInt(value: number) {
+  return Math.round(value);
+}
+
+function calculateAxisPoints(scores: Array<{ score: unknown; evaluationItem: { axis: string; weight: unknown } }>) {
+  let selfGrowthPoint = 0;
+  let synergyPoint = 0;
+
+  for (const row of scores) {
+    const amount = toNumber(row.score) * toNumber(row.evaluationItem.weight) / 100;
+    if (row.evaluationItem.axis === "SYNERGY") {
+      synergyPoint += amount;
+    } else {
+      selfGrowthPoint += amount;
+    }
+  }
+
+  const roundedSelfGrowthPoint = roundInt(selfGrowthPoint);
+  const roundedSynergyPoint = roundInt(synergyPoint);
+  return {
+    selfGrowthPoint: roundedSelfGrowthPoint,
+    synergyPoint: roundedSynergyPoint,
+    totalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
+  };
 }
 
 const adjustmentReasonsPath = path.join(process.cwd(), "data", "settings", "salary-simulation-adjustments.json");
@@ -172,6 +206,13 @@ function fallbackBundle(): SalarySimulationBundle {
       newSalary: 413400,
       adjustmentReason: "",
       status: "DRAFT",
+      selfGrowthPoint: 56,
+      synergyPoint: 18,
+      totalGradePoint: 74,
+      gradeBaseAmount: 180000,
+      pointUnitAmount: 3000,
+      gradeCalculationAmount: 222000,
+      gradeSalaryAmount: 402000,
     },
     {
       userId: "demo-member2",
@@ -199,6 +240,13 @@ function fallbackBundle(): SalarySimulationBundle {
       newSalary: 402800,
       adjustmentReason: "",
       status: "DRAFT",
+      selfGrowthPoint: 56,
+      synergyPoint: 18,
+      totalGradePoint: 74,
+      gradeBaseAmount: 180000,
+      pointUnitAmount: 3000,
+      gradeCalculationAmount: 222000,
+      gradeSalaryAmount: 402000,
     },
   ];
 
@@ -242,8 +290,11 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
   try {
     const period = await resolvePeriod(evaluationPeriodId);
 
-    const salaryStructure = await getSalaryStructureBundle();
-    const adjustmentReasonStore = await readAdjustmentReasons();
+    const [salaryStructure, gradeSalarySetting, adjustmentReasonStore] = await Promise.all([
+      getSalaryStructureBundle(),
+      getGradeSalarySettingBundle(),
+      readAdjustmentReasons(),
+    ]);
 
     const rules = await prisma.salaryRevisionRule.findMany({
       where: { evaluationPeriodId: period.id },
@@ -283,6 +334,15 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         team: { select: { id: true, name: true } },
         itSkillGrade: { select: { rankOrder: true } },
         businessSkillGrade: { select: { rankOrder: true } },
+        scores: {
+          where: { reviewType: ReviewType.FINAL },
+          select: {
+            score: true,
+            evaluationItem: {
+              select: { axis: true, weight: true },
+            },
+          },
+        },
       },
     });
 
@@ -319,6 +379,9 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const newSalary = saved ? toNumber(saved.newSalary) : finalSalaryReference;
         const proposedRaiseAmount = round(newSalary - currentSalary);
         const proposedRaiseRate = currentSalary === 0 ? 0 : round((proposedRaiseAmount / currentSalary) * 100);
+        const points = calculateAxisPoints(evaluation.scores);
+        const gradeCalculationAmount = points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+        const gradeSalaryAmount = gradeSalarySetting.baseAmount + gradeCalculationAmount;
 
         return {
           userId: evaluation.userId,
@@ -346,6 +409,13 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
           newSalary,
           adjustmentReason: getAdjustmentReason(adjustmentReasonStore, period.id, evaluation.userId),
           status: saved?.status ?? SalarySimulationStatus.DRAFT,
+          selfGrowthPoint: points.selfGrowthPoint,
+          synergyPoint: points.synergyPoint,
+          totalGradePoint: points.totalGradePoint,
+          gradeBaseAmount: gradeSalarySetting.baseAmount,
+          pointUnitAmount: gradeSalarySetting.pointUnitAmount,
+          gradeCalculationAmount,
+          gradeSalaryAmount,
         };
       }),
       source: "database",

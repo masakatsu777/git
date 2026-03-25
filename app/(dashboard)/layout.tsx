@@ -56,6 +56,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       { href: "/settings/evaluation-periods", label: "評価期間" },
       { href: "/settings/skill-careers", label: "スキル" },
       { href: "/settings/career-statuses", label: "等級一覧" },
+      { href: "/settings/grade-salary-settings", label: "等級給与設定" },
       { href: "/settings/overall-grade-salary-rules", label: "総合等級昇給" },
       { href: "/settings/salary-revision-rules", label: "期待充足ランク昇給" },
       { href: "/settings/salary-structure", label: "給与構成" },
