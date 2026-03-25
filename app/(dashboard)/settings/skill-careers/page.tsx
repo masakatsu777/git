@@ -59,7 +59,6 @@ export default async function SkillCareerSettingsPage() {
             canEdit={canView}
             gradeDefaults={bundle.grades}
             evaluationItemDefaults={bundle.evaluationItems}
-            positionOptions={bundle.positions}
           />
         </div>
       </div>

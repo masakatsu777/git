@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 
 import { SkillCategory } from "@/generated/prisma";
 import { downloadCsv, parseCsv } from "@/lib/client/csv";
-import type { EvaluationInputScope, EvaluationItemRow, PositionOptionRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
+import type { EvaluationInputScope, EvaluationItemRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
 
 type SkillCareerSettingEditorProps = {
   canEdit: boolean;
   gradeDefaults: SkillGradeRow[];
   evaluationItemDefaults: EvaluationItemRow[];
-  positionOptions: PositionOptionRow[];
 };
 
 type CsvImportPreview = {
@@ -489,9 +488,9 @@ function buildRecommendedItems(category: SkillCategory, currentItems: Evaluation
   );
 }
 
-export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationItemDefaults, positionOptions }: SkillCareerSettingEditorProps) {
+export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationItemDefaults }: SkillCareerSettingEditorProps) {
   const router = useRouter();
-  const [grades, setGrades] = useState(gradeDefaults);
+  const [grades] = useState(gradeDefaults);
   const [evaluationItems, setEvaluationItems] = useState(evaluationItemDefaults);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
@@ -536,23 +535,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     };
   }, [evaluationItems]);
 
-  function addGrade(category: SkillCategory) {
-    setGrades((current) => [
-      ...current,
-      {
-        id: `new-grade-${crypto.randomUUID()}`,
-        category,
-        gradeCode: "",
-        gradeName: "",
-        rankOrder: current.filter((row) => row.category === category).length * 10 + 10,
-        description: "",
-        minScore: 1,
-        maxScore: 5,
-        positionId: null,
-        positionName: "全職種共通",
-      },
-    ]);
-  }
+
 
   function addEvaluationItem(category: SkillCategory) {
     setEvaluationItems((current) => [
@@ -603,27 +586,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     await saveSkillCareerSettings(evaluationItems, "評価制度設定を保存しました");
   }
 
-  function handleExportGradesCsv() {
-    const rows = grades
-      .slice()
-      .sort((left, right) => left.category.localeCompare(right.category, "ja") || left.rankOrder - right.rankOrder || left.gradeCode.localeCompare(right.gradeCode, "ja"))
-      .map((row) => [
-        categoryLabel(row.category),
-        row.positionName,
-        row.gradeCode,
-        row.gradeName,
-        row.minScore,
-        row.maxScore,
-        row.rankOrder,
-        row.description,
-      ]);
 
-    downloadCsv(
-      "evaluation-settings-grades.csv",
-      ["カテゴリ", "職種", "等級コード", "等級名", "最小点", "最大点", "表示順", "説明"],
-      rows,
-    );
-  }
 
   function handleExportItemsCsv() {
     const rows = evaluationItems
@@ -776,95 +739,9 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         ))}
       </div>
 
-      <section className="rounded-3xl border border-slate-200 p-5">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-950">初期マスタ案</h3>
-            <p className="mt-1 text-sm text-slate-500">大分類ごとに、そのまま評価項目へ展開しやすい小分類候補を並べています。ITスキルは少し詳細に分けてあります。</p>
-          </div>
-          <p className="text-sm text-slate-500">まずは各大分類 2〜4 項目から始めるのがおすすめです。</p>
-        </div>
-        <div className="mt-5 grid gap-6 xl:grid-cols-2">
-          {([SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL] as SkillCategory[]).map((category) => (
-            <section key={`proposal-${category}`} className="rounded-3xl bg-slate-50 p-4">
-              <h4 className="text-base font-semibold text-slate-950">{categoryLabel(category)}</h4>
-              <p className="mt-1 text-sm text-slate-500">{categoryGuides[category].subtitle}</p>
-              <div className="mt-4 space-y-4">
-                {categoryGuides[category].majorCategories.map((section) => (
-                  <article key={`${category}-${section.name}`} className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <h5 className="font-semibold text-slate-950">{section.name}</h5>
-                    <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-                      {section.items.map((item) => (
-                        <li key={item}>・{item}</li>
-                      ))}
-                    </ul>
-                  </article>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      </section>
 
-      {[SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL].map((category) => (
-        <section key={category} className="space-y-4 rounded-3xl border border-slate-200 p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 className="font-semibold text-slate-950">{categoryLabel(category)}等級</h3>
-              <p className="mt-1 text-sm text-slate-500">会社独自の等級名称、職種別判定ルール、点数レンジを管理します。</p>
-            </div>
-            <button type="button" onClick={() => addGrade(category)} disabled={!canEdit || isPending} className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 disabled:border-slate-200 disabled:text-slate-400">
-              等級を追加
-            </button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-[1380px] text-left text-sm">
-              <thead className="bg-slate-50 text-slate-500">
-                <tr>
-                  <th className="px-4 py-3 font-medium">職種</th>
-                  <th className="px-4 py-3 font-medium">等級コード</th>
-                  <th className="px-4 py-3 font-medium">等級名</th>
-                  <th className="px-4 py-3 font-medium">最小点</th>
-                  <th className="px-4 py-3 font-medium">最大点</th>
-                  <th className="px-4 py-3 font-medium">表示順</th>
-                  <th className="px-4 py-3 font-medium">説明</th>
-                </tr>
-              </thead>
-              <tbody>
-                {grades.filter((row) => row.category === category).map((row) => (
-                  <tr key={row.id} className="border-t border-slate-200">
-                    <td className="px-4 py-3">
-                      <select value={row.positionId ?? ""} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, positionId: event.target.value || null, positionName: positionOptions.find((option) => option.id === event.target.value)?.name ?? "全職種共通" } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm">
-                        {positionOptions.map((option) => (
-                          <option key={option.id || "common"} value={option.id}>{option.name}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="px-4 py-3">
-                      <input type="text" value={row.gradeCode} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, gradeCode: event.target.value } : item))} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <input type="text" value={row.gradeName} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, gradeName: event.target.value } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <input type="number" min={1} max={5} step="0.01" value={row.minScore} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, minScore: toNumber(event.target.value) } : item))} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <input type="number" min={1} max={5} step="0.01" value={row.maxScore} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, maxScore: toNumber(event.target.value) } : item))} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <input type="number" value={row.rankOrder} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, rankOrder: toNumber(event.target.value) } : item))} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <input type="text" value={row.description} disabled={!canEdit || isPending} onChange={(event) => setGrades((current) => current.map((item) => item.id === row.id ? { ...item, description: event.target.value } : item))} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ))}
+
+
 
       {[SkillCategory.IT_SKILL, SkillCategory.BUSINESS_SKILL].map((category) => (
         <section key={`${category}-items`} className="space-y-4 rounded-3xl border border-slate-200 p-4">
@@ -1166,9 +1043,6 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       ) : null}
 
       <div className="flex flex-wrap gap-3">
-        <button type="button" onClick={handleExportGradesCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
-          等級CSV出力
-        </button>
         <button type="button" onClick={handleExportItemsCsv} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700">
           評価項目CSV出力
         </button>

@@ -381,6 +381,24 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
           continue;
         }
 
+        const existingItem = await tx.evaluationItem.findFirst({
+          where: {
+            category: row.category,
+            majorCategory: row.majorCategory,
+            minorCategory: row.minorCategory,
+            title: row.title,
+          },
+          select: { id: true },
+        });
+
+        if (existingItem) {
+          await tx.evaluationItem.update({
+            where: { id: existingItem.id },
+            data: payload,
+          });
+          continue;
+        }
+
         await tx.evaluationItem.create({
           data: payload,
         });

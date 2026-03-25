@@ -1,6 +1,6 @@
 ﻿category,axis,scoreType,majorCategory,majorCategoryOrder,minorCategory,minorCategoryOrder,title,description,weight,displayOrder,evidenceRequired,isActive,inputScope
-IT_SKILL,SELF_GROWTH,LEVEL_2,初期設定,1,大卒,10,大卒者ポイント,大卒者にベース金額加算するもの,10,1,FALSE,TRUE,MANAGER
-IT_SKILL,SELF_GROWTH,LEVEL_2,初期設定,1,院卒,20,院卒者ポイント,院卒者にベース金額加算するもの,20,2,FALSE,TRUE,MANAGER
+IT_SKILL,SELF_GROWTH,CONTINUOUS_DONE,初期設定,1,院卒,10,大卒者ポイント,大卒者にベース金額加算するもの,10,1,FALSE,TRUE,MANAGER
+IT_SKILL,SELF_GROWTH,CONTINUOUS_DONE,初期設定,1,院卒,20,院卒者ポイント,院卒者にベース金額加算するもの,20,2,FALSE,TRUE,MANAGER
 IT_SKILL,SELF_GROWTH,LEVEL_2,必須: 基礎理解,10,業務理解,10,担当業務の目的と全体の流れを理解し 作業の意味を説明できる,自分の作業だけでなく 前後工程や利用者視点まで含めて理解しているかを見る,1,10,FALSE,TRUE,BOTH
 IT_SKILL,SELF_GROWTH,LEVEL_2,必須: 基礎理解,10,技術理解,20,使用技術や業務知識の基礎を理解し 自分で調べながら作業に入れる,基本知識を持ち 分からないことを自力で調べて前進できるかを見る,1,20,FALSE,TRUE,BOTH
 IT_SKILL,SELF_GROWTH,LEVEL_2,必須: 基礎理解,10,システム理解,30,既存システムの構成や前提条件を理解し 安全に作業へ入れる,システム全体像や制約を踏まえて行動できるかを見る,1,30,FALSE,TRUE,BOTH
