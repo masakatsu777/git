@@ -262,9 +262,12 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
     const selfMap = new Map((target.evaluation?.scores ?? []).filter((row) => row.reviewType === ReviewType.SELF).map((row) => [row.evaluationItemId, row]));
     const managerMap = new Map((target.evaluation?.scores ?? []).filter((row) => row.reviewType === ReviewType.MANAGER).map((row) => [row.evaluationItemId, row]));
 
-    const items: ManagerReviewItem[] = itemRows.map((item) => {
+    const items: ManagerReviewItem[] = itemRows.flatMap((item) => {
       const meta = resolveStoredItemMetaFromRow(item);
-      return {
+      if (meta.inputScope === "SELF") {
+        return [];
+      }
+      return [{
         evaluationItemId: item.id,
         title: item.title,
         category: item.category,
@@ -280,7 +283,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         managerComment: managerMap.get(item.id)?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
         evidences: normalizeEvidences(managerMap.get(item.id)?.evidences),
-      };
+      }];
     });
 
     return {

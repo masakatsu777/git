@@ -4,7 +4,7 @@ import { SkillCategory } from "@/generated/prisma";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getSkillCareerSettingsBundle, saveSkillCareerSettingsBundle } from "@/lib/skill-careers/skill-career-setting-service";
+import { getSkillCareerSettingsBundle, saveSkillCareerSettingsBundle, type EvaluationInputScope } from "@/lib/skill-careers/skill-career-setting-service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -21,6 +21,10 @@ function toAxis(value: unknown): "SELF_GROWTH" | "SYNERGY" {
 
 function toScoreType(value: unknown): "LEVEL_2" | "CONTINUOUS_DONE" {
   return value === "CONTINUOUS_DONE" ? "CONTINUOUS_DONE" : "LEVEL_2";
+}
+
+function toInputScope(value: unknown): EvaluationInputScope {
+  return value === "SELF" || value === "MANAGER" || value === "BOTH" ? value : "BOTH";
 }
 
 export async function GET() {
@@ -66,6 +70,7 @@ export async function POST(request: Request) {
         category: toCategory(row.category),
         axis: toAxis(row.axis),
         scoreType: toScoreType(row.scoreType),
+        inputScope: toInputScope(row.inputScope),
         majorCategory: String(row.majorCategory ?? ""),
         majorCategoryOrder: toNumber(row.majorCategoryOrder),
         minorCategory: String(row.minorCategory ?? ""),

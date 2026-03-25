@@ -59,6 +59,7 @@ export type SaveSelfReviewInput = {
 type ItemMeta = {
   axis: SelfReviewAxis;
   scoreType: SelfReviewScoreType;
+  inputScope: "SELF" | "MANAGER" | "BOTH";
   majorCategory: string;
   majorCategoryOrder: number;
   minorCategory: string;
@@ -76,6 +77,7 @@ type StoredItemMetaInput =
       majorCategoryOrder?: number | null;
       minorCategory?: string | null;
       minorCategoryOrder?: number | null;
+      inputScope?: "SELF" | "MANAGER" | "BOTH" | null;
       description?: string | null;
       displayOrder?: number | null;
     };
@@ -114,30 +116,30 @@ function normalizeEvidences(evidences?: Array<EvaluationEvidence | { id?: string
 function inferItemMeta(title: string, category: "IT_SKILL" | "BUSINESS_SKILL"): ItemMeta {
   if (category === "IT_SKILL") {
     if (title.includes("設計")) {
-      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "設計", minorCategoryOrder: 20 };
+      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", inputScope: "BOTH", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "設計", minorCategoryOrder: 20 };
     }
     if (title.includes("実装")) {
-      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "実装", minorCategoryOrder: 30 };
+      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", inputScope: "BOTH", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "実装", minorCategoryOrder: 30 };
     }
     if (title.includes("課題")) {
-      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "課題解決力", majorCategoryOrder: 20, minorCategory: title, minorCategoryOrder: 10 };
+      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", inputScope: "BOTH", majorCategory: "課題解決力", majorCategoryOrder: 20, minorCategory: title, minorCategoryOrder: 10 };
     }
     if (title.includes("伝") || title.includes("対話") || title.includes("連絡") || title.includes("相談")) {
-      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "対話力", majorCategoryOrder: 30, minorCategory: title, minorCategoryOrder: 10 };
+      return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", inputScope: "BOTH", majorCategory: "対話力", majorCategoryOrder: 30, minorCategory: title, minorCategoryOrder: 10 };
     }
-    return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "自律成長力", majorCategoryOrder: 90, minorCategory: title, minorCategoryOrder: 10 };
+    return { axis: "SELF_GROWTH", scoreType: "LEVEL_2", inputScope: "BOTH", majorCategory: "自律成長力", majorCategoryOrder: 90, minorCategory: title, minorCategoryOrder: 10 };
   }
 
   if (title.includes("顧客") || title.includes("提案")) {
-    return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", majorCategoryOrder: 10, minorCategory: title, minorCategoryOrder: 10 };
+    return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", inputScope: "BOTH", majorCategory: "顧客拡張力", majorCategoryOrder: 10, minorCategory: title, minorCategoryOrder: 10 };
   }
   if (title.includes("チーム") || title.includes("レビュー") || title.includes("伴走")) {
-    return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", majorCategoryOrder: 20, minorCategory: title, minorCategoryOrder: 10 };
+    return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", inputScope: "BOTH", majorCategory: "育成支援力", majorCategoryOrder: 20, minorCategory: title, minorCategoryOrder: 10 };
   }
   if (title.includes("共有") || title.includes("ナレッジ")) {
-    return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "ナレッジ共有力", majorCategoryOrder: 30, minorCategory: title, minorCategoryOrder: 10 };
+    return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", inputScope: "BOTH", majorCategory: "ナレッジ共有力", majorCategoryOrder: 30, minorCategory: title, minorCategoryOrder: 10 };
   }
-  return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "協調相乗力", majorCategoryOrder: 90, minorCategory: title, minorCategoryOrder: 10 };
+  return { axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", inputScope: "BOTH", majorCategory: "協調相乗力", majorCategoryOrder: 90, minorCategory: title, minorCategoryOrder: 10 };
 }
 
 export function resolveStoredItemMeta(
@@ -173,6 +175,12 @@ export function resolveStoredItemMeta(
         : descriptionMeta.scoreType === "CONTINUOUS_DONE"
           ? "CONTINUOUS_DONE"
           : fallback.scoreType,
+    inputScope:
+      metaObject.inputScope === "SELF" || metaObject.inputScope === "MANAGER" || metaObject.inputScope === "BOTH"
+        ? metaObject.inputScope
+        : descriptionMeta.inputScope === "SELF" || descriptionMeta.inputScope === "MANAGER" || descriptionMeta.inputScope === "BOTH"
+          ? descriptionMeta.inputScope
+          : fallback.inputScope,
     majorCategory: String(metaObject.majorCategory || descriptionMeta.majorCategory || fallback.majorCategory),
     majorCategoryOrder: Number(metaObject.majorCategoryOrder ?? descriptionMeta.majorCategoryOrder ?? fallback.majorCategoryOrder ?? displayOrder),
     minorCategory: String(metaObject.minorCategory || descriptionMeta.minorCategory || fallback.minorCategory),
@@ -190,6 +198,7 @@ export function resolveStoredItemMetaFromRow(row: {
   majorCategoryOrder?: number | null;
   minorCategory?: string | null;
   minorCategoryOrder?: number | null;
+  inputScope?: "SELF" | "MANAGER" | "BOTH" | null;
   displayOrder?: number | null;
 }) {
   return resolveStoredItemMeta(row.title, row.category, {
@@ -200,6 +209,7 @@ export function resolveStoredItemMetaFromRow(row: {
     majorCategoryOrder: row.majorCategoryOrder,
     minorCategory: row.minorCategory,
     minorCategoryOrder: row.minorCategoryOrder,
+    inputScope: row.inputScope,
     displayOrder: row.displayOrder,
   });
 }
@@ -412,13 +422,16 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
     ]);
 
     const scoreMap = new Map(evaluation?.scores.map((row) => [row.evaluationItemId, row]));
-    const items: SelfReviewItem[] = itemRows.map((item) => {
+    const items: SelfReviewItem[] = itemRows.flatMap((item) => {
       const meta = resolveStoredItemMetaFromRow(item);
+      if (meta.inputScope === "MANAGER") {
+        return [];
+      }
       const scoreType = meta.scoreType;
       const rawScore = toNumber(scoreMap.get(item.id)?.score);
       const normalizedScore = normalizeScore(rawScore, scoreType);
 
-      return {
+      return [{
         evaluationItemId: item.id,
         title: item.title,
         category: item.category,
@@ -435,7 +448,7 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
         comment: scoreMap.get(item.id)?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
         evidences: normalizeEvidences(scoreMap.get(item.id)?.evidences),
-      };
+      }];
     });
 
     return {

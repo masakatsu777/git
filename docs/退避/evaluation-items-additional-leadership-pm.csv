@@ -1,0 +1,19 @@
+﻿category,axis,scoreType,majorCategory,majorCategoryOrder,minorCategory,minorCategoryOrder,title,description,weight,displayOrder,evidenceRequired,isActive
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チームリード,160,役割設計,10,チームの役割分担を整理し 各メンバーが動きやすい進め方を考えられる,チーム全体の動きを見ながら 誰が何を担うと成果が出やすいかを考えられるかを見る,3,810,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チームリード,160,配置判断,20,メンバーの状況や力量を見ながら 適切な仕事の振り分けができる,個々の力量や負荷を踏まえて 無理のない役割分担ができるかを見る,3,820,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チームリード,160,課題把握,30,チーム内の課題や遅れを早めに捉え 打ち手を考えられる,問題が表面化する前に兆候を捉え 先回りして対応を考えられるかを見る,3,830,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チーム運営,170,安定運営,10,短期対応だけでなく チームとして安定して成果を出す進め方を設計できる,場当たり対応ではなく 継続して成果を出せるチーム運営を考えられるかを見る,3,840,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チーム育成,180,育成機会設計,10,メンバーごとの成長課題を把握し 仕事を通じた育成の機会を作れる,人を使うだけでなく 成長につながる仕事の与え方ができるかを見る,3,850,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チームリード,160,調整準備,40,関係者との調整を見越して 事前に論点やリスクを整理できる,調整が必要になる前に 論点や懸念点を先に整理して動けるかを見る,3,860,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チーム運営,170,基準言語化,20,チームとして守るべき品質 納期 進め方の基準を言語化できる,暗黙知にせず チームの判断基準を言葉にして共有できるかを見る,3,870,FALSE,TRUE
+IT_SKILL,SELF_GROWTH,LEVEL_2,上位: チーム改善,190,振り返り改善,10,チーム全体の成果を見て 改善すべき点を整理し次の行動に落とし込める,チーム成果を振り返り 具体的な改善行動へつなげられるかを見る,3,880,FALSE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト推進,120,進捗把握,10,プロジェクトの進捗状況を把握し 必要な共有や働きかけを継続して行っている,進捗を見える化し 遅れや停滞を防ぐための共有や行動が継続しているかを見る,3,890,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト推進,120,課題対応,20,課題やリスクを早めに共有し 関係者を巻き込んで対応を進めている,問題を抱え込まず 早めに共有して解決へつなげているかを見る,3,900,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: 関係者調整,130,認識統一,10,メンバーや関係者との認識をそろえ プロジェクトが止まらないように調整している,認識差を放置せず 前に進めるための調整ができているかを見る,3,910,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: 関係者調整,130,情報連携,20,顧客 社内 協力会社の間に立ち 必要な情報連携を継続して行っている,関係者間の情報断絶を防ぎ 必要な連携を継続できているかを見る,3,920,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト推進,120,計画調整,30,スケジュール変更や優先順位の見直しが必要なときに 現実的な調整を行っている,理想論でなく 制約を踏まえた現実的な計画調整ができているかを見る,3,930,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト運営,140,問題収束,10,問題発生時に責任の押し付け合いにせず 前に進めるための整理と対応を行っている,混乱時でも感情論に流れず 状況整理と前進のための行動ができるかを見る,3,940,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト運営,140,会議運営,20,会議や打合せを 結論と次アクションが明確になるように運営している,話し合いを実行につながる形で運営できているかを見る,3,950,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト運営,140,支援確保,30,プロジェクト内で不足している役割や支援を見つけ 必要な働きかけを行っている,人や支援の不足を見つけ 必要なリソース確保につなげられているかを見る,3,960,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト改善,150,経験展開,10,プロジェクトの経験や課題を振り返り 次案件へ活かせる形で共有している,案件の学びを属人的に終わらせず 次へ活かせる形にしているかを見る,3,970,TRUE,TRUE
+BUSINESS_SKILL,SYNERGY,CONTINUOUS_DONE,上位: プロジェクト運営,140,継続フォロー,40,周囲が安心して動けるように 継続して状況確認とフォローを行っている,一度の声掛けで終わらず 継続的に状況を見ながら支援できているかを見る,3,980,TRUE,TRUE

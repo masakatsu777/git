@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { SkillCategory } from "@/generated/prisma";
 import { downloadCsv, parseCsv } from "@/lib/client/csv";
-import type { EvaluationItemRow, PositionOptionRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
+import type { EvaluationInputScope, EvaluationItemRow, PositionOptionRow, SkillGradeRow } from "@/lib/skill-careers/skill-career-setting-service";
 
 type SkillCareerSettingEditorProps = {
   canEdit: boolean;
@@ -221,6 +221,20 @@ function scoreTypeLabel(scoreType: EvaluationItemRow["scoreType"]) {
   return scoreType === "CONTINUOUS_DONE" ? "0 / 1 継続実践" : "1 / 2 評価";
 }
 
+function inputScopeLabel(inputScope: EvaluationInputScope) {
+  if (inputScope === "SELF") return "本人のみ";
+  if (inputScope === "MANAGER") return "上長のみ";
+  return "両方";
+}
+
+function normalizeInputScope(value: string): EvaluationInputScope | null {
+  const normalized = value.trim();
+  if (["SELF", "本人のみ"].includes(normalized)) return "SELF";
+  if (["MANAGER", "上長のみ", "管理者のみ"].includes(normalized)) return "MANAGER";
+  if (["BOTH", "両方"].includes(normalized)) return "BOTH";
+  return null;
+}
+
 function weightHint(row: EvaluationItemRow) {
   if (row.axis === "SYNERGY") {
     if (row.weight >= 3) return "全社・事業拡大型";
@@ -291,6 +305,7 @@ function normalizeCsvHeader(header: string) {
     表示順: "displayOrder",
     根拠必須: "evidenceRequired",
     使用: "isActive",
+    入力者区分: "inputScope",
   };
 
   return aliasMap[normalized] ?? normalized;
@@ -356,6 +371,8 @@ function parseEvaluationItemsCsv(text: string, currentItems: EvaluationItemRow[]
     const majorCategory = (csvRow[indexByName.get("majorCategory")! ] ?? "").trim();
     const minorCategory = (csvRow[indexByName.get("minorCategory")! ] ?? "").trim();
     const title = (csvRow[indexByName.get("title")! ] ?? "").trim();
+    const rawInputScope = indexByName.has("inputScope") ? String(csvRow[indexByName.get("inputScope")! ] ?? "") : "";
+    const inputScope = normalizeInputScope(rawInputScope) ?? "BOTH";
 
     if (!category || !axis || !scoreType || !majorCategory || !minorCategory || !title) {
       errorMessages.push(`${lineIndex + 1}行目: 必須列の値が不足しています`);
@@ -369,6 +386,7 @@ function parseEvaluationItemsCsv(text: string, currentItems: EvaluationItemRow[]
       category,
       axis,
       scoreType,
+      inputScope,
       majorCategory,
       majorCategoryOrder: toNumber(csvRow[indexByName.get("majorCategoryOrder")! ] ?? "0"),
       minorCategory,
@@ -453,6 +471,7 @@ function buildRecommendedItems(category: SkillCategory, currentItems: Evaluation
           category,
           axis,
           scoreType: axis === "SYNERGY" ? "CONTINUOUS_DONE" : "LEVEL_2",
+          inputScope: "BOTH",
           majorCategory: majorCategory.name,
           majorCategoryOrder: (majorIndex + 1) * 10,
           minorCategory: majorCategory.name,
@@ -543,6 +562,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         category,
         axis: category === SkillCategory.IT_SKILL ? "SELF_GROWTH" : "SYNERGY",
         scoreType: category === SkillCategory.IT_SKILL ? "LEVEL_2" : "CONTINUOUS_DONE",
+        inputScope: "BOTH",
         majorCategory: defaultMajorCategory(category),
         majorCategoryOrder: current.filter((row) => row.category === category).length + 1,
         minorCategory: defaultMinorCategory(category),
@@ -627,13 +647,15 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
         row.title,
         row.description,
         row.weight,
+        row.displayOrder,
         row.evidenceRequired,
         row.isActive,
+        row.inputScope,
       ]);
 
     downloadCsv(
       "evaluation-settings-items.csv",
-      ["category", "axis", "scoreType", "majorCategory", "majorCategoryOrder", "minorCategory", "minorCategoryOrder", "title", "description", "weight", "evidenceRequired", "isActive"],
+      ["category", "axis", "scoreType", "majorCategory", "majorCategoryOrder", "minorCategory", "minorCategoryOrder", "title", "description", "weight", "displayOrder", "evidenceRequired", "isActive", "inputScope"],
       rows,
     );
   }
@@ -906,6 +928,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                   <th className="px-4 py-3 font-medium">項目名</th>
                   <th className="px-4 py-3 font-medium">説明</th>
                   <th className="px-4 py-3 font-medium">重み</th>
+                  <th className="px-4 py-3 font-medium">入力者区分</th>
                   <th className="px-4 py-3 font-medium">根拠</th>
                   <th className="px-4 py-3 font-medium">使用</th>
                 </tr>
@@ -1059,6 +1082,29 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                           </div>
                         ) : null}
                         <p className="text-xs text-slate-500">{weightHint(row)}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="space-y-2">
+                        <select
+                          value={row.inputScope}
+                          disabled={!canEdit || isPending}
+                          onChange={(event) =>
+                            setEvaluationItems((current) =>
+                              current.map((item) =>
+                                item.id === row.id
+                                  ? { ...item, inputScope: normalizeInputScope(event.target.value) ?? "BOTH" }
+                                  : item,
+                              ),
+                            )
+                          }
+                          className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        >
+                          <option value="SELF">本人のみ</option>
+                          <option value="MANAGER">上長のみ</option>
+                          <option value="BOTH">両方</option>
+                        </select>
+                        <p className="text-xs text-slate-500">{inputScopeLabel(row.inputScope)}</p>
                       </div>
                     </td>
                     <td className="px-4 py-3">

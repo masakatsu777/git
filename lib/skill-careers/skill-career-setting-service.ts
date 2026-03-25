@@ -4,6 +4,7 @@ import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type EvaluationAxis = "SELF_GROWTH" | "SYNERGY";
 export type EvaluationScoreType = "LEVEL_2" | "CONTINUOUS_DONE";
+export type EvaluationInputScope = "SELF" | "MANAGER" | "BOTH";
 
 export type SkillGradeRow = {
   id: string;
@@ -23,6 +24,7 @@ export type EvaluationItemRow = {
   category: SkillCategory;
   axis: EvaluationAxis;
   scoreType: EvaluationScoreType;
+  inputScope: EvaluationInputScope;
   majorCategory: string;
   majorCategoryOrder: number;
   minorCategory: string;
@@ -99,6 +101,7 @@ const fallbackBundle: SkillCareerSettingsBundle = {
       category: SkillCategory.IT_SKILL,
       axis: "SELF_GROWTH",
       scoreType: "LEVEL_2",
+      inputScope: "BOTH",
       majorCategory: "ITスキル: 基礎理解",
       majorCategoryOrder: 10,
       minorCategory: "基礎理解",
@@ -116,6 +119,7 @@ const fallbackBundle: SkillCareerSettingsBundle = {
       category: SkillCategory.IT_SKILL,
       axis: "SELF_GROWTH",
       scoreType: "LEVEL_2",
+      inputScope: "BOTH",
       majorCategory: "ITスキル: 設計",
       majorCategoryOrder: 20,
       minorCategory: "設計",
@@ -133,6 +137,7 @@ const fallbackBundle: SkillCareerSettingsBundle = {
       category: SkillCategory.IT_SKILL,
       axis: "SELF_GROWTH",
       scoreType: "LEVEL_2",
+      inputScope: "BOTH",
       majorCategory: "ITスキル: 実装",
       majorCategoryOrder: 30,
       minorCategory: "実装",
@@ -150,6 +155,7 @@ const fallbackBundle: SkillCareerSettingsBundle = {
       category: SkillCategory.IT_SKILL,
       axis: "SELF_GROWTH",
       scoreType: "LEVEL_2",
+      inputScope: "BOTH",
       majorCategory: "ITスキル: テスト・品質",
       majorCategoryOrder: 40,
       minorCategory: "テスト・品質",
@@ -167,6 +173,7 @@ const fallbackBundle: SkillCareerSettingsBundle = {
       category: SkillCategory.IT_SKILL,
       axis: "SELF_GROWTH",
       scoreType: "LEVEL_2",
+      inputScope: "BOTH",
       majorCategory: "ITスキル: 運用保守",
       majorCategoryOrder: 50,
       minorCategory: "運用保守",
@@ -184,6 +191,7 @@ const fallbackBundle: SkillCareerSettingsBundle = {
       category: SkillCategory.BUSINESS_SKILL,
       axis: "SYNERGY",
       scoreType: "CONTINUOUS_DONE",
+      inputScope: "BOTH",
       majorCategory: "育成支援力",
       majorCategoryOrder: 10,
       minorCategory: "レビュー支援",
@@ -214,6 +222,7 @@ const META_PREFIX = "__EVAL_META__";
 type EvaluationItemStoredMeta = {
   majorCategoryOrder?: number;
   minorCategoryOrder?: number;
+  inputScope?: EvaluationInputScope;
 };
 
 function parseEvaluationItemDescription(description: string | null | undefined, displayOrder: number) {
@@ -222,6 +231,7 @@ function parseEvaluationItemDescription(description: string | null | undefined, 
       description: description ?? "",
       majorCategoryOrder: displayOrder,
       minorCategoryOrder: displayOrder,
+      inputScope: "BOTH" as EvaluationInputScope,
     };
   }
 
@@ -235,12 +245,14 @@ function parseEvaluationItemDescription(description: string | null | undefined, 
       description: visibleDescription,
       majorCategoryOrder: toNumber(parsed.majorCategoryOrder ?? displayOrder),
       minorCategoryOrder: toNumber(parsed.minorCategoryOrder ?? displayOrder),
+      inputScope: parsed.inputScope === "SELF" || parsed.inputScope === "MANAGER" ? parsed.inputScope : "BOTH",
     };
   } catch {
     return {
       description,
       majorCategoryOrder: displayOrder,
       minorCategoryOrder: displayOrder,
+      inputScope: "BOTH" as EvaluationInputScope,
     };
   }
 }
@@ -249,6 +261,7 @@ function buildEvaluationItemDescription(row: EvaluationItemRow) {
   const meta: EvaluationItemStoredMeta = {
     majorCategoryOrder: row.majorCategoryOrder,
     minorCategoryOrder: row.minorCategoryOrder,
+    inputScope: row.inputScope,
   };
   return `${META_PREFIX}${JSON.stringify(meta)}\n${row.description || ""}`;
 }
@@ -293,6 +306,7 @@ export async function getSkillCareerSettingsBundle(): Promise<SkillCareerSetting
           category: item.category,
           axis: item.axis,
           scoreType: item.scoreType,
+          inputScope: parsedDescription.inputScope as EvaluationInputScope,
           majorCategory: item.majorCategory,
           majorCategoryOrder: parsedDescription.majorCategoryOrder,
           minorCategory: item.minorCategory,
