@@ -266,6 +266,18 @@ function buildEvaluationItemDescription(row: EvaluationItemRow) {
   return `${META_PREFIX}${JSON.stringify(meta)}\n${row.description || ""}`;
 }
 
+function buildEvaluationItemIdentity(row: Pick<EvaluationItemRow, "category" | "majorCategory" | "minorCategory" | "title">) {
+  return [row.category, row.majorCategory.trim(), row.minorCategory.trim(), row.title.trim()].join("::");
+}
+
+function dedupeEvaluationItems(rows: EvaluationItemRow[]) {
+  const map = new Map<string, EvaluationItemRow>();
+  for (const row of rows) {
+    map.set(buildEvaluationItemIdentity(row), row);
+  }
+  return Array.from(map.values());
+}
+
 export async function getSkillCareerSettingsBundle(): Promise<SkillCareerSettingsBundle> {
   if (!hasDatabaseUrl()) {
     return fallbackBundle;
@@ -357,7 +369,9 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
         });
       }
 
-      for (const row of input.evaluationItems) {
+      const evaluationItems = dedupeEvaluationItems(input.evaluationItems);
+
+      for (const row of evaluationItems) {
         const payload = {
           category: row.category,
           axis: row.axis,
@@ -381,21 +395,36 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
           continue;
         }
 
-        const existingItem = await tx.evaluationItem.findFirst({
+        const existingItems = await tx.evaluationItem.findMany({
           where: {
             category: row.category,
             majorCategory: row.majorCategory,
             minorCategory: row.minorCategory,
             title: row.title,
           },
+          orderBy: [{ createdAt: "asc" }, { id: "asc" }],
           select: { id: true },
         });
 
-        if (existingItem) {
+        const preferredExistingId = row.id && !row.id.startsWith("new-item-")
+          ? row.id
+          : existingItems[0]?.id;
+
+        if (preferredExistingId) {
           await tx.evaluationItem.update({
-            where: { id: existingItem.id },
+            where: { id: preferredExistingId },
             data: payload,
           });
+
+          const duplicateIds = existingItems
+            .map((item) => item.id)
+            .filter((id) => id !== preferredExistingId);
+
+          if (duplicateIds.length > 0) {
+            await tx.evaluationItem.deleteMany({
+              where: { id: { in: duplicateIds } },
+            });
+          }
           continue;
         }
 
