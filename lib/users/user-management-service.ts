@@ -188,22 +188,26 @@ export async function getUserManagementBundle(): Promise<UserManagementBundle> {
     const menuVisibilityMap = await getUserMenuVisibilityMap(users.map((user) => user.id));
 
     return {
-      rows: users.map((user) => ({
-        userId: user.id,
-        employeeCode: user.employeeCode,
-        name: user.name,
-        email: user.email,
-        joinedAt: formatDate(user.joinedAt),
-        roleId: user.role.id,
-        roleCode: user.role.code,
-        roleName: user.role.name,
-        departmentId: user.department?.id ?? "",
-        departmentName: user.department?.name ?? "-",
-        teamId: user.teamMemberships.find((membership) => membership.isPrimary && !membership.endDate)?.team.id ?? user.teamMemberships[0]?.team.id ?? "",
-        teamName: user.teamMemberships.find((membership) => membership.isPrimary && !membership.endDate)?.team.name ?? user.teamMemberships[0]?.team.name ?? "未所属",
-        status: user.status,
-        menuVisibility: menuVisibilityMap[user.id],
-      })),
+      rows: users.map((user) => {
+        const currentPrimaryMembership = user.teamMemberships.find((membership) => membership.isPrimary && !membership.endDate);
+
+        return {
+          userId: user.id,
+          employeeCode: user.employeeCode,
+          name: user.name,
+          email: user.email,
+          joinedAt: formatDate(user.joinedAt),
+          roleId: user.role.id,
+          roleCode: user.role.code,
+          roleName: user.role.name,
+          departmentId: user.department?.id ?? "",
+          departmentName: user.department?.name ?? "-",
+          teamId: currentPrimaryMembership?.team.id ?? "",
+          teamName: currentPrimaryMembership?.team.name ?? "未所属",
+          status: user.status,
+          menuVisibility: menuVisibilityMap[user.id],
+        };
+      }),
       roleOptions: roles.map((role) => ({ roleId: role.id, roleCode: role.code, roleName: role.name })),
       departmentOptions: departments.map((department) => ({
         departmentId: department.id,
