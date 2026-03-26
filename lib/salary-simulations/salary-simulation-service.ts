@@ -86,7 +86,7 @@ function calculateAxisPoints(scores: Array<{ score: unknown; evaluationItem: { a
   let synergyPoint = 0;
 
   for (const row of scores) {
-    const amount = toNumber(row.score) * toNumber(row.evaluationItem.weight) / 100;
+    const amount = toNumber(row.score) * toNumber(row.evaluationItem.weight);
     if (row.evaluationItem.axis === "SYNERGY") {
       synergyPoint += amount;
     } else {

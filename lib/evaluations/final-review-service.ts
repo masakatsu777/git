@@ -173,7 +173,7 @@ function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplay
   let synergyPoint = 0;
 
   for (const item of items.filter((row) => row.inputScope !== "MANAGER" && row.inputScope !== "ADMIN")) {
-    const amount = getDisplayScore(item, stage) * item.weight / 100;
+    const amount = getDisplayScore(item, stage) * item.weight;
     if (item.axis === "SYNERGY") {
       synergyPoint += amount;
     } else {
@@ -181,12 +181,12 @@ function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplay
     }
   }
 
-  const roundedSelfGrowthPoint = round2(selfGrowthPoint);
-  const roundedSynergyPoint = round2(synergyPoint);
+  const roundedSelfGrowthPoint = Math.round(selfGrowthPoint);
+  const roundedSynergyPoint = Math.round(synergyPoint);
   return {
     selfGrowthPoint: roundedSelfGrowthPoint,
     synergyPoint: roundedSynergyPoint,
-    totalGradePoint: round2(roundedSelfGrowthPoint + roundedSynergyPoint),
+    totalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
   };
 }
 
