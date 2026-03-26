@@ -54,14 +54,8 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
   const [selfComment, setSelfComment] = useState(defaults.selfComment);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
-  const [showCompletedSelfGrowth, setShowCompletedSelfGrowth] = useState(false);
-
   const total = useMemo(() => calculateTotal(items), [items]);
   const selfGrowthItems = useMemo(() => items.filter((item) => item.axis === "SELF_GROWTH"), [items]);
-  const visibleSelfGrowthItems = useMemo(
-    () => (showCompletedSelfGrowth ? selfGrowthItems : selfGrowthItems.filter((item) => item.score !== 2)),
-    [selfGrowthItems, showCompletedSelfGrowth],
-  );
   const completedSelfGrowthCount = useMemo(
     () => selfGrowthItems.filter((item) => item.score === 2).length,
     [selfGrowthItems],
@@ -174,13 +168,9 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
           <p>自ら学び、考え、行動し、必要とされる存在になる力を確認します。</p>
           {completedSelfGrowthCount > 0 ? (
-            <button
-              type="button"
-              onClick={() => setShowCompletedSelfGrowth((current) => !current)}
-              className="rounded-full border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-800"
-            >
-              {showCompletedSelfGrowth ? "未完了のみ表示" : `全項目表示 (${completedSelfGrowthCount}件完了)`}
-            </button>
+            <span className="rounded-full border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-800">
+              完了 {completedSelfGrowthCount} 件
+            </span>
           ) : null}
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -193,22 +183,22 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
 
         </div>
         <div className="mt-6 space-y-4">
-          {groupByMajorCategory(visibleSelfGrowthItems).map(([majorCategory, groupedItems]) => (
-            <section key={majorCategory} className="rounded-3xl border border-sky-200/80 bg-white/75 p-4">
+          {groupByMajorCategory(selfGrowthItems).map(([majorCategory, groupedItems]) => (
+            <section key={majorCategory} className="rounded-3xl border border-emerald-200/80 bg-white/80 p-4">
               <div className="flex items-center gap-3">
-                <span className="h-8 w-1.5 rounded-full bg-sky-400" aria-hidden />
+                <span className="h-8 w-1.5 rounded-full bg-emerald-400" aria-hidden />
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">協調相乗力</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">自律成長力</p>
                   <h3 className="text-lg font-semibold text-slate-950">{majorCategory}</h3>
                 </div>
               </div>
               <div className="mt-4 space-y-4">
                 {groupedItems.map((item) => (
-                  <article key={item.evaluationItemId} className="rounded-2xl border border-sky-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(240,249,255,0.88))] p-4">
+                  <article key={item.evaluationItemId} className="rounded-2xl border border-emerald-100 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(236,253,245,0.9))] p-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="max-w-3xl">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="inline-flex items-center rounded-full bg-sky-100 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-sky-700">継続実践</span>
+                          <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-emerald-700">1 / 2 評価</span>
                           <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">{item.minorCategory}</p>
                         </div>
                         <h4 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h4>
