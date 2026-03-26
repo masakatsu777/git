@@ -152,6 +152,10 @@ function resolveDisplayStage(status: string): FinalReviewDisplayStage {
   }
 }
 
+function getProgressTargetItems(items: FinalReviewItem[], axis: SelfReviewAxis) {
+  return items.filter((item) => item.axis === axis && item.inputScope !== "MANAGER" && item.inputScope !== "ADMIN");
+}
+
 function getDisplayScore(item: Pick<FinalReviewItem, "selfScore" | "managerScore" | "finalScore">, stage: FinalReviewDisplayStage) {
   switch (stage) {
     case "FINAL":
@@ -168,7 +172,7 @@ function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplay
   let selfGrowthPoint = 0;
   let synergyPoint = 0;
 
-  for (const item of items) {
+  for (const item of items.filter((row) => row.inputScope !== "MANAGER" && row.inputScope !== "ADMIN")) {
     const amount = getDisplayScore(item, stage) * item.weight / 100;
     if (item.axis === "SYNERGY") {
       synergyPoint += amount;
@@ -187,7 +191,7 @@ function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplay
 }
 
 function calculateProgress(items: FinalReviewItem[], axis: SelfReviewAxis, stage: FinalReviewDisplayStage) {
-  const targetItems = items.filter((item) => item.axis === axis);
+  const targetItems = getProgressTargetItems(items, axis);
   if (targetItems.length === 0) return 0;
   const achieved = targetItems.reduce((sum, item) => sum + getDisplayScore(item, stage) * item.weight, 0);
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
@@ -196,7 +200,7 @@ function calculateProgress(items: FinalReviewItem[], axis: SelfReviewAxis, stage
 }
 
 function calculateAxisMetric(items: FinalReviewItem[], axis: SelfReviewAxis, stage: FinalReviewDisplayStage) {
-  const targetItems = items.filter((item) => item.axis === axis);
+  const targetItems = getProgressTargetItems(items, axis);
   if (targetItems.length === 0) return 0;
   const achieved = targetItems.reduce((sum, item) => sum + getDisplayScore(item, stage) * item.weight, 0);
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
