@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
@@ -69,8 +70,14 @@ export default async function EvaluationResultPage({
     );
   }
   const periods = await getEvaluationPeriodOptions();
-  const finalReview = await getFinalReviewBundle(user.id, params.evaluationPeriodId);
-  const salaryResult = await getSalaryResultDetailBundle(user.id, params.evaluationPeriodId).catch(() => null);
+  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? periods[0]?.id;
+
+  if (!params.evaluationPeriodId && selectedEvaluationPeriodId) {
+    redirect(`/evaluations/result?evaluationPeriodId=${selectedEvaluationPeriodId}`);
+  }
+
+  const finalReview = await getFinalReviewBundle(user.id, selectedEvaluationPeriodId);
+  const salaryResult = await getSalaryResultDetailBundle(user.id, selectedEvaluationPeriodId).catch(() => null);
   const salaryRow = salaryResult?.row;
   const displaySalaryRow = salaryRow
     ? salaryRow

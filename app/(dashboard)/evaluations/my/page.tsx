@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { SelfReviewEditor } from "@/components/evaluations/self-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
@@ -27,8 +28,14 @@ export default async function MyEvaluationPage({
       </main>
     );
   }
-  const bundle = await getSelfReviewBundle(user.id, user.role, params.evaluationPeriodId);
   const periods = await getEvaluationPeriodOptions();
+  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? periods[0]?.id;
+
+  if (!params.evaluationPeriodId && selectedEvaluationPeriodId) {
+    redirect(`/evaluations/my?evaluationPeriodId=${selectedEvaluationPeriodId}`);
+  }
+
+  const bundle = await getSelfReviewBundle(user.id, user.role, selectedEvaluationPeriodId);
   const canEdit = hasPermission(user, PERMISSIONS.evaluationSelfWrite) && bundle.periodStatus === "OPEN";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
