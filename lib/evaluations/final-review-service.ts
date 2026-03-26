@@ -181,12 +181,12 @@ function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplay
     }
   }
 
-  const roundedSelfGrowthPoint = Math.round(selfGrowthPoint);
-  const roundedSynergyPoint = Math.round(synergyPoint);
+  const roundedSelfGrowthPoint = round2(selfGrowthPoint);
+  const roundedSynergyPoint = round2(synergyPoint);
   return {
     selfGrowthPoint: roundedSelfGrowthPoint,
     synergyPoint: roundedSynergyPoint,
-    totalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
+    totalGradePoint: round2(roundedSelfGrowthPoint + roundedSynergyPoint),
   };
 }
 
