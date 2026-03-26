@@ -13,6 +13,7 @@ import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { deriveRatingFromScore } from "@/lib/salary-rules/salary-revision-rule-service";
 import { judgeGradeByScore } from "@/lib/skill-careers/grade-judgement-service";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
+import { getGradeSalarySettingBundle } from "@/lib/grade-salary/grade-salary-setting-service";
 
 export type FinalReviewMember = {
   userId: string;
@@ -49,6 +50,8 @@ export type FinalReviewItem = {
   inputScope: "SELF" | "MANAGER" | "ADMIN" | "BOTH";
 };
 
+export type FinalReviewDisplayStage = "SELF" | "MANAGER" | "FINAL";
+
 export type FinalReviewBundle = {
   evaluationPeriodId: string;
   periodName: string;
@@ -59,6 +62,7 @@ export type FinalReviewBundle = {
   teamName: string;
   positionName: string;
   status: string;
+  displayStage: FinalReviewDisplayStage;
   selfComment: string;
   managerComment: string;
   finalComment: string;
@@ -68,6 +72,13 @@ export type FinalReviewBundle = {
   finalRating: string;
   overallGradeName: string;
   selfGrowthProgress: number;
+  selfGrowthPoint: number;
+  synergyPoint: number;
+  totalGradePoint: number;
+  gradeBaseAmount: number;
+  pointUnitAmount: number;
+  gradeSalaryAmount: number;
+  currentSalary: number;
   synergyProgress: number;
   itSkillScore: number;
   businessSkillScore: number;
@@ -128,27 +139,74 @@ function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return round2(items.reduce((sum, item) => sum + (item.score * item.weight) / 100, 0));
 }
 
-function calculateProgress(items: FinalReviewItem[], axis: SelfReviewAxis) {
+function resolveDisplayStage(status: string): FinalReviewDisplayStage {
+  switch (status) {
+    case EvaluationStatus.FINALIZED:
+      return "FINAL";
+    case EvaluationStatus.MANAGER_REVIEW:
+    case EvaluationStatus.FINAL_REVIEW:
+      return "MANAGER";
+    case EvaluationStatus.SELF_REVIEW:
+    default:
+      return "SELF";
+  }
+}
+
+function getDisplayScore(item: Pick<FinalReviewItem, "selfScore" | "managerScore" | "finalScore">, stage: FinalReviewDisplayStage) {
+  switch (stage) {
+    case "FINAL":
+      return item.finalScore;
+    case "MANAGER":
+      return item.managerScore;
+    case "SELF":
+    default:
+      return item.selfScore;
+  }
+}
+
+function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplayStage) {
+  let selfGrowthPoint = 0;
+  let synergyPoint = 0;
+
+  for (const item of items) {
+    const amount = getDisplayScore(item, stage) * item.weight / 100;
+    if (item.axis === "SYNERGY") {
+      synergyPoint += amount;
+    } else {
+      selfGrowthPoint += amount;
+    }
+  }
+
+  const roundedSelfGrowthPoint = Math.round(selfGrowthPoint);
+  const roundedSynergyPoint = Math.round(synergyPoint);
+  return {
+    selfGrowthPoint: roundedSelfGrowthPoint,
+    synergyPoint: roundedSynergyPoint,
+    totalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
+  };
+}
+
+function calculateProgress(items: FinalReviewItem[], axis: SelfReviewAxis, stage: FinalReviewDisplayStage) {
   const targetItems = items.filter((item) => item.axis === axis);
   if (targetItems.length === 0) return 0;
-  const achieved = targetItems.reduce((sum, item) => sum + item.finalScore * item.weight, 0);
+  const achieved = targetItems.reduce((sum, item) => sum + getDisplayScore(item, stage) * item.weight, 0);
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
   if (possible === 0) return 0;
   return round2((achieved / possible) * 100);
 }
 
-function calculateAxisMetric(items: FinalReviewItem[], axis: SelfReviewAxis) {
+function calculateAxisMetric(items: FinalReviewItem[], axis: SelfReviewAxis, stage: FinalReviewDisplayStage) {
   const targetItems = items.filter((item) => item.axis === axis);
   if (targetItems.length === 0) return 0;
-  const achieved = targetItems.reduce((sum, item) => sum + item.finalScore * item.weight, 0);
+  const achieved = targetItems.reduce((sum, item) => sum + getDisplayScore(item, stage) * item.weight, 0);
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
   if (possible === 0) return 0;
   return round2((achieved / possible) * 100);
 }
 
-async function enrichWithGradeJudgement(items: FinalReviewItem[], positionId?: string | null) {
-  const itSkillScore = calculateAxisMetric(items, "SELF_GROWTH");
-  const businessSkillScore = calculateAxisMetric(items, "SYNERGY");
+async function enrichWithGradeJudgement(items: FinalReviewItem[], stage: FinalReviewDisplayStage, positionId?: string | null) {
+  const itSkillScore = calculateAxisMetric(items, "SELF_GROWTH", stage);
+  const businessSkillScore = calculateAxisMetric(items, "SYNERGY", stage);
   const [itSkill, businessSkill] = await Promise.all([
     judgeGradeByScore(SkillCategory.IT_SKILL, itSkillScore, positionId),
     judgeGradeByScore(SkillCategory.BUSINESS_SKILL, businessSkillScore, positionId),
@@ -253,8 +311,12 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
       inputScope: "BOTH",
     },
   ];
-  const judgement = await enrichWithGradeJudgement(items, null);
-  const finalTotal = calculateTotal(items.map((item) => ({ score: item.finalScore, weight: item.weight })));
+  const displayStage = resolveDisplayStage(target.status);
+  const judgement = await enrichWithGradeJudgement(items, displayStage, null);
+  const points = calculateAxisPoints(items, displayStage);
+  const gradeSalarySetting = await getGradeSalarySettingBundle();
+  const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+  const finalTotal = calculateTotal(items.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
 
   return {
     evaluationPeriodId: "period-2025-h2",
@@ -266,6 +328,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
     teamName: target.teamName,
     positionName: "メンバー",
     status: target.status,
+    displayStage,
     selfComment: "自律成長と継続実践の両面を整理する。",
     managerComment: "半期を通じて安定した実践が見られました。",
     finalComment: "次期は継続実践の広がりも期待します。",
@@ -274,8 +337,15 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
     finalScoreTotal: finalTotal,
     finalRating: finalTotal > 0 ? deriveRatingFromScore(finalTotal) : "-",
     overallGradeName: judgement.overall.gradeName,
-    selfGrowthProgress: calculateProgress(items, "SELF_GROWTH"),
-    synergyProgress: calculateProgress(items, "SYNERGY"),
+    selfGrowthProgress: calculateProgress(items, "SELF_GROWTH", displayStage),
+    synergyProgress: calculateProgress(items, "SYNERGY", displayStage),
+    selfGrowthPoint: points.selfGrowthPoint,
+    synergyPoint: points.synergyPoint,
+    totalGradePoint: points.totalGradePoint,
+    gradeBaseAmount: gradeSalarySetting.baseAmount,
+    pointUnitAmount: gradeSalarySetting.pointUnitAmount,
+    gradeSalaryAmount,
+    currentSalary: 0,
     itSkillScore: judgement.itSkillScore,
     businessSkillScore: judgement.businessSkillScore,
     itSkillGradeName: judgement.itSkill.gradeName,
@@ -309,7 +379,18 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
           managerScoreTotal: true,
           finalScoreTotal: true,
           finalRating: true,
-          user: { select: { name: true, positionId: true, position: { select: { name: true } } } },
+          user: {
+            select: {
+              name: true,
+              positionId: true,
+              position: { select: { name: true } },
+              salaryRecords: {
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
+                select: { baseSalary: true, allowance: true },
+              },
+            },
+          },
           team: { select: { name: true } },
           itSkillGrade: { select: { gradeName: true, rankOrder: true } },
           businessSkillGrade: { select: { gradeName: true, rankOrder: true } },
@@ -389,6 +470,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         teamName: "",
         positionName: "",
         status: EvaluationStatus.SELF_REVIEW,
+        displayStage: "SELF",
         selfComment: "",
         managerComment: "",
         finalComment: "",
@@ -399,6 +481,13 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         overallGradeName: "未判定",
         selfGrowthProgress: 0,
         synergyProgress: 0,
+        selfGrowthPoint: 0,
+        synergyPoint: 0,
+        totalGradePoint: 0,
+        gradeBaseAmount: 0,
+        pointUnitAmount: 0,
+        gradeSalaryAmount: 0,
+        currentSalary: 0,
         itSkillScore: 0,
         businessSkillScore: 0,
         itSkillGradeName: "未判定",
@@ -439,8 +528,13 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         inputScope: meta.inputScope,
       };
     });
-    const judgement = await enrichWithGradeJudgement(items, target.positionId ?? null);
-    const finalTotal = calculateTotal(items.map((item) => ({ score: item.finalScore, weight: item.weight })));
+    const displayStage = resolveDisplayStage(target.status);
+    const judgement = await enrichWithGradeJudgement(items, displayStage, target.positionId ?? null);
+    const points = calculateAxisPoints(items, displayStage);
+    const gradeSalarySetting = await getGradeSalarySettingBundle();
+    const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+    const finalTotal = calculateTotal(items.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
+    const currentSalary = toNumber(target.evaluation.user.salaryRecords[0]?.baseSalary) + toNumber(target.evaluation.user.salaryRecords[0]?.allowance);
 
     return {
       evaluationPeriodId: period.id,
@@ -464,16 +558,24 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       teamName: target.teamName,
       positionName: target.positionName,
       status: target.status,
+      displayStage,
       selfComment: target.evaluation.selfComment ?? "",
       managerComment: target.evaluation.managerComment ?? "",
       finalComment: target.evaluation.finalComment ?? "",
       selfScoreTotal: toNumber(target.evaluation.selfScoreTotal),
       managerScoreTotal: toNumber(target.evaluation.managerScoreTotal),
       finalScoreTotal: finalTotal,
-      finalRating: target.evaluation.finalRating ?? deriveRatingFromScore(finalTotal),
+      finalRating: finalTotal > 0 ? (target.evaluation.finalRating ?? deriveRatingFromScore(finalTotal)) : "-",
       overallGradeName: judgement.overall.gradeName,
-      selfGrowthProgress: calculateProgress(items, "SELF_GROWTH"),
-      synergyProgress: calculateProgress(items, "SYNERGY"),
+      selfGrowthProgress: calculateProgress(items, "SELF_GROWTH", displayStage),
+      synergyProgress: calculateProgress(items, "SYNERGY", displayStage),
+      selfGrowthPoint: points.selfGrowthPoint,
+      synergyPoint: points.synergyPoint,
+      totalGradePoint: points.totalGradePoint,
+      gradeBaseAmount: gradeSalarySetting.baseAmount,
+      pointUnitAmount: gradeSalarySetting.pointUnitAmount,
+      gradeSalaryAmount,
+      currentSalary,
       itSkillScore: judgement.itSkillScore,
       businessSkillScore: judgement.businessSkillScore,
       itSkillGradeName: target.evaluation.itSkillGrade?.gradeName ?? judgement.itSkill.gradeName,
@@ -657,8 +759,12 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
         ? { ...item, finalScore: normalizeScore(saved.score, item.scoreType), finalComment: saved.comment, evidences: normalizeEvidences(saved.evidences) }
         : item;
     });
-    const judgement = await enrichWithGradeJudgement(nextItems, null);
-    const finalTotal = calculateTotal(nextItems.map((item) => ({ score: item.finalScore, weight: item.weight })));
+    const displayStage = "FINAL" as const;
+    const judgement = await enrichWithGradeJudgement(nextItems, displayStage, null);
+    const points = calculateAxisPoints(nextItems, displayStage);
+    const gradeSalarySetting = await getGradeSalarySettingBundle();
+    const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+    const finalTotal = calculateTotal(nextItems.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
     return {
       ...fallback,
       evaluationPeriodId: input.evaluationPeriodId,
@@ -669,8 +775,15 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
       finalScoreTotal: finalTotal,
       finalRating: deriveRatingFromScore(finalTotal),
       overallGradeName: judgement.overall.gradeName,
-      selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH"),
-      synergyProgress: calculateProgress(nextItems, "SYNERGY"),
+      selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH", displayStage),
+      synergyProgress: calculateProgress(nextItems, "SYNERGY", displayStage),
+      selfGrowthPoint: points.selfGrowthPoint,
+      synergyPoint: points.synergyPoint,
+      totalGradePoint: points.totalGradePoint,
+      gradeBaseAmount: gradeSalarySetting.baseAmount,
+      pointUnitAmount: gradeSalarySetting.pointUnitAmount,
+      gradeSalaryAmount,
+      currentSalary: 0,
       itSkillScore: judgement.itSkillScore,
       businessSkillScore: judgement.businessSkillScore,
       itSkillGradeName: judgement.itSkill.gradeName,
@@ -678,6 +791,7 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
       nextItSkillGradeName: judgement.itSkill.nextGradeName,
       nextBusinessSkillGradeName: judgement.businessSkill.nextGradeName,
       status: EvaluationStatus.FINALIZED,
+      displayStage,
       source: "fallback",
     };
   }

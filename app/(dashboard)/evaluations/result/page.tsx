@@ -26,6 +26,18 @@ function toStatusLabel(status: string) {
   }
 }
 
+function getDisplayStageLabel(stage: "SELF" | "MANAGER" | "FINAL") {
+  switch (stage) {
+    case "FINAL":
+      return "最終確定結果";
+    case "MANAGER":
+      return "上長評価ベースの暫定結果";
+    case "SELF":
+    default:
+      return "自己評価ベースの暫定結果";
+  }
+}
+
 function toStatusTone(status: string) {
   switch (status) {
     case "APPLIED":
@@ -60,10 +72,22 @@ export default async function EvaluationResultPage({
   const finalReview = await getFinalReviewBundle(user.id, params.evaluationPeriodId);
   const salaryResult = await getSalaryResultDetailBundle(user.id, params.evaluationPeriodId).catch(() => null);
   const salaryRow = salaryResult?.row;
+  const displaySalaryRow = salaryRow
+    ? salaryRow
+    : {
+        status: "DRAFT",
+        gradeBaseAmount: finalReview.gradeBaseAmount,
+        selfGrowthPoint: finalReview.selfGrowthPoint,
+        synergyPoint: finalReview.synergyPoint,
+        totalGradePoint: finalReview.totalGradePoint,
+        pointUnitAmount: finalReview.pointUnitAmount,
+        gradeSalaryAmount: finalReview.gradeSalaryAmount,
+        currentSalary: finalReview.currentSalary,
+      };
   const hasFinalizedAnnualRaise = salaryRow ? salaryRow.status !== "DRAFT" : false;
-  const selfGrowthSalaryAmount = salaryRow ? salaryRow.gradeBaseAmount + salaryRow.selfGrowthPoint * salaryRow.pointUnitAmount : 0;
-  const synergySalaryAmount = salaryRow ? salaryRow.synergyPoint * salaryRow.pointUnitAmount : 0;
-  const referenceSalaryDiffAmount = salaryRow ? salaryRow.gradeSalaryAmount - salaryRow.currentSalary : 0;
+  const selfGrowthSalaryAmount = displaySalaryRow.gradeBaseAmount + displaySalaryRow.selfGrowthPoint * displaySalaryRow.pointUnitAmount;
+  const synergySalaryAmount = displaySalaryRow.synergyPoint * displaySalaryRow.pointUnitAmount;
+  const referenceSalaryDiffAmount = displaySalaryRow.gradeSalaryAmount - displaySalaryRow.currentSalary;
   const latestEvidenceItems = finalReview.items.filter((item) => item.axis === "SYNERGY" && item.evidences.length > 0);
 
   return (
@@ -77,6 +101,7 @@ export default async function EvaluationResultPage({
               <p className="mt-2 text-sm text-slate-300">
                 半期の評価結果と、年1回の昇給結果をまとめて確認できます。
               </p>
+              <p className="mt-2 text-sm text-amber-200">{getDisplayStageLabel(finalReview.displayStage)}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {periods.map((period) => {
                   const active = period.id === finalReview.evaluationPeriodId;
@@ -106,9 +131,9 @@ export default async function EvaluationResultPage({
         <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長力達成率</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatPercent(finalReview.selfGrowthProgress)}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗力実施率</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatPercent(finalReview.synergyProgress)}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長力</p><p className="mt-3 text-2xl font-semibold text-slate-950">S{salaryRow?.selfGrowthPoint ?? 0}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗力</p><p className="mt-3 text-2xl font-semibold text-slate-950">B{salaryRow?.synergyPoint ?? 0}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">総合評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">G{salaryRow?.totalGradePoint ?? 0}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長力</p><p className="mt-3 text-2xl font-semibold text-slate-950">S{displaySalaryRow.selfGrowthPoint}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗力</p><p className="mt-3 text-2xl font-semibold text-slate-950">B{displaySalaryRow.synergyPoint}</p></article>
+          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">総合評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">G{displaySalaryRow.totalGradePoint}</p></article>
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">期待充足ランク</p><p className="mt-3 text-2xl font-semibold text-slate-950">{finalReview.finalRating}</p></article>
         </section>
 
@@ -126,7 +151,16 @@ export default async function EvaluationResultPage({
           </div>
 
           {!salaryRow ? (
-            <p className="mt-5 rounded-2xl bg-slate-50 px-4 py-4 text-sm text-slate-600">年次昇給結果はまだ作成されていません。</p>
+            <div className="mt-5 grid gap-4 md:grid-cols-3">
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考本給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.gradeSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.currentSalary)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考本給額 {formatCurrency(displaySalaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(displaySalaryRow.currentSalary)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自己成長給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p><p className="mt-1 text-sm text-slate-500">ベース {formatCurrency(displaySalaryRow.gradeBaseAmount)} + S{displaySalaryRow.selfGrowthPoint} × {formatCurrency(displaySalaryRow.pointUnitAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p><p className="mt-1 text-sm text-slate-500">B{displaySalaryRow.synergyPoint} × {formatCurrency(displaySalaryRow.pointUnitAmount)}</p></article>
+              <div className="md:col-span-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
+                年次昇給結果はまだ作成されていません。ここでは {getDisplayStageLabel(finalReview.displayStage)} をもとにした暫定参考額を表示しています。
+              </div>
+            </div>
           ) : !hasFinalizedAnnualRaise ? (
             <div className="mt-5 grid gap-4 md:grid-cols-3">
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考本給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
