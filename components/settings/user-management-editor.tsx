@@ -67,6 +67,14 @@ const emptyAssignmentForm: TeamAssignmentForm = {
   startDate: "",
 };
 
+function getTodayDateInput() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function buildMembershipEditMap(historyMap: Record<string, UserMembershipHistoryRow[]>) {
   return Object.fromEntries(
     Object.values(historyMap)
@@ -108,6 +116,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
   const [assignmentForm, setAssignmentForm] = useState<TeamAssignmentForm>({
     ...emptyAssignmentForm,
     userId: rows[0]?.userId ?? "",
+    startDate: getTodayDateInput(),
   });
   const [membershipEditMap, setMembershipEditMap] = useState<Record<string, MembershipEditForm>>(
     buildMembershipEditMap(membershipHistoryMap),
@@ -333,6 +342,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
         setAssignmentForm({
           ...emptyAssignmentForm,
           userId: assignmentForm.userId,
+          startDate: getTodayDateInput(),
         });
         router.refresh();
       }
@@ -703,7 +713,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
                           保存
                         </button>
                         {!edit.endDate ? (
-                          <button type="button" onClick={() => handleMembershipHistorySave(history.membershipId, "2026-03-20")} disabled={!canEdit || isPending} className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-800 disabled:opacity-60">
+                          <button type="button" onClick={() => handleMembershipHistorySave(history.membershipId, getTodayDateInput())} disabled={!canEdit || isPending} className="rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-xs font-semibold text-amber-800 disabled:opacity-60">
                             未所属にする
                           </button>
                         ) : null}

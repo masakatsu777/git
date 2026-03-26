@@ -42,6 +42,7 @@ export function OrganizationEditor({ canEdit, defaults }: OrganizationEditorProp
   const [assignmentMessage, setAssignmentMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [assignmentTeamByUser, setAssignmentTeamByUser] = useState<Record<string, string>>({});
+  const [assignmentStartDateByUser, setAssignmentStartDateByUser] = useState<Record<string, string>>({});
 
   const sortedTeams = useMemo(() => {
     return [...teams].sort((a, b) => {
@@ -78,8 +79,13 @@ export function OrganizationEditor({ canEdit, defaults }: OrganizationEditorProp
 
   async function handleAssignUnassigned(member: OrganizationUnassignedMemberRow) {
     const teamId = assignmentTeamByUser[member.userId] ?? "";
+    const startDate = assignmentStartDateByUser[member.userId] ?? "";
     if (!teamId) {
       setAssignmentMessage("割り当て先のチームを選択してください。");
+      return;
+    }
+    if (!startDate) {
+      setAssignmentMessage("所属開始日を入力してください。");
       return;
     }
 
@@ -88,7 +94,7 @@ export function OrganizationEditor({ canEdit, defaults }: OrganizationEditorProp
       const response = await fetch("/api/users/assign-team", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: member.userId, teamId }),
+        body: JSON.stringify({ userId: member.userId, teamId, startDate }),
       });
       const result = (await response.json()) as { message?: string };
       setAssignmentMessage(result.message ?? (response.ok ? "所属を更新しました" : "所属更新に失敗しました"));
@@ -263,13 +269,14 @@ export function OrganizationEditor({ canEdit, defaults }: OrganizationEditorProp
                 <th className="px-4 py-3 font-medium">氏名</th>
                 <th className="px-4 py-3 font-medium">部署</th>
                 <th className="px-4 py-3 font-medium">割当先チーム</th>
+                <th className="px-4 py-3 font-medium">所属開始日</th>
                 <th className="px-4 py-3 font-medium">操作</th>
               </tr>
             </thead>
             <tbody>
               {defaults.unassignedMembers.length === 0 ? (
                 <tr className="border-t border-slate-200">
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">未所属メンバーはいません。</td>
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500">未所属メンバーはいません。</td>
                 </tr>
               ) : (
                 defaults.unassignedMembers.map((member) => {
@@ -290,6 +297,15 @@ export function OrganizationEditor({ canEdit, defaults }: OrganizationEditorProp
                             <option key={team.id} value={team.id}>{team.departmentName} / {team.name}</option>
                           ))}
                         </select>
+                      </td>
+                      <td className="px-4 py-3">
+                        <input
+                          type="date"
+                          value={assignmentStartDateByUser[member.userId] ?? ""}
+                          disabled={!canEdit || isPending}
+                          onChange={(event) => setAssignmentStartDateByUser((current) => ({ ...current, [member.userId]: event.target.value }))}
+                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        />
                       </td>
                       <td className="px-4 py-3">
                         <button
