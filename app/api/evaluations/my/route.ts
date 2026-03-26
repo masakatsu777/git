@@ -50,6 +50,14 @@ export async function POST(request: NextRequest) {
         evaluationItemId: String(item.evaluationItemId ?? ""),
         score: toNumber(item.score),
         comment: String(item.comment ?? ""),
+        evidences: Array.isArray(item.evidences)
+          ? item.evidences.map((evidence) => ({
+              id: typeof evidence === "object" && evidence !== null ? String((evidence as Record<string, unknown>).id ?? "") || undefined : undefined,
+              summary: typeof evidence === "object" && evidence !== null ? String((evidence as Record<string, unknown>).summary ?? "") : "",
+              targetName: typeof evidence === "object" && evidence !== null ? String((evidence as Record<string, unknown>).targetName ?? "") : "",
+              periodNote: typeof evidence === "object" && evidence !== null ? String((evidence as Record<string, unknown>).periodNote ?? "") : "",
+            }))
+          : [],
       })),
     });
 

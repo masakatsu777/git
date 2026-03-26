@@ -513,11 +513,24 @@ export async function saveSelfReviewBundle(userId: string, role: string, teamId:
     const resolvedTeamId =
       teamId ??
       (await prisma.teamMembership.findFirst({
-        where: { userId, isPrimary: true },
+        where: { userId, isPrimary: true, endDate: null },
         orderBy: { startDate: "desc" },
         select: { teamId: true },
       }))?.teamId ??
-      "team-platform";
+      (await prisma.employeeEvaluation.findUnique({
+        where: {
+          userId_evaluationPeriodId: {
+            userId,
+            evaluationPeriodId: input.evaluationPeriodId,
+          },
+        },
+        select: { teamId: true },
+      }))?.teamId ??
+      null;
+
+    if (!resolvedTeamId) {
+      throw new Error("所属チームが見つからないため自己評価を保存できません。ユーザー管理で所属を確認してください。");
+    }
 
     await prisma.$transaction(async (tx) => {
       await tx.employeeEvaluation.upsert({
@@ -599,24 +612,28 @@ export async function saveSelfReviewBundle(userId: string, role: string, teamId:
     });
 
     return getSelfReviewBundle(userId, role, input.evaluationPeriodId);
-  } catch {
-    const fallback = fallbackBundle(role);
-    const nextItems = fallback.items.map((item) => {
-      const saved = input.items.find((candidate) => candidate.evaluationItemId === item.evaluationItemId);
-      return saved ? { ...item, score: normalizeScore(saved.score, item.scoreType), comment: saved.comment, evidences: normalizeEvidences(saved.evidences) } : item;
-    });
+  } catch (error) {
+    if (!hasDatabaseUrl()) {
+      const fallback = fallbackBundle(role);
+      const nextItems = fallback.items.map((item) => {
+        const saved = input.items.find((candidate) => candidate.evaluationItemId === item.evaluationItemId);
+        return saved ? { ...item, score: normalizeScore(saved.score, item.scoreType), comment: saved.comment, evidences: normalizeEvidences(saved.evidences) } : item;
+      });
 
-    return {
-      ...fallback,
-      evaluationPeriodId: input.evaluationPeriodId,
-      periodStatus: EvaluationPeriodStatus.OPEN,
-      selfComment: input.selfComment,
-      items: nextItems,
-      selfScoreTotal: calculateTotal(nextItems),
-      selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH"),
-      synergyProgress: calculateProgress(nextItems, "SYNERGY"),
-      source: "fallback",
-    };
+      return {
+        ...fallback,
+        evaluationPeriodId: input.evaluationPeriodId,
+        periodStatus: EvaluationPeriodStatus.OPEN,
+        selfComment: input.selfComment,
+        items: nextItems,
+        selfScoreTotal: calculateTotal(nextItems),
+        selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH"),
+        synergyProgress: calculateProgress(nextItems, "SYNERGY"),
+        source: "fallback",
+      };
+    }
+
+    throw error;
   }
 }
 
