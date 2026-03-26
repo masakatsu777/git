@@ -34,6 +34,7 @@ export type ManagerReviewItem = {
   managerComment: string;
   evidenceRequired: boolean;
   evidences: EvaluationEvidence[];
+  inputScope: "SELF" | "MANAGER" | "ADMIN" | "BOTH";
 };
 
 export type ManagerReviewBundle = {
@@ -106,7 +107,7 @@ function calculateTotal(items: Array<{ score: number; weight: number }>) {
 }
 
 function calculateProgress(items: ManagerReviewItem[], axis: SelfReviewAxis, scoreField: "selfScore" | "managerScore") {
-  const targetItems = items.filter((item) => item.axis === axis);
+  const targetItems = items.filter((item) => item.axis === axis && item.inputScope !== "SELF" && item.inputScope !== "ADMIN");
   if (targetItems.length === 0) return 0;
   const achieved = targetItems.reduce((sum, item) => sum + item[scoreField] * item.weight, 0);
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
@@ -121,10 +122,10 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
   ];
   const target = members.find((member) => member.userId === selectedUserId) ?? members[0];
   const items: ManagerReviewItem[] = [
-    { evaluationItemId: "item-it-foundation", title: "使用技術や業務知識の基礎を理解している", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", minorCategory: "基礎理解", weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [] },
-    { evaluationItemId: "item-it-implementation", title: "設計意図を理解して実装へ落とし込める", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", minorCategory: "実装", weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [] },
-    { evaluationItemId: "item-synergy-customer", title: "関係深化や追加提案につながる行動を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", minorCategory: "関係深化", weight: 8, maxScore: 1, selfScore: 0, selfComment: "単発対応はある", managerScore: 0, managerComment: "継続実践までは未到達", evidenceRequired: true, evidences: [] },
-    { evaluationItemId: "item-synergy-team", title: "レビューや伴走を通じて他者の成長支援を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", minorCategory: "レビュー支援", weight: 7, maxScore: 1, selfScore: 1, selfComment: "レビュー支援を継続", managerScore: 1, managerComment: "継続支援できている", evidenceRequired: true, evidences: [] },
+    { evaluationItemId: "item-it-foundation", title: "使用技術や業務知識の基礎を理解している", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", minorCategory: "基礎理解", weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-it-implementation", title: "設計意図を理解して実装へ落とし込める", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", minorCategory: "実装", weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-synergy-customer", title: "関係深化や追加提案につながる行動を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", minorCategory: "関係深化", weight: 8, maxScore: 1, selfScore: 0, selfComment: "単発対応はある", managerScore: 0, managerComment: "継続実践までは未到達", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-synergy-team", title: "レビューや伴走を通じて他者の成長支援を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", minorCategory: "レビュー支援", weight: 7, maxScore: 1, selfScore: 1, selfComment: "レビュー支援を継続", managerScore: 1, managerComment: "継続支援できている", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
   ];
 
   return {
@@ -264,7 +265,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
 
     const items: ManagerReviewItem[] = itemRows.flatMap((item) => {
       const meta = resolveStoredItemMetaFromRow(item);
-      if (meta.inputScope === "SELF") {
+      if (meta.inputScope === "SELF" || meta.inputScope === "ADMIN") {
         return [];
       }
       return [{
@@ -283,6 +284,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         managerComment: managerMap.get(item.id)?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
         evidences: normalizeEvidences(managerMap.get(item.id)?.evidences),
+        inputScope: meta.inputScope,
       }];
     });
 

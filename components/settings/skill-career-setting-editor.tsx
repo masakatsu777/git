@@ -223,13 +223,15 @@ function scoreTypeLabel(scoreType: EvaluationItemRow["scoreType"]) {
 function inputScopeLabel(inputScope: EvaluationInputScope) {
   if (inputScope === "SELF") return "本人のみ";
   if (inputScope === "MANAGER") return "上長のみ";
+  if (inputScope === "ADMIN") return "管理者のみ";
   return "両方";
 }
 
 function normalizeInputScope(value: string): EvaluationInputScope | null {
   const normalized = value.trim();
   if (["SELF", "本人のみ"].includes(normalized)) return "SELF";
-  if (["MANAGER", "上長のみ", "管理者のみ"].includes(normalized)) return "MANAGER";
+  if (["MANAGER", "上長のみ"].includes(normalized)) return "MANAGER";
+  if (["ADMIN", "管理者のみ"].includes(normalized)) return "ADMIN";
   if (["BOTH", "両方"].includes(normalized)) return "BOTH";
   return null;
 }
@@ -561,14 +563,18 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     ]);
   }
 
-  async function saveSkillCareerSettings(nextEvaluationItems = evaluationItems, successMessage = "評価制度設定を保存しました") {
+  async function saveSkillCareerSettings(
+    nextEvaluationItems = evaluationItems,
+    successMessage = "評価制度設定を保存しました",
+    evaluationItemSaveMode: CsvImportMode = "merge",
+  ) {
     setMessage(null);
 
     startSaving(async () => {
       const response = await fetch("/api/skill-careers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ grades, evaluationItems: nextEvaluationItems }),
+        body: JSON.stringify({ grades, evaluationItems: nextEvaluationItems, evaluationItemSaveMode }),
       });
 
       const result = (await response.json()) as { message?: string };
@@ -671,6 +677,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
     await saveSkillCareerSettings(
       nextItems,
       `CSV取込を反映しました（${csvImportModeLabel(csvImportMode)} / 新規 ${csvImportPreview.newCount} 件 / 更新 ${csvImportPreview.updateCount} 件）`,
+      csvImportMode,
     );
   }
 
@@ -979,6 +986,7 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                         >
                           <option value="SELF">本人のみ</option>
                           <option value="MANAGER">上長のみ</option>
+                          <option value="ADMIN">管理者のみ</option>
                           <option value="BOTH">両方</option>
                         </select>
                         <p className="text-xs text-slate-500">{inputScopeLabel(row.inputScope)}</p>
@@ -1030,6 +1038,32 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
               <button type="button" onClick={() => setCsvImportPreview(null)} className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700">
                 プレビューを閉じる
               </button>
+            </div>
+          </div>
+          <div className="mt-4 rounded-2xl border border-amber-200 bg-white/80 p-4">
+            <p className="text-sm font-semibold text-slate-900">反映モード</p>
+            <div className="mt-3 flex flex-col gap-2">
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 px-3 py-3">
+                <input type="radio" name="csv-import-mode" checked={csvImportMode === "merge"} onChange={() => setCsvImportMode("merge")} className="mt-1 h-4 w-4 border-slate-300 text-slate-950" />
+                <span>
+                  <span className="block font-medium text-slate-900">追加 / 更新</span>
+                  <span className="block text-xs text-slate-500">既存項目は更新し、CSVにない項目はそのまま残します。</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 px-3 py-3">
+                <input type="radio" name="csv-import-mode" checked={csvImportMode === "replace-category"} onChange={() => setCsvImportMode("replace-category")} className="mt-1 h-4 w-4 border-slate-300 text-slate-950" />
+                <span>
+                  <span className="block font-medium text-slate-900">カテゴリ単位置換</span>
+                  <span className="block text-xs text-slate-500">CSVに含まれるカテゴリだけ、DBの既存項目をCSV内容へ完全同期します。</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 px-3 py-3">
+                <input type="radio" name="csv-import-mode" checked={csvImportMode === "replace-all"} onChange={() => setCsvImportMode("replace-all")} className="mt-1 h-4 w-4 border-slate-300 text-slate-950" />
+                <span>
+                  <span className="block font-medium text-slate-900">全件置換</span>
+                  <span className="block text-xs text-slate-500">評価項目全体をCSV内容へ完全同期し、CSVにない項目は削除します。</span>
+                </span>
+              </label>
             </div>
           </div>
           {csvImportPreview.errorMessages.length > 0 ? (

@@ -46,6 +46,7 @@ export type FinalReviewItem = {
   finalComment: string;
   evidenceRequired: boolean;
   evidences: EvaluationEvidence[];
+  inputScope: "SELF" | "MANAGER" | "ADMIN" | "BOTH";
 };
 
 export type FinalReviewBundle = {
@@ -189,6 +190,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
       finalComment: "",
       evidenceRequired: false,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-it-implementation",
@@ -208,6 +210,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
       finalComment: "",
       evidenceRequired: false,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-synergy-customer",
@@ -227,6 +230,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
       finalComment: "継続実践として認められる。",
       evidenceRequired: true,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-synergy-team",
@@ -246,6 +250,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
       finalComment: "継続実践できている。",
       evidenceRequired: true,
       evidences: [],
+      inputScope: "BOTH",
     },
   ];
   const judgement = await enrichWithGradeJudgement(items, null);
@@ -431,6 +436,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         finalComment: scoreMap.final.get(item.id)?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
         evidences: normalizeEvidences(scoreMap.final.get(item.id)?.evidences),
+        inputScope: meta.inputScope,
       };
     });
     const judgement = await enrichWithGradeJudgement(items, target.positionId ?? null);
@@ -540,6 +546,7 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
         finalComment: saved?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
         evidences: normalizeEvidences(saved?.evidences),
+        inputScope: meta.inputScope,
       };
     });
     const judgement = await enrichWithGradeJudgement(judgementItems, user?.positionId ?? null);

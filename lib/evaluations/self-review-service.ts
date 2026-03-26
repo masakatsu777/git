@@ -30,6 +30,7 @@ export type SelfReviewItem = {
   comment: string;
   evidenceRequired: boolean;
   evidences: EvaluationEvidence[];
+  inputScope: "SELF" | "MANAGER" | "ADMIN" | "BOTH";
 };
 
 export type SelfReviewBundle = {
@@ -59,7 +60,7 @@ export type SaveSelfReviewInput = {
 type ItemMeta = {
   axis: SelfReviewAxis;
   scoreType: SelfReviewScoreType;
-  inputScope: "SELF" | "MANAGER" | "BOTH";
+  inputScope: "SELF" | "MANAGER" | "ADMIN" | "BOTH";
   majorCategory: string;
   majorCategoryOrder: number;
   minorCategory: string;
@@ -77,7 +78,7 @@ type StoredItemMetaInput =
       majorCategoryOrder?: number | null;
       minorCategory?: string | null;
       minorCategoryOrder?: number | null;
-      inputScope?: "SELF" | "MANAGER" | "BOTH" | null;
+      inputScope?: "SELF" | "MANAGER" | "ADMIN" | "BOTH" | null;
       description?: string | null;
       displayOrder?: number | null;
     };
@@ -176,9 +177,9 @@ export function resolveStoredItemMeta(
           ? "CONTINUOUS_DONE"
           : fallback.scoreType,
     inputScope:
-      metaObject.inputScope === "SELF" || metaObject.inputScope === "MANAGER" || metaObject.inputScope === "BOTH"
+      metaObject.inputScope === "SELF" || metaObject.inputScope === "MANAGER" || metaObject.inputScope === "ADMIN" || metaObject.inputScope === "BOTH"
         ? metaObject.inputScope
-        : descriptionMeta.inputScope === "SELF" || descriptionMeta.inputScope === "MANAGER" || descriptionMeta.inputScope === "BOTH"
+        : descriptionMeta.inputScope === "SELF" || descriptionMeta.inputScope === "MANAGER" || descriptionMeta.inputScope === "ADMIN" || descriptionMeta.inputScope === "BOTH"
           ? descriptionMeta.inputScope
           : fallback.inputScope,
     majorCategory: String(metaObject.majorCategory || descriptionMeta.majorCategory || fallback.majorCategory),
@@ -198,7 +199,7 @@ export function resolveStoredItemMetaFromRow(row: {
   majorCategoryOrder?: number | null;
   minorCategory?: string | null;
   minorCategoryOrder?: number | null;
-  inputScope?: "SELF" | "MANAGER" | "BOTH" | null;
+  inputScope?: "SELF" | "MANAGER" | "ADMIN" | "BOTH" | null;
   displayOrder?: number | null;
 }) {
   return resolveStoredItemMeta(row.title, row.category, {
@@ -227,7 +228,7 @@ function calculateTotal(items: Array<{ score: number; weight: number }>) {
 }
 
 function calculateProgress(items: SelfReviewItem[], axis: SelfReviewAxis) {
-  const targetItems = items.filter((item) => item.axis === axis);
+  const targetItems = items.filter((item) => item.axis === axis && item.inputScope !== "MANAGER" && item.inputScope !== "ADMIN");
   if (targetItems.length === 0) return 0;
 
   const achieved = targetItems.reduce((sum, item) => sum + item.score * item.weight, 0);
@@ -256,6 +257,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
       comment: "",
       evidenceRequired: false,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-it-implementation",
@@ -274,6 +276,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
       comment: "",
       evidenceRequired: false,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-problem-solving",
@@ -292,6 +295,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
       comment: "",
       evidenceRequired: false,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-communication",
@@ -310,6 +314,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
       comment: "",
       evidenceRequired: false,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-synergy-customer",
@@ -328,6 +333,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
       comment: role === "leader" ? "顧客との定例対話で継続的に改善提案を実施した。" : "単発対応はあるが、継続実践には至っていない。",
       evidenceRequired: true,
       evidences: [],
+      inputScope: "BOTH",
     },
     {
       evaluationItemId: "item-synergy-team",
@@ -346,6 +352,7 @@ function fallbackBundle(role: string): SelfReviewBundle {
       comment: role === "leader" ? "半期を通じてレビューとフォローを継続した。" : "相談対応はあるが、継続的な支援まではできていない。",
       evidenceRequired: true,
       evidences: [],
+      inputScope: "BOTH",
     },
   ];
 
@@ -424,7 +431,7 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
     const scoreMap = new Map(evaluation?.scores.map((row) => [row.evaluationItemId, row]));
     const items: SelfReviewItem[] = itemRows.flatMap((item) => {
       const meta = resolveStoredItemMetaFromRow(item);
-      if (meta.inputScope === "MANAGER") {
+      if (meta.inputScope === "MANAGER" || meta.inputScope === "ADMIN") {
         return [];
       }
       const scoreType = meta.scoreType;
@@ -448,6 +455,7 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
         comment: scoreMap.get(item.id)?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
         evidences: normalizeEvidences(scoreMap.get(item.id)?.evidences),
+        inputScope: meta.inputScope,
       }];
     });
 

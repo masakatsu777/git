@@ -4,7 +4,7 @@ import { SkillCategory } from "@/generated/prisma";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getSkillCareerSettingsBundle, saveSkillCareerSettingsBundle, type EvaluationInputScope } from "@/lib/skill-careers/skill-career-setting-service";
+import { getSkillCareerSettingsBundle, saveSkillCareerSettingsBundle, type EvaluationInputScope, type EvaluationItemSaveMode } from "@/lib/skill-careers/skill-career-setting-service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -24,7 +24,11 @@ function toScoreType(value: unknown): "LEVEL_2" | "CONTINUOUS_DONE" {
 }
 
 function toInputScope(value: unknown): EvaluationInputScope {
-  return value === "SELF" || value === "MANAGER" || value === "BOTH" ? value : "BOTH";
+  return value === "SELF" || value === "MANAGER" || value === "ADMIN" || value === "BOTH" ? value : "BOTH";
+}
+
+function toEvaluationItemSaveMode(value: unknown): EvaluationItemSaveMode {
+  return value === "replace-category" || value === "replace-all" ? value : "merge";
 }
 
 export async function GET() {
@@ -50,6 +54,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       grades?: Array<Record<string, unknown>>;
       evaluationItems?: Array<Record<string, unknown>>;
+      evaluationItemSaveMode?: unknown;
     };
 
     const result = await saveSkillCareerSettingsBundle({
@@ -83,6 +88,7 @@ export async function POST(request: Request) {
         evidenceRequired: Boolean(row.evidenceRequired),
         gradeDefinitionId: row.gradeDefinitionId ? String(row.gradeDefinitionId) : null,
       })),
+      evaluationItemSaveMode: toEvaluationItemSaveMode(body.evaluationItemSaveMode),
     });
 
     return NextResponse.json({

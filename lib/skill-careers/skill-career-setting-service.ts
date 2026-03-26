@@ -4,7 +4,7 @@ import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type EvaluationAxis = "SELF_GROWTH" | "SYNERGY";
 export type EvaluationScoreType = "LEVEL_2" | "CONTINUOUS_DONE";
-export type EvaluationInputScope = "SELF" | "MANAGER" | "BOTH";
+export type EvaluationInputScope = "SELF" | "MANAGER" | "ADMIN" | "BOTH";
 
 export type SkillGradeRow = {
   id: string;
@@ -51,9 +51,12 @@ export type SkillCareerSettingsBundle = {
   source: "database" | "fallback";
 };
 
+export type EvaluationItemSaveMode = "merge" | "replace-category" | "replace-all";
+
 export type SaveSkillCareerSettingsInput = {
   grades: SkillGradeRow[];
   evaluationItems: EvaluationItemRow[];
+  evaluationItemSaveMode?: EvaluationItemSaveMode;
 };
 
 const fallbackBundle: SkillCareerSettingsBundle = {
@@ -245,7 +248,7 @@ function parseEvaluationItemDescription(description: string | null | undefined, 
       description: visibleDescription,
       majorCategoryOrder: toNumber(parsed.majorCategoryOrder ?? displayOrder),
       minorCategoryOrder: toNumber(parsed.minorCategoryOrder ?? displayOrder),
-      inputScope: parsed.inputScope === "SELF" || parsed.inputScope === "MANAGER" ? parsed.inputScope : "BOTH",
+      inputScope: parsed.inputScope === "SELF" || parsed.inputScope === "MANAGER" || parsed.inputScope === "ADMIN" ? parsed.inputScope : "BOTH",
     };
   } catch {
     return {
@@ -370,6 +373,9 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
       }
 
       const evaluationItems = dedupeEvaluationItems(input.evaluationItems);
+      const evaluationItemSaveMode = input.evaluationItemSaveMode ?? "merge";
+      const keptEvaluationItemIds = new Set<string>();
+      const targetCategories = new Set(evaluationItems.map((row) => row.category));
 
       for (const row of evaluationItems) {
         const payload = {
@@ -386,14 +392,6 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
           evidenceRequired: row.evidenceRequired,
           gradeDefinitionId: row.gradeDefinitionId || null,
         };
-
-        if (row.id && !row.id.startsWith("new-item-")) {
-          await tx.evaluationItem.update({
-            where: { id: row.id },
-            data: payload,
-          });
-          continue;
-        }
 
         const existingItems = await tx.evaluationItem.findMany({
           where: {
@@ -415,10 +413,11 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
             where: { id: preferredExistingId },
             data: payload,
           });
+          keptEvaluationItemIds.add(preferredExistingId);
 
           const duplicateIds = existingItems
             .map((item) => item.id)
-            .filter((id) => id !== preferredExistingId);
+            .filter((id) => id != preferredExistingId);
 
           if (duplicateIds.length > 0) {
             await tx.evaluationItem.deleteMany({
@@ -428,8 +427,27 @@ export async function saveSkillCareerSettingsBundle(input: SaveSkillCareerSettin
           continue;
         }
 
-        await tx.evaluationItem.create({
+        const created = await tx.evaluationItem.create({
           data: payload,
+          select: { id: true },
+        });
+        keptEvaluationItemIds.add(created.id);
+      }
+
+      if (evaluationItemSaveMode == "replace-category" && targetCategories.size > 0) {
+        await tx.evaluationItem.deleteMany({
+          where: {
+            category: { in: Array.from(targetCategories) },
+            id: { notIn: Array.from(keptEvaluationItemIds) },
+          },
+        });
+      }
+
+      if (evaluationItemSaveMode == "replace-all") {
+        await tx.evaluationItem.deleteMany({
+          where: {
+            id: { notIn: Array.from(keptEvaluationItemIds) },
+          },
         });
       }
     });
