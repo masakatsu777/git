@@ -651,7 +651,7 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
         inputScope: meta.inputScope,
       };
     });
-    const judgement = await enrichWithGradeJudgement(judgementItems, user?.positionId ?? null);
+    const judgement = await enrichWithGradeJudgement(judgementItems, "FINAL", user?.positionId ?? null);
 
     await prisma.$transaction(async (tx) => {
       const existing = await tx.employeeEvaluation.findUnique({
