@@ -75,6 +75,9 @@ export type FinalReviewBundle = {
   selfGrowthPoint: number;
   synergyPoint: number;
   totalGradePoint: number;
+  salarySelfGrowthPoint: number;
+  salarySynergyPoint: number;
+  salaryTotalGradePoint: number;
   gradeBaseAmount: number;
   pointUnitAmount: number;
   gradeSalaryAmount: number;
@@ -187,6 +190,28 @@ function calculateAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplay
     selfGrowthPoint: roundedSelfGrowthPoint,
     synergyPoint: roundedSynergyPoint,
     totalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
+  };
+}
+
+function calculateSalaryAxisPoints(items: FinalReviewItem[], stage: FinalReviewDisplayStage) {
+  let selfGrowthPoint = 0;
+  let synergyPoint = 0;
+
+  for (const item of items) {
+    const amount = getDisplayScore(item, stage) * item.weight;
+    if (item.axis === "SYNERGY") {
+      synergyPoint += amount;
+    } else {
+      selfGrowthPoint += amount;
+    }
+  }
+
+  const roundedSelfGrowthPoint = Math.round(selfGrowthPoint);
+  const roundedSynergyPoint = Math.round(synergyPoint);
+  return {
+    salarySelfGrowthPoint: roundedSelfGrowthPoint,
+    salarySynergyPoint: roundedSynergyPoint,
+    salaryTotalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
   };
 }
 
@@ -318,8 +343,9 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
   const displayStage = resolveDisplayStage(target.status);
   const judgement = await enrichWithGradeJudgement(items, displayStage, null);
   const points = calculateAxisPoints(items, displayStage);
+  const salaryPoints = calculateSalaryAxisPoints(items, displayStage);
   const gradeSalarySetting = await getGradeSalarySettingBundle();
-  const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+  const gradeSalaryAmount = gradeSalarySetting.baseAmount + salaryPoints.salaryTotalGradePoint * gradeSalarySetting.pointUnitAmount;
   const finalTotal = calculateTotal(items.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
 
   return {
@@ -346,6 +372,9 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
     selfGrowthPoint: points.selfGrowthPoint,
     synergyPoint: points.synergyPoint,
     totalGradePoint: points.totalGradePoint,
+    salarySelfGrowthPoint: salaryPoints.salarySelfGrowthPoint,
+    salarySynergyPoint: salaryPoints.salarySynergyPoint,
+    salaryTotalGradePoint: salaryPoints.salaryTotalGradePoint,
     gradeBaseAmount: gradeSalarySetting.baseAmount,
     pointUnitAmount: gradeSalarySetting.pointUnitAmount,
     gradeSalaryAmount,
@@ -488,6 +517,9 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         selfGrowthPoint: 0,
         synergyPoint: 0,
         totalGradePoint: 0,
+        salarySelfGrowthPoint: 0,
+        salarySynergyPoint: 0,
+        salaryTotalGradePoint: 0,
         gradeBaseAmount: 0,
         pointUnitAmount: 0,
         gradeSalaryAmount: 0,
