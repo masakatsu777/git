@@ -567,8 +567,9 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
     const displayStage = resolveDisplayStage(target.status);
     const judgement = await enrichWithGradeJudgement(items, displayStage, target.positionId ?? null);
     const points = calculateAxisPoints(items, displayStage);
+    const salaryPoints = calculateSalaryAxisPoints(items, displayStage);
     const gradeSalarySetting = await getGradeSalarySettingBundle();
-    const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+    const gradeSalaryAmount = gradeSalarySetting.baseAmount + salaryPoints.salaryTotalGradePoint * gradeSalarySetting.pointUnitAmount;
     const finalTotal = calculateTotal(items.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
     const currentSalary = toNumber(target.evaluation.user.salaryRecords[0]?.baseSalary) + toNumber(target.evaluation.user.salaryRecords[0]?.allowance);
 
@@ -608,6 +609,9 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       selfGrowthPoint: points.selfGrowthPoint,
       synergyPoint: points.synergyPoint,
       totalGradePoint: points.totalGradePoint,
+      salarySelfGrowthPoint: salaryPoints.salarySelfGrowthPoint,
+      salarySynergyPoint: salaryPoints.salarySynergyPoint,
+      salaryTotalGradePoint: salaryPoints.salaryTotalGradePoint,
       gradeBaseAmount: gradeSalarySetting.baseAmount,
       pointUnitAmount: gradeSalarySetting.pointUnitAmount,
       gradeSalaryAmount,
