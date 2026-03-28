@@ -127,7 +127,7 @@ export function encodeManagerCategoryComment(comment: string, reviewStatus: Mana
   return `${MANAGER_CATEGORY_META_PREFIX}${JSON.stringify({ reviewStatus })}\n${trimmed}`;
 }
 
-export function decodeManagerCategoryComment(rawComment?: string | null) {
+export function decodeManagerCategoryComment(rawComment?: string | null): { reviewStatus: ManagerCategoryReviewStatus; comment: string } {
   const source = String(rawComment ?? "");
   if (!source.startsWith(MANAGER_CATEGORY_META_PREFIX)) {
     return {
@@ -142,7 +142,7 @@ export function decodeManagerCategoryComment(rawComment?: string | null) {
   try {
     const parsed = JSON.parse(metaPayload) as { reviewStatus?: ManagerCategoryReviewStatus };
     return {
-      reviewStatus: parsed.reviewStatus === "REVISION_REQUESTED" || parsed.reviewStatus === "APPROVED" ? parsed.reviewStatus : "PENDING",
+      reviewStatus: parsed.reviewStatus === "REVISION_REQUESTED" || parsed.reviewStatus === "APPROVED" ? parsed.reviewStatus : ("PENDING" as ManagerCategoryReviewStatus),
       comment: newLineIndex >= 0 ? source.slice(newLineIndex + 1) : "",
     };
   } catch {
