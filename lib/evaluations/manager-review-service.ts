@@ -10,6 +10,8 @@ import {
 import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
+export type ManagerCategoryReviewStatus = "PENDING" | "REVISION_REQUESTED" | "APPROVED";
+
 export type ManagerReviewMember = {
   userId: string;
   name: string;
@@ -34,6 +36,7 @@ export type ManagerReviewItem = {
   selfComment: string;
   managerScore: number;
   managerComment: string;
+  managerReviewStatus: ManagerCategoryReviewStatus;
   evidenceRequired: boolean;
   evidences: EvaluationEvidence[];
   inputScope: "SELF" | "MANAGER" | "ADMIN" | "BOTH";
@@ -70,6 +73,8 @@ export type SaveManagerReviewInput = {
     evidences?: EvaluationEvidence[];
   }>;
 };
+
+const MANAGER_CATEGORY_META_PREFIX = "__MANAGER_CATEGORY_META__";
 
 function toNumber(value: unknown) {
   return Number(value ?? 0);
@@ -117,6 +122,37 @@ function calculateProgress(items: ManagerReviewItem[], axis: SelfReviewAxis, sco
   return round2((achieved / possible) * 100);
 }
 
+export function encodeManagerCategoryComment(comment: string, reviewStatus: ManagerCategoryReviewStatus) {
+  const trimmed = comment.trim();
+  return `${MANAGER_CATEGORY_META_PREFIX}${JSON.stringify({ reviewStatus })}\n${trimmed}`;
+}
+
+export function decodeManagerCategoryComment(rawComment?: string | null) {
+  const source = String(rawComment ?? "");
+  if (!source.startsWith(MANAGER_CATEGORY_META_PREFIX)) {
+    return {
+      reviewStatus: "PENDING" as ManagerCategoryReviewStatus,
+      comment: source,
+    };
+  }
+
+  const newLineIndex = source.indexOf("\n");
+  const metaPayload = newLineIndex >= 0 ? source.slice(MANAGER_CATEGORY_META_PREFIX.length, newLineIndex) : source.slice(MANAGER_CATEGORY_META_PREFIX.length);
+
+  try {
+    const parsed = JSON.parse(metaPayload) as { reviewStatus?: ManagerCategoryReviewStatus };
+    return {
+      reviewStatus: parsed.reviewStatus === "REVISION_REQUESTED" || parsed.reviewStatus === "APPROVED" ? parsed.reviewStatus : "PENDING",
+      comment: newLineIndex >= 0 ? source.slice(newLineIndex + 1) : "",
+    };
+  } catch {
+    return {
+      reviewStatus: "PENDING" as ManagerCategoryReviewStatus,
+      comment: source,
+    };
+  }
+}
+
 function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
   const members: ManagerReviewMember[] = [
     { userId: "demo-member1", name: "開発 一郎", status: "SELF_REVIEW", selfScoreTotal: 1.1, managerScoreTotal: 0.96 },
@@ -124,10 +160,10 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
   ];
   const target = members.find((member) => member.userId === selectedUserId) ?? members[0];
   const items: ManagerReviewItem[] = [
-    { evaluationItemId: "item-it-foundation", title: "使用技術や業務知識の基礎を理解している", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "基礎理解", minorCategoryOrder: 10, weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
-    { evaluationItemId: "item-it-implementation", title: "設計意図を理解して実装へ落とし込める", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "実装", minorCategoryOrder: 20, weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
-    { evaluationItemId: "item-synergy-customer", title: "関係深化や追加提案につながる行動を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", majorCategoryOrder: 10, minorCategory: "関係深化", minorCategoryOrder: 10, weight: 8, maxScore: 1, selfScore: 0, selfComment: "単発対応はある", managerScore: 0, managerComment: "継続実践までは未到達", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
-    { evaluationItemId: "item-synergy-team", title: "レビューや伴走を通じて他者の成長支援を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", majorCategoryOrder: 20, minorCategory: "レビュー支援", minorCategoryOrder: 10, weight: 7, maxScore: 1, selfScore: 1, selfComment: "レビュー支援を継続", managerScore: 1, managerComment: "継続支援できている", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-it-foundation", title: "使用技術や業務知識の基礎を理解している", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "基礎理解", minorCategoryOrder: 10, weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", managerReviewStatus: "PENDING", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-it-implementation", title: "設計意図を理解して実装へ落とし込める", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "実装", minorCategoryOrder: 20, weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", managerReviewStatus: "PENDING", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-synergy-customer", title: "関係深化や追加提案につながる行動を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", majorCategoryOrder: 10, minorCategory: "関係深化", minorCategoryOrder: 10, weight: 8, maxScore: 1, selfScore: 0, selfComment: "単発対応はある", managerScore: 0, managerComment: "継続実践までは未到達", managerReviewStatus: "PENDING", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-synergy-team", title: "レビューや伴走を通じて他者の成長支援を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", majorCategoryOrder: 20, minorCategory: "レビュー支援", minorCategoryOrder: 10, weight: 7, maxScore: 1, selfScore: 1, selfComment: "レビュー支援を継続", managerScore: 1, managerComment: "継続支援できている", managerReviewStatus: "APPROVED", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
   ];
 
   return {
@@ -270,6 +306,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       if (meta.inputScope === "SELF" || meta.inputScope === "ADMIN") {
         return [];
       }
+      const decodedManagerComment = decodeManagerCategoryComment(managerMap.get(item.id)?.comment);
       return [{
         evaluationItemId: item.id,
         title: item.title,
@@ -285,9 +322,10 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         selfScore: normalizeScore(toNumber(selfMap.get(item.id)?.score), meta.scoreType),
         selfComment: selfMap.get(item.id)?.comment ?? "",
         managerScore: normalizeScore(toNumber(managerMap.get(item.id)?.score), meta.scoreType),
-        managerComment: managerMap.get(item.id)?.comment ?? "",
+        managerComment: decodedManagerComment.comment,
+        managerReviewStatus: decodedManagerComment.reviewStatus,
         evidenceRequired: Boolean(item.evidenceRequired),
-        evidences: normalizeEvidences(managerMap.get(item.id)?.evidences),
+        evidences: normalizeEvidences(selfMap.get(item.id)?.evidences),
         inputScope: meta.inputScope,
       }];
     });
@@ -332,17 +370,17 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
     const itemRows = await prisma.evaluationItem.findMany({
       where: { id: { in: input.items.map((item) => item.evaluationItemId) } },
       select: {
-          id: true,
-          title: true,
-          description: true,
-          category: true,
-          weight: true,
-          axis: true,
-          scoreType: true,
-          majorCategory: true,
-          minorCategory: true,
-          evidenceRequired: true,
-        },
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+        weight: true,
+        axis: true,
+        scoreType: true,
+        majorCategory: true,
+        minorCategory: true,
+        evidenceRequired: true,
+      },
     });
     const itemMap = new Map(itemRows.map((item) => [item.id, item]));
     const total = calculateTotal(
@@ -382,7 +420,6 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
         const row = itemMap.get(item.evaluationItemId);
         const scoreType = row ? resolveStoredItemMetaFromRow(row).scoreType : "LEVEL_2";
         const normalizedScore = normalizeScore(item.score, scoreType);
-
         const normalizedEvidences = normalizeEvidences(item.evidences);
 
         const savedScore = await tx.evaluationScore.upsert({
@@ -427,7 +464,17 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
     const fallback = buildFallbackBundle(input.userId);
     const nextItems = fallback.items.map((item) => {
       const saved = input.items.find((candidate) => candidate.evaluationItemId === item.evaluationItemId);
-      return saved ? { ...item, managerScore: normalizeScore(saved.score, item.scoreType), managerComment: saved.comment, evidences: normalizeEvidences(saved.evidences) } : item;
+      if (!saved) {
+        return item;
+      }
+      const decoded = decodeManagerCategoryComment(saved.comment);
+      return {
+        ...item,
+        managerScore: normalizeScore(saved.score, item.scoreType),
+        managerComment: decoded.comment,
+        managerReviewStatus: decoded.reviewStatus,
+        evidences: normalizeEvidences(saved.evidences),
+      };
     });
     return {
       ...fallback,

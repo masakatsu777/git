@@ -3,7 +3,12 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import type { ManagerReviewBundle, ManagerReviewItem } from "@/lib/evaluations/manager-review-service";
+import {
+  encodeManagerCategoryComment,
+  type ManagerCategoryReviewStatus,
+  type ManagerReviewBundle,
+  type ManagerReviewItem,
+} from "@/lib/evaluations/manager-review-service";
 
 type ManagerReviewEditorProps = {
   canEdit: boolean;
@@ -12,6 +17,7 @@ type ManagerReviewEditorProps = {
 
 type SelfGrowthCategoryDecision = "NOT_STARTED" | "CHALLENGING" | "CLEARED";
 type SynergyCategoryDecision = "NOT_PRACTICING" | "PRACTICING";
+type OverallManagerStatus = "IN_REVIEW" | "REVISION_REQUESTED" | "APPROVED";
 
 type CategoryGroup = {
   key: string;
@@ -81,6 +87,12 @@ function getCategoryComment(items: ManagerReviewItem[]) {
   return items.find((item) => item.managerComment.trim())?.managerComment ?? "";
 }
 
+function getCategoryReviewStatus(items: ManagerReviewItem[]): ManagerCategoryReviewStatus {
+  return items.find((item) => item.managerReviewStatus === "REVISION_REQUESTED")?.managerReviewStatus
+    ?? items.find((item) => item.managerReviewStatus === "APPROVED")?.managerReviewStatus
+    ?? "PENDING";
+}
+
 function getSelfSummary(items: ManagerReviewItem[]) {
   const scoreSummary = items.map((item) => `${item.minorCategory}:${item.selfScore}`).join(" / ");
   return scoreSummary || "自己評価なし";
@@ -100,6 +112,76 @@ function getDetailTone(axis: ManagerReviewItem["axis"]) {
       };
 }
 
+function getMemberStatusLabel(status: string) {
+  switch (status) {
+    case "SELF_REVIEW":
+      return "自己評価中";
+    case "MANAGER_REVIEW":
+      return "上長評価中";
+    case "FINAL_REVIEW":
+      return "最終評価中";
+    case "FINALIZED":
+      return "確定済み";
+    default:
+      return status;
+  }
+}
+
+function getReviewStatusLabel(status: ManagerCategoryReviewStatus) {
+  switch (status) {
+    case "REVISION_REQUESTED":
+      return "確認依頼中";
+    case "APPROVED":
+      return "承認済み";
+    default:
+      return "上長確認中";
+  }
+}
+
+function getReviewStatusTone(status: ManagerCategoryReviewStatus) {
+  switch (status) {
+    case "REVISION_REQUESTED":
+      return "bg-amber-100 text-amber-800";
+    case "APPROVED":
+      return "bg-emerald-100 text-emerald-800";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+}
+
+function getOverallStatus(groups: CategoryGroup[]): OverallManagerStatus {
+  const statuses = groups.map((group) => getCategoryReviewStatus(group.items));
+  if (statuses.includes("REVISION_REQUESTED")) {
+    return "REVISION_REQUESTED";
+  }
+  if (statuses.length > 0 && statuses.every((status) => status === "APPROVED")) {
+    return "APPROVED";
+  }
+  return "IN_REVIEW";
+}
+
+function getOverallStatusLabel(status: OverallManagerStatus) {
+  switch (status) {
+    case "REVISION_REQUESTED":
+      return "確認依頼あり";
+    case "APPROVED":
+      return "承認";
+    default:
+      return "上長確認中";
+  }
+}
+
+function getOverallStatusTone(status: OverallManagerStatus) {
+  switch (status) {
+    case "REVISION_REQUESTED":
+      return "bg-amber-100 text-amber-800";
+    case "APPROVED":
+      return "bg-emerald-100 text-emerald-800";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+}
+
 export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorProps) {
   const router = useRouter();
   const [items, setItems] = useState(defaults.items);
@@ -112,6 +194,8 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
   const synergyItems = useMemo(() => items.filter((item) => item.axis === "SYNERGY"), [items]);
   const selfGrowthCategories = useMemo(() => groupByMajorCategory(selfGrowthItems), [selfGrowthItems]);
   const synergyCategories = useMemo(() => groupByMajorCategory(synergyItems), [synergyItems]);
+  const allCategories = useMemo(() => [...selfGrowthCategories, ...synergyCategories], [selfGrowthCategories, synergyCategories]);
+  const overallStatus = useMemo(() => getOverallStatus(allCategories), [allCategories]);
   const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))), [items]);
 
   function updateCategoryScores(categoryItems: ManagerReviewItem[], nextScore: number) {
@@ -124,12 +208,22 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
     setItems((current) => current.map((row) => (ids.has(row.evaluationItemId) ? { ...row, managerComment: nextComment } : row)));
   }
 
+  function updateCategoryReviewStatus(categoryItems: ManagerReviewItem[], nextStatus: ManagerCategoryReviewStatus) {
+    const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
+    setItems((current) => current.map((row) => (ids.has(row.evaluationItemId) ? { ...row, managerReviewStatus: nextStatus } : row)));
+  }
+
   function toggleDetails(key: string) {
     setOpenedDetails((current) => ({ ...current, [key]: !current[key] }));
   }
 
-  async function handleSave() {
+  function saveWithMode(mode: "save" | "approve") {
     setMessage(null);
+
+    if (mode === "approve" && overallStatus !== "APPROVED") {
+      setMessage("全体承認するには、すべての大分類を承認済みにしてください。確認依頼中の大分類がある場合は承認できません。");
+      return;
+    }
 
     startSaving(async () => {
       const response = await fetch("/api/evaluations/team", {
@@ -143,14 +237,14 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           items: items.map((item) => ({
             evaluationItemId: item.evaluationItemId,
             score: item.managerScore,
-            comment: item.managerComment,
+            comment: encodeManagerCategoryComment(item.managerComment, item.managerReviewStatus),
             evidences: [],
           })),
         }),
       });
 
       const result = (await response.json()) as { message?: string };
-      setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
+      setMessage(result.message ?? (response.ok ? (mode === "approve" ? "承認しました" : "保存しました") : "保存に失敗しました"));
 
       if (response.ok) {
         router.refresh();
@@ -162,6 +256,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
     const isSelfGrowth = group.axis === "SELF_GROWTH";
     const decision = isSelfGrowth ? getSelfGrowthDecision(group.items) : getSynergyDecision(group.items);
     const comment = getCategoryComment(group.items);
+    const categoryReviewStatus = getCategoryReviewStatus(group.items);
     const detailTone = getDetailTone(group.axis);
     const detailsOpen = Boolean(openedDetails[group.key]);
     const guides = isSelfGrowth ? selfGrowthGuide : synergyGuide;
@@ -175,6 +270,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
                 {isSelfGrowth ? "自律成長力" : "協調相乗力"}
               </span>
               <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{group.items.length} 項目</span>
+              <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getReviewStatusTone(categoryReviewStatus)}`}>{getReviewStatusLabel(categoryReviewStatus)}</span>
             </div>
             <h4 className="mt-3 text-lg font-semibold text-slate-950">{group.majorCategory}</h4>
             <p className="mt-1 text-sm text-slate-500">本人入力: {getSelfSummary(group.items)}</p>
@@ -200,6 +296,18 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
                   </div>
                   <p className="mt-2 font-medium text-slate-900">{item.title}</p>
                   <p className="mt-2 whitespace-pre-wrap leading-6">{item.selfComment || "本人コメントは未入力です。"}</p>
+                  {item.axis === "SYNERGY" && item.evidences.length > 0 ? (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-slate-500">本人の根拠</p>
+                      {item.evidences.map((evidence, index) => (
+                        <div key={`${item.evaluationItemId}-evidence-${index}`} className="rounded-xl bg-white px-3 py-3 text-xs leading-6 text-slate-700">
+                          <p>{evidence.summary || "要約なし"}</p>
+                          {evidence.targetName ? <p>対象: {evidence.targetName}</p> : null}
+                          {evidence.periodNote ? <p>{evidence.periodNote}</p> : null}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </article>
               ))}
             </div>
@@ -224,6 +332,25 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           ))}
         </div>
 
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={!canEdit || isPending}
+            onClick={() => updateCategoryReviewStatus(group.items, "REVISION_REQUESTED")}
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${categoryReviewStatus === "REVISION_REQUESTED" ? "bg-amber-500 text-white" : "border border-amber-200 bg-white text-amber-700"}`}
+          >
+            確認依頼
+          </button>
+          <button
+            type="button"
+            disabled={!canEdit || isPending}
+            onClick={() => updateCategoryReviewStatus(group.items, "APPROVED")}
+            className={`rounded-full px-4 py-2 text-sm font-semibold ${categoryReviewStatus === "APPROVED" ? "bg-emerald-600 text-white" : "border border-emerald-200 bg-white text-emerald-700"}`}
+          >
+            承認
+          </button>
+        </div>
+
         <textarea
           value={comment}
           disabled={!canEdit || isPending}
@@ -241,12 +368,12 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">上長評価入力</h2>
-          <p className="mt-1 text-sm text-slate-500">大分類ごとに判定とコメントを入力し、必要に応じて本人へ確認しやすい形に整えます。</p>
+          <p className="mt-1 text-sm text-slate-500">大分類ごとに判定、確認依頼、承認を管理しながら上長評価を進めます。</p>
         </div>
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">入力受付中</span>}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-5">
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">対象期間</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.periodName}</p>
@@ -254,6 +381,10 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">対象者</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.selectedUserName}</p>
+        </div>
+        <div className="rounded-2xl bg-slate-50 px-4 py-4">
+          <p className="text-sm text-slate-500">全体状態</p>
+          <p className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getOverallStatusTone(overallStatus)}`}>{getOverallStatusLabel(overallStatus)}</p>
         </div>
         <div className="rounded-2xl bg-emerald-50 px-4 py-4">
           <p className="text-sm text-slate-500">自律成長力達成率</p>
@@ -275,7 +406,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
               className={`rounded-2xl border px-4 py-3 text-sm ${member.userId === defaults.selectedUserId ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-slate-50 text-slate-800"}`}
             >
               <p className="font-semibold"><span style={{ color: member.userId === defaults.selectedUserId ? "#ffffff" : "#0f172a" }}>{member.name}</span></p>
-              <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>状態: {member.status}</p>
+              <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>状態: {getMemberStatusLabel(member.status)}</p>
               <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>自己 {member.selfScoreTotal} / 上長 {member.managerScoreTotal}</p>
             </a>
           ))}
@@ -289,7 +420,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
 
       <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-4">
         <h3 className="font-semibold text-slate-950">自律成長力</h3>
-        <p className="mt-1 text-sm text-slate-600">大分類単位で未着手・チャレンジ中・クリアを判定し、コメントを入力します。</p>
+        <p className="mt-1 text-sm text-slate-600">大分類単位で未着手・チャレンジ中・クリアを判定し、必要なら確認依頼、問題なければ承認します。</p>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {selfGrowthGuide.map((guide) => (
             <article key={guide.value} className="rounded-2xl border border-emerald-200 bg-white px-4 py-4 text-sm text-slate-700">
@@ -303,7 +434,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
 
       <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-4">
         <h3 className="font-semibold text-slate-950">協調相乗力</h3>
-        <p className="mt-1 text-sm text-slate-600">大分類単位で継続実践の有無を判定し、コメントを入力します。</p>
+        <p className="mt-1 text-sm text-slate-600">大分類単位で継続実践の有無を判定し、本人の根拠を参照しながら確認依頼または承認を行います。</p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {synergyGuide.map((guide) => (
             <article key={guide.value} className="rounded-2xl border border-sky-200 bg-white px-4 py-4 text-sm text-slate-700">
@@ -328,8 +459,11 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
-          {isPending ? "処理中..." : "上長評価を保存"}
+        <button type="button" onClick={() => saveWithMode("save")} disabled={!canEdit || isPending} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 disabled:bg-slate-100 disabled:text-slate-400">
+          {isPending ? "処理中..." : "下書き保存"}
+        </button>
+        <button type="button" onClick={() => saveWithMode("approve")} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
+          {isPending ? "処理中..." : "全体を承認して保存"}
         </button>
         <span className="text-sm text-slate-500">現在の上長評価加重点: {managerTotal}</span>
       </div>
