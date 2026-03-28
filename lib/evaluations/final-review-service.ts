@@ -15,6 +15,7 @@ import { judgeGradeByScore } from "@/lib/skill-careers/grade-judgement-service";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
 import { getGradeSalarySettingBundle } from "@/lib/grade-salary/grade-salary-setting-service";
 import { decodeManagerOverallComment } from "@/lib/evaluations/manager-review-service";
+import { getTeamMonthlySnapshot } from "@/lib/pl/service";
 
 export type FinalReviewMember = {
   userId: string;
@@ -83,6 +84,8 @@ export type FinalReviewBundle = {
   pointUnitAmount: number;
   gradeSalaryAmount: number;
   currentSalary: number;
+  grossProfitVarianceRate: number;
+  grossProfitDeductionAmount: number;
   synergyProgress: number;
   itSkillScore: number;
   businessSkillScore: number;
@@ -237,6 +240,58 @@ function calculateProgress(items: FinalReviewItem[], axis: SelfReviewAxis, stage
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
   if (possible === 0) return 0;
   return round2((achieved / possible) * 100);
+}
+
+function buildPeriodYearMonths(periodStartDate: Date, periodEndDate: Date) {
+  const months: string[] = [];
+  const cursor = new Date(periodStartDate.getFullYear(), periodStartDate.getMonth(), 1);
+  const end = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), 1);
+
+  while (cursor <= end) {
+    months.push(`${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`);
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  return months;
+}
+
+async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, evaluationPeriodId: string, gradeSalaryAmount: number) {
+  if (!teamId || !hasDatabaseUrl()) {
+    return {
+      grossProfitVarianceRate: 0,
+      grossProfitDeductionAmount: 0,
+    };
+  }
+
+  try {
+    const period = await prisma.evaluationPeriod.findUniqueOrThrow({
+      where: { id: evaluationPeriodId },
+      select: { startDate: true, endDate: true },
+    });
+
+    const yearMonths = buildPeriodYearMonths(period.startDate, period.endDate);
+    const snapshots = await Promise.all(yearMonths.map((yearMonth) => getTeamMonthlySnapshot(teamId, yearMonth)));
+    const salesTotal = snapshots.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
+    const finalGrossProfit = snapshots.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0);
+    const targetGrossProfitRate = snapshots.length > 0
+      ? round2(snapshots.reduce((sum, row) => sum + Number(row.targetGrossProfitRate ?? 0), 0) / snapshots.length)
+      : 0;
+    const actualGrossProfitRate = salesTotal === 0 ? 0 : round2((finalGrossProfit / salesTotal) * 100);
+    const grossProfitVarianceRate = round2(actualGrossProfitRate - targetGrossProfitRate);
+    const grossProfitDeductionAmount = grossProfitVarianceRate < 0
+      ? Math.round(gradeSalaryAmount * (Math.abs(grossProfitVarianceRate) / 100))
+      : 0;
+
+    return {
+      grossProfitVarianceRate,
+      grossProfitDeductionAmount,
+    };
+  } catch {
+    return {
+      grossProfitVarianceRate: 0,
+      grossProfitDeductionAmount: 0,
+    };
+  }
 }
 
 function calculateAxisMetric(items: FinalReviewItem[], axis: SelfReviewAxis, stage: FinalReviewDisplayStage) {
@@ -394,6 +449,8 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
     pointUnitAmount: gradeSalarySetting.pointUnitAmount,
     gradeSalaryAmount,
     currentSalary: 0,
+    grossProfitVarianceRate: 0,
+    grossProfitDeductionAmount: 0,
     itSkillScore: judgement.itSkillScore,
     businessSkillScore: judgement.businessSkillScore,
     itSkillGradeName: judgement.itSkill.gradeName,
@@ -439,7 +496,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
               },
             },
           },
-          team: { select: { name: true } },
+          team: { select: { id: true, name: true } },
           itSkillGrade: { select: { gradeName: true, rankOrder: true } },
           businessSkillGrade: { select: { gradeName: true, rankOrder: true } },
           scores: {
@@ -491,6 +548,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       return {
         userId: evaluation.userId,
         name: evaluation.user.name,
+        teamId: evaluation.team.id,
         teamName: evaluation.team.name,
         positionName: evaluation.user.position?.name ?? "未設定",
         positionId: evaluation.user.positionId,
@@ -539,6 +597,8 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         pointUnitAmount: 0,
         gradeSalaryAmount: 0,
         currentSalary: 0,
+        grossProfitVarianceRate: 0,
+        grossProfitDeductionAmount: 0,
         itSkillScore: 0,
         businessSkillScore: 0,
         itSkillGradeName: "未判定",
@@ -588,6 +648,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
     const gradeSalaryAmount = gradeSalarySetting.baseAmount + salaryPoints.salaryTotalGradePoint * gradeSalarySetting.pointUnitAmount;
     const finalTotal = calculateTotal(items.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
     const currentSalary = toNumber(target.evaluation.user.salaryRecords[0]?.baseSalary) + toNumber(target.evaluation.user.salaryRecords[0]?.allowance);
+    const grossProfitMetrics = await calculatePeriodGrossProfitMetrics(target.teamId, period.id, gradeSalaryAmount);
 
     return {
       evaluationPeriodId: period.id,
@@ -632,6 +693,8 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       pointUnitAmount: gradeSalarySetting.pointUnitAmount,
       gradeSalaryAmount,
       currentSalary,
+      grossProfitVarianceRate: grossProfitMetrics.grossProfitVarianceRate,
+      grossProfitDeductionAmount: grossProfitMetrics.grossProfitDeductionAmount,
       itSkillScore: judgement.itSkillScore,
       businessSkillScore: judgement.businessSkillScore,
       itSkillGradeName: target.evaluation.itSkillGrade?.gradeName ?? judgement.itSkill.gradeName,

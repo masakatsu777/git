@@ -91,8 +91,8 @@ export default async function EvaluationResultPage({
         pointUnitAmount: finalReview.pointUnitAmount,
         gradeSalaryAmount: finalReview.gradeSalaryAmount,
         currentSalary: finalReview.currentSalary,
-        grossProfitVarianceRate: 0,
-        grossProfitDeductionAmount: 0,
+        grossProfitVarianceRate: finalReview.grossProfitVarianceRate,
+        grossProfitDeductionAmount: finalReview.grossProfitDeductionAmount,
       };
   const hasFinalizedAnnualRaise = salaryRow ? salaryRow.status !== "DRAFT" : false;
   const selfGrowthSalaryAmount = displaySalaryRow.gradeBaseAmount + displaySalaryRow.selfGrowthPoint * displaySalaryRow.pointUnitAmount;
