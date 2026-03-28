@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canAccessTeam, requirePermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, saveTeamMonthlyInput } from "@/lib/pl/service";
+import { deleteTeamMonthlySnapshot, getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, saveTeamMonthlyInput } from "@/lib/pl/service";
 
 function toNumber(value: unknown) {
   const parsed = Number(value);
@@ -72,6 +72,28 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { message: error instanceof Error ? error.message : "Failed to save monthly PL" },
+      { status: 403 },
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const user = await getSessionUser();
+
+  try {
+    const teamId = request.nextUrl.searchParams.get("teamId") ?? "";
+    const yearMonth = request.nextUrl.searchParams.get("yearMonth") ?? "";
+
+    requirePermission(user, PERMISSIONS.plTeamWrite, teamId);
+
+    const result = await deleteTeamMonthlySnapshot(teamId, yearMonth);
+    return NextResponse.json({
+      message: result.persisted ? "月次PL手入力を削除しました" : "DB未接続のため削除は反映されませんでした",
+      persisted: result.persisted,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: error instanceof Error ? error.message : "Failed to delete monthly PL" },
       { status: 403 },
     );
   }

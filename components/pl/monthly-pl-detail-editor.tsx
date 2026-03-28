@@ -163,6 +163,30 @@ export function MonthlyPlDetailEditor({
     });
   }
 
+  async function handleDeleteMonthlyPl() {
+    if (!window.confirm(`${yearMonth} の月次PL手入力を削除して自動計算へ戻しますか？`)) {
+      return;
+    }
+
+    setMessage(null);
+
+    startSaving(async () => {
+      const params = new URLSearchParams({ teamId, yearMonth });
+      const response = await fetch(`/api/pl/monthly?${params.toString()}`, {
+        method: "DELETE",
+      });
+
+      const result = (await response.json()) as { message?: string };
+      setMessage(result.message ?? (response.ok ? "月次PL手入力を削除しました" : "月次PL手入力の削除に失敗しました"));
+
+      if (response.ok) {
+        startTransition(() => {
+          router.refresh();
+        });
+      }
+    });
+  }
+
   function addAssignment() {
     const option = employeeOptions[0];
     setAssignments((current) => [
@@ -204,14 +228,24 @@ export function MonthlyPlDetailEditor({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {canEdit ? (
-            <button
-              type="button"
-              onClick={handleCopyPreviousMonth}
-              disabled={isPending}
-              className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-400"
-            >
-              {isPending ? "処理中..." : "前月コピー"}
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleCopyPreviousMonth}
+                disabled={isPending}
+                className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-400"
+              >
+                {isPending ? "処理中..." : "前月コピー"}
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteMonthlyPl}
+                disabled={isPending}
+                className="rounded-full border border-rose-200 bg-white px-4 py-2 text-sm font-medium text-rose-700 disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-400"
+              >
+                {isPending ? "処理中..." : "月次PL手入力を削除"}
+              </button>
+            </>
           ) : null}
           {!canEdit ? <span className="rounded-full bg-stone-100 px-4 py-2 text-sm text-stone-500">閲覧専用</span> : null}
         </div>

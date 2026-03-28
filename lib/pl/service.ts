@@ -313,6 +313,21 @@ export async function getCompanyTargetGrossProfitRate(yearMonth: string): Promis
   }
 }
 
+export async function deleteTeamMonthlySnapshot(teamId: string, yearMonth: string): Promise<{ persisted: boolean }> {
+  if (!hasDatabaseUrl()) {
+    return { persisted: false };
+  }
+
+  try {
+    await prisma.teamMonthlyPl.deleteMany({
+      where: { teamId, yearMonth },
+    });
+    return { persisted: true };
+  } catch {
+    return { persisted: false };
+  }
+}
+
 export async function saveTeamMonthlyInput(input: TeamMonthlyInput): Promise<SaveTeamMonthlyResult> {
   const currentSnapshot = await getTeamMonthlySnapshot(input.teamId, input.yearMonth);
   const calculated = calculateGrossProfit({
