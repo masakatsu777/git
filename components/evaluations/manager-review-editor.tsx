@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import type {
   ManagerCategoryReviewStatus,
+  ManagerExpectedFulfillmentRank,
   ManagerReviewBundle,
   ManagerReviewItem,
 } from "@/lib/evaluations/manager-review-service";
@@ -37,11 +38,23 @@ const synergyGuide = [
   { value: "PRACTICING", label: "継続実践あり", description: "大分類全体として継続実践できている" },
 ] as const;
 
+const expectedFulfillmentRankOptions = [
+  { value: "A", label: "A", description: "役割期待を上回っている" },
+  { value: "B", label: "B", description: "役割期待通り" },
+  { value: "C", label: "C", description: "役割期待に不足がある" },
+] as const;
+
 const MANAGER_CATEGORY_META_PREFIX = "__MANAGER_CATEGORY_META__";
+const MANAGER_OVERALL_META_PREFIX = "__MANAGER_OVERALL_META__";
 
 function encodeManagerCategoryComment(comment: string, reviewStatus: ManagerCategoryReviewStatus) {
   const trimmed = comment.trim();
   return `${MANAGER_CATEGORY_META_PREFIX}${JSON.stringify({ reviewStatus })}\n${trimmed}`;
+}
+
+function encodeManagerOverallComment(comment: string, expectedFulfillmentRank: ManagerExpectedFulfillmentRank) {
+  const trimmed = comment.trim();
+  return `${MANAGER_OVERALL_META_PREFIX}${JSON.stringify({ expectedFulfillmentRank })}\n${trimmed}`;
 }
 
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
@@ -192,6 +205,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
   const router = useRouter();
   const [items, setItems] = useState(defaults.items);
   const [managerComment, setManagerComment] = useState(defaults.managerComment);
+  const [expectedFulfillmentRank, setExpectedFulfillmentRank] = useState<ManagerExpectedFulfillmentRank>(defaults.expectedFulfillmentRank);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
   const [openedDetails, setOpenedDetails] = useState<Record<string, boolean>>({});
@@ -239,7 +253,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           evaluationPeriodId: defaults.evaluationPeriodId,
           userId: defaults.selectedUserId,
           teamId: defaults.teamId,
-          managerComment,
+          managerComment: encodeManagerOverallComment(managerComment, expectedFulfillmentRank),
           items: items.map((item) => ({
             evaluationItemId: item.evaluationItemId,
             score: item.managerScore,
@@ -454,6 +468,26 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
 
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">総括フィードバック</h3>
+        <div className="mt-4 rounded-2xl bg-slate-50 p-4">
+          <p className="text-sm font-semibold text-slate-950">期待充足ランク</p>
+          <div className="mt-3 grid gap-3 md:grid-cols-3">
+            {expectedFulfillmentRankOptions.map((option) => (
+              <label key={option.value} className="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-700">
+                <input
+                  type="radio"
+                  name="expectedFulfillmentRank"
+                  checked={expectedFulfillmentRank === option.value}
+                  disabled={!canEdit || isPending}
+                  onChange={() => setExpectedFulfillmentRank(option.value)}
+                />
+                <span>
+                  <span className="block font-semibold text-slate-950">{option.label}</span>
+                  <span className="block text-xs text-slate-500">{option.description}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
         <textarea
           value={managerComment}
           disabled={!canEdit || isPending}

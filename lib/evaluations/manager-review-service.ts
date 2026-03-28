@@ -11,6 +11,7 @@ import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 export type ManagerCategoryReviewStatus = "PENDING" | "REVISION_REQUESTED" | "APPROVED";
+export type ManagerExpectedFulfillmentRank = "A" | "B" | "C" | "";
 
 export type ManagerReviewMember = {
   userId: string;
@@ -54,6 +55,7 @@ export type ManagerReviewBundle = {
   status: string;
   selfComment: string;
   managerComment: string;
+  expectedFulfillmentRank: ManagerExpectedFulfillmentRank;
   selfScoreTotal: number;
   managerScoreTotal: number;
   selfGrowthProgress: number;
@@ -75,6 +77,7 @@ export type SaveManagerReviewInput = {
 };
 
 const MANAGER_CATEGORY_META_PREFIX = "__MANAGER_CATEGORY_META__";
+const MANAGER_OVERALL_META_PREFIX = "__MANAGER_OVERALL_META__";
 
 function toNumber(value: unknown) {
   return Number(value ?? 0);
@@ -153,6 +156,32 @@ export function decodeManagerCategoryComment(rawComment?: string | null): { revi
   }
 }
 
+export function decodeManagerOverallComment(rawComment?: string | null): { expectedFulfillmentRank: ManagerExpectedFulfillmentRank; comment: string } {
+  const source = String(rawComment ?? "");
+  if (!source.startsWith(MANAGER_OVERALL_META_PREFIX)) {
+    return {
+      expectedFulfillmentRank: "",
+      comment: source,
+    };
+  }
+
+  const newLineIndex = source.indexOf("\n");
+  const metaPayload = newLineIndex >= 0 ? source.slice(MANAGER_OVERALL_META_PREFIX.length, newLineIndex) : source.slice(MANAGER_OVERALL_META_PREFIX.length);
+
+  try {
+    const parsed = JSON.parse(metaPayload) as { expectedFulfillmentRank?: ManagerExpectedFulfillmentRank };
+    return {
+      expectedFulfillmentRank: parsed.expectedFulfillmentRank === "A" || parsed.expectedFulfillmentRank === "B" || parsed.expectedFulfillmentRank === "C" ? parsed.expectedFulfillmentRank : "",
+      comment: newLineIndex >= 0 ? source.slice(newLineIndex + 1) : "",
+    };
+  } catch {
+    return {
+      expectedFulfillmentRank: "",
+      comment: source,
+    };
+  }
+}
+
 function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
   const members: ManagerReviewMember[] = [
     { userId: "demo-member1", name: "開発 一郎", status: "SELF_REVIEW", selfScoreTotal: 1.1, managerScoreTotal: 0.96 },
@@ -178,6 +207,7 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
     status: target.status,
     selfComment: "自律成長を中心に振り返る",
     managerComment: "継続実践は一部で確認できるため、次期は広がりを期待します。",
+    expectedFulfillmentRank: "B",
     selfScoreTotal: target.selfScoreTotal,
     managerScoreTotal: calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))),
     selfGrowthProgress: calculateProgress(items, "SELF_GROWTH", "managerScore"),
@@ -289,6 +319,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         status: EvaluationStatus.SELF_REVIEW,
         selfComment: "",
         managerComment: "",
+        expectedFulfillmentRank: "",
         selfScoreTotal: 0,
         managerScoreTotal: 0,
         selfGrowthProgress: 0,
@@ -300,6 +331,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
 
     const selfMap = new Map((target.evaluation?.scores ?? []).filter((row) => row.reviewType === ReviewType.SELF).map((row) => [row.evaluationItemId, row]));
     const managerMap = new Map((target.evaluation?.scores ?? []).filter((row) => row.reviewType === ReviewType.MANAGER).map((row) => [row.evaluationItemId, row]));
+    const overallManagerMeta = decodeManagerOverallComment(target.evaluation?.managerComment);
 
     const items: ManagerReviewItem[] = itemRows.flatMap((item) => {
       const meta = resolveStoredItemMetaFromRow(item);
@@ -347,7 +379,8 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       selectedUserName: target.name,
       status: target.status,
       selfComment: target.evaluation?.selfComment ?? "",
-      managerComment: target.evaluation?.managerComment ?? "",
+      managerComment: overallManagerMeta.comment,
+      expectedFulfillmentRank: overallManagerMeta.expectedFulfillmentRank,
       selfScoreTotal: toNumber(target.evaluation?.selfScoreTotal),
       managerScoreTotal: calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))),
       selfGrowthProgress: calculateProgress(items, "SELF_GROWTH", "managerScore"),
@@ -462,6 +495,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
     return getManagerReviewBundle(teamId, input.userId, input.evaluationPeriodId);
   } catch {
     const fallback = buildFallbackBundle(input.userId);
+    const overallManagerMeta = decodeManagerOverallComment(input.managerComment);
     const nextItems = fallback.items.map((item) => {
       const saved = input.items.find((candidate) => candidate.evaluationItemId === item.evaluationItemId);
       if (!saved) {
@@ -481,7 +515,8 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
       evaluationPeriodId: input.evaluationPeriodId,
       periodStatus: EvaluationPeriodStatus.OPEN,
       selectedUserId: input.userId,
-      managerComment: input.managerComment,
+      managerComment: overallManagerMeta.comment,
+      expectedFulfillmentRank: overallManagerMeta.expectedFulfillmentRank,
       items: nextItems,
       managerScoreTotal: calculateTotal(nextItems.map((item) => ({ score: item.managerScore, weight: item.weight }))),
       selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH", "managerScore"),
