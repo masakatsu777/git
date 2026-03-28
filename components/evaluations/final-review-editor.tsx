@@ -3,14 +3,17 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { EvidenceInputList } from "@/components/evaluations/evidence-input-list";
 import { ExpectedFulfillmentRankGuide } from "@/components/evaluations/expected-fulfillment-rank-guide";
-import type { EvaluationEvidence } from "@/lib/evaluations/self-review-service";
 import type { FinalReviewBundle, FinalReviewItem } from "@/lib/evaluations/final-review-service";
 
 type FinalReviewEditorProps = {
   canEdit: boolean;
   defaults: FinalReviewBundle;
+};
+
+type AxisReviewState = {
+  score: number;
+  comment: string;
 };
 
 const selfGrowthGuide = [
@@ -36,40 +39,97 @@ function deriveRating(score: number) {
   return "D";
 }
 
-function groupByMajorCategory(items: FinalReviewItem[]) {
-  const map = new Map<string, FinalReviewItem[]>();
-  for (const item of items) {
-    const current = map.get(item.majorCategory) ?? [];
-    current.push(item);
-    map.set(item.majorCategory, current);
-  }
-  return Array.from(map.entries());
+function buildAxisState(items: FinalReviewItem[]) {
+  return {
+    score: items[0]?.finalScore ?? 0,
+    comment: items[0]?.finalComment ?? "",
+  } satisfies AxisReviewState;
+}
+
+function buildAxisPayload(items: FinalReviewItem[], state: AxisReviewState) {
+  return items.map((item) => ({
+    evaluationItemId: item.evaluationItemId,
+    score: state.score,
+    comment: state.comment,
+    evidences: item.evidences,
+  }));
+}
+
+function renderReferenceItems(items: FinalReviewItem[], showEvidence: boolean) {
+  return (
+    <div className="mt-4 space-y-3">
+      {items.map((item) => (
+        <article key={item.evaluationItemId} className="rounded-2xl border border-slate-200 bg-white p-4">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.majorCategory} / {item.minorCategory}</p>
+          <h4 className="mt-2 text-sm font-semibold text-slate-950">{item.title}</h4>
+          <p className="mt-2 text-sm text-slate-500">自己 {item.selfScore} / 上長 {item.managerScore} / 重み {item.weight}</p>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl bg-slate-50 p-3">
+              <p className="text-xs font-semibold text-slate-500">本人コメント</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.selfComment || "コメントはありません。"}</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-3">
+              <p className="text-xs font-semibold text-slate-500">上長コメント</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.managerComment || "コメントはありません。"}</p>
+            </div>
+          </div>
+          {showEvidence && item.evidences.length > 0 ? (
+            <div className="mt-3 rounded-2xl bg-slate-50 p-3">
+              <p className="text-xs font-semibold text-slate-500">本人入力の根拠</p>
+              <div className="mt-2 space-y-2">
+                {item.evidences.map((evidence, index) => (
+                  <div key={`${item.evaluationItemId}-${index}`} className="rounded-xl bg-white px-3 py-3 text-sm text-slate-700">
+                    <p className="font-medium text-slate-900">{evidence.summary || "概要なし"}</p>
+                    {evidence.targetName ? <p className="mt-1 text-xs text-slate-500">対象: {evidence.targetName}</p> : null}
+                    {evidence.periodNote ? <p className="mt-2 text-xs text-slate-500">{evidence.periodNote}</p> : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </article>
+      ))}
+    </div>
+  );
 }
 
 export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps) {
   const router = useRouter();
-  const [items, setItems] = useState(defaults.items);
+  const [items] = useState(defaults.items);
   const [finalComment, setFinalComment] = useState(defaults.finalComment);
+  const [selfGrowthReview, setSelfGrowthReview] = useState<AxisReviewState>(() => buildAxisState(defaults.items.filter((item) => item.axis === "SELF_GROWTH")));
+  const [synergyReview, setSynergyReview] = useState<AxisReviewState>(() => buildAxisState(defaults.items.filter((item) => item.axis === "SYNERGY")));
+  const [showSelfGrowthDetails, setShowSelfGrowthDetails] = useState(false);
+  const [showSynergyDetails, setShowSynergyDetails] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
 
   const selfGrowthItems = useMemo(() => items.filter((item) => item.axis === "SELF_GROWTH"), [items]);
   const synergyItems = useMemo(() => items.filter((item) => item.axis === "SYNERGY"), [items]);
-  const liveTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.finalScore, weight: item.weight }))), [items]);
+  const payloadItems = useMemo(
+    () => [
+      ...buildAxisPayload(selfGrowthItems, selfGrowthReview),
+      ...buildAxisPayload(synergyItems, synergyReview),
+    ],
+    [selfGrowthItems, selfGrowthReview, synergyItems, synergyReview],
+  );
+  const liveTotal = useMemo(
+    () => calculateTotal([
+      ...selfGrowthItems.map((item) => ({ score: selfGrowthReview.score, weight: item.weight })),
+      ...synergyItems.map((item) => ({ score: synergyReview.score, weight: item.weight })),
+    ]),
+    [selfGrowthItems, selfGrowthReview.score, synergyItems, synergyReview.score],
+  );
   const liveRating = liveTotal > 0 ? deriveRating(liveTotal) : "-";
 
   async function handleSave() {
     setMessage(null);
 
-    const missingEvidenceItems = items.filter(
-      (item) =>
-        item.axis === "SYNERGY" &&
-        item.evidenceRequired &&
-        item.finalScore === 1 &&
-        (!item.finalComment.trim() || !item.evidences.some((evidence) => evidence.summary.trim() || evidence.targetName.trim() || evidence.periodNote.trim())),
-    );
-    if (missingEvidenceItems.length > 0) {
-      setMessage("協調相乗力で継続実践できているを選んだ項目は、最終コメントと少なくとも1件の根拠を入力してください。");
+    const synergyNeedsEvidence = synergyReview.score === 1 && synergyItems.some((item) => item.evidenceRequired);
+    const hasEvidence = synergyItems.some((item) => item.evidences.some((evidence) => evidence.summary.trim() || evidence.targetName.trim() || evidence.periodNote.trim()));
+
+    if (synergyNeedsEvidence && (!synergyReview.comment.trim() || !hasEvidence)) {
+      setMessage("協調相乗力を継続実践できているで確定する場合は、最終コメントと本人入力の根拠が必要です。");
       return;
     }
 
@@ -81,12 +141,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           evaluationPeriodId: defaults.evaluationPeriodId,
           userId: defaults.selectedUserId,
           finalComment,
-          items: items.map((item) => ({
-            evaluationItemId: item.evaluationItemId,
-            score: item.finalScore,
-            comment: item.finalComment,
-            evidences: item.evidences,
-          })),
+          items: payloadItems,
         }),
       });
 
@@ -104,7 +159,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">最終評価確定</h2>
-          <p className="mt-1 text-sm text-slate-500">自己評価と上長評価を踏まえ、自律成長力と協調相乗力を最終確定します。</p>
+          <p className="mt-1 text-sm text-slate-500">上長評価を踏まえ、自律成長力と協調相乗力を軸単位で最終確定します。</p>
         </div>
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-amber-100 px-4 py-2 text-sm text-amber-700">最終確定可能</span>}
       </div>
@@ -164,7 +219,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">期待充足ランク</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{liveRating}</p>
-          <p className="mt-1 text-sm text-slate-500">現在の役割期待をどの程度満たしているかを見る補助指標です。B は低評価ではなく、現在の役割期待を安定して満たしている状態として扱います。</p>
+          <p className="mt-1 text-sm text-slate-500">現在の役割期待をどの程度満たしているかを見る補助指標です。</p>
         </div>
       </div>
 
@@ -194,144 +249,75 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
         <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{defaults.managerComment || "上長コメントはありません。"}</p>
       </section>
 
-      <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-4">
-        <h3 className="font-semibold text-slate-950">自律成長力</h3>
-        <p className="mt-1 text-sm text-slate-600">仕事を通じて必要とされる存在になる力を最終確定します。</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {selfGrowthGuide.map((guide) => (
-            <article key={guide.score} className="rounded-2xl border border-emerald-200 bg-white px-4 py-4 text-sm text-slate-700">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-700">{guide.score}</p>
-              <p className="mt-2 font-semibold text-slate-950">{guide.label}</p>
-            </article>
-          ))}
-
+      <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-950">自律成長力の最終評価</h3>
+            <p className="mt-1 text-sm text-slate-600">自律成長力全体に対して最終評価とコメントを確定します。</p>
+          </div>
+          <button type="button" onClick={() => setShowSelfGrowthDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
+            {showSelfGrowthDetails ? "本人・上長の詳細を閉じる" : "本人・上長の詳細を表示"}
+          </button>
         </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {selfGrowthGuide.map((guide) => (
+            <label key={`self-growth-${guide.score}`} className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-white px-4 py-4 text-sm text-slate-700">
+              <input
+                type="radio"
+                name="selfGrowthFinalScore"
+                checked={selfGrowthReview.score === guide.score}
+                disabled={!canEdit || isPending}
+                onChange={() => setSelfGrowthReview((current) => ({ ...current, score: guide.score }))}
+              />
+              <span>{guide.label}</span>
+            </label>
+          ))}
+        </div>
+        <textarea
+          value={selfGrowthReview.comment}
+          disabled={!canEdit || isPending}
+          onChange={(event) => setSelfGrowthReview((current) => ({ ...current, comment: event.target.value }))}
+          rows={5}
+          className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
+          placeholder="自律成長力全体に対する最終コメントを入力"
+        />
+        {showSelfGrowthDetails ? renderReferenceItems(selfGrowthItems, false) : null}
       </section>
 
-      <div className="space-y-5">
-        {groupByMajorCategory(selfGrowthItems).map(([majorCategory, groupedItems]) => (
-          <section key={majorCategory} className="rounded-3xl border border-slate-200 p-4">
-            <h3 className="text-lg font-semibold text-slate-950">{majorCategory}</h3>
-            <div className="mt-4 space-y-4">
-              {groupedItems.map((item) => (
-                <article key={item.evaluationItemId} className="rounded-2xl bg-slate-50 p-4">
-                  <div className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
-                    <div className="rounded-2xl bg-white p-4">
-                      <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.minorCategory}</p>
-                      <h4 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h4>
-                      <p className="mt-1 text-sm text-slate-500">自己 {item.selfScore} / 重み {item.weight}</p>
-                      <p className="mt-4 whitespace-pre-wrap text-sm text-slate-700">{item.selfComment || "自己コメントなし"}</p>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      <p className="text-sm text-slate-500">上長 {item.managerScore}</p>
-                      <p className="mt-4 whitespace-pre-wrap text-sm text-slate-700">{item.managerComment || "上長コメントなし"}</p>
-                    </div>
-                    <div>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {selfGrowthGuide.map((guide) => (
-                          <label key={`${item.evaluationItemId}-${guide.score}`} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700">
-                            <input
-                              type="radio"
-                              name={item.evaluationItemId}
-                              checked={item.finalScore === guide.score}
-                              disabled={!canEdit || isPending}
-                              onChange={() => setItems((current) => current.map((row) => row.evaluationItemId === item.evaluationItemId ? { ...row, finalScore: guide.score } : row))}
-                            />
-                            {guide.label}
-                          </label>
-                        ))}
-                      </div>
-                      <textarea
-                        value={item.finalComment}
-                        disabled={!canEdit || isPending}
-                        onChange={(event) => setItems((current) => current.map((row) => row.evaluationItemId === item.evaluationItemId ? { ...row, finalComment: event.target.value } : row))}
-                        rows={4}
-                        className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-                        placeholder="最終コメントを入力"
-                      />
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
-
-      <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-4">
-        <h3 className="font-semibold text-slate-950">協調相乗力</h3>
-        <p className="mt-1 text-sm text-slate-600">単発ではなく、半期を通じた継続実践になっているかを最終確定します。</p>
+      <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-950">協調相乗力の最終評価</h3>
+            <p className="mt-1 text-sm text-slate-600">協調相乗力全体に対して最終評価とコメントを確定します。</p>
+          </div>
+          <button type="button" onClick={() => setShowSynergyDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
+            {showSynergyDetails ? "本人・上長の詳細を閉じる" : "本人・上長の詳細を表示"}
+          </button>
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {synergyGuide.map((guide) => (
-            <article key={guide.score} className="rounded-2xl border border-sky-200 bg-white px-4 py-4 text-sm text-slate-700">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-700">{guide.score}</p>
-              <p className="mt-2 font-semibold text-slate-950">{guide.label}</p>
-            </article>
+            <label key={`synergy-${guide.score}`} className="flex items-center gap-3 rounded-2xl border border-sky-200 bg-white px-4 py-4 text-sm text-slate-700">
+              <input
+                type="radio"
+                name="synergyFinalScore"
+                checked={synergyReview.score === guide.score}
+                disabled={!canEdit || isPending}
+                onChange={() => setSynergyReview((current) => ({ ...current, score: guide.score }))}
+              />
+              <span>{guide.label}</span>
+            </label>
           ))}
         </div>
+        <textarea
+          value={synergyReview.comment}
+          disabled={!canEdit || isPending}
+          onChange={(event) => setSynergyReview((current) => ({ ...current, comment: event.target.value }))}
+          rows={5}
+          className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
+          placeholder="協調相乗力全体に対する最終コメントを入力"
+        />
+        {showSynergyDetails ? renderReferenceItems(synergyItems, true) : null}
       </section>
-
-      <div className="space-y-5">
-        {groupByMajorCategory(synergyItems).map(([majorCategory, groupedItems]) => (
-          <section key={majorCategory} className="rounded-3xl border border-slate-200 p-4">
-            <h3 className="text-lg font-semibold text-slate-950">{majorCategory}</h3>
-            <div className="mt-4 space-y-4">
-              {groupedItems.map((item) => (
-                <article key={item.evaluationItemId} className="rounded-2xl bg-slate-50 p-4">
-                  <div className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
-                    <div className="rounded-2xl bg-white p-4">
-                      <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.minorCategory}</p>
-                      <h4 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h4>
-                      <p className="mt-1 text-sm text-slate-500">自己 {item.selfScore} / 重み {item.weight} / 継続実践を評価{item.evidenceRequired ? " / 根拠コメント必須" : ""}</p>
-                      <p className="mt-4 whitespace-pre-wrap text-sm text-slate-700">{item.selfComment || "自己コメントなし"}</p>
-                    </div>
-                    <div className="rounded-2xl bg-white p-4">
-                      <p className="text-sm text-slate-500">上長 {item.managerScore}</p>
-                      <p className="mt-4 whitespace-pre-wrap text-sm text-slate-700">{item.managerComment || "上長コメントなし"}</p>
-                    </div>
-                    <div>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {synergyGuide.map((guide) => (
-                          <label key={`${item.evaluationItemId}-${guide.score}`} className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700">
-                            <input
-                              type="radio"
-                              name={item.evaluationItemId}
-                              checked={item.finalScore === guide.score}
-                              disabled={!canEdit || isPending}
-                              onChange={() => setItems((current) => current.map((row) => row.evaluationItemId === item.evaluationItemId ? { ...row, finalScore: guide.score } : row))}
-                            />
-                            {guide.label}
-                          </label>
-                        ))}
-                      </div>
-                      <textarea
-                        value={item.finalComment}
-                        disabled={!canEdit || isPending}
-                        onChange={(event) => setItems((current) => current.map((row) => row.evaluationItemId === item.evaluationItemId ? { ...row, finalComment: event.target.value } : row))}
-                        rows={4}
-                        className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-                        placeholder={item.evidenceRequired ? "継続実践の事実、頻度、成果を最終コメントとして必ず入力" : "継続実践の事実、頻度、成果を最終コメントとして入力"}
-                      />
-                      <EvidenceInputList
-                        disabled={!canEdit || isPending || item.finalScore !== 1}
-                        evidences={item.evidences}
-                        required={item.evidenceRequired && item.finalScore === 1}
-                        onChange={(next: EvaluationEvidence[]) =>
-                          setItems((current) =>
-                            current.map((row) =>
-                              row.evaluationItemId === item.evaluationItemId ? { ...row, evidences: next } : row,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
 
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">最終総括コメント</h3>
