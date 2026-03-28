@@ -189,6 +189,11 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
 
       <ExpectedFulfillmentRankGuide />
 
+      <section className="rounded-3xl border border-slate-200 p-4">
+        <h3 className="font-semibold text-slate-950">上長総括コメント</h3>
+        <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{defaults.managerComment || "上長コメントはありません。"}</p>
+      </section>
+
       <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-4">
         <h3 className="font-semibold text-slate-950">自律成長力</h3>
         <p className="mt-1 text-sm text-slate-600">仕事を通じて必要とされる存在になる力を最終確定します。</p>
