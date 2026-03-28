@@ -547,3 +547,31 @@ export async function updateMembershipHistory(input: { membershipId: string; sta
     return { success: true as const, source: "fallback" as const };
   }
 }
+
+export async function deleteMembershipHistory(input: { membershipId: string }) {
+  try {
+    await prisma.$transaction(async (tx) => {
+      const membership = await tx.teamMembership.findUnique({
+        where: { id: input.membershipId },
+        select: { id: true, userId: true },
+      });
+
+      if (!membership) {
+        throw new Error("所属履歴が見つかりません。");
+      }
+
+      await tx.teamMembership.delete({
+        where: { id: input.membershipId },
+      });
+
+      await syncUserDepartmentFromActiveMembership(tx, membership.userId);
+    });
+
+    return { success: true as const, source: "database" as const };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    return { success: true as const, source: "fallback" as const };
+  }
+}

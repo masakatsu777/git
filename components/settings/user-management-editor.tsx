@@ -378,6 +378,24 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
     });
   }
 
+
+  async function handleMembershipHistoryDelete(membershipId: string) {
+    setMessage(null);
+    startTransition(async () => {
+      const response = await fetch("/api/users/membership-history", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ membershipId }),
+      });
+
+      const responsePayload = (await response.json()) as { message?: string };
+      setMessage(responsePayload.message ?? (response.ok ? "所属履歴を削除しました" : "所属履歴の削除に失敗しました"));
+      if (response.ok) {
+        router.refresh();
+      }
+    });
+  }
+
   async function handleCreateUser() {
     if (!createForm.employeeCode || !createForm.name || !createForm.email || !createForm.roleId || !createForm.password || !createForm.joinedAt) {
       setMessage("新規ユーザーの必須項目を入力してください。");
@@ -717,6 +735,9 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
                             未所属にする
                           </button>
                         ) : null}
+                        <button type="button" onClick={() => handleMembershipHistoryDelete(history.membershipId)} disabled={!canEdit || isPending} className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-700 disabled:opacity-60">
+                          削除
+                        </button>
                       </div>
                     </td>
                   </tr>
