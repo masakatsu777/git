@@ -158,8 +158,8 @@ function resolveDisplayStage(status: string): FinalReviewDisplayStage {
 
 function resolveDisplayedFinalRating(managerComment: string | null | undefined, storedFinalRating: string | null | undefined, displayStage: FinalReviewDisplayStage, totalScore: number) {
   const managerMeta = decodeManagerOverallComment(managerComment);
-  if (displayStage !== "FINAL" && managerMeta.expectedFulfillmentRank) {
-    return managerMeta.expectedFulfillmentRank;
+  if (displayStage !== "FINAL") {
+    return managerMeta.expectedFulfillmentRank ?? "未";
   }
   if (storedFinalRating) {
     return storedFinalRating;

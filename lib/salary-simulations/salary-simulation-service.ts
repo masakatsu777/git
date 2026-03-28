@@ -27,7 +27,9 @@ export type SalarySimulationRow = {
   synergyBaseAmount: number;
   baseSalaryReference: number;
   grossProfitAchievementRate: number;
+  grossProfitVarianceRate: number;
   grossProfitMultiplier: number;
+  grossProfitDeductionAmount: number;
   finalSalaryReference: number;
   recommendedMinRaiseRate: number;
   recommendedMaxRaiseRate: number;
@@ -195,7 +197,9 @@ function fallbackBundle(): SalarySimulationBundle {
       synergyBaseAmount: 10000,
       baseSalaryReference: 310000,
       grossProfitAchievementRate: 100,
+      grossProfitVarianceRate: 0,
       grossProfitMultiplier: 1,
+      grossProfitDeductionAmount: 0,
       finalSalaryReference: 310000,
       currentSalary: 390000,
       recommendedMinRaiseRate: 4,
@@ -229,7 +233,9 @@ function fallbackBundle(): SalarySimulationBundle {
       synergyBaseAmount: 10000,
       baseSalaryReference: 360000,
       grossProfitAchievementRate: 100,
+      grossProfitVarianceRate: 0,
       grossProfitMultiplier: 1,
+      grossProfitDeductionAmount: 0,
       finalSalaryReference: 360000,
       currentSalary: 380000,
       recommendedMinRaiseRate: 4,
@@ -374,6 +380,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const baseSalaryReference = selfGrowthBaseAmount + synergyBaseAmount;
         const snapshot = teamSnapshotMap.get(`${evaluation.team.id}:${yearMonth}`);
         const grossProfitAchievementRate = !snapshot || Number(snapshot.targetGrossProfitRate) <= 0 ? 100 : round((Number(snapshot.actualGrossProfitRate) / Number(snapshot.targetGrossProfitRate)) * 100);
+        const grossProfitVarianceRate = snapshot ? round(toNumber(snapshot.varianceRate)) : 0;
         const grossProfitMultiplier = resolveGrossProfitMultiplier(salaryStructure.grossProfitAdjustments, grossProfitAchievementRate);
         const finalSalaryReference = Math.round(baseSalaryReference * grossProfitMultiplier);
         const newSalary = saved ? toNumber(saved.newSalary) : finalSalaryReference;
@@ -382,6 +389,8 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const points = calculateAxisPoints(evaluation.scores);
         const gradeCalculationAmount = points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
         const gradeSalaryAmount = gradeSalarySetting.baseAmount + gradeCalculationAmount;
+        const grossProfitDeductionRate = Math.max(0, -grossProfitVarianceRate);
+        const grossProfitDeductionAmount = Math.round(gradeSalaryAmount * (grossProfitDeductionRate / 100));
 
         return {
           userId: evaluation.userId,
@@ -398,7 +407,9 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
           synergyBaseAmount,
           baseSalaryReference,
           grossProfitAchievementRate,
+          grossProfitVarianceRate,
           grossProfitMultiplier,
+          grossProfitDeductionAmount,
           finalSalaryReference,
           recommendedMinRaiseRate: ruleRange.min,
           recommendedMaxRaiseRate: ruleRange.max,
