@@ -370,6 +370,64 @@ function fallbackBundle(role: string): SelfReviewBundle {
   };
 }
 
+async function getPreviousClearedSelfGrowthCategories(userId: string, evaluationPeriodId: string) {
+  const periods = await prisma.evaluationPeriod.findMany({
+    orderBy: [{ startDate: "desc" }],
+    select: { id: true },
+  });
+  const currentIndex = periods.findIndex((period) => period.id === evaluationPeriodId);
+  if (currentIndex < 0 || currentIndex >= periods.length - 1) {
+    return new Set<string>();
+  }
+
+  const previousPeriodId = periods[currentIndex + 1]?.id;
+  if (!previousPeriodId) {
+    return new Set<string>();
+  }
+
+  const previousEvaluation = await prisma.employeeEvaluation.findUnique({
+    where: {
+      userId_evaluationPeriodId: {
+        userId,
+        evaluationPeriodId: previousPeriodId,
+      },
+    },
+    select: {
+      scores: {
+        where: { reviewType: ReviewType.MANAGER },
+        select: {
+          score: true,
+          evaluationItem: {
+            select: {
+              title: true,
+              description: true,
+              category: true,
+              axis: true,
+              scoreType: true,
+              majorCategory: true,
+              minorCategory: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const categoryStates = new Map<string, boolean>();
+  for (const row of previousEvaluation?.scores ?? []) {
+    const meta = resolveStoredItemMetaFromRow(row.evaluationItem);
+    if (meta.axis !== "SELF_GROWTH" || meta.inputScope === "SELF" || meta.inputScope === "ADMIN") {
+      continue;
+    }
+
+    const isCleared = normalizeScore(toNumber(row.score), meta.scoreType) >= 2;
+    const previous = categoryStates.get(meta.majorCategory);
+    categoryStates.set(meta.majorCategory, previous === undefined ? isCleared : previous && isCleared);
+  }
+
+  return new Set(Array.from(categoryStates.entries()).filter(([, cleared]) => cleared).map(([majorCategory]) => majorCategory));
+}
+
 export async function getSelfReviewBundle(userId: string, role: string, evaluationPeriodId?: string): Promise<SelfReviewBundle> {
   if (!hasDatabaseUrl()) {
     return fallbackBundle(role);
@@ -378,7 +436,7 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
 
-    const [evaluation, itemRows] = await Promise.all([
+    const [evaluation, itemRows, clearedSelfGrowthCategories] = await Promise.all([
       prisma.employeeEvaluation.findUnique({
         where: {
           userId_evaluationPeriodId: {
@@ -426,6 +484,7 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
           displayOrder: true,
         },
       }),
+      getPreviousClearedSelfGrowthCategories(userId, period.id),
     ]);
 
     const scoreMap = new Map(evaluation?.scores.map((row) => [row.evaluationItemId, row]));
@@ -435,7 +494,12 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
         return [];
       }
       const scoreType = meta.scoreType;
-      const rawScore = toNumber(scoreMap.get(item.id)?.score);
+      const savedScore = scoreMap.get(item.id);
+      const rawScore = savedScore
+        ? toNumber(savedScore.score)
+        : meta.axis === "SELF_GROWTH" && clearedSelfGrowthCategories.has(meta.majorCategory)
+          ? 2
+          : 0;
       const normalizedScore = normalizeScore(rawScore, scoreType);
 
       return [{
@@ -452,9 +516,9 @@ export async function getSelfReviewBundle(userId: string, role: string, evaluati
         displayOrder: item.displayOrder ?? 0,
         maxScore: scoreType === "LEVEL_2" ? 2 : 1,
         score: normalizedScore,
-        comment: scoreMap.get(item.id)?.comment ?? "",
+        comment: savedScore?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
-        evidences: normalizeEvidences(scoreMap.get(item.id)?.evidences),
+        evidences: normalizeEvidences(savedScore?.evidences),
         inputScope: meta.inputScope,
       }];
     });
