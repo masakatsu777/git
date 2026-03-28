@@ -371,7 +371,16 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
     await Promise.all(evaluations.map(async (evaluation) => {
       const key = evaluation.team.id;
       if (!teamSnapshotMap.has(key)) {
-        const snapshots = await Promise.all(coveredYearMonths.map((yearMonth) => getTeamMonthlySnapshot(evaluation.team.id, yearMonth)));
+        const existingMonths = await prisma.teamMonthlyPl.findMany({
+          where: {
+            teamId: evaluation.team.id,
+            yearMonth: { in: coveredYearMonths },
+          },
+          select: { yearMonth: true },
+          orderBy: { yearMonth: 'asc' },
+        });
+        const targetMonths = existingMonths.map((row) => row.yearMonth);
+        const snapshots = await Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(evaluation.team.id, yearMonth)));
         teamSnapshotMap.set(key, snapshots);
       }
     }));

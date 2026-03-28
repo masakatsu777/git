@@ -270,7 +270,16 @@ async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, eva
     });
 
     const yearMonths = buildPeriodYearMonths(period.startDate, period.endDate);
-    const snapshots = await Promise.all(yearMonths.map((yearMonth) => getTeamMonthlySnapshot(teamId, yearMonth)));
+    const existingMonths = await prisma.teamMonthlyPl.findMany({
+      where: {
+        teamId,
+        yearMonth: { in: yearMonths },
+      },
+      select: { yearMonth: true },
+      orderBy: { yearMonth: 'asc' },
+    });
+    const targetMonths = existingMonths.map((row) => row.yearMonth);
+    const snapshots = await Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(teamId, yearMonth)));
     const salesTotal = snapshots.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
     const finalGrossProfit = snapshots.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0);
     const targetGrossProfitRate = snapshots.length > 0
