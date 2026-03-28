@@ -119,6 +119,17 @@ function createSnapshot(teamId: string, teamName: string, yearMonth: string, sou
   };
 }
 
+function isEffectivelyEmptySnapshot(snapshot: TeamMonthlySnapshot) {
+  return snapshot.salesTotal === 0
+    && snapshot.directLaborCost === 0
+    && snapshot.outsourcingCost === 0
+    && snapshot.indirectCost === 0
+    && snapshot.fixedCostAllocation === 0
+    && snapshot.grossProfit1 === 0
+    && snapshot.grossProfit2 === 0
+    && snapshot.finalGrossProfit === 0;
+}
+
 type TeamMonthlyPlStatus = "DRAFT" | "CONFIRMED";
 
 async function persistSnapshot(snapshot: TeamMonthlySnapshot, status: TeamMonthlyPlStatus) {
@@ -407,6 +418,16 @@ export async function saveMonthlyTargetRates(input: SaveMonthlyTargetRatesInput)
           },
         });
 
+        if (isEffectivelyEmptySnapshot(snapshot)) {
+          await tx.teamMonthlyPl.deleteMany({
+            where: {
+              teamId: snapshot.teamId,
+              yearMonth: snapshot.yearMonth,
+            },
+          });
+          continue;
+        }
+
         await tx.teamMonthlyPl.upsert({
           where: {
             teamId_yearMonth: {
@@ -469,6 +490,10 @@ export async function recalculateTeamMonthlyPl(teamId: string, yearMonth: string
     } catch {}
     return getTeamMonthlySnapshot(teamId, yearMonth);
   })();
+
+  if (isEffectivelyEmptySnapshot(snapshot)) {
+    return snapshot;
+  }
 
   try {
     await persistSnapshot(snapshot, "CONFIRMED");
