@@ -33,7 +33,7 @@ const synergyGuide = [
 ] as const;
 
 function calculateTotal(items: SelfReviewBundle["items"]) {
-  return Math.round(items.reduce((sum, item) => sum + (item.score * item.weight) / 100, 0) * 100) / 100;
+  return Math.round(items.reduce((sum, item) => sum + item.score * item.weight, 0) * 100) / 100;
 }
 
 function sortItems<T extends { majorCategoryOrder: number; minorCategoryOrder: number; displayOrder: number; evaluationItemId: string }>(items: T[]) {

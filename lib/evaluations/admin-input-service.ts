@@ -75,7 +75,7 @@ function normalizeEvidences(
 }
 
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
-  return round2(items.reduce((sum, item) => sum + (item.score * item.weight) / 100, 0));
+  return round2(items.reduce((sum, item) => sum + item.score * item.weight, 0));
 }
 
 function sortItems<T extends { majorCategoryOrder: number; minorCategoryOrder: number; displayOrder: number; evaluationItemId: string }>(items: T[]) {

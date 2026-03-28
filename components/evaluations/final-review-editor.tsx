@@ -28,7 +28,7 @@ const synergyGuide = [
 ] as const;
 
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
-  return Math.round(items.reduce((sum, item) => sum + (item.score * item.weight) / 100, 0) * 100) / 100;
+  return Math.round(items.reduce((sum, item) => sum + item.score * item.weight, 0) * 100) / 100;
 }
 
 function deriveRating(score: number) {
