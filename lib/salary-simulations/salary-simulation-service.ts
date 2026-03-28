@@ -282,19 +282,17 @@ async function resolvePeriod(evaluationPeriodId?: string) {
   });
 }
 
-function resolveSnapshotYearMonth(periodStartDate: Date, periodEndDate: Date) {
-  const today = new Date();
-  const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const startMonth = new Date(periodStartDate.getFullYear(), periodStartDate.getMonth(), 1);
-  const endMonth = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), 1);
+function buildPeriodYearMonths(periodStartDate: Date, periodEndDate: Date) {
+  const months: string[] = [];
+  const cursor = new Date(periodStartDate.getFullYear(), periodStartDate.getMonth(), 1);
+  const end = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), 1);
 
-  if (currentMonth < startMonth) {
-    return toYearMonth(startMonth);
+  while (cursor <= end) {
+    months.push(toYearMonth(cursor));
+    cursor.setMonth(cursor.getMonth() + 1);
   }
-  if (currentMonth > endMonth) {
-    return toYearMonth(endMonth);
-  }
-  return toYearMonth(currentMonth);
+
+  return months;
 }
 
 function getApplyEffectiveFrom(periodEndDate: Date) {
@@ -368,12 +366,13 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
       },
     });
 
-    const yearMonth = resolveSnapshotYearMonth(period.startDate, period.endDate);
+    const coveredYearMonths = buildPeriodYearMonths(period.startDate, period.endDate);
     const teamSnapshotMap = new Map();
     await Promise.all(evaluations.map(async (evaluation) => {
-      const key = `${evaluation.team.id}:${yearMonth}`;
+      const key = evaluation.team.id;
       if (!teamSnapshotMap.has(key)) {
-        teamSnapshotMap.set(key, await getTeamMonthlySnapshot(evaluation.team.id, yearMonth));
+        const snapshots = await Promise.all(coveredYearMonths.map((yearMonth) => getTeamMonthlySnapshot(evaluation.team.id, yearMonth)));
+        teamSnapshotMap.set(key, snapshots);
       }
     }));
 
@@ -394,9 +393,15 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const selfGrowthBaseAmount = getBandAmount(salaryStructure.selfGrowthBands, selfGrowthGradeCode);
         const synergyBaseAmount = getBandAmount(salaryStructure.synergyBands, synergyGradeCode);
         const baseSalaryReference = selfGrowthBaseAmount + synergyBaseAmount;
-        const snapshot = teamSnapshotMap.get(`${evaluation.team.id}:${yearMonth}`);
-        const grossProfitAchievementRate = !snapshot || Number(snapshot.targetGrossProfitRate) <= 0 ? 100 : round((Number(snapshot.actualGrossProfitRate) / Number(snapshot.targetGrossProfitRate)) * 100);
-        const grossProfitVarianceRate = snapshot ? round(toNumber(snapshot.varianceRate)) : 0;
+        const snapshots = (teamSnapshotMap.get(evaluation.team.id) ?? []) as Array<{ salesTotal: number; finalGrossProfit: number; targetGrossProfitRate: number }>;
+        const periodSalesTotal = snapshots.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
+        const periodFinalGrossProfit = snapshots.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0);
+        const periodTargetGrossProfitRate = snapshots.length > 0
+          ? round(snapshots.reduce((sum, row) => sum + Number(row.targetGrossProfitRate ?? 0), 0) / snapshots.length)
+          : 0;
+        const periodActualGrossProfitRate = periodSalesTotal === 0 ? 0 : round((periodFinalGrossProfit / periodSalesTotal) * 100);
+        const grossProfitAchievementRate = periodTargetGrossProfitRate <= 0 ? 100 : round((periodActualGrossProfitRate / periodTargetGrossProfitRate) * 100);
+        const grossProfitVarianceRate = round(periodActualGrossProfitRate - periodTargetGrossProfitRate);
         const grossProfitMultiplier = resolveGrossProfitMultiplier(salaryStructure.grossProfitAdjustments, grossProfitAchievementRate);
         const finalSalaryReference = Math.round(baseSalaryReference * grossProfitMultiplier);
         const newSalary = saved ? toNumber(saved.newSalary) : finalSalaryReference;
