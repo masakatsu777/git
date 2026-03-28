@@ -1,3 +1,4 @@
+import { prisma } from "@/lib/prisma";
 import { getTeamMonthlySnapshot, getVisibleTeamOptions, getVisibleYearMonthOptions, saveMonthlyTargetRates, type TeamMonthlySnapshot } from "@/lib/pl/service";
 
 export type FiscalYearOption = {
@@ -273,13 +274,34 @@ export async function getAnnualDashboardBundle(
   async function buildRangeSummary(targetFiscalYear: number, targetMonths: string[], targetPreviousMonths: string[]) {
     const yearSummaries = await Promise.all(
       teams.map(async (team) => {
-        const [snapshots, previousSnapshots] = await Promise.all([
-          Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(team.teamId, yearMonth))),
-          Promise.all(targetPreviousMonths.map((yearMonth) => getTeamMonthlySnapshot(team.teamId, yearMonth))),
+        const [existingCurrentMonths, existingPreviousMonths] = await Promise.all([
+          prisma.teamMonthlyPl.findMany({
+            where: {
+              teamId: team.teamId,
+              yearMonth: { in: targetMonths },
+            },
+            select: { yearMonth: true },
+            orderBy: { yearMonth: "asc" },
+          }),
+          prisma.teamMonthlyPl.findMany({
+            where: {
+              teamId: team.teamId,
+              yearMonth: { in: targetPreviousMonths },
+            },
+            select: { yearMonth: true },
+            orderBy: { yearMonth: "asc" },
+          }),
         ]);
-        const covered = snapshots.filter((snapshot) => snapshot.salesTotal > 0 || snapshot.finalGrossProfit !== 0 || snapshot.targetGrossProfitRate > 0);
-        const previousCovered = previousSnapshots.filter((snapshot) => snapshot.salesTotal > 0 || snapshot.finalGrossProfit !== 0 || snapshot.targetGrossProfitRate > 0);
-        return sumSnapshots(team.teamId, team.teamName, targetFiscalYear, resolvedFiscalStartMonth, covered, previousCovered);
+
+        const currentMonths = existingCurrentMonths.map((row) => row.yearMonth);
+        const previousMonthsForTeam = existingPreviousMonths.map((row) => row.yearMonth);
+
+        const [snapshots, previousSnapshots] = await Promise.all([
+          Promise.all(currentMonths.map((yearMonth) => getTeamMonthlySnapshot(team.teamId, yearMonth))),
+          Promise.all(previousMonthsForTeam.map((yearMonth) => getTeamMonthlySnapshot(team.teamId, yearMonth))),
+        ]);
+
+        return sumSnapshots(team.teamId, team.teamName, targetFiscalYear, resolvedFiscalStartMonth, snapshots, previousSnapshots);
       }),
     );
 
