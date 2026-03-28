@@ -84,6 +84,7 @@ function getSelfSummary(items: ManagerReviewItem[]) {
   return scoreSummary || "自己評価なし";
 }
 
+
 export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorProps) {
   const router = useRouter();
   const [items, setItems] = useState(defaults.items);
@@ -183,6 +184,11 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
         </div>
       </section>
 
+      <section className="rounded-3xl border border-slate-200 p-4">
+        <h3 className="font-semibold text-slate-950">本人の総括コメント</h3>
+        <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700">{defaults.selfComment || "本人の総括コメントは未入力です。"}</div>
+      </section>
+
       <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-4">
         <h3 className="font-semibold text-slate-950">自律成長力</h3>
         <p className="mt-1 text-sm text-slate-600">大分類単位で未着手・チャレンジ中・クリアを判定し、コメントを入力します。</p>
@@ -208,6 +214,36 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
                     </div>
                     <h4 className="mt-3 text-lg font-semibold text-slate-950">{group.majorCategory}</h4>
                     <p className="mt-1 text-sm text-slate-500">本人入力: {getSelfSummary(group.items)}</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-3 rounded-2xl border border-sky-100 bg-white/80 p-4">
+                  <p className="text-sm font-semibold text-slate-950">本人入力の詳細</p>
+                  <div className="space-y-3">
+                    {group.items.map((item) => (
+                      <article key={`${group.key}-${item.evaluationItemId}-self`} className="rounded-2xl bg-sky-50/60 px-4 py-3 text-sm text-slate-700">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-sky-700">{item.minorCategory}</span>
+                          <span className="text-xs text-slate-500">自己評価 {item.selfScore}</span>
+                        </div>
+                        <p className="mt-2 font-medium text-slate-900">{item.title}</p>
+                        <p className="mt-2 whitespace-pre-wrap leading-6">{item.selfComment || "本人コメントは未入力です。"}</p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 space-y-3 rounded-2xl border border-emerald-100 bg-white/80 p-4">
+                  <p className="text-sm font-semibold text-slate-950">本人入力の詳細</p>
+                  <div className="space-y-3">
+                    {group.items.map((item) => (
+                      <article key={`${group.key}-${item.evaluationItemId}-self`} className="rounded-2xl bg-emerald-50/60 px-4 py-3 text-sm text-slate-700">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold tracking-[0.18em] text-emerald-700">{item.minorCategory}</span>
+                          <span className="text-xs text-slate-500">自己評価 {item.selfScore}</span>
+                        </div>
+                        <p className="mt-2 font-medium text-slate-900">{item.title}</p>
+                        <p className="mt-2 whitespace-pre-wrap leading-6">{item.selfComment || "本人コメントは未入力です。"}</p>
+                      </article>
+                    ))}
                   </div>
                 </div>
                 <div className="mt-4 grid gap-2 md:grid-cols-3">
