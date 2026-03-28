@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
@@ -44,6 +45,8 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
   const [rows, setRows] = useState<EditableRow[]>(defaults.rows);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const isPreview = defaults.source !== "database";
+  const canPersist = canEdit && !isPreview;
 
   const sortedRows = useMemo(
     () =>
@@ -89,7 +92,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
-            disabled={!canEdit || isPending}
+            disabled={!canPersist || isPending}
             onClick={() => setRows((current) => [createRow(), ...current])}
             className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 disabled:opacity-50"
           >
@@ -98,13 +101,20 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
           <button
             type="button"
             onClick={handleSave}
-            disabled={!canEdit || isPending}
+            disabled={!canPersist || isPending}
             className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
           >
             {isPending ? "処理中..." : "評価期間を保存"}
           </button>
         </div>
       </div>
+
+      {isPreview ? (
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+          <p className="font-semibold">DB未接続のため保存できません</p>
+          <p className="mt-1 text-rose-800">この画面はプレビュー表示です。追加・編集内容は再読込後に保持されません。DATABASE_URL と DB 接続状態を確認してください。</p>
+        </div>
+      ) : null}
 
       <div className="grid gap-3 md:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
@@ -131,6 +141,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
               <th className="px-4 py-3 font-medium">終了日</th>
               <th className="px-4 py-3 font-medium">状態</th>
               <th className="px-4 py-3 font-medium">利用件数</th>
+              <th className="px-4 py-3 font-medium">初期設定</th>
             </tr>
           </thead>
           <tbody>
@@ -142,7 +153,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                     <input
                       type="text"
                       value={row.name}
-                      disabled={!canEdit || isPending}
+                      disabled={!canPersist || isPending}
                       onChange={(event) => updateRow(index, { name: event.target.value })}
                       placeholder="例: 2025年度下期"
                       className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
@@ -151,7 +162,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                   <td className="px-4 py-3">
                     <select
                       value={row.periodType}
-                      disabled={!canEdit || isPending}
+                      disabled={!canPersist || isPending}
                       onChange={(event) => updateRow(index, { periodType: event.target.value as PeriodTypeValue })}
                       className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
                     >
@@ -166,7 +177,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                     <input
                       type="date"
                       value={row.startDate}
-                      disabled={!canEdit || isPending}
+                      disabled={!canPersist || isPending}
                       onChange={(event) => updateRow(index, { startDate: event.target.value })}
                       className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
                     />
@@ -175,7 +186,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                     <input
                       type="date"
                       value={row.endDate}
-                      disabled={!canEdit || isPending}
+                      disabled={!canPersist || isPending}
                       onChange={(event) => updateRow(index, { endDate: event.target.value })}
                       className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
                     />
@@ -183,7 +194,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                   <td className="px-4 py-3">
                     <select
                       value={row.status}
-                      disabled={!canEdit || isPending}
+                      disabled={!canPersist || isPending}
                       onChange={(event) => updateRow(index, { status: event.target.value as EvaluationPeriodStatusValue })}
                       className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
                     >
@@ -197,6 +208,18 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                   <td className="px-4 py-3 text-slate-700">
                     <p className="font-semibold text-slate-950">{row.evaluationCount}件</p>
                     <p className="mt-1 text-xs text-slate-500">{row.id ? `ID: ${row.id}` : "保存後にIDを採番します"}</p>
+                  </td>
+                  <td className="px-4 py-3">
+                    {row.id ? (
+                      <Link
+                        href={`/evaluations/admin?evaluationPeriodId=${row.id}`}
+                        className="inline-flex rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+                      >
+                        評価初期設定
+                      </Link>
+                    ) : (
+                      <span className="text-xs text-slate-400">保存後に利用できます</span>
+                    )}
                   </td>
                 </tr>
               );

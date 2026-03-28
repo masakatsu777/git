@@ -18,15 +18,9 @@ type CategoryGroup = {
   items: AdminInputItem[];
 };
 
-const selfGrowthGuide = [
-  { score: 0, label: "未設定" },
-  { score: 1, label: "一部設定済み" },
-  { score: 2, label: "設定済み" },
-] as const;
-
-const synergyGuide = [
-  { score: 0, label: "未設定" },
-  { score: 1, label: "設定済み" },
+const adminGuide = [
+  { score: 0, label: "非該当" },
+  { score: 1, label: "該当" },
 ] as const;
 
 function sortItems<T extends { majorCategoryOrder: number; minorCategoryOrder: number; displayOrder: number; evaluationItemId: string }>(items: T[]) {
@@ -71,6 +65,7 @@ export function AdminInputEditor({ canEdit, defaults }: AdminInputEditorProps) {
   const [message, setMessage] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [isPending, startSaving] = useTransition();
+  const [isCopyPending, startCopying] = useTransition();
 
   const total = useMemo(() => calculateTotal(items), [items]);
   const selfGrowthCategories = useMemo(() => groupByMajorCategory(items.filter((item) => item.axis === "SELF_GROWTH")), [items]);
@@ -121,9 +116,32 @@ export function AdminInputEditor({ canEdit, defaults }: AdminInputEditorProps) {
     });
   }
 
+  async function handleCopyPrevious() {
+    setMessage(null);
+    startCopying(async () => {
+      const response = await fetch("/api/evaluations/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "copyPrevious",
+          evaluationPeriodId: defaults.evaluationPeriodId,
+          teamId: defaults.teamId,
+          userId: defaults.selectedUserId,
+        }),
+      });
+
+      const result = (await response.json()) as { message?: string; data?: AdminInputBundle };
+      setMessage(result.message ?? (response.ok ? "前期間からコピーしました" : "コピーに失敗しました"));
+      if (response.ok && result.data) {
+        setItems(result.data.items);
+        setSelfComment(result.data.selfComment);
+        router.refresh();
+      }
+    });
+  }
+
   function renderCategory(group: CategoryGroup) {
     const expanded = Boolean(expandedCategories[group.key]);
-    const guide = group.axis === "SELF_GROWTH" ? selfGrowthGuide : synergyGuide;
 
     return (
       <section key={group.key} className="rounded-3xl border border-slate-200 bg-white p-4">
@@ -141,8 +159,8 @@ export function AdminInputEditor({ canEdit, defaults }: AdminInputEditorProps) {
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-400">{item.minorCategory}</p>
                 <h4 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h4>
                 <p className="mt-1 text-sm text-slate-500">重み: {item.weight}</p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  {guide.map((option) => (
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {adminGuide.map((option) => (
                     <label key={option.score} className={`rounded-2xl border px-4 py-3 text-sm ${item.score === option.score ? "border-brand-300 bg-brand-50 text-slate-950" : "border-slate-200 bg-white text-slate-600"}`}>
                       <input
                         type="radio"
@@ -219,7 +237,20 @@ export function AdminInputEditor({ canEdit, defaults }: AdminInputEditorProps) {
 
       {defaults.members.length > 0 ? (
         <section className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-          <h3 className="font-semibold text-slate-950">対象メンバー</h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="font-semibold text-slate-950">対象メンバー</h3>
+              <p className="mt-1 text-sm text-slate-500">前期間からのコピーは、このチームの現行メンバー全員を対象に実行します。</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleCopyPrevious}
+              disabled={!canEdit || isCopyPending}
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isCopyPending ? "コピー中..." : "前期間からコピー"}
+            </button>
+          </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {defaults.members.map((member) => (
               <a

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { getAdminInputBundle, saveAdminInputBundle } from "@/lib/evaluations/admin-input-service";
+import { copyAdminInputsFromPreviousPeriod, getAdminInputBundle, saveAdminInputBundle } from "@/lib/evaluations/admin-input-service";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 
@@ -46,12 +46,27 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = (await request.json()) as {
+      action?: string;
       evaluationPeriodId?: string;
       teamId?: string;
       userId?: string;
       selfComment?: string;
       items?: Array<Record<string, unknown>>;
     };
+
+    if (body.action === "copyPrevious") {
+      const result = await copyAdminInputsFromPreviousPeriod(
+        String(body.teamId ?? ""),
+        String(body.evaluationPeriodId ?? ""),
+        body.userId ? String(body.userId) : undefined,
+      );
+      const failedMessage = result.failedMembers.length > 0 ? ` コピーできなかった社員: ${result.failedMembers.join("、")}` : "";
+      return NextResponse.json({
+        data: result.bundle,
+        failedMembers: result.failedMembers,
+        message: `前期間「${result.previousPeriodName}」から ${result.copiedCount} 名分をコピーしました。${failedMessage}`.trim(),
+      });
+    }
 
     const bundle = await saveAdminInputBundle({
       evaluationPeriodId: String(body.evaluationPeriodId ?? ""),

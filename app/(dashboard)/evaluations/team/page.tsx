@@ -6,8 +6,7 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { getManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
 import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
-import { canEditManagerReview, canViewManagerReview, hasPermission } from "@/lib/permissions/check";
-import { PERMISSIONS } from "@/lib/permissions/definitions";
+import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
 import { getDepartmentScopedTeamIds, getVisibleTeamOptions } from "@/lib/pl/service";
 
 export default async function TeamEvaluationPage({
@@ -132,11 +131,6 @@ export default async function TeamEvaluationPage({
               <Link href={`/evaluations/my?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 半期自己評価
               </Link>
-              {hasPermission(user, PERMISSIONS.masterWrite) ? (
-                <Link href={`/evaluations/admin?evaluationPeriodId=${bundle.evaluationPeriodId}&teamId=${bundle.teamId}${effectiveMemberId ? `&memberId=${effectiveMemberId}` : ""}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                  評価初期設定
-                </Link>
-              ) : null}
             </div>
           </div>
         </header>
