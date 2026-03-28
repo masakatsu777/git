@@ -5,7 +5,7 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { getEvaluationProgressBundle } from "@/lib/evaluations/progress-service";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
-import { getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
+import { getCompanyTargetGrossProfitRate, getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
 import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
 import { formatCurrency } from "@/lib/format/currency";
 
@@ -26,7 +26,7 @@ export default async function DashboardPage({
   const showPersonalProfit = !canViewAll && !hasPrimaryTeam;
   const defaultTeamId = hasPrimaryTeam ? user.teamIds[0] : undefined;
 
-  const [snapshots, personalSummary, progress, yearMonthOptions] = await Promise.all([
+  const [snapshots, personalSummary, progress, yearMonthOptions, companyTargetGrossProfitRate] = await Promise.all([
     showPersonalProfit
       ? Promise.resolve([])
       : canViewAll
@@ -35,7 +35,26 @@ export default async function DashboardPage({
     showPersonalProfit ? getUnassignedPersonalProfitByUser(user.id, yearMonth) : Promise.resolve(null),
     getEvaluationProgressBundle(canViewAll ? undefined : user.teamIds),
     getVisibleYearMonthOptions(showPersonalProfit ? undefined : defaultTeamId),
+    showPersonalProfit || !canViewAll ? Promise.resolve(0) : getCompanyTargetGrossProfitRate(yearMonth),
   ]);
+
+  const aggregateSnapshot = !showPersonalProfit && canViewAll
+    ? (() => {
+        const salesTotal = snapshots.reduce((sum, row) => sum + row.salesTotal, 0);
+        const grossProfit1 = snapshots.reduce((sum, row) => sum + row.grossProfit1, 0);
+        const finalGrossProfit = snapshots.reduce((sum, row) => sum + row.finalGrossProfit, 0);
+        const actualGrossProfitRate = salesTotal === 0 ? 0 : Math.round((finalGrossProfit / salesTotal) * 100 * 100) / 100;
+        const varianceRate = Math.round((actualGrossProfitRate - companyTargetGrossProfitRate) * 100) / 100;
+        return {
+          salesTotal,
+          grossProfit1,
+          finalGrossProfit,
+          varianceRate,
+        };
+      })()
+    : null;
+
+  const primarySnapshot = aggregateSnapshot ?? snapshots[0];
 
   const summaryCards = showPersonalProfit
     ? [
@@ -45,10 +64,10 @@ export default async function DashboardPage({
         { label: "最終粗利", value: formatCurrency(personalSummary?.finalGrossProfit ?? 0), unit: "円" },
       ]
     : [
-        { label: "売上合計", value: formatCurrency(snapshots[0]?.salesTotal ?? 0), unit: "円" },
-        { label: "1次粗利", value: formatCurrency(snapshots[0]?.grossProfit1 ?? 0), unit: "円" },
-        { label: "最終粗利", value: formatCurrency(snapshots[0]?.finalGrossProfit ?? 0), unit: "円" },
-        { label: "粗利率差異", value: `${snapshots[0]?.varianceRate ?? 0}`, unit: "pt" },
+        { label: "売上合計", value: formatCurrency(primarySnapshot?.salesTotal ?? 0), unit: "円" },
+        { label: "1次粗利", value: formatCurrency(primarySnapshot?.grossProfit1 ?? 0), unit: "円" },
+        { label: "最終粗利", value: formatCurrency(primarySnapshot?.finalGrossProfit ?? 0), unit: "円" },
+        { label: "粗利率差異", value: `${primarySnapshot?.varianceRate ?? 0}`, unit: "pt" },
       ];
 
   return (

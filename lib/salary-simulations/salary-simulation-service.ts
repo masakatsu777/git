@@ -271,14 +271,30 @@ async function resolvePeriod(evaluationPeriodId?: string) {
     return {
       id: period.id,
       name: period.name,
+      startDate: new Date("2025-04-01T00:00:00.000Z"),
       endDate: new Date("2026-03-31T00:00:00.000Z"),
     };
   }
 
   return prisma.evaluationPeriod.findUniqueOrThrow({
     where: { id: period.id },
-    select: { id: true, name: true, endDate: true },
+    select: { id: true, name: true, startDate: true, endDate: true },
   });
+}
+
+function resolveSnapshotYearMonth(periodStartDate: Date, periodEndDate: Date) {
+  const today = new Date();
+  const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startMonth = new Date(periodStartDate.getFullYear(), periodStartDate.getMonth(), 1);
+  const endMonth = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), 1);
+
+  if (currentMonth < startMonth) {
+    return toYearMonth(startMonth);
+  }
+  if (currentMonth > endMonth) {
+    return toYearMonth(endMonth);
+  }
+  return toYearMonth(currentMonth);
 }
 
 function getApplyEffectiveFrom(periodEndDate: Date) {
@@ -352,7 +368,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
       },
     });
 
-    const yearMonth = toYearMonth(period.endDate);
+    const yearMonth = resolveSnapshotYearMonth(period.startDate, period.endDate);
     const teamSnapshotMap = new Map();
     await Promise.all(evaluations.map(async (evaluation) => {
       const key = `${evaluation.team.id}:${yearMonth}`;
