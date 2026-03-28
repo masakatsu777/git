@@ -29,7 +29,10 @@ export type SaveEvaluationPeriodsInput = {
 };
 
 function formatDate(value: Date) {
-  return value.toISOString().slice(0, 10);
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, "0");
+  const day = String(value.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function fallbackRows(): EvaluationPeriodAdminRow[] {
@@ -150,18 +153,7 @@ function validateRows(rows: SaveEvaluationPeriodsInput["rows"]) {
 export async function saveEvaluationPeriods(input: SaveEvaluationPeriodsInput): Promise<EvaluationPeriodAdminBundle> {
   const rows = validateRows(input.rows);
   if (!hasDatabaseUrl()) {
-    return {
-      source: "fallback",
-      rows: rows.map((row, index) => ({
-        id: row.id || `preview-${index}`,
-        name: row.name,
-        periodType: row.periodType,
-        startDate: row.startDate,
-        endDate: row.endDate,
-        status: row.status,
-        evaluationCount: 0,
-      })),
-    };
+    throw new Error("DB未接続のため評価期間を保存できません。DATABASE_URL を確認してください。");
   }
 
   await prisma.$transaction(async (tx) => {

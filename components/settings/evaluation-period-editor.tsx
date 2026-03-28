@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import type { EvaluationPeriodAdminBundle, EvaluationPeriodAdminRow } from "@/lib/evaluations/evaluation-period-admin-service";
 
@@ -47,16 +47,6 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
   const [isPending, startTransition] = useTransition();
   const isPreview = defaults.source !== "database";
   const canPersist = canEdit && !isPreview;
-
-  const sortedRows = useMemo(
-    () =>
-      [...rows].sort((a, b) => {
-        const dateCompare = b.startDate.localeCompare(a.startDate);
-        if (dateCompare !== 0) return dateCompare;
-        return a.name.localeCompare(b.name, "ja");
-      }),
-    [rows],
-  );
 
   function updateRow(index: number, patch: Partial<EditableRow>) {
     setRows((current) => current.map((row, rowIndex) => (rowIndex === index ? { ...row, ...patch } : row)));
@@ -145,8 +135,7 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map((row) => {
-              const index = rows.findIndex((candidate) => candidate === row);
+            {rows.map((row, index) => {
               return (
                 <tr key={row.id || `row-${index}`} className="border-t border-slate-200 align-top">
                   <td className="px-4 py-3">
