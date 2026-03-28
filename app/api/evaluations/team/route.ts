@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
 import { getManagerReviewBundle, saveManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
-import { getDepartmentScopedTeamIds } from "@/lib/pl/service";
+import { getDepartmentScopedTeamIds, getVisibleTeamOptions } from "@/lib/pl/service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 
 function toNumber(value: unknown) {
@@ -25,7 +25,8 @@ function normalizeEvidences(value: unknown) {
 export async function GET(request: NextRequest) {
   const user = await getSessionUser();
   const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
-  const requestedTeamId = request.nextUrl.searchParams.get("teamId") ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
+  const availableTeamOptions = user.role === "admin" || user.role === "president" ? await getVisibleTeamOptions() : [];
+  const requestedTeamId = request.nextUrl.searchParams.get("teamId") ?? availableTeamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
   const requestedMemberId = request.nextUrl.searchParams.get("memberId") ?? undefined;
   const effectiveMemberId = user.role === "employee" ? user.id : requestedMemberId;
 
@@ -62,7 +63,8 @@ export async function POST(request: NextRequest) {
     };
 
     const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
-    const teamId = String(body.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform");
+    const availableTeamOptions = user.role === "admin" || user.role === "president" ? await getVisibleTeamOptions() : [];
+    const teamId = String(body.teamId ?? availableTeamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform");
     if (user.role === "leader" && !visibleTeamIds.includes(teamId)) {
       return NextResponse.json({ message: "同部署のチームのみ参照できます" }, { status: 403 });
     }

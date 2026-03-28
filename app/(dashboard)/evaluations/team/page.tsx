@@ -30,7 +30,11 @@ export default async function TeamEvaluationPage({
   const periods = await getEvaluationPeriodOptions();
 
   const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
-  const requestedTeamId = params.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
+  const teamOptions = user.role === "employee"
+    ? []
+    : await getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.role === "leader" ? visibleTeamIds : user.teamIds);
+  const defaultTeamId = params.teamId ?? teamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
+  const requestedTeamId = defaultTeamId;
   const effectiveMemberId = user.role === "employee" ? user.id : params.memberId;
   const canView = canViewManagerReview(user, requestedTeamId, effectiveMemberId)
     && (user.role !== "leader" || visibleTeamIds.includes(requestedTeamId));
@@ -48,7 +52,6 @@ export default async function TeamEvaluationPage({
 
   const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId);
   const canEdit = canEditManagerReview(user, bundle.teamId) && bundle.periodStatus === "OPEN";
-  const teamOptions = user.role === "employee" ? [] : await getVisibleTeamOptions(user.role === "leader" ? visibleTeamIds : user.teamIds);
   const selectedMemberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 

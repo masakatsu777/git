@@ -25,7 +25,9 @@ export type ManagerReviewItem = {
   axis: SelfReviewAxis;
   scoreType: SelfReviewScoreType;
   majorCategory: string;
+  majorCategoryOrder: number;
   minorCategory: string;
+  minorCategoryOrder: number;
   weight: number;
   maxScore: number;
   selfScore: number;
@@ -122,10 +124,10 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
   ];
   const target = members.find((member) => member.userId === selectedUserId) ?? members[0];
   const items: ManagerReviewItem[] = [
-    { evaluationItemId: "item-it-foundation", title: "使用技術や業務知識の基礎を理解している", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", minorCategory: "基礎理解", weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
-    { evaluationItemId: "item-it-implementation", title: "設計意図を理解して実装へ落とし込める", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", minorCategory: "実装", weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
-    { evaluationItemId: "item-synergy-customer", title: "関係深化や追加提案につながる行動を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", minorCategory: "関係深化", weight: 8, maxScore: 1, selfScore: 0, selfComment: "単発対応はある", managerScore: 0, managerComment: "継続実践までは未到達", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
-    { evaluationItemId: "item-synergy-team", title: "レビューや伴走を通じて他者の成長支援を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", minorCategory: "レビュー支援", weight: 7, maxScore: 1, selfScore: 1, selfComment: "レビュー支援を継続", managerScore: 1, managerComment: "継続支援できている", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-it-foundation", title: "使用技術や業務知識の基礎を理解している", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "基礎理解", minorCategoryOrder: 10, weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-it-implementation", title: "設計意図を理解して実装へ落とし込める", category: "IT_SKILL", axis: "SELF_GROWTH", scoreType: "LEVEL_2", majorCategory: "ITスキル", majorCategoryOrder: 10, minorCategory: "実装", minorCategoryOrder: 20, weight: 25, maxScore: 2, selfScore: 0, selfComment: "", managerScore: 0, managerComment: "", evidenceRequired: false, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-synergy-customer", title: "関係深化や追加提案につながる行動を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "顧客拡張力", majorCategoryOrder: 10, minorCategory: "関係深化", minorCategoryOrder: 10, weight: 8, maxScore: 1, selfScore: 0, selfComment: "単発対応はある", managerScore: 0, managerComment: "継続実践までは未到達", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
+    { evaluationItemId: "item-synergy-team", title: "レビューや伴走を通じて他者の成長支援を継続して行っている", category: "BUSINESS_SKILL", axis: "SYNERGY", scoreType: "CONTINUOUS_DONE", majorCategory: "育成支援力", majorCategoryOrder: 20, minorCategory: "レビュー支援", minorCategoryOrder: 10, weight: 7, maxScore: 1, selfScore: 1, selfComment: "レビュー支援を継続", managerScore: 1, managerComment: "継続支援できている", evidenceRequired: true, evidences: [], inputScope: "BOTH" },
   ];
 
   return {
@@ -275,7 +277,9 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         axis: meta.axis,
         scoreType: meta.scoreType,
         majorCategory: meta.majorCategory,
+        majorCategoryOrder: meta.majorCategoryOrder,
         minorCategory: meta.minorCategory,
+        minorCategoryOrder: meta.minorCategoryOrder,
         weight: toNumber(item.weight),
         maxScore: meta.scoreType === "LEVEL_2" ? 2 : 1,
         selfScore: normalizeScore(toNumber(selfMap.get(item.id)?.score), meta.scoreType),
