@@ -70,7 +70,8 @@ export default async function EvaluationResultPage({
     );
   }
   const periods = await getEvaluationPeriodOptions();
-  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? periods[0]?.id;
+  const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
+  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? defaultEvaluationPeriodId;
 
   if (!params.evaluationPeriodId && selectedEvaluationPeriodId) {
     redirect(`/evaluations/result?evaluationPeriodId=${selectedEvaluationPeriodId}`);
@@ -109,20 +110,25 @@ export default async function EvaluationResultPage({
                 半期の評価結果と、年1回の昇給結果をまとめて確認できます。
               </p>
               <p className="mt-2 text-sm text-amber-200">{getDisplayStageLabel(finalReview.displayStage)}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {periods.map((period) => {
-                  const active = period.id === finalReview.evaluationPeriodId;
-                  return (
-                    <Link
-                      key={period.id}
-                      href={`/evaluations/result?evaluationPeriodId=${period.id}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
-                    >
-                      <span style={{ color: "#000000" }}>{period.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
+              <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
+                <label className="text-sm text-slate-200">
+                  評価期間
+                  <select
+                    name="evaluationPeriodId"
+                    defaultValue={finalReview.evaluationPeriodId}
+                    className="mt-2 min-w-64 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  >
+                    {periods.map((period) => (
+                      <option key={period.id} value={period.id}>
+                        {period.name}（{period.status}）
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+                  表示更新
+                </button>
+              </form>
             </div>
             <div className="flex gap-3">
               <Link href="/evaluations/my" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">

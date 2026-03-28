@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { FinalReviewEditor } from "@/components/evaluations/final-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
@@ -41,8 +42,16 @@ export default async function FinalizeEvaluationPage({
     );
   }
 
-  const bundle = await getFinalReviewBundle(effectiveMemberId, params.evaluationPeriodId);
   const periods = await getEvaluationPeriodOptions();
+  const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
+  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? defaultEvaluationPeriodId;
+
+  if (!params.evaluationPeriodId && selectedEvaluationPeriodId) {
+    const memberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
+    redirect(`/evaluations/finalize?evaluationPeriodId=${selectedEvaluationPeriodId}${memberQuery}`);
+  }
+
+  const bundle = await getFinalReviewBundle(effectiveMemberId, selectedEvaluationPeriodId);
   const canEdit = hasPermission(user, PERMISSIONS.evaluationFinalize) && bundle.periodStatus === "CLOSED";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
@@ -61,21 +70,26 @@ export default async function FinalizeEvaluationPage({
                     ? "管理者・役員が最終評価を確定する画面です。"
                     : "最終評価内容を参照できます。"}
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {periods.map((period) => {
-                  const active = period.id === bundle.evaluationPeriodId;
-                  const memberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
-                  return (
-                    <Link
-                      key={period.id}
-                      href={`/evaluations/finalize?evaluationPeriodId=${period.id}${memberQuery}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
-                    >
-                      <span style={{ color: "#000000" }}>{period.name}（{period.status}）</span>
-                    </Link>
-                  );
-                })}
-              </div>
+              <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
+                {effectiveMemberId ? <input type="hidden" name="memberId" value={effectiveMemberId} /> : null}
+                <label className="text-sm text-slate-200">
+                  評価期間
+                  <select
+                    name="evaluationPeriodId"
+                    defaultValue={bundle.evaluationPeriodId}
+                    className="mt-2 min-w-64 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  >
+                    {periods.map((period) => (
+                      <option key={period.id} value={period.id}>
+                        {period.name}（{period.status}）
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+                  表示更新
+                </button>
+              </form>
               <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
               {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の最終評価は閲覧専用です。</p> : null}
             </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { ManagerReviewEditor } from "@/components/evaluations/manager-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
@@ -28,6 +29,7 @@ export default async function TeamEvaluationPage({
     );
   }
   const periods = await getEvaluationPeriodOptions();
+  const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
 
   const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
   const teamOptions = user.role === "employee"
@@ -36,6 +38,12 @@ export default async function TeamEvaluationPage({
   const defaultTeamId = params.teamId ?? teamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
   const requestedTeamId = defaultTeamId;
   const effectiveMemberId = user.role === "employee" ? user.id : params.memberId;
+
+  if (!params.evaluationPeriodId && defaultEvaluationPeriodId) {
+    const memberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
+    redirect(`/evaluations/team?evaluationPeriodId=${defaultEvaluationPeriodId}&teamId=${requestedTeamId}${memberQuery}`);
+  }
+
   const canView = canViewManagerReview(user, requestedTeamId, effectiveMemberId)
     && (user.role !== "leader" || visibleTeamIds.includes(requestedTeamId));
 
@@ -52,7 +60,6 @@ export default async function TeamEvaluationPage({
 
   const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId);
   const canEdit = canEditManagerReview(user, bundle.teamId) && bundle.periodStatus === "OPEN";
-  const selectedMemberQuery = effectiveMemberId ? `&memberId=${effectiveMemberId}` : "";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
   return (
@@ -70,20 +77,27 @@ export default async function TeamEvaluationPage({
                     ? `${bundle.teamName} のメンバー評価を入力します。`
                     : `${bundle.teamName} のメンバー評価を参照できます。`}
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {periods.map((period) => {
-                  const active = period.id === bundle.evaluationPeriodId;
-                  return (
-                    <Link
-                      key={period.id}
-                      href={`/evaluations/team?evaluationPeriodId=${period.id}&teamId=${bundle.teamId}${selectedMemberQuery}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
-                    >
-                      <span style={{ color: "#000000" }}>{period.name}（{period.status}）</span>
-                    </Link>
-                  );
-                })}
-              </div>
+              <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
+                <input type="hidden" name="teamId" value={bundle.teamId} />
+                {effectiveMemberId ? <input type="hidden" name="memberId" value={effectiveMemberId} /> : null}
+                <label className="text-sm text-slate-200">
+                  評価期間
+                  <select
+                    name="evaluationPeriodId"
+                    defaultValue={bundle.evaluationPeriodId}
+                    className="mt-2 min-w-64 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  >
+                    {periods.map((period) => (
+                      <option key={period.id} value={period.id}>
+                        {period.name}（{period.status}）
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+                  表示更新
+                </button>
+              </form>
               <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
               {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の上長評価は閲覧専用です。</p> : null}
               {teamOptions.length > 0 ? (

@@ -29,7 +29,8 @@ export default async function MyEvaluationPage({
     );
   }
   const periods = await getEvaluationPeriodOptions();
-  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? periods[0]?.id;
+  const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
+  const selectedEvaluationPeriodId = params.evaluationPeriodId ?? defaultEvaluationPeriodId;
 
   if (!params.evaluationPeriodId && selectedEvaluationPeriodId) {
     redirect(`/evaluations/my?evaluationPeriodId=${selectedEvaluationPeriodId}`);
@@ -48,20 +49,25 @@ export default async function MyEvaluationPage({
             <div>
               <h1 className="text-3xl font-semibold">自己評価</h1>
               <p className="mt-2 text-sm text-slate-300">{user.name} の自己評価入力画面です。評価期間を切り替えると過去分も確認できます。</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {periods.map((period) => {
-                  const active = period.id === bundle.evaluationPeriodId;
-                  return (
-                    <Link
-                      key={period.id}
-                      href={`/evaluations/my?evaluationPeriodId=${period.id}`}
-                      className={`rounded-full px-4 py-2 text-sm font-medium ${active ? "border border-brand-300 bg-brand-200 text-black shadow-sm font-semibold" : "border border-slate-200 bg-white/90 text-black"}`}
-                    >
-                      <span style={{ color: "#000000" }}>{period.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
+              <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
+                <label className="text-sm text-slate-200">
+                  評価期間
+                  <select
+                    name="evaluationPeriodId"
+                    defaultValue={bundle.evaluationPeriodId}
+                    className="mt-2 min-w-64 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  >
+                    {periods.map((period) => (
+                      <option key={period.id} value={period.id}>
+                        {period.name}（{period.status}）
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
+                  表示更新
+                </button>
+              </form>
               <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
               {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間は閲覧専用です。過去分も確認できます。</p> : null}
             </div>
