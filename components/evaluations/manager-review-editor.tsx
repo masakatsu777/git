@@ -3,11 +3,10 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  encodeManagerCategoryComment,
-  type ManagerCategoryReviewStatus,
-  type ManagerReviewBundle,
-  type ManagerReviewItem,
+import type {
+  ManagerCategoryReviewStatus,
+  ManagerReviewBundle,
+  ManagerReviewItem,
 } from "@/lib/evaluations/manager-review-service";
 
 type ManagerReviewEditorProps = {
@@ -37,6 +36,13 @@ const synergyGuide = [
   { value: "NOT_PRACTICING", label: "継続実践なし", description: "大分類全体として継続実践には至っていない" },
   { value: "PRACTICING", label: "継続実践あり", description: "大分類全体として継続実践できている" },
 ] as const;
+
+const MANAGER_CATEGORY_META_PREFIX = "__MANAGER_CATEGORY_META__";
+
+function encodeManagerCategoryComment(comment: string, reviewStatus: ManagerCategoryReviewStatus) {
+  const trimmed = comment.trim();
+  return `${MANAGER_CATEGORY_META_PREFIX}${JSON.stringify({ reviewStatus })}\n${trimmed}`;
+}
 
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return Math.round(items.reduce((sum, item) => sum + (item.score * item.weight) / 100, 0) * 100) / 100;
