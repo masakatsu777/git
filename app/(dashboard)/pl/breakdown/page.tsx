@@ -154,13 +154,13 @@ export default async function ProfitBreakdownPage({
                   <th className="px-4 py-3 font-medium">部署</th>
                   <th className="px-4 py-3 font-medium">チーム</th>
                   <th className="px-4 py-3 font-medium">所属状態</th>
+                  <th className="px-4 py-3 font-medium">最終粗利</th>
+                  <th className="px-4 py-3 font-medium">粗利率</th>
                   <th className="px-4 py-3 font-medium">売上</th>
                   <th className="px-4 py-3 font-medium">人件費</th>
                   <th className="px-4 py-3 font-medium">外注費</th>
                   <th className="px-4 py-3 font-medium">チーム経費按分</th>
                   <th className="px-4 py-3 font-medium">全社固定費按分</th>
-                  <th className="px-4 py-3 font-medium">最終粗利</th>
-                  <th className="px-4 py-3 font-medium">粗利率</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,13 +174,13 @@ export default async function ProfitBreakdownPage({
                     <td className="px-4 py-3 text-stone-700">
                       {row.membershipStatus === "PARTNER" ? "-" : row.membershipStatus === "UNASSIGNED" ? "未所属" : "所属あり"}
                     </td>
+                    <td className={`px-4 py-3 font-semibold ${row.finalGrossProfit >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatCurrencyWithUnit(row.finalGrossProfit)}</td>
+                    <td className={`px-4 py-3 font-semibold ${row.grossProfitRate >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{row.grossProfitRate}%</td>
                     <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.salesTotal)}</td>
                     <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.directLaborCost)}</td>
                     <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.outsourcingCost)}</td>
                     <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.indirectCostAllocation)}</td>
                     <td className="px-4 py-3 text-stone-700">{formatCurrencyWithUnit(row.fixedCostAllocation)}</td>
-                    <td className={`px-4 py-3 font-semibold ${row.finalGrossProfit >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatCurrencyWithUnit(row.finalGrossProfit)}</td>
-                    <td className={`px-4 py-3 font-semibold ${row.grossProfitRate >= 0 ? "text-emerald-700" : "text-rose-700"}`}>{row.grossProfitRate}%</td>
                   </tr>
                 ))}
                 {bundle.rows.length === 0 ? (

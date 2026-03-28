@@ -363,7 +363,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       continue;
     }
     const membershipStatus = user.teamMemberships.length === 0 ? "UNASSIGNED" : "ASSIGNED";
-    const key = `${row.userId}:${row.teamId}`;
+    const key = membershipStatus === "UNASSIGNED" ? `${row.userId}:UNASSIGNED` : `${row.userId}:${row.teamId}`;
     const monthlyCostMap = new Map(user.monthlyCosts.map((cost) => [`${cost.yearMonth}:${cost.costCategory}`, toNumber(cost.amount)]));
     const directLaborCost = rangeYearMonths.reduce((sum, currentYearMonth) => {
       const monthEnd = getMonthRange(currentYearMonth).end;
@@ -405,9 +405,9 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       entityId: user.id,
       displayName: user.name,
       secondaryLabel: user.employeeCode,
-      departmentId: teamContext.departmentId,
-      departmentName: teamContext.departmentName,
-      teamId: teamContext.teamId,
+      departmentId: membershipStatus === "UNASSIGNED" ? "" : teamContext.departmentId,
+      departmentName: membershipStatus === "UNASSIGNED" ? "-" : teamContext.departmentName,
+      teamId: membershipStatus === "UNASSIGNED" ? "" : teamContext.teamId,
       teamName: membershipStatus === "UNASSIGNED" ? "未所属" : teamContext.teamName,
       salesTotal: toNumber(row.salesAmount),
       directLaborCost,
