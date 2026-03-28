@@ -128,7 +128,16 @@ async function getAdminItems() {
   return itemRows.filter((item) => resolveStoredItemMetaFromRow(item).inputScope === "ADMIN");
 }
 
-async function recalculateSelfScoreTotal(tx: typeof prisma, employeeEvaluationId: string) {
+type AdminInputTransaction = {
+  evaluationScore: {
+    findMany: typeof prisma.evaluationScore.findMany;
+  };
+  employeeEvaluation: {
+    update: typeof prisma.employeeEvaluation.update;
+  };
+};
+
+async function recalculateSelfScoreTotal(tx: AdminInputTransaction, employeeEvaluationId: string) {
   const allSelfScores = await tx.evaluationScore.findMany({
     where: {
       employeeEvaluationId,
