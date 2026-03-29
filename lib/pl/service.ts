@@ -360,6 +360,15 @@ export async function saveTeamMonthlyInput(input: TeamMonthlyInput): Promise<Sav
   try {
     const team = await prisma.team.findUniqueOrThrow({ where: { id: input.teamId }, select: { id: true, name: true } });
     const snapshot = createSnapshot(team.id, team.name, input.yearMonth, "manual", calculated);
+
+    if (isEffectivelyEmptySnapshot(snapshot)) {
+      await prisma.teamMonthlyPl.deleteMany({ where: { teamId: team.id, yearMonth: input.yearMonth } });
+      return {
+        persisted: true,
+        snapshot: createSnapshot(team.id, team.name, input.yearMonth, "database", calculated),
+      };
+    }
+
     await persistSnapshot(snapshot, "DRAFT");
     return { persisted: true, snapshot };
   } catch {
