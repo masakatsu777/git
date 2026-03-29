@@ -216,9 +216,23 @@ function getOverallStatusTone(status: OverallManagerStatus) {
   }
 }
 
+function initializeManagerItems(items: ManagerReviewItem[]) {
+  const groups = groupByMajorCategory(items);
+  const initialized = new Map<string, ManagerReviewItem>();
+
+  for (const group of groups) {
+    const useSavedManager = hasSavedManagerScores(group.items);
+    for (const item of group.items) {
+      initialized.set(item.evaluationItemId, useSavedManager ? item : { ...item, managerScore: item.selfScore });
+    }
+  }
+
+  return items.map((item) => initialized.get(item.evaluationItemId) ?? item);
+}
+
 export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorProps) {
   const router = useRouter();
-  const [items, setItems] = useState(defaults.items);
+  const [items, setItems] = useState(() => initializeManagerItems(defaults.items));
   const [managerComment, setManagerComment] = useState(defaults.managerComment);
   const [expectedFulfillmentRank, setExpectedFulfillmentRank] = useState<ManagerExpectedFulfillmentRank>(defaults.expectedFulfillmentRank);
   const [message, setMessage] = useState<string | null>(null);
@@ -232,6 +246,8 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
   const allCategories = useMemo(() => [...selfGrowthCategories, ...synergyCategories], [selfGrowthCategories, synergyCategories]);
   const overallStatus = useMemo(() => getOverallStatus(allCategories), [allCategories]);
   const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))), [items]);
+  const selfGrowthProgress = useMemo(() => calculateTotal(selfGrowthItems.map((item) => ({ score: item.managerScore, weight: item.weight }))) / Math.max(1, calculateTotal(selfGrowthItems.map((item) => ({ score: item.maxScore, weight: item.weight })))) * 100, [selfGrowthItems]);
+  const synergyProgress = useMemo(() => calculateTotal(synergyItems.map((item) => ({ score: item.managerScore, weight: item.weight }))) / Math.max(1, calculateTotal(synergyItems.map((item) => ({ score: item.maxScore, weight: item.weight })))) * 100, [synergyItems]);
 
   function updateCategoryScores(categoryItems: ManagerReviewItem[], nextDecision: number | SynergyCategoryDecision) {
     const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
@@ -453,11 +469,11 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
         </div>
         <div className="rounded-2xl bg-emerald-50 px-4 py-4">
           <p className="text-sm text-slate-500">自律成長力達成率</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.selfGrowthProgress}%</p>
+          <p className="mt-2 text-lg font-semibold text-slate-950">{Math.round(selfGrowthProgress * 100) / 100}%</p>
         </div>
         <div className="rounded-2xl bg-sky-50 px-4 py-4">
           <p className="text-sm text-slate-500">協調相乗力実施率</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.synergyProgress}%</p>
+          <p className="mt-2 text-lg font-semibold text-slate-950">{Math.round(synergyProgress * 100) / 100}%</p>
         </div>
       </div>
 
