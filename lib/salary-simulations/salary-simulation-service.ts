@@ -419,8 +419,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const points = calculateAxisPoints(evaluation.scores);
         const gradeCalculationAmount = points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
         const gradeSalaryAmount = gradeSalarySetting.baseAmount + gradeCalculationAmount;
-        const grossProfitDeductionRate = Math.max(0, -grossProfitVarianceRate);
-        const grossProfitDeductionAmount = Math.round(gradeSalaryAmount * (grossProfitDeductionRate / 100));
+        const grossProfitDeductionAmount = Math.round(gradeSalaryAmount * (grossProfitVarianceRate / 100));
 
         return {
           userId: evaluation.userId,

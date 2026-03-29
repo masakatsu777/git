@@ -287,9 +287,7 @@ async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, eva
       : 0;
     const actualGrossProfitRate = salesTotal === 0 ? 0 : round2((finalGrossProfit / salesTotal) * 100);
     const grossProfitVarianceRate = round2(actualGrossProfitRate - targetGrossProfitRate);
-    const grossProfitDeductionAmount = grossProfitVarianceRate < 0
-      ? Math.round(gradeSalaryAmount * (Math.abs(grossProfitVarianceRate) / 100))
-      : 0;
+    const grossProfitDeductionAmount = Math.round(gradeSalaryAmount * (grossProfitVarianceRate / 100));
 
     return {
       grossProfitVarianceRate,
