@@ -3,7 +3,7 @@ import { SkillCategory } from "@/generated/prisma";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
 type GradeDefinitionRow = {
-  id: string;
+  id: string | null;
   gradeCode: string;
   gradeName: string;
   rankOrder: number;
@@ -52,14 +52,14 @@ function normalizeScoreForDefinitions(score: number, definitions: GradeDefinitio
 
 function fallbackGradeDefinitions(category: SkillCategory, positionId?: string | null): GradeDefinitionRow[] {
   const commonIt = [
-    { id: "grade-it-sg1", gradeCode: "SG1", gradeName: "自律成長初級", rankOrder: 10, minScore: 0, maxScore: 54.99, positionId: null },
-    { id: "grade-it-sg2", gradeCode: "SG2", gradeName: "自律成長中級", rankOrder: 20, minScore: 55, maxScore: 79.99, positionId: null },
-    { id: "grade-it-sg3", gradeCode: "SG3", gradeName: "自律成長上級", rankOrder: 30, minScore: 80, maxScore: 100, positionId: null },
+    { id: null, gradeCode: "SG1", gradeName: "自律成長初級", rankOrder: 10, minScore: 0, maxScore: 54.99, positionId: null },
+    { id: null, gradeCode: "SG2", gradeName: "自律成長中級", rankOrder: 20, minScore: 55, maxScore: 79.99, positionId: null },
+    { id: null, gradeCode: "SG3", gradeName: "自律成長上級", rankOrder: 30, minScore: 80, maxScore: 100, positionId: null },
   ];
   const commonBiz = [
-    { id: "grade-biz-kg1", gradeCode: "KG1", gradeName: "協調相乗初級", rankOrder: 10, minScore: 0, maxScore: 29.99, positionId: null },
-    { id: "grade-biz-kg2", gradeCode: "KG2", gradeName: "協調相乗中級", rankOrder: 20, minScore: 30, maxScore: 59.99, positionId: null },
-    { id: "grade-biz-kg3", gradeCode: "KG3", gradeName: "協調相乗上級", rankOrder: 30, minScore: 60, maxScore: 100, positionId: null },
+    { id: null, gradeCode: "KG1", gradeName: "協調相乗初級", rankOrder: 10, minScore: 0, maxScore: 29.99, positionId: null },
+    { id: null, gradeCode: "KG2", gradeName: "協調相乗中級", rankOrder: 20, minScore: 30, maxScore: 59.99, positionId: null },
+    { id: null, gradeCode: "KG3", gradeName: "協調相乗上級", rankOrder: 30, minScore: 60, maxScore: 100, positionId: null },
   ];
 
   const base = category === SkillCategory.IT_SKILL ? commonIt : commonBiz;
@@ -105,7 +105,7 @@ export async function judgeGradeByScore(category: SkillCategory, score: number, 
   const definitions = await getGradeDefinitionsByCategory(category, positionId);
   const normalized = normalizeScoreForDefinitions(score, definitions);
   const current = definitions.find((row) => normalized >= row.minScore && normalized <= row.maxScore) ?? definitions[0] ?? null;
-  const currentIndex = current ? definitions.findIndex((row) => row.id === current.id) : -1;
+  const currentIndex = current ? definitions.indexOf(current) : -1;
   const next = currentIndex >= 0 ? definitions[currentIndex + 1] ?? null : null;
 
   return {
