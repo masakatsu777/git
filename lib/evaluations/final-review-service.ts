@@ -716,6 +716,51 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
 }
 
 export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFinalReviewInput): Promise<FinalReviewBundle> {
+  if (!hasDatabaseUrl()) {
+    const fallback = await buildFallbackBundle(input.userId);
+    const nextItems = fallback.items.map((item) => {
+      const saved = input.items.find((candidate) => candidate.evaluationItemId === item.evaluationItemId);
+      return saved
+        ? { ...item, finalScore: normalizeScore(saved.score, item.scoreType), finalComment: saved.comment, evidences: normalizeEvidences(saved.evidences) }
+        : item;
+    });
+    const displayStage = "FINAL" as const;
+    const judgement = await enrichWithGradeJudgement(nextItems, displayStage, null);
+    const points = calculateAxisPoints(nextItems, displayStage);
+    const gradeSalarySetting = await getGradeSalarySettingBundle();
+    const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
+    const finalTotal = calculateTotal(nextItems.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
+    return {
+      ...fallback,
+      evaluationPeriodId: input.evaluationPeriodId,
+      periodStatus: EvaluationPeriodStatus.CLOSED,
+      selectedUserId: input.userId,
+      finalComment: input.finalComment,
+      items: nextItems,
+      finalScoreTotal: finalTotal,
+      finalRating: deriveRatingFromScore(finalTotal),
+      overallGradeName: judgement.overall.gradeName,
+      selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH", displayStage),
+      synergyProgress: calculateProgress(nextItems, "SYNERGY", displayStage),
+      selfGrowthPoint: points.selfGrowthPoint,
+      synergyPoint: points.synergyPoint,
+      totalGradePoint: points.totalGradePoint,
+      gradeBaseAmount: gradeSalarySetting.baseAmount,
+      pointUnitAmount: gradeSalarySetting.pointUnitAmount,
+      gradeSalaryAmount,
+      currentSalary: 0,
+      itSkillScore: judgement.itSkillScore,
+      businessSkillScore: judgement.businessSkillScore,
+      itSkillGradeName: judgement.itSkill.gradeName,
+      businessSkillGradeName: judgement.businessSkill.gradeName,
+      nextItSkillGradeName: judgement.itSkill.nextGradeName,
+      nextBusinessSkillGradeName: judgement.businessSkill.nextGradeName,
+      status: EvaluationStatus.FINALIZED,
+      displayStage,
+      source: "fallback",
+    };
+  }
+
   try {
     const period = await resolveEvaluationPeriod(input.evaluationPeriodId);
     if (period.status !== EvaluationPeriodStatus.CLOSED) {
@@ -788,7 +833,11 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
         select: { id: true, status: true, finalScoreTotal: true, finalRating: true, managerComment: true },
       });
 
-      const finalRating = resolveDisplayedFinalRating(existing?.managerComment, existing?.finalRating, "FINAL", total);
+      if (!existing) {
+        throw new Error("対象者の評価データが見つからないため、最終評価を確定できません");
+      }
+
+      const finalRating = resolveDisplayedFinalRating(existing.managerComment, existing.finalRating, "FINAL", total);
 
       const evaluation = await tx.employeeEvaluation.update({
         where: {
@@ -877,49 +926,8 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
     });
 
     return getFinalReviewBundle(input.userId, input.evaluationPeriodId);
-  } catch {
-    const fallback = await buildFallbackBundle(input.userId);
-    const nextItems = fallback.items.map((item) => {
-      const saved = input.items.find((candidate) => candidate.evaluationItemId === item.evaluationItemId);
-      return saved
-        ? { ...item, finalScore: normalizeScore(saved.score, item.scoreType), finalComment: saved.comment, evidences: normalizeEvidences(saved.evidences) }
-        : item;
-    });
-    const displayStage = "FINAL" as const;
-    const judgement = await enrichWithGradeJudgement(nextItems, displayStage, null);
-    const points = calculateAxisPoints(nextItems, displayStage);
-    const gradeSalarySetting = await getGradeSalarySettingBundle();
-    const gradeSalaryAmount = gradeSalarySetting.baseAmount + points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
-    const finalTotal = calculateTotal(nextItems.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
-    return {
-      ...fallback,
-      evaluationPeriodId: input.evaluationPeriodId,
-      periodStatus: EvaluationPeriodStatus.CLOSED,
-      selectedUserId: input.userId,
-      finalComment: input.finalComment,
-      items: nextItems,
-      finalScoreTotal: finalTotal,
-      finalRating: deriveRatingFromScore(finalTotal),
-      overallGradeName: judgement.overall.gradeName,
-      selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH", displayStage),
-      synergyProgress: calculateProgress(nextItems, "SYNERGY", displayStage),
-      selfGrowthPoint: points.selfGrowthPoint,
-      synergyPoint: points.synergyPoint,
-      totalGradePoint: points.totalGradePoint,
-      gradeBaseAmount: gradeSalarySetting.baseAmount,
-      pointUnitAmount: gradeSalarySetting.pointUnitAmount,
-      gradeSalaryAmount,
-      currentSalary: 0,
-      itSkillScore: judgement.itSkillScore,
-      businessSkillScore: judgement.businessSkillScore,
-      itSkillGradeName: judgement.itSkill.gradeName,
-      businessSkillGradeName: judgement.businessSkill.gradeName,
-      nextItSkillGradeName: judgement.itSkill.nextGradeName,
-      nextBusinessSkillGradeName: judgement.businessSkill.nextGradeName,
-      status: EvaluationStatus.FINALIZED,
-      displayStage,
-      source: "fallback",
-    };
+  } catch (error) {
+    throw error instanceof Error ? error : new Error("最終評価の保存に失敗しました");
   }
 }
 
