@@ -92,12 +92,8 @@ function groupByMajorCategory(items: ManagerReviewItem[]) {
   return Array.from(map.values());
 }
 
-function hasSavedManagerScores(items: ManagerReviewItem[]) {
-  return items.some((item) => item.managerScore > 0 || item.managerComment.trim() || item.managerReviewStatus !== "PENDING");
-}
-
 function getSelfGrowthDecision(items: ManagerReviewItem[]): SelfGrowthCategoryDecision {
-  const sourceScores = items.map((item) => item.managerScore);
+  const sourceScores = items.map((item) => item.selfScore);
 
   if (sourceScores.every((score) => score === 2)) {
     return "CLEARED";
@@ -109,7 +105,7 @@ function getSelfGrowthDecision(items: ManagerReviewItem[]): SelfGrowthCategoryDe
 }
 
 function getSynergyDecision(items: ManagerReviewItem[]): SynergyCategoryDecision {
-  const sourceScores = items.map((item) => item.managerScore);
+  const sourceScores = items.map((item) => item.selfScore);
 
   if (sourceScores.every((score) => score >= 1)) {
     return "PRACTICING";
@@ -219,23 +215,9 @@ function getOverallStatusTone(status: OverallManagerStatus) {
   }
 }
 
-function initializeManagerItems(items: ManagerReviewItem[]) {
-  const groups = groupByMajorCategory(items);
-  const initialized = new Map<string, ManagerReviewItem>();
-
-  for (const group of groups) {
-    const useSavedManager = hasSavedManagerScores(group.items);
-    for (const item of group.items) {
-      initialized.set(item.evaluationItemId, useSavedManager ? item : { ...item, managerScore: item.selfScore });
-    }
-  }
-
-  return items.map((item) => initialized.get(item.evaluationItemId) ?? item);
-}
-
 export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerReviewEditorProps) {
   const router = useRouter();
-  const [items, setItems] = useState(() => initializeManagerItems(defaults.items));
+  const [items, setItems] = useState(defaults.items);
   const [managerComment, setManagerComment] = useState(defaults.managerComment);
   const [expectedFulfillmentRank, setExpectedFulfillmentRank] = useState<ManagerExpectedFulfillmentRank>(defaults.expectedFulfillmentRank);
   const [message, setMessage] = useState<string | null>(null);
