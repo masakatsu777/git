@@ -157,11 +157,11 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         item.axis === "SYNERGY" &&
         item.evidenceRequired &&
         item.score === 1 &&
-        (!item.comment.trim() || !item.evidences.some(hasEvidenceValue)),
+        !item.evidences.some(hasEvidenceValue),
     );
 
     if (missingEvidenceItems.length > 0) {
-      setMessage("協調相乗力で継続実践できているを選んだ項目は、根拠コメントと少なくとも1件の根拠を入力してください。");
+      setMessage("協調相乗力で継続実践できているを選んだ項目は、少なくとも1件の継続実践の根拠を入力してください。");
       return;
     }
 
@@ -366,7 +366,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
                               <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">{item.minorCategory}</p>
                             </div>
                             <h5 className="mt-2 text-base font-semibold text-slate-950">{item.title}</h5>
-                            <p className="mt-1 text-sm text-slate-500">重み {item.weight}{item.evidenceRequired ? " / 根拠コメント必須" : ""}</p>
+                            <p className="mt-1 text-sm text-slate-500">重み {item.weight}{item.evidenceRequired ? " / 継続実践の根拠必須" : ""}</p>
                           </div>
                           <div className="grid gap-2 sm:grid-cols-2">
                             {synergyGuide.map((guide) => (
@@ -383,14 +383,6 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
                             ))}
                           </div>
                         </div>
-                        <textarea
-                          value={item.comment}
-                          disabled={!canEdit || isPending}
-                          onChange={(event) => updateItem(item.evaluationItemId, { comment: event.target.value })}
-                          rows={3}
-                          className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-                          placeholder={item.evidenceRequired ? "継続実践の内容、対象、頻度、成果を必ず入力" : "継続実践の内容、対象、頻度、成果を入力"}
-                        />
                         <EvidenceInputList
                           disabled={!canEdit || isPending || item.score !== 1}
                           evidences={item.evidences}
