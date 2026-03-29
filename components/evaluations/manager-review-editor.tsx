@@ -389,29 +389,39 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
         ) : null}
 
         <div className={`mt-4 grid gap-2 ${isSelfGrowth ? "md:grid-cols-3" : "md:grid-cols-3"}`}>
-          {guides.map((guide) => (
-            <label key={`${group.key}-${guide.value}`} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-              <input
-                type="radio"
-                name={group.key}
-                checked={decision === guide.value}
-                disabled={!canEdit || isPending}
-                onChange={() => {
-                  if (isSelfGrowth) {
+          {guides.map((guide) => {
+            if (!isSelfGrowth) {
+              const selected = decision === guide.value;
+              return (
+                <article
+                  key={`${group.key}-${guide.value}`}
+                  className={`rounded-2xl border px-4 py-3 text-sm ${selected ? "border-sky-500 bg-sky-50 text-sky-900" : "border-slate-200 bg-white text-slate-500"}`}
+                >
+                  <span className="block font-semibold">{guide.label}</span>
+                  <span className={`mt-1 block text-xs ${selected ? "text-sky-700" : "text-slate-500"}`}>{guide.description}</span>
+                </article>
+              );
+            }
+
+            return (
+              <label key={`${group.key}-${guide.value}`} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+                <input
+                  type="radio"
+                  name={group.key}
+                  checked={decision === guide.value}
+                  disabled={!canEdit || isPending}
+                  onChange={() => {
                     const nextScore = guide.value === "CLEARED" ? 2 : guide.value === "CHALLENGING" ? 1 : 0;
                     updateCategoryScores(group.items, nextScore);
-                    return;
-                  }
-
-                  updateCategoryScores(group.items, guide.value as SynergyCategoryDecision);
-                }}
-              />
-              <span>
-                <span className="block font-semibold text-slate-950">{guide.label}</span>
-                <span className="block text-xs text-slate-500">{guide.description}</span>
-              </span>
-            </label>
-          ))}
+                  }}
+                />
+                <span>
+                  <span className="block font-semibold text-slate-950">{guide.label}</span>
+                  <span className="block text-xs text-slate-500">{guide.description}</span>
+                </span>
+              </label>
+            );
+          })}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
