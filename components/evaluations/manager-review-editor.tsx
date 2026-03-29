@@ -378,7 +378,15 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
                 name={group.key}
                 checked={decision === guide.value}
                 disabled={!canEdit || isPending}
-                onChange={() => updateCategoryScores(group.items, isSelfGrowth ? (guide.value === "CLEARED" ? 2 : guide.value === "CHALLENGING" ? 1 : 0) : guide.value)}
+                onChange={() => {
+                  if (isSelfGrowth) {
+                    const nextScore = guide.value === "CLEARED" ? 2 : guide.value === "CHALLENGING" ? 1 : 0;
+                    updateCategoryScores(group.items, nextScore);
+                    return;
+                  }
+
+                  updateCategoryScores(group.items, guide.value as SynergyCategoryDecision);
+                }}
               />
               <span>
                 <span className="block font-semibold text-slate-950">{guide.label}</span>
