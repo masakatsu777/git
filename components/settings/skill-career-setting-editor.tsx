@@ -513,7 +513,9 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
       selfGrowthCount: selfGrowth.length,
       synergyCount: synergy.length,
       synergyEvidenceRequiredCount: synergy.filter((item) => item.evidenceRequired).length,
-      synergyHighWeightCount: synergy.filter((item) => item.weight >= 3).length,
+      activeWeightTotal: evaluationItems
+        .filter((item) => item.inputScope !== "ADMIN")
+        .reduce((sum, item) => sum + item.weight, 0),
     };
   }, [evaluationItems]);
 
@@ -703,9 +705,9 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
           <p className="mt-2 text-xs text-slate-500">協調相乗力では原則オンを推奨します。</p>
         </article>
         <article className="rounded-3xl border border-amber-200 bg-amber-50/80 p-4">
-          <p className="text-sm text-slate-500">重み3の重点項目</p>
-          <p className="mt-2 text-2xl font-semibold text-slate-950">{itemSummary.synergyHighWeightCount}</p>
-          <p className="mt-2 text-xs text-slate-500">全社・事業拡大に効く項目の目安です。</p>
+          <p className="text-sm text-slate-500">重み合計値</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-950">{itemSummary.activeWeightTotal}</p>
+          <p className="mt-2 text-xs text-slate-500">入力者区分が管理者のみ以外の項目を合計しています。</p>
         </article>
       </div>
 
