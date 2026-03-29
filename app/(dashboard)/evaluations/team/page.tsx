@@ -136,7 +136,7 @@ export default async function TeamEvaluationPage({
         </header>
 
         <div className="mt-8">
-          <ManagerReviewEditor canEdit={canEdit} defaults={user.role === "employee" ? { ...bundle, members: bundle.members.filter((member) => member.userId === user.id) } : bundle} />
+          <ManagerReviewEditor key={`${bundle.evaluationPeriodId}:${bundle.teamId}:${bundle.selectedUserId}`} canEdit={canEdit} defaults={user.role === "employee" ? { ...bundle, members: bundle.members.filter((member) => member.userId === user.id) } : bundle} />
         </div>
       </div>
     </main>

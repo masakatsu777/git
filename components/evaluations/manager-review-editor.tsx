@@ -16,7 +16,7 @@ type ManagerReviewEditorProps = {
 };
 
 type SelfGrowthCategoryDecision = "NOT_STARTED" | "CHALLENGING" | "CLEARED";
-type SynergyCategoryDecision = "NOT_PRACTICING" | "PRACTICING";
+type SynergyCategoryDecision = "NOT_PRACTICING" | "PARTIALLY_PRACTICING" | "PRACTICING";
 type OverallManagerStatus = "IN_REVIEW" | "REVISION_REQUESTED" | "APPROVED";
 
 type CategoryGroup = {
@@ -35,7 +35,8 @@ const selfGrowthGuide = [
 
 const synergyGuide = [
   { value: "NOT_PRACTICING", label: "継続実践なし", description: "大分類全体として継続実践には至っていない" },
-  { value: "PRACTICING", label: "継続実践あり", description: "大分類全体として継続実践できている" },
+  { value: "PARTIALLY_PRACTICING", label: "一部継続実践", description: "大分類内の一部項目で継続実践できている" },
+  { value: "PRACTICING", label: "継続実践中", description: "大分類全体として継続実践できている" },
 ] as const;
 
 const expectedFulfillmentRankOptions = [
@@ -88,18 +89,32 @@ function groupByMajorCategory(items: ManagerReviewItem[]) {
   return Array.from(map.values());
 }
 
+function hasSavedManagerScores(items: ManagerReviewItem[]) {
+  return items.some((item) => item.managerScore > 0 || item.managerComment.trim() || item.managerReviewStatus !== "PENDING");
+}
+
 function getSelfGrowthDecision(items: ManagerReviewItem[]): SelfGrowthCategoryDecision {
-  if (items.every((item) => item.managerScore === 2)) {
+  const sourceScores = hasSavedManagerScores(items) ? items.map((item) => item.managerScore) : items.map((item) => item.selfScore);
+
+  if (sourceScores.every((score) => score === 2)) {
     return "CLEARED";
   }
-  if (items.some((item) => item.managerScore >= 1)) {
+  if (sourceScores.some((score) => score >= 1)) {
     return "CHALLENGING";
   }
   return "NOT_STARTED";
 }
 
 function getSynergyDecision(items: ManagerReviewItem[]): SynergyCategoryDecision {
-  return items.some((item) => item.managerScore >= 1) ? "PRACTICING" : "NOT_PRACTICING";
+  const sourceScores = hasSavedManagerScores(items) ? items.map((item) => item.managerScore) : items.map((item) => item.selfScore);
+
+  if (sourceScores.every((score) => score >= 1)) {
+    return "PRACTICING";
+  }
+  if (sourceScores.some((score) => score >= 1)) {
+    return "PARTIALLY_PRACTICING";
+  }
+  return "NOT_PRACTICING";
 }
 
 function getCategoryComment(items: ManagerReviewItem[]) {
@@ -218,9 +233,30 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
   const overallStatus = useMemo(() => getOverallStatus(allCategories), [allCategories]);
   const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))), [items]);
 
-  function updateCategoryScores(categoryItems: ManagerReviewItem[], nextScore: number) {
+  function updateCategoryScores(categoryItems: ManagerReviewItem[], nextDecision: number | SynergyCategoryDecision) {
     const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
-    setItems((current) => current.map((row) => (ids.has(row.evaluationItemId) ? { ...row, managerScore: nextScore } : row)));
+    setItems((current) => current.map((row) => {
+      if (!ids.has(row.evaluationItemId)) {
+        return row;
+      }
+
+      if (typeof nextDecision === "number") {
+        return { ...row, managerScore: nextDecision };
+      }
+
+      if (nextDecision === "PRACTICING") {
+        return { ...row, managerScore: 1 };
+      }
+
+      if (nextDecision === "NOT_PRACTICING") {
+        return { ...row, managerScore: 0 };
+      }
+
+      const categoryIndex = categoryItems.findIndex((item) => item.evaluationItemId === row.evaluationItemId);
+      const fallbackHasPositive = categoryItems.some((item) => item.selfScore >= 1);
+      const nextScore = row.selfScore >= 1 ? 1 : (!fallbackHasPositive && categoryIndex === 0 ? 1 : 0);
+      return { ...row, managerScore: nextScore };
+    }));
   }
 
   function updateCategoryComment(categoryItems: ManagerReviewItem[], nextComment: string) {
@@ -334,7 +370,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           </div>
         ) : null}
 
-        <div className={`mt-4 grid gap-2 ${isSelfGrowth ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+        <div className={`mt-4 grid gap-2 ${isSelfGrowth ? "md:grid-cols-3" : "md:grid-cols-3"}`}>
           {guides.map((guide) => (
             <label key={`${group.key}-${guide.value}`} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
               <input
@@ -342,7 +378,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
                 name={group.key}
                 checked={decision === guide.value}
                 disabled={!canEdit || isPending}
-                onChange={() => updateCategoryScores(group.items, isSelfGrowth ? (guide.value === "CLEARED" ? 2 : guide.value === "CHALLENGING" ? 1 : 0) : (guide.value === "PRACTICING" ? 1 : 0))}
+                onChange={() => updateCategoryScores(group.items, isSelfGrowth ? (guide.value === "CLEARED" ? 2 : guide.value === "CHALLENGING" ? 1 : 0) : guide.value)}
               />
               <span>
                 <span className="block font-semibold text-slate-950">{guide.label}</span>
