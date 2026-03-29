@@ -7,6 +7,7 @@ import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getSalaryResultDetailBundle } from "@/lib/salary-simulations/salary-simulation-service";
 import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
+import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
 
 function formatCurrency(value: number) {
   return formatCurrencyWithUnit(value);
@@ -144,13 +145,8 @@ export default async function EvaluationResultPage({
           </div>
         </header>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長力達成率</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatPercent(finalReview.selfGrowthProgress)}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗力実施率</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatPercent(finalReview.synergyProgress)}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長力</p><p className="mt-3 text-2xl font-semibold text-slate-950">S{finalReview.selfGrowthPoint}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗力</p><p className="mt-3 text-2xl font-semibold text-slate-950">B{finalReview.synergyPoint}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">総合評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">G{finalReview.totalGradePoint}</p></article>
-          <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">期待充足ランク</p><p className="mt-3 text-2xl font-semibold text-slate-950">{displayedFinalRating}</p></article>
+        <section className="mt-8">
+          <EvaluationResultSummary summary={{ ...finalReview, finalRating: displayedFinalRating }} />
         </section>
 
         <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">

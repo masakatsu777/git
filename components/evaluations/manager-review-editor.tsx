@@ -3,6 +3,8 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
+import type { FinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import type {
   ManagerCategoryReviewStatus,
   ManagerExpectedFulfillmentRank,
@@ -13,6 +15,7 @@ import type {
 type ManagerReviewEditorProps = {
   canEdit: boolean;
   defaults: ManagerReviewBundle;
+  summary: FinalReviewBundle;
 };
 
 type SelfGrowthCategoryDecision = "NOT_STARTED" | "CHALLENGING" | "CLEARED";
@@ -230,7 +233,7 @@ function initializeManagerItems(items: ManagerReviewItem[]) {
   return items.map((item) => initialized.get(item.evaluationItemId) ?? item);
 }
 
-export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorProps) {
+export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerReviewEditorProps) {
   const router = useRouter();
   const [items, setItems] = useState(() => initializeManagerItems(defaults.items));
   const [managerComment, setManagerComment] = useState(defaults.managerComment);
@@ -246,8 +249,6 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
   const allCategories = useMemo(() => [...selfGrowthCategories, ...synergyCategories], [selfGrowthCategories, synergyCategories]);
   const overallStatus = useMemo(() => getOverallStatus(allCategories), [allCategories]);
   const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))), [items]);
-  const selfGrowthProgress = useMemo(() => calculateTotal(selfGrowthItems.map((item) => ({ score: item.managerScore, weight: item.weight }))) / Math.max(1, calculateTotal(selfGrowthItems.map((item) => ({ score: item.maxScore, weight: item.weight })))) * 100, [selfGrowthItems]);
-  const synergyProgress = useMemo(() => calculateTotal(synergyItems.map((item) => ({ score: item.managerScore, weight: item.weight }))) / Math.max(1, calculateTotal(synergyItems.map((item) => ({ score: item.maxScore, weight: item.weight })))) * 100, [synergyItems]);
 
   function updateCategoryScores(categoryItems: ManagerReviewItem[], nextDecision: number | SynergyCategoryDecision) {
     const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
@@ -454,7 +455,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">入力受付中</span>}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">対象期間</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.periodName}</p>
@@ -467,15 +468,9 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           <p className="text-sm text-slate-500">全体状態</p>
           <p className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getOverallStatusTone(overallStatus)}`}>{getOverallStatusLabel(overallStatus)}</p>
         </div>
-        <div className="rounded-2xl bg-emerald-50 px-4 py-4">
-          <p className="text-sm text-slate-500">自律成長力達成率</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{Math.round(selfGrowthProgress * 100) / 100}%</p>
-        </div>
-        <div className="rounded-2xl bg-sky-50 px-4 py-4">
-          <p className="text-sm text-slate-500">協調相乗力実施率</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{Math.round(synergyProgress * 100) / 100}%</p>
-        </div>
       </div>
+
+      <EvaluationResultSummary summary={summary} />
 
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">対象メンバー</h3>

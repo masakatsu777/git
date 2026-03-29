@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ManagerReviewEditor } from "@/components/evaluations/manager-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { getManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
+import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
@@ -58,7 +59,10 @@ export default async function TeamEvaluationPage({
     );
   }
 
-  const bundle = await getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId);
+  const [bundle, resultSummary] = await Promise.all([
+    getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId),
+    getFinalReviewBundle(effectiveMemberId, params.evaluationPeriodId),
+  ]);
   const canEdit = canEditManagerReview(user, bundle.teamId) && bundle.periodStatus === "OPEN";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
@@ -136,7 +140,7 @@ export default async function TeamEvaluationPage({
         </header>
 
         <div className="mt-8">
-          <ManagerReviewEditor key={`${bundle.evaluationPeriodId}:${bundle.teamId}:${bundle.selectedUserId}`} canEdit={canEdit} defaults={user.role === "employee" ? { ...bundle, members: bundle.members.filter((member) => member.userId === user.id) } : bundle} />
+          <ManagerReviewEditor key={`${bundle.evaluationPeriodId}:${bundle.teamId}:${bundle.selectedUserId}`} canEdit={canEdit} defaults={user.role === "employee" ? { ...bundle, members: bundle.members.filter((member) => member.userId === user.id) } : bundle} summary={resultSummary} />
         </div>
       </div>
     </main>

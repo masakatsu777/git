@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
+import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
 import { ExpectedFulfillmentRankGuide } from "@/components/evaluations/expected-fulfillment-rank-guide";
 import type { FinalReviewBundle, FinalReviewItem } from "@/lib/evaluations/final-review-service";
 
@@ -29,14 +30,6 @@ const synergyGuide = [
 
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return Math.round(items.reduce((sum, item) => sum + item.score * item.weight, 0) * 100) / 100;
-}
-
-function deriveRating(score: number) {
-  if (score >= 1.7) return "S";
-  if (score >= 1.45) return "A";
-  if (score >= 1.15) return "B";
-  if (score >= 0.85) return "C";
-  return "D";
 }
 
 function buildAxisState(items: FinalReviewItem[]) {
@@ -120,7 +113,6 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
     ]),
     [selfGrowthItems, selfGrowthReview.score, synergyItems, synergyReview.score],
   );
-  const liveRating = liveTotal > 0 ? deriveRating(liveTotal) : "-";
 
   async function handleSave() {
     setMessage(null);
@@ -164,7 +156,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-amber-100 px-4 py-2 text-sm text-amber-700">最終確定可能</span>}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">対象期間</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.periodName}</p>
@@ -178,50 +170,9 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.positionName}</p>
           <p className="mt-1 text-sm text-slate-500">職種別の等級閾値がある場合はそのルールを優先します。</p>
         </div>
-        <div className="rounded-2xl bg-emerald-50 px-4 py-4">
-          <p className="text-sm text-slate-500">自律成長力達成率</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.selfGrowthProgress}%</p>
-        </div>
-        <div className="rounded-2xl bg-sky-50 px-4 py-4">
-          <p className="text-sm text-slate-500">協調相乗力実施率</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.synergyProgress}%</p>
-        </div>
-        <div className="rounded-2xl bg-amber-50 px-4 py-4">
-          <p className="text-sm text-slate-500">総合等級</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.overallGradeName}</p>
-          <p className="mt-1 text-sm text-slate-500">自律成長等級と協調相乗等級のマトリクスで算出します。</p>
-        </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">自律成長等級</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.itSkillGradeName}</p>
-          <p className="mt-1 text-sm text-slate-500">達成率 {defaults.itSkillScore}% / 次: {defaults.nextItSkillGradeName}</p>
-        </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">協調相乗等級</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.businessSkillGradeName}</p>
-          <p className="mt-1 text-sm text-slate-500">実施率 {defaults.businessSkillScore}% / 次: {defaults.nextBusinessSkillGradeName}</p>
-        </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">自己評価点</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.selfScoreTotal}</p>
-          <p className="mt-1 text-sm text-slate-500">補助情報</p>
-        </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">上長評価点</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.managerScoreTotal}</p>
-          <p className="mt-1 text-sm text-slate-500">補助情報</p>
-        </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">参考評価点</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{liveTotal}</p>
-          <p className="mt-1 text-sm text-slate-500">現在の役割期待に対する充足度を補助的に表す参考値です。</p>
-        </div>
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">期待充足ランク</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{liveRating}</p>
-          <p className="mt-1 text-sm text-slate-500">現在の役割期待をどの程度満たしているかを見る補助指標です。</p>
-        </div>
       </div>
+
+      <EvaluationResultSummary summary={defaults} />
 
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">評価対象一覧</h3>
