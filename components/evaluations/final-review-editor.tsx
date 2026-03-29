@@ -4,7 +4,6 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
-import { ExpectedFulfillmentRankGuide } from "@/components/evaluations/expected-fulfillment-rank-guide";
 import type { FinalReviewBundle, FinalReviewItem } from "@/lib/evaluations/final-review-service";
 
 type FinalReviewEditorProps = {
@@ -16,17 +15,6 @@ type AxisReviewState = {
   score: number;
   comment: string;
 };
-
-const selfGrowthGuide = [
-  { score: 0, label: "これから習得する段階" },
-  { score: 1, label: "完全ではないができる" },
-  { score: 2, label: "問題なくできる" },
-] as const;
-
-const synergyGuide = [
-  { score: 0, label: "継続実践には至っていない" },
-  { score: 1, label: "継続実践できている" },
-] as const;
 
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return Math.round(items.reduce((sum, item) => sum + item.score * item.weight, 0) * 100) / 100;
@@ -117,13 +105,6 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
   async function handleSave() {
     setMessage(null);
 
-    const synergyNeedsEvidence = synergyReview.score === 1 && synergyItems.some((item) => item.evidenceRequired);
-    const hasEvidence = synergyItems.some((item) => item.evidences.some((evidence) => evidence.summary.trim() || evidence.targetName.trim() || evidence.periodNote.trim()));
-
-    if (synergyNeedsEvidence && (!synergyReview.comment.trim() || !hasEvidence)) {
-      setMessage("協調相乗力を継続実践できているで確定する場合は、最終コメントと本人入力の根拠が必要です。");
-      return;
-    }
 
     startSaving(async () => {
       const response = await fetch("/api/evaluations/final", {
@@ -193,7 +174,6 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
         </div>
       </section>
 
-      <ExpectedFulfillmentRankGuide />
 
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">上長総括コメント</h3>
@@ -204,25 +184,11 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-950">自律成長力の最終評価</h3>
-            <p className="mt-1 text-sm text-slate-600">自律成長力全体に対して最終評価とコメントを確定します。</p>
+            <p className="mt-1 text-sm text-slate-600">自律成長力全体に対する最終コメントを入力します。</p>
           </div>
           <button type="button" onClick={() => setShowSelfGrowthDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
             {showSelfGrowthDetails ? "本人・上長の詳細を閉じる" : "本人・上長の詳細を表示"}
           </button>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {selfGrowthGuide.map((guide) => (
-            <label key={`self-growth-${guide.score}`} className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-white px-4 py-4 text-sm text-slate-700">
-              <input
-                type="radio"
-                name="selfGrowthFinalScore"
-                checked={selfGrowthReview.score === guide.score}
-                disabled={!canEdit || isPending}
-                onChange={() => setSelfGrowthReview((current) => ({ ...current, score: guide.score }))}
-              />
-              <span>{guide.label}</span>
-            </label>
-          ))}
         </div>
         <textarea
           value={selfGrowthReview.comment}
@@ -239,25 +205,11 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-950">協調相乗力の最終評価</h3>
-            <p className="mt-1 text-sm text-slate-600">協調相乗力全体に対して最終評価とコメントを確定します。</p>
+            <p className="mt-1 text-sm text-slate-600">協調相乗力全体に対する最終コメントを入力します。</p>
           </div>
           <button type="button" onClick={() => setShowSynergyDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
             {showSynergyDetails ? "本人・上長の詳細を閉じる" : "本人・上長の詳細を表示"}
           </button>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {synergyGuide.map((guide) => (
-            <label key={`synergy-${guide.score}`} className="flex items-center gap-3 rounded-2xl border border-sky-200 bg-white px-4 py-4 text-sm text-slate-700">
-              <input
-                type="radio"
-                name="synergyFinalScore"
-                checked={synergyReview.score === guide.score}
-                disabled={!canEdit || isPending}
-                onChange={() => setSynergyReview((current) => ({ ...current, score: guide.score }))}
-              />
-              <span>{guide.label}</span>
-            </label>
-          ))}
         </div>
         <textarea
           value={synergyReview.comment}

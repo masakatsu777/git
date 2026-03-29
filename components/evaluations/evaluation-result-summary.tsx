@@ -25,11 +25,26 @@ function formatPercent(value: number) {
   return `${value}%`;
 }
 
+function formatFinalRatingLabel(value: string) {
+  switch (value) {
+    case "A":
+      return "役割期待を上回っている";
+    case "B":
+      return "役割期待通り";
+    case "C":
+      return "役割期待に不足がある";
+    case "-":
+      return "未";
+    default:
+      return value;
+  }
+}
+
 export function EvaluationResultSummary({ summary }: EvaluationResultSummaryProps) {
   const selfGrowthSalaryAmount = summary.gradeBaseAmount + summary.salarySelfGrowthPoint * summary.pointUnitAmount;
   const synergySalaryAmount = summary.salarySynergyPoint * summary.pointUnitAmount;
   const referenceSalaryDiffAmount = summary.gradeSalaryAmount - summary.currentSalary;
-  const displayedFinalRating = summary.finalRating === "-" ? "未" : summary.finalRating;
+  const displayedFinalRating = formatFinalRatingLabel(summary.finalRating);
 
   return (
     <div className="space-y-4">
