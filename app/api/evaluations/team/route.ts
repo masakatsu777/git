@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       userId?: string;
       teamId?: string;
       managerComment?: string;
+      submitMode?: string;
       items?: Array<Record<string, unknown>>;
     };
 
@@ -81,6 +82,7 @@ export async function POST(request: NextRequest) {
       evaluationPeriodId: String(body.evaluationPeriodId ?? "period-2025-h2"),
       userId: String(body.userId ?? ""),
       managerComment: String(body.managerComment ?? ""),
+      submitMode: body.submitMode === "approve" ? "approve" : "save",
       items: (body.items ?? []).map((item) => ({
         evaluationItemId: String(item.evaluationItemId ?? ""),
         score: toNumber(item.score),

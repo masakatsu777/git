@@ -68,6 +68,7 @@ export type SaveManagerReviewInput = {
   evaluationPeriodId: string;
   userId: string;
   managerComment: string;
+  submitMode?: "save" | "approve";
   items: Array<{
     evaluationItemId: string;
     score: number;
@@ -424,6 +425,8 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
       }),
     );
 
+    const nextStatus = input.submitMode === "approve" ? EvaluationStatus.MANAGER_REVIEW : EvaluationStatus.SELF_REVIEW;
+
     await prisma.$transaction(async (tx) => {
       const evaluation = await tx.employeeEvaluation.upsert({
         where: {
@@ -434,7 +437,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
         },
         update: {
           teamId,
-          status: EvaluationStatus.MANAGER_REVIEW,
+          status: nextStatus,
           managerComment: input.managerComment,
           managerScoreTotal: total,
         },
@@ -442,7 +445,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
           userId: input.userId,
           evaluationPeriodId: input.evaluationPeriodId,
           teamId,
-          status: EvaluationStatus.MANAGER_REVIEW,
+          status: nextStatus,
           managerComment: input.managerComment,
           managerScoreTotal: total,
         },

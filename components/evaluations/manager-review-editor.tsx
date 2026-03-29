@@ -290,6 +290,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
           userId: defaults.selectedUserId,
           teamId: defaults.teamId,
           managerComment: encodeManagerOverallComment(managerComment, expectedFulfillmentRank),
+          submitMode: mode,
           items: items.map((item) => ({
             evaluationItemId: item.evaluationItemId,
             score: item.managerScore,
@@ -300,7 +301,7 @@ export function ManagerReviewEditor({ canEdit, defaults }: ManagerReviewEditorPr
       });
 
       const result = (await response.json()) as { message?: string };
-      setMessage(result.message ?? (response.ok ? (mode === "approve" ? "承認しました" : "保存しました") : "保存に失敗しました"));
+      setMessage(result.message ?? (response.ok ? (mode === "approve" ? "承認しました" : "下書き保存しました") : "保存に失敗しました"));
 
       if (response.ok) {
         router.refresh();
