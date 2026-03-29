@@ -230,7 +230,7 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
   const synergyCategories = useMemo(() => groupByMajorCategory(synergyItems), [synergyItems]);
   const allCategories = useMemo(() => [...selfGrowthCategories, ...synergyCategories], [selfGrowthCategories, synergyCategories]);
   const overallStatus = useMemo(() => getOverallStatus(allCategories), [allCategories]);
-  const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))), [items]);
+  const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.selfScore, weight: item.weight }))), [items]);
 
   function updateCategoryComment(categoryItems: ManagerReviewItem[], nextComment: string) {
     const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
@@ -266,7 +266,7 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
           submitMode: mode,
           items: items.map((item) => ({
             evaluationItemId: item.evaluationItemId,
-            score: item.managerScore,
+            score: item.selfScore,
             comment: encodeManagerCategoryComment(item.managerComment, item.managerReviewStatus),
             evidences: [],
           })),
@@ -433,7 +433,7 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
             >
               <p className="font-semibold"><span style={{ color: member.userId === defaults.selectedUserId ? "#ffffff" : "#0f172a" }}>{member.name}</span></p>
               <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>状態: {getMemberStatusLabel(member.status)}</p>
-              <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>自己 {member.selfScoreTotal} / 上長 {member.managerScoreTotal}</p>
+              <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>自己評価合計 {member.selfScoreTotal}</p>
             </a>
           ))}
         </div>
@@ -511,7 +511,7 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
         <button type="button" onClick={() => saveWithMode("approve")} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
           {isPending ? "処理中..." : "全体を承認して保存"}
         </button>
-        <span className="text-sm text-slate-500">現在の上長評価加重点: {managerTotal}</span>
+        <span className="text-sm text-slate-500">現在の本人評価加重点: {managerTotal}</span>
       </div>
 
       {message ? <p className="text-sm text-slate-600">{message}</p> : null}

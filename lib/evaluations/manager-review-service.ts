@@ -117,10 +117,10 @@ function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return round2(items.reduce((sum, item) => sum + item.score * item.weight, 0));
 }
 
-function calculateProgress(items: ManagerReviewItem[], axis: SelfReviewAxis, scoreField: "selfScore" | "managerScore") {
+function calculateProgress(items: ManagerReviewItem[], axis: SelfReviewAxis) {
   const targetItems = items.filter((item) => item.axis === axis && item.inputScope !== "SELF" && item.inputScope !== "ADMIN");
   if (targetItems.length === 0) return 0;
-  const achieved = targetItems.reduce((sum, item) => sum + item[scoreField] * item.weight, 0);
+  const achieved = targetItems.reduce((sum, item) => sum + item.selfScore * item.weight, 0);
   const possible = targetItems.reduce((sum, item) => sum + item.maxScore * item.weight, 0);
   if (possible === 0) return 0;
   return round2((achieved / possible) * 100);
@@ -210,9 +210,9 @@ function buildFallbackBundle(selectedUserId?: string): ManagerReviewBundle {
     managerComment: "継続実践は一部で確認できるため、次期は広がりを期待します。",
     expectedFulfillmentRank: "B",
     selfScoreTotal: target.selfScoreTotal,
-    managerScoreTotal: calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))),
-    selfGrowthProgress: calculateProgress(items, "SELF_GROWTH", "managerScore"),
-    synergyProgress: calculateProgress(items, "SYNERGY", "managerScore"),
+    managerScoreTotal: calculateTotal(items.map((item) => ({ score: item.selfScore, weight: item.weight }))),
+    selfGrowthProgress: calculateProgress(items, "SELF_GROWTH"),
+    synergyProgress: calculateProgress(items, "SYNERGY"),
     items,
     source: "fallback",
   };
@@ -301,7 +301,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         name: membership.user.name,
         status: evaluation?.status ?? EvaluationStatus.SELF_REVIEW,
         selfScoreTotal: toNumber(evaluation?.selfScoreTotal),
-        managerScoreTotal: toNumber(evaluation?.managerScoreTotal),
+        managerScoreTotal: toNumber(evaluation?.selfScoreTotal),
         evaluation,
       };
     });
@@ -383,9 +383,9 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       managerComment: overallManagerMeta.comment,
       expectedFulfillmentRank: overallManagerMeta.expectedFulfillmentRank,
       selfScoreTotal: toNumber(target.evaluation?.selfScoreTotal),
-      managerScoreTotal: calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))),
-      selfGrowthProgress: calculateProgress(items, "SELF_GROWTH", "managerScore"),
-      synergyProgress: calculateProgress(items, "SYNERGY", "managerScore"),
+      managerScoreTotal: calculateTotal(items.map((item) => ({ score: item.selfScore, weight: item.weight }))),
+      selfGrowthProgress: calculateProgress(items, "SELF_GROWTH"),
+      synergyProgress: calculateProgress(items, "SYNERGY"),
       items,
       source: "database",
     };
