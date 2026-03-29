@@ -796,32 +796,6 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
         };
       }),
     );
-    const judgementItems: FinalReviewItem[] = itemRows.map((item) => {
-      const meta = resolveStoredItemMetaFromRow(item);
-      const saved = input.items.find((candidate) => candidate.evaluationItemId === item.id);
-      return {
-        evaluationItemId: item.id,
-        title: item.title,
-        category: item.category,
-        axis: meta.axis,
-        scoreType: meta.scoreType,
-        majorCategory: meta.majorCategory,
-        minorCategory: meta.minorCategory,
-        weight: toNumber(item.weight),
-        maxScore: meta.scoreType === "LEVEL_2" ? 2 : 1,
-        selfScore: 0,
-        managerScore: 0,
-        finalScore: normalizeScore(saved?.score ?? 0, meta.scoreType),
-        selfComment: "",
-        managerComment: "",
-        finalComment: saved?.comment ?? "",
-        evidenceRequired: Boolean(item.evidenceRequired),
-        evidences: normalizeEvidences(saved?.evidences),
-        inputScope: meta.inputScope,
-      };
-    });
-    const judgement = await enrichWithGradeJudgement(judgementItems, "FINAL", user?.positionId ?? null);
-
     await prisma.$transaction(async (tx) => {
       const existing = await tx.employeeEvaluation.findUnique({
         where: {
@@ -851,8 +825,6 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
           finalComment: input.finalComment,
           finalScoreTotal: total,
           finalRating,
-          itSkillGradeId: judgement.itSkill.gradeId,
-          businessSkillGradeId: judgement.businessSkill.gradeId,
           finalizedBy,
           finalizedAt: new Date(),
         },
@@ -918,8 +890,6 @@ export async function saveFinalReviewBundle(finalizedBy: string, input: SaveFina
           finalRating,
           userId: input.userId,
           evaluationPeriodId: input.evaluationPeriodId,
-          itSkillGradeId: judgement.itSkill.gradeId,
-          businessSkillGradeId: judgement.businessSkill.gradeId,
           positionId: user?.positionId ?? null,
         },
       });
