@@ -94,7 +94,7 @@ function hasSavedManagerScores(items: ManagerReviewItem[]) {
 }
 
 function getSelfGrowthDecision(items: ManagerReviewItem[]): SelfGrowthCategoryDecision {
-  const sourceScores = hasSavedManagerScores(items) ? items.map((item) => item.managerScore) : items.map((item) => item.selfScore);
+  const sourceScores = items.map((item) => item.managerScore);
 
   if (sourceScores.every((score) => score === 2)) {
     return "CLEARED";
@@ -106,7 +106,7 @@ function getSelfGrowthDecision(items: ManagerReviewItem[]): SelfGrowthCategoryDe
 }
 
 function getSynergyDecision(items: ManagerReviewItem[]): SynergyCategoryDecision {
-  const sourceScores = hasSavedManagerScores(items) ? items.map((item) => item.managerScore) : items.map((item) => item.selfScore);
+  const sourceScores = items.map((item) => item.managerScore);
 
   if (sourceScores.every((score) => score >= 1)) {
     return "PRACTICING";
