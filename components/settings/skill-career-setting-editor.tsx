@@ -231,7 +231,7 @@ function normalizeItemByAxis(row: EvaluationItemRow, axis: EvaluationItemRow["ax
       ...row,
       axis,
       scoreType: "CONTINUOUS_DONE",
-      weight: Math.min(3, Math.max(1, Math.round(row.weight || 1))),
+      weight: row.weight > 0 ? row.weight : 1,
       evidenceRequired: true,
     };
   }
