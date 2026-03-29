@@ -216,17 +216,6 @@ function defaultMinorCategory(category: SkillCategory) {
   return categoryGuides[category].majorCategories[0]?.items[0] ?? "";
 }
 
-function scoreTypeLabel(scoreType: EvaluationItemRow["scoreType"]) {
-  return scoreType === "CONTINUOUS_DONE" ? "0 / 1 継続実践" : "1 / 2 評価";
-}
-
-function inputScopeLabel(inputScope: EvaluationInputScope) {
-  if (inputScope === "SELF") return "本人のみ";
-  if (inputScope === "MANAGER") return "上長のみ";
-  if (inputScope === "ADMIN") return "管理者のみ";
-  return "両方";
-}
-
 function normalizeInputScope(value: string): EvaluationInputScope | null {
   const normalized = value.trim();
   if (["SELF", "本人のみ"].includes(normalized)) return "SELF";
@@ -234,15 +223,6 @@ function normalizeInputScope(value: string): EvaluationInputScope | null {
   if (["ADMIN", "管理者のみ"].includes(normalized)) return "ADMIN";
   if (["BOTH", "両方"].includes(normalized)) return "BOTH";
   return null;
-}
-
-function weightHint(row: EvaluationItemRow) {
-  if (row.axis === "SYNERGY") {
-    if (row.weight >= 3) return "全社・事業拡大型";
-    if (row.weight >= 2) return "チーム・顧客へ継続価値";
-    return "チーム内の継続協力";
-  }
-  return "加重平均で使用";
 }
 
 function normalizeItemByAxis(row: EvaluationItemRow, axis: EvaluationItemRow["axis"]): EvaluationItemRow {
@@ -872,7 +852,6 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                           <option value="LEVEL_2">1 / 2 評価</option>
                           <option value="CONTINUOUS_DONE">0 / 1 継続実践</option>
                         </select>
-                        <p className="text-xs text-slate-500">{scoreTypeLabel(row.scoreType)}</p>
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -924,49 +903,26 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                       <input type="text" value={row.description} disabled={!canEdit || isPending} onChange={(event) => setEvaluationItems((current) => current.map((item) => item.id === row.id ? { ...item, description: event.target.value } : item))} className="w-72 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
                     </td>
                     <td className="px-4 py-3">
-                      <div className="space-y-2">
-                        <input
-                          type="number"
-                          min={row.axis === "SYNERGY" ? 1 : 0}
-                          max={row.axis === "SYNERGY" ? 3 : undefined}
-                          step={row.axis === "SYNERGY" ? 1 : 0.01}
-                          value={row.weight}
-                          disabled={!canEdit || isPending}
-                          onChange={(event) =>
-                            setEvaluationItems((current) =>
-                              current.map((item) => {
-                                if (item.id !== row.id) return item;
-                                const nextWeight = toNumber(event.target.value);
-                                return {
-                                  ...item,
-                                  weight: item.axis === "SYNERGY" ? Math.min(3, Math.max(1, Math.round(nextWeight || 1))) : nextWeight,
-                                };
-                              }),
-                            )
-                          }
-                          className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                        />
-                        {row.axis === "SYNERGY" ? (
-                          <div className="flex gap-2">
-                            {[1, 2, 3].map((weight) => (
-                              <button
-                                key={weight}
-                                type="button"
-                                disabled={!canEdit || isPending}
-                                onClick={() =>
-                                  setEvaluationItems((current) =>
-                                    current.map((item) => (item.id === row.id ? { ...item, weight } : item)),
-                                  )
-                                }
-                                className={`rounded-full border px-2.5 py-1 text-xs ${row.weight === weight ? "border-slate-950 bg-slate-950 text-white" : "border-slate-300 bg-white text-slate-700"}`}
-                              >
-                                {weight}
-                              </button>
-                            ))}
-                          </div>
-                        ) : null}
-                        <p className="text-xs text-slate-500">{weightHint(row)}</p>
-                      </div>
+                      <input
+                        type="number"
+                        min={0}
+                        step={0.01}
+                        value={row.weight}
+                        disabled={!canEdit || isPending}
+                        onChange={(event) =>
+                          setEvaluationItems((current) =>
+                            current.map((item) => {
+                              if (item.id !== row.id) return item;
+                              const nextWeight = toNumber(event.target.value);
+                              return {
+                                ...item,
+                                weight: nextWeight,
+                              };
+                            }),
+                          )
+                        }
+                        className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                      />
                     </td>
                     <td className="px-4 py-3">
                       <div className="space-y-2">
@@ -989,7 +945,6 @@ export function SkillCareerSettingEditor({ canEdit, gradeDefaults, evaluationIte
                           <option value="ADMIN">管理者のみ</option>
                           <option value="BOTH">両方</option>
                         </select>
-                        <p className="text-xs text-slate-500">{inputScopeLabel(row.inputScope)}</p>
                       </div>
                     </td>
                     <td className="px-4 py-3">
