@@ -250,32 +250,6 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
   const overallStatus = useMemo(() => getOverallStatus(allCategories), [allCategories]);
   const managerTotal = useMemo(() => calculateTotal(items.map((item) => ({ score: item.managerScore, weight: item.weight }))), [items]);
 
-  function updateCategoryScores(categoryItems: ManagerReviewItem[], nextDecision: number | SynergyCategoryDecision) {
-    const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
-    setItems((current) => current.map((row) => {
-      if (!ids.has(row.evaluationItemId)) {
-        return row;
-      }
-
-      if (typeof nextDecision === "number") {
-        return { ...row, managerScore: nextDecision };
-      }
-
-      if (nextDecision === "PRACTICING") {
-        return { ...row, managerScore: 1 };
-      }
-
-      if (nextDecision === "NOT_PRACTICING") {
-        return { ...row, managerScore: 0 };
-      }
-
-      const categoryIndex = categoryItems.findIndex((item) => item.evaluationItemId === row.evaluationItemId);
-      const fallbackHasPositive = categoryItems.some((item) => item.selfScore >= 1);
-      const nextScore = row.selfScore >= 1 ? 1 : (!fallbackHasPositive && categoryIndex === 0 ? 1 : 0);
-      return { ...row, managerScore: nextScore };
-    }));
-  }
-
   function updateCategoryComment(categoryItems: ManagerReviewItem[], nextComment: string) {
     const ids = new Set(categoryItems.map((item) => item.evaluationItemId));
     setItems((current) => current.map((row) => (ids.has(row.evaluationItemId) ? { ...row, managerComment: nextComment } : row)));
@@ -388,38 +362,22 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
           </div>
         ) : null}
 
-        <div className={`mt-4 grid gap-2 ${isSelfGrowth ? "md:grid-cols-3" : "md:grid-cols-3"}`}>
+        <div className="mt-4 grid gap-2 md:grid-cols-3">
           {guides.map((guide) => {
-            if (!isSelfGrowth) {
-              const selected = decision === guide.value;
-              return (
-                <article
-                  key={`${group.key}-${guide.value}`}
-                  className={`rounded-2xl border px-4 py-3 text-sm ${selected ? "border-sky-500 bg-sky-50 text-sky-900" : "border-slate-200 bg-white text-slate-500"}`}
-                >
-                  <span className="block font-semibold">{guide.label}</span>
-                  <span className={`mt-1 block text-xs ${selected ? "text-sky-700" : "text-slate-500"}`}>{guide.description}</span>
-                </article>
-              );
-            }
+            const selected = decision === guide.value;
+            const selectedTone = isSelfGrowth
+              ? "border-emerald-500 bg-emerald-50 text-emerald-900"
+              : "border-sky-500 bg-sky-50 text-sky-900";
+            const selectedSubTone = isSelfGrowth ? "text-emerald-700" : "text-sky-700";
 
             return (
-              <label key={`${group.key}-${guide.value}`} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
-                <input
-                  type="radio"
-                  name={group.key}
-                  checked={decision === guide.value}
-                  disabled={!canEdit || isPending}
-                  onChange={() => {
-                    const nextScore = guide.value === "CLEARED" ? 2 : guide.value === "CHALLENGING" ? 1 : 0;
-                    updateCategoryScores(group.items, nextScore);
-                  }}
-                />
-                <span>
-                  <span className="block font-semibold text-slate-950">{guide.label}</span>
-                  <span className="block text-xs text-slate-500">{guide.description}</span>
-                </span>
-              </label>
+              <article
+                key={`${group.key}-${guide.value}`}
+                className={`rounded-2xl border px-4 py-3 text-sm ${selected ? selectedTone : "border-slate-200 bg-white text-slate-500"}`}
+              >
+                <span className="block font-semibold">{guide.label}</span>
+                <span className={`mt-1 block text-xs ${selected ? selectedSubTone : "text-slate-500"}`}>{guide.description}</span>
+              </article>
             );
           })}
         </div>
