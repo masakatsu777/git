@@ -629,6 +629,10 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
 
     const items: FinalReviewItem[] = itemRows.map((item) => {
       const meta = resolveStoredItemMetaFromRow(item);
+      const selfRow = scoreMap.self.get(item.id);
+      const managerRow = scoreMap.manager.get(item.id);
+      const finalRow = scoreMap.final.get(item.id);
+      const normalizedSelfScore = normalizeScore(toNumber(selfRow?.score), meta.scoreType);
       return {
         evaluationItemId: item.id,
         title: item.title,
@@ -639,14 +643,14 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         minorCategory: meta.minorCategory,
         weight: toNumber(item.weight),
         maxScore: meta.scoreType === "LEVEL_2" ? 2 : 1,
-        selfScore: normalizeScore(toNumber(scoreMap.self.get(item.id)?.score), meta.scoreType),
-        managerScore: normalizeScore(toNumber(scoreMap.manager.get(item.id)?.score), meta.scoreType),
-        finalScore: normalizeScore(toNumber(scoreMap.final.get(item.id)?.score), meta.scoreType),
-        selfComment: scoreMap.self.get(item.id)?.comment ?? "",
-        managerComment: scoreMap.manager.get(item.id)?.comment ?? "",
-        finalComment: scoreMap.final.get(item.id)?.comment ?? "",
+        selfScore: normalizedSelfScore,
+        managerScore: normalizeScore(toNumber(managerRow?.score), meta.scoreType),
+        finalScore: finalRow ? normalizeScore(toNumber(finalRow.score), meta.scoreType) : normalizedSelfScore,
+        selfComment: selfRow?.comment ?? "",
+        managerComment: managerRow?.comment ?? "",
+        finalComment: finalRow?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
-        evidences: normalizeEvidences(scoreMap.final.get(item.id)?.evidences),
+        evidences: normalizeEvidences(finalRow?.evidences),
         inputScope: meta.inputScope,
       };
     });
