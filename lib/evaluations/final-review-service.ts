@@ -654,7 +654,9 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         inputScope: meta.inputScope,
       };
     });
-    const displayStage = resolveDisplayStage(target.status);
+    const resolvedDisplayStage = resolveDisplayStage(target.status);
+    const hasUsableFinalScores = toNumber(target.evaluation.finalScoreTotal) > 0 || items.some((item) => item.finalScore > 0);
+    const displayStage = resolvedDisplayStage === "FINAL" && !hasUsableFinalScores ? "SELF" : resolvedDisplayStage;
     const overallManagerMeta = decodeManagerOverallComment(target.evaluation.managerComment);
     const judgement = await enrichWithGradeJudgement(items, displayStage, target.positionId ?? null);
     const points = calculateAxisPoints(items, displayStage);
