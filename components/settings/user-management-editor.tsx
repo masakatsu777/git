@@ -323,8 +323,8 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
   }
 
   async function handleAssignmentChange() {
-    if (!assignmentForm.userId || !assignmentForm.teamId || !assignmentForm.startDate) {
-      setMessage("所属変更の対象ユーザー、チーム、所属開始日を入力してください。");
+    if (!assignmentForm.userId || !assignmentForm.departmentId || !assignmentForm.startDate) {
+      setMessage("所属変更の対象ユーザー、部署、所属開始日を入力してください。");
       return;
     }
 

@@ -375,26 +375,33 @@ export async function updateUserProfile(input: {
   }
 }
 
-export async function assignUserToTeam(input: { userId: string; teamId: string; startDate: string }) {
+export async function assignUserToTeam(input: { userId: string; departmentId?: string; teamId?: string; startDate: string }) {
   const membershipStartDate = new Date(`${input.startDate}T00:00:00`);
   const previousEndDate = new Date(membershipStartDate);
   previousEndDate.setDate(previousEndDate.getDate() - 1);
 
   try {
     await prisma.$transaction(async (tx) => {
-      const team = await tx.team.findUnique({
-        where: { id: input.teamId },
-        select: { id: true, departmentId: true, isActive: true },
-      });
+      let nextDepartmentId = input.departmentId || null;
+      const nextTeamId = input.teamId || "";
 
-      if (!team || !team.isActive) {
-        throw new Error("対象チームが見つからないか、無効です");
+      if (nextTeamId) {
+        const team = await tx.team.findUnique({
+          where: { id: nextTeamId },
+          select: { id: true, departmentId: true, isActive: true },
+        });
+
+        if (!team || !team.isActive) {
+          throw new Error("対象チームが見つからないか、無効です");
+        }
+
+        nextDepartmentId = team.departmentId ?? nextDepartmentId;
       }
 
       await tx.user.update({
         where: { id: input.userId },
         data: {
-          departmentId: team.departmentId ?? null,
+          departmentId: nextDepartmentId,
           status: UserStatus.ACTIVE,
         },
       });
@@ -407,11 +414,7 @@ export async function assignUserToTeam(input: { userId: string; teamId: string; 
         orderBy: { startDate: "desc" },
       });
 
-      if (currentMembership?.teamId === input.teamId) {
-        return;
-      }
-
-      if (currentMembership) {
+      if (currentMembership && (!nextTeamId || currentMembership.teamId !== nextTeamId)) {
         await tx.teamMembership.update({
           where: { id: currentMembership.id },
           data: {
@@ -421,9 +424,13 @@ export async function assignUserToTeam(input: { userId: string; teamId: string; 
         });
       }
 
+      if (!nextTeamId || currentMembership?.teamId === nextTeamId) {
+        return;
+      }
+
       await tx.teamMembership.create({
         data: {
-          teamId: input.teamId,
+          teamId: nextTeamId,
           userId: input.userId,
           startDate: membershipStartDate,
           isPrimary: true,
