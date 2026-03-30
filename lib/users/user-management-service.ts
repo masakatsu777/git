@@ -190,6 +190,8 @@ export async function getUserManagementBundle(): Promise<UserManagementBundle> {
     return {
       rows: users.map((user) => {
         const currentPrimaryMembership = user.teamMemberships.find((membership) => membership.isPrimary && !membership.endDate);
+        const effectiveDepartmentId = currentPrimaryMembership?.team.department?.id ?? user.department?.id ?? "";
+        const effectiveDepartmentName = currentPrimaryMembership?.team.department?.name ?? user.department?.name ?? "-";
 
         return {
           userId: user.id,
@@ -200,8 +202,8 @@ export async function getUserManagementBundle(): Promise<UserManagementBundle> {
           roleId: user.role.id,
           roleCode: user.role.code,
           roleName: user.role.name,
-          departmentId: currentPrimaryMembership?.team.department?.id ?? "",
-          departmentName: currentPrimaryMembership?.team.department?.name ?? "-",
+          departmentId: effectiveDepartmentId,
+          departmentName: effectiveDepartmentName,
           teamId: currentPrimaryMembership?.team.id ?? "",
           teamName: currentPrimaryMembership?.team.name ?? "未所属",
           status: user.status,
@@ -498,9 +500,13 @@ async function syncUserDepartmentFromActiveMembership(tx: Prisma.TransactionClie
     select: { team: { select: { departmentId: true } } },
   });
 
+  if (!activeMembership) {
+    return;
+  }
+
   await tx.user.update({
     where: { id: userId },
-    data: { departmentId: activeMembership?.team.departmentId ?? null },
+    data: { departmentId: activeMembership.team.departmentId ?? null },
   });
 }
 
