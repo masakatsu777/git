@@ -710,8 +710,8 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       items,
       source: "database",
     };
-  } catch {
-    return buildFallbackBundle(selectedUserId);
+  } catch (error) {
+    throw error instanceof Error ? error : new Error("最終評価結果の読み込みに失敗しました");
   }
 }
 
