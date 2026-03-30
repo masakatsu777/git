@@ -6,7 +6,9 @@ import { getEvaluationProgressBundle } from "@/lib/evaluations/progress-service"
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { getCompanyTargetGrossProfitRate, getTeamMonthlySnapshot, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
+import { getTeamMonthlyDetails } from "@/lib/pl/detail-service";
 import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
+import { calculateGrossProfit } from "@/lib/pl/calculations";
 import { formatCurrency } from "@/lib/format/currency";
 
 
@@ -26,23 +28,49 @@ export default async function DashboardPage({
   const showPersonalProfit = !canViewAll && !hasPrimaryTeam;
   const defaultTeamId = hasPrimaryTeam ? user.teamIds[0] : undefined;
 
-  const [snapshots, personalSummary, progress, yearMonthOptions, companyTargetGrossProfitRate] = await Promise.all([
+  const [snapshots, teamDetails, personalSummary, progress, yearMonthOptions, companyTargetGrossProfitRate] = await Promise.all([
     showPersonalProfit
       ? Promise.resolve([])
       : canViewAll
         ? getVisibleTeamMonthlySnapshots(yearMonth)
         : Promise.resolve([await getTeamMonthlySnapshot(defaultTeamId!, yearMonth)]),
+    showPersonalProfit || canViewAll || !defaultTeamId
+      ? Promise.resolve(null)
+      : getTeamMonthlyDetails(defaultTeamId, yearMonth),
     showPersonalProfit ? getUnassignedPersonalProfitByUser(user.id, yearMonth) : Promise.resolve(null),
     getEvaluationProgressBundle(canViewAll ? undefined : user.teamIds),
     getVisibleYearMonthOptions(showPersonalProfit ? undefined : defaultTeamId),
     showPersonalProfit || !canViewAll ? Promise.resolve(0) : getCompanyTargetGrossProfitRate(yearMonth),
   ]);
 
+  const visibleSnapshots = !showPersonalProfit && !canViewAll && teamDetails && snapshots[0]
+    ? (() => {
+        const unassignedEmployeeIdSet = new Set(teamDetails.unassignedEmployeeIds);
+        const unassignedPartnerIdSet = new Set(teamDetails.unassignedPartnerIds);
+        const visibleAssignments = teamDetails.assignments.filter((row) => {
+          if (row.targetType === "EMPLOYEE") {
+            return !row.userId || !unassignedEmployeeIdSet.has(row.userId);
+          }
+
+          return !row.partnerId || !unassignedPartnerIdSet.has(row.partnerId);
+        });
+        const recalculated = calculateGrossProfit({
+          salesTotal: visibleAssignments.reduce((sum, row) => sum + row.salesAmount, 0),
+          directLaborCost: teamDetails.directLaborCostTotal,
+          outsourcingCost: teamDetails.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
+          indirectCost: teamDetails.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
+          fixedCostAllocation: teamDetails.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
+          targetGrossProfitRate: snapshots[0].targetGrossProfitRate,
+        });
+        return [{ ...snapshots[0], ...recalculated }];
+      })()
+    : snapshots;
+
   const aggregateSnapshot = !showPersonalProfit && canViewAll
     ? (() => {
-        const salesTotal = snapshots.reduce((sum, row) => sum + row.salesTotal, 0);
-        const grossProfit1 = snapshots.reduce((sum, row) => sum + row.grossProfit1, 0);
-        const finalGrossProfit = snapshots.reduce((sum, row) => sum + row.finalGrossProfit, 0);
+        const salesTotal = visibleSnapshots.reduce((sum, row) => sum + row.salesTotal, 0);
+        const grossProfit1 = visibleSnapshots.reduce((sum, row) => sum + row.grossProfit1, 0);
+        const finalGrossProfit = visibleSnapshots.reduce((sum, row) => sum + row.finalGrossProfit, 0);
         const actualGrossProfitRate = salesTotal === 0 ? 0 : Math.round((finalGrossProfit / salesTotal) * 100 * 100) / 100;
         const varianceRate = Math.round((actualGrossProfitRate - companyTargetGrossProfitRate) * 100) / 100;
         return {
@@ -54,7 +82,7 @@ export default async function DashboardPage({
       })()
     : null;
 
-  const primarySnapshot = aggregateSnapshot ?? snapshots[0];
+  const primarySnapshot = aggregateSnapshot ?? visibleSnapshots[0];
 
   const summaryCards = showPersonalProfit
     ? [
@@ -208,7 +236,7 @@ export default async function DashboardPage({
                         <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">当月の個人粗利データはまだありません。</td>
                       </tr>
                     )
-                  ) : snapshots.map((row) => (
+                  ) : visibleSnapshots.map((row) => (
                     <tr key={`${row.teamId}-${row.yearMonth}`} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">
                         <Link href={`/pl/monthly?teamId=${row.teamId}&yearMonth=${yearMonth}`} className="text-brand-700 underline-offset-4 hover:underline">
