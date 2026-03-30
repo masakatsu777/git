@@ -40,15 +40,6 @@ export default async function MonthlyPlPage({
     getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.teamIds),
     getVisibleYearMonthOptions(teamId),
   ]);
-  const effectiveSnapshot = calculateGrossProfit({
-    salesTotal: details.assignments.reduce((sum, row) => sum + row.salesAmount, 0),
-    directLaborCost: details.directLaborCostTotal,
-    outsourcingCost: details.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
-    indirectCost: details.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
-    fixedCostAllocation: details.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
-    targetGrossProfitRate: snapshot.targetGrossProfitRate,
-  });
-
   const canEdit = hasPermission(user, PERMISSIONS.plTeamWrite);
   const canManageFixedCosts = hasPermission(user, PERMISSIONS.masterWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
@@ -68,6 +59,14 @@ export default async function MonthlyPlPage({
     }
 
     return Boolean(row.partnerId) && row.partnerId !== null && unassignedPartnerIdSet.has(row.partnerId);
+  });
+  const effectiveSnapshot = calculateGrossProfit({
+    salesTotal: (canManageUnassignedSales ? details.assignments : teamAssignments).reduce((sum, row) => sum + row.salesAmount, 0),
+    directLaborCost: details.directLaborCostTotal,
+    outsourcingCost: details.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
+    indirectCost: details.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
+    fixedCostAllocation: details.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
+    targetGrossProfitRate: snapshot.targetGrossProfitRate,
   });
 
   return (
