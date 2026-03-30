@@ -16,9 +16,6 @@ const sections = [
     title: "制度設定",
     items: [
       { label: "評価制度設定", href: "/settings/skill-careers", note: "項目、重み、根拠必須を確認" },
-      { label: "総合等級別昇給ルール", href: "/settings/overall-grade-salary-rules", note: "主基準を確認" },
-      { label: "期待充足ランク別昇給ルール", href: "/settings/salary-revision-rules", note: "補助基準を確認" },
-      { label: "給与構成", href: "/settings/salary-structure", note: "基準額と粗利補正を確認" },
     ],
   },
   {
@@ -33,7 +30,6 @@ const sections = [
     title: "昇給運用",
     items: [
       { label: "昇給シミュレーション", href: "/salary/simulations", note: "決定額、差額、調整理由、承認を確認" },
-      { label: "昇給結果一覧", href: "/salary/results", note: "反映後の一覧と詳細を確認" },
       { label: "監査ログ", href: "/settings/audit-logs?action=SALARY_SIMULATION", note: "保存、承認、反映ログを確認" },
     ],
   },

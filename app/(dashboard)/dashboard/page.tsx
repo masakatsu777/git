@@ -137,18 +137,6 @@ export default async function DashboardPage({
                 <Link href="/settings/skill-careers" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   評価制度設定
                 </Link>
-                <Link href="/settings/career-statuses" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                  等級一覧
-                </Link>
-                <Link href="/settings/overall-grade-salary-rules" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                  総合等級別昇給ルール
-                </Link>
-                <Link href="/settings/salary-revision-rules" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                  期待充足ランク別昇給ルール
-                </Link>
-                <Link href="/settings/salary-structure" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                  給与構成
-                </Link>
                 <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   全社固定費設定
                 </Link>

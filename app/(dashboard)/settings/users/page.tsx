@@ -44,9 +44,6 @@ export default async function UsersPage({
               <Link href="/settings/organization" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 組織設定
               </Link>
-              <Link href="/settings/career-statuses" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                等級一覧
-              </Link>
               <Link href="/settings/audit-logs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 監査ログ
               </Link>

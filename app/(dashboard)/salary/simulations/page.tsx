@@ -71,9 +71,6 @@ export default async function SalarySimulationPage({
               <Link href={`/evaluations/finalize?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 最終評価
               </Link>
-              <Link href={`/salary/results?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                昇給結果
-              </Link>
             </div>
           </div>
         </header>
