@@ -58,8 +58,6 @@ export async function getEvaluationProgressBundle(teamIds?: string[]): Promise<E
       select: {
         status: true,
         selfScoreTotal: true,
-        managerScoreTotal: true,
-        finalScoreTotal: true,
         userId: true,
         user: { select: { name: true } },
       },
@@ -71,12 +69,12 @@ export async function getEvaluationProgressBundle(teamIds?: string[]): Promise<E
     );
     const managerPending = evaluations.filter(
       (evaluation) =>
+        evaluation.status !== EvaluationStatus.MANAGER_REVIEW &&
         evaluation.status !== EvaluationStatus.FINAL_REVIEW &&
-        evaluation.status !== EvaluationStatus.FINALIZED &&
-        evaluation.managerScoreTotal === null,
+        evaluation.status !== EvaluationStatus.FINALIZED,
     );
     const finalPending = evaluations.filter(
-      (evaluation) => evaluation.status !== EvaluationStatus.FINALIZED && evaluation.finalScoreTotal === null,
+      (evaluation) => evaluation.status !== EvaluationStatus.FINALIZED,
     );
 
     return {

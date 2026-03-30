@@ -105,6 +105,7 @@ export async function getAnnualEvaluationSummaryBundle(fiscalYear: number, fisca
           where: teamIds && teamIds.length > 0 ? { teamId: { in: teamIds } } : undefined,
           select: {
             status: true,
+            selfScoreTotal: true,
             finalScoreTotal: true,
             finalRating: true,
           },
@@ -121,7 +122,7 @@ export async function getAnnualEvaluationSummaryBundle(fiscalYear: number, fisca
     const filteredPeriods = periods.filter((period) => isOverlapping(period.startDate, period.endDate, range.start, range.end));
 
     const summaries = filteredPeriods.map((period) => {
-      const finalized = period.employeeEvaluations.filter((evaluation) => evaluation.status === EvaluationStatus.FINALIZED && evaluation.finalScoreTotal !== null);
+      const finalized = period.employeeEvaluations.filter((evaluation) => evaluation.status === EvaluationStatus.FINALIZED && (evaluation.selfScoreTotal !== null || evaluation.finalScoreTotal !== null));
       const ratingCounts = finalized.reduce<Record<string, number>>((counts, evaluation) => {
         const rating = evaluation.finalRating ?? "-";
         counts[rating] = (counts[rating] ?? 0) + 1;
@@ -141,7 +142,7 @@ export async function getAnnualEvaluationSummaryBundle(fiscalYear: number, fisca
         endDate: period.endDate.toISOString().slice(0, 10),
         finalizedCount: finalized.length,
         totalCount: period.employeeEvaluations.length,
-        averageFinalScore: finalized.length > 0 ? round2(finalized.reduce((sum, evaluation) => sum + Number(evaluation.finalScoreTotal), 0) / finalized.length) : 0,
+        averageFinalScore: finalized.length > 0 ? round2(finalized.reduce((sum, evaluation) => sum + Number(evaluation.selfScoreTotal ?? evaluation.finalScoreTotal ?? 0), 0) / finalized.length) : 0,
         ratingCounts,
         salarySimulationStatusCounts,
         proposedRaiseAmountTotal,

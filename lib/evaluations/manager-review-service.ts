@@ -521,7 +521,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
       managerComment: overallManagerMeta.comment,
       expectedFulfillmentRank: overallManagerMeta.expectedFulfillmentRank,
       items: nextItems,
-      managerScoreTotal: calculateTotal(nextItems.map((item) => ({ score: item.managerScore, weight: item.weight }))),
+      managerScoreTotal: calculateTotal(nextItems.map((item) => ({ score: item.selfScore, weight: item.weight }))),
       selfGrowthProgress: calculateProgress(nextItems, "SELF_GROWTH"),
       synergyProgress: calculateProgress(nextItems, "SYNERGY"),
       source: "fallback",

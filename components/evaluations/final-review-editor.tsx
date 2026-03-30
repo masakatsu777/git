@@ -43,7 +43,7 @@ function renderReferenceItems(items: FinalReviewItem[], showEvidence: boolean) {
         <article key={item.evaluationItemId} className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.majorCategory} / {item.minorCategory}</p>
           <h4 className="mt-2 text-sm font-semibold text-slate-950">{item.title}</h4>
-          <p className="mt-2 text-sm text-slate-500">自己 {item.selfScore} / 上長 {item.managerScore} / 重み {item.weight}</p>
+          <p className="mt-2 text-sm text-slate-500">自己評価 {item.selfScore} / 重み {item.weight}</p>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             <div className="rounded-2xl bg-slate-50 p-3">
               <p className="text-xs font-semibold text-slate-500">本人コメント</p>
