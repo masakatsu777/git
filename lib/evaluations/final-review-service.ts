@@ -475,72 +475,77 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
 
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
-    const [evaluations, itemRows] = await Promise.all([
-      prisma.employeeEvaluation.findMany({
-        where: { evaluationPeriodId: period.id },
-        orderBy: [{ team: { name: "asc" } }, { user: { name: "asc" } }],
-        select: {
-          id: true,
-          userId: true,
-          status: true,
-          selfComment: true,
-          managerComment: true,
-          finalComment: true,
-          selfScoreTotal: true,
-          managerScoreTotal: true,
-          finalScoreTotal: true,
-          finalRating: true,
-          user: {
-            select: {
-              name: true,
-              positionId: true,
-              position: { select: { name: true } },
-              salaryRecords: {
-                orderBy: { effectiveFrom: "desc" },
-                take: 1,
-                select: { baseSalary: true, allowance: true },
-              },
+    const evaluations = await prisma.employeeEvaluation.findMany({
+      where: { evaluationPeriodId: period.id },
+      orderBy: [{ team: { name: "asc" } }, { user: { name: "asc" } }],
+      select: {
+        id: true,
+        userId: true,
+        status: true,
+        selfComment: true,
+        managerComment: true,
+        finalComment: true,
+        selfScoreTotal: true,
+        managerScoreTotal: true,
+        finalScoreTotal: true,
+        finalRating: true,
+        user: {
+          select: {
+            name: true,
+            positionId: true,
+            position: { select: { name: true } },
+            salaryRecords: {
+              orderBy: { effectiveFrom: "desc" },
+              take: 1,
+              select: { baseSalary: true, allowance: true },
             },
           },
-          team: { select: { id: true, name: true } },
-          itSkillGrade: { select: { gradeName: true, rankOrder: true } },
-          businessSkillGrade: { select: { gradeName: true, rankOrder: true } },
-          scores: {
-            where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER, ReviewType.FINAL] } },
-            select: {
-              evaluationItemId: true,
-              reviewType: true,
-              score: true,
-              comment: true,
-              evidences: {
-                select: {
-                  id: true,
-                  summary: true,
-                  targetName: true,
-                  periodNote: true,
-                },
+        },
+        team: { select: { id: true, name: true } },
+        itSkillGrade: { select: { gradeName: true, rankOrder: true } },
+        businessSkillGrade: { select: { gradeName: true, rankOrder: true } },
+        scores: {
+          where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER, ReviewType.FINAL] } },
+          select: {
+            evaluationItemId: true,
+            reviewType: true,
+            score: true,
+            comment: true,
+            evidences: {
+              select: {
+                id: true,
+                summary: true,
+                targetName: true,
+                periodNote: true,
               },
             },
           },
         },
-      }),
-      prisma.evaluationItem.findMany({
-        where: { isActive: true },
-        orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          category: true,
-          weight: true,
-          axis: true,
-          scoreType: true,
-          majorCategory: true,
-          minorCategory: true,
-          evidenceRequired: true,
-        },
-      }),
-    ]);
+      },
+    });
+
+    const referencedItemIds = Array.from(new Set(evaluations.flatMap((evaluation) => evaluation.scores.map((score) => score.evaluationItemId))));
+    const itemRows = await prisma.evaluationItem.findMany({
+      where: {
+        OR: [
+          { isActive: true },
+          { id: { in: referencedItemIds.length > 0 ? referencedItemIds : ["__never__"] } },
+        ],
+      },
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+        weight: true,
+        axis: true,
+        scoreType: true,
+        majorCategory: true,
+        minorCategory: true,
+        evidenceRequired: true,
+      },
+    });
 
     const visibilityMap = await getUserMenuVisibilityMap(evaluations.map((evaluation) => evaluation.userId));
     const visibleEvaluations = evaluations.filter((evaluation) => visibilityMap[evaluation.userId]?.philosophyPractice);
