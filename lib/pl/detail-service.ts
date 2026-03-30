@@ -63,7 +63,9 @@ export type TeamMonthlyDetailBundle = {
   grossProfitTarget: number;
   grossProfitRateTarget: number;
   employeeOptions: PlDetailOption[];
+  unassignedEmployeeIds: string[];
   unassignedEmployeeOptions: PlDetailOption[];
+  unassignedPartnerIds: string[];
   unassignedPartnerOptions: PlDetailOption[];
   partnerOptions: PlDetailOption[];
   source: "database" | "fallback";
@@ -209,7 +211,9 @@ const fallbackBundle: TeamMonthlyDetailBundle = {
     { id: "demo-member1", label: "開発 一郎", defaultUnitPrice: 800000, defaultWorkRate: 100 },
     { id: "demo-member2", label: "開発 二郎", defaultUnitPrice: 780000, defaultWorkRate: 100 },
   ],
+  unassignedEmployeeIds: [],
   unassignedEmployeeOptions: [],
+  unassignedPartnerIds: [],
   unassignedPartnerOptions: [],
   partnerOptions: [{ id: "partner-001", label: "協力会社A", defaultUnitPrice: 700000, defaultWorkRate: 100, defaultOutsourceAmount: 620000 }],
   source: "fallback",
@@ -330,7 +334,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
           },
         },
       }),
-      includeUnassignedEmployeeOptions && team.departmentId
+      team.departmentId
         ? prisma.user.findMany({
             where: {
               status: "ACTIVE",
@@ -356,8 +360,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
             },
           })
         : Promise.resolve([]),
-      includeUnassignedEmployeeOptions
-        ? prisma.partner.findMany({
+      prisma.partner.findMany({
             where: {
               status: "ACTIVE",
               OR: [
@@ -377,8 +380,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
                 },
               },
             },
-          })
-        : Promise.resolve([]),
+          }),
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
       getTeamLaborCostSummary(teamId, yearMonth),
     ]);
@@ -449,18 +451,24 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
         defaultUnitPrice: num(row.user.employeeSalesRateSetting?.unitPrice),
         defaultWorkRate: num(row.user.employeeSalesRateSetting?.defaultWorkRate ?? 100),
       })),
-      unassignedEmployeeOptions: unassignedEmployees.map((row) => ({
-        id: row.id,
-        label: row.name,
-        defaultUnitPrice: num(row.employeeSalesRateSetting?.unitPrice),
-        defaultWorkRate: num(row.employeeSalesRateSetting?.defaultWorkRate ?? 100),
-      })),
-      unassignedPartnerOptions: unassignedPartners.map((row) => ({
-        id: row.id,
-        label: row.name,
-        defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
-        defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
-      })),
+      unassignedEmployeeIds: unassignedEmployees.map((row) => row.id),
+      unassignedEmployeeOptions: includeUnassignedEmployeeOptions
+        ? unassignedEmployees.map((row) => ({
+            id: row.id,
+            label: row.name,
+            defaultUnitPrice: num(row.employeeSalesRateSetting?.unitPrice),
+            defaultWorkRate: num(row.employeeSalesRateSetting?.defaultWorkRate ?? 100),
+          }))
+        : [],
+      unassignedPartnerIds: unassignedPartners.map((row) => row.id),
+      unassignedPartnerOptions: includeUnassignedEmployeeOptions
+        ? unassignedPartners.map((row) => ({
+            id: row.id,
+            label: row.name,
+            defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
+            defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
+          }))
+        : [],
       partnerOptions: partners.map((row) => ({
         id: row.id,
         label: row.name,

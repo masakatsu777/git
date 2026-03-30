@@ -53,8 +53,8 @@ export default async function MonthlyPlPage({
   const canManageFixedCosts = hasPermission(user, PERMISSIONS.masterWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
   const canManageUnassignedSales = user.role === "admin" || user.role === "president";
-  const unassignedEmployeeIdSet = new Set(details.unassignedEmployeeOptions.map((option) => option.id));
-  const unassignedPartnerIdSet = new Set(details.unassignedPartnerOptions.map((option) => option.id));
+  const unassignedEmployeeIdSet = new Set(details.unassignedEmployeeIds);
+  const unassignedPartnerIdSet = new Set(details.unassignedPartnerIds);
   const teamAssignments = details.assignments.filter((row) => {
     if (row.targetType === "EMPLOYEE") {
       return !row.userId || !unassignedEmployeeIdSet.has(row.userId);
