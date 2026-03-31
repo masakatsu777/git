@@ -164,7 +164,6 @@ export default async function EvaluationResultPage({
 
           {!salaryRow ? (
             <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.gradeSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.currentSalary)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考評価額 {formatCurrency(displaySalaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(displaySalaryRow.currentSalary)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
@@ -177,7 +176,6 @@ export default async function EvaluationResultPage({
             </div>
           ) : !hasFinalizedAnnualRaise ? (
             <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.baseSalaryReference)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利補正</p><p className="mt-3 text-2xl font-semibold text-slate-950">{salaryRow.grossProfitMultiplier} 倍</p><p className="mt-1 text-sm text-slate-500">粗利達成率 {formatPercent(salaryRow.grossProfitAchievementRate)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
@@ -191,7 +189,6 @@ export default async function EvaluationResultPage({
             </div>
           ) : (
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.newSalary)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
