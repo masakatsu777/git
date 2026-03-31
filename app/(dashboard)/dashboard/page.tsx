@@ -34,20 +34,29 @@ export default async function DashboardPage({
       : canViewAll
         ? getVisibleTeamMonthlySnapshots(yearMonth)
         : Promise.resolve([await getTeamMonthlySnapshot(defaultTeamId!, yearMonth)]),
-    showPersonalProfit || canViewAll || !defaultTeamId
-      ? Promise.resolve(null)
-      : getTeamMonthlyDetails(defaultTeamId, yearMonth),
+    showPersonalProfit
+      ? Promise.resolve([])
+      : canViewAll
+        ? Promise.all((await getVisibleTeamMonthlySnapshots(yearMonth)).map((snapshot) => getTeamMonthlyDetails(snapshot.teamId, yearMonth)))
+        : defaultTeamId
+          ? Promise.all([getTeamMonthlyDetails(defaultTeamId, yearMonth)])
+          : Promise.resolve([]),
     showPersonalProfit ? getUnassignedPersonalProfitByUser(user.id, yearMonth) : Promise.resolve(null),
     getEvaluationProgressBundle(canViewAll ? undefined : user.teamIds),
     getVisibleYearMonthOptions(showPersonalProfit ? undefined : defaultTeamId),
     showPersonalProfit || !canViewAll ? Promise.resolve(0) : getCompanyTargetGrossProfitRate(yearMonth),
   ]);
 
-  const visibleSnapshots = !showPersonalProfit && !canViewAll && teamDetails && snapshots[0]
-    ? (() => {
-        const unassignedEmployeeIdSet = new Set(teamDetails.unassignedEmployeeIds);
-        const unassignedPartnerIdSet = new Set(teamDetails.unassignedPartnerIds);
-        const visibleAssignments = teamDetails.assignments.filter((row) => {
+  const detailMap = new Map(teamDetails.map((detail) => [detail.teamId, detail]));
+  const visibleSnapshots = !showPersonalProfit
+    ? snapshots.map((snapshot) => {
+        const detail = detailMap.get(snapshot.teamId);
+        if (!detail) {
+          return snapshot;
+        }
+        const unassignedEmployeeIdSet = new Set(detail.unassignedEmployeeIds);
+        const unassignedPartnerIdSet = new Set(detail.unassignedPartnerIds);
+        const visibleAssignments = detail.assignments.filter((row) => {
           if (row.targetType === "EMPLOYEE") {
             return !row.userId || !unassignedEmployeeIdSet.has(row.userId);
           }
@@ -56,14 +65,14 @@ export default async function DashboardPage({
         });
         const recalculated = calculateGrossProfit({
           salesTotal: visibleAssignments.reduce((sum, row) => sum + row.salesAmount, 0),
-          directLaborCost: teamDetails.directLaborCostTotal,
-          outsourcingCost: teamDetails.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
-          indirectCost: teamDetails.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
-          fixedCostAllocation: teamDetails.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
-          targetGrossProfitRate: snapshots[0].targetGrossProfitRate,
+          directLaborCost: detail.directLaborCostTotal,
+          outsourcingCost: detail.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
+          indirectCost: detail.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
+          fixedCostAllocation: detail.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
+          targetGrossProfitRate: snapshot.targetGrossProfitRate,
         });
-        return [{ ...snapshots[0], ...recalculated }];
-      })()
+        return { ...snapshot, ...recalculated };
+      })
     : snapshots;
 
   const aggregateSnapshot = !showPersonalProfit && canViewAll
