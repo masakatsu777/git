@@ -42,7 +42,6 @@ export default async function MonthlyPlPage({
   const canEdit = hasPermission(user, PERMISSIONS.plTeamWrite);
   const canManageFixedCosts = hasPermission(user, PERMISSIONS.masterWrite);
   const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
-  const canManageUnassignedSales = user.role === "admin" || user.role === "president";
   const unassignedEmployeeIdSet = new Set(details.unassignedEmployeeIds);
   const unassignedPartnerIdSet = new Set(details.unassignedPartnerIds);
   const teamAssignments = details.assignments.filter((row) => {
@@ -53,7 +52,7 @@ export default async function MonthlyPlPage({
     return !row.partnerId || !unassignedPartnerIdSet.has(row.partnerId);
   });
   const effectiveSnapshot = calculateGrossProfit({
-    salesTotal: (canManageUnassignedSales ? details.assignments : teamAssignments).reduce((sum, row) => sum + row.salesAmount, 0),
+    salesTotal: teamAssignments.reduce((sum, row) => sum + row.salesAmount, 0),
     directLaborCost: details.directLaborCostTotal,
     outsourcingCost: details.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
     indirectCost: details.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
@@ -142,7 +141,7 @@ export default async function MonthlyPlPage({
                   </Link>
                 </>
               ) : null}
-              {canManageUnassignedSales ? (
+              {user.role === "admin" || user.role === "president" ? (
                 <Link href={`/pl/unassigned-monthly?departmentId=${details.departmentId}&yearMonth=${yearMonth}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                   未所属売上入力
                 </Link>
@@ -196,7 +195,7 @@ export default async function MonthlyPlPage({
               }}
               targetSummary={{
                 grossProfitRateTarget: snapshot.targetGrossProfitRate,
-                grossProfitTarget: Math.round(snapshot.salesTotal * (snapshot.targetGrossProfitRate / 100)),
+                grossProfitTarget: Math.round(effectiveSnapshot.salesTotal * (snapshot.targetGrossProfitRate / 100)),
               }}
             />
 
