@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
               partnerName: String(item.partnerName ?? ""),
               unitPrice: toNumber(item.unitPrice),
               salesAmount: toNumber(item.salesAmount),
+              outsourcingCost: toNumber(item.outsourcingCost),
               workRate: toNumber(item.workRate),
               remarks: String(item.remarks ?? ""),
             };

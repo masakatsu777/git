@@ -88,6 +88,7 @@ export default async function DepartmentUnassignedMonthlyPage({
               partnerName: row.label,
               unitPrice: row.unitPrice,
               salesAmount: row.salesAmount,
+              outsourcingCost: row.outsourcingCost,
               workRate: row.workRate,
               remarks: row.remarks,
             }))}

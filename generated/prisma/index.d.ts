@@ -109,6 +109,11 @@ export type Partner = $Result.DefaultSelection<Prisma.$PartnerPayload>
  */
 export type MonthlyAssignment = $Result.DefaultSelection<Prisma.$MonthlyAssignmentPayload>
 /**
+ * Model DepartmentUnassignedMonthlyAssignment
+ * 
+ */
+export type DepartmentUnassignedMonthlyAssignment = $Result.DefaultSelection<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+/**
  * Model MonthlyCost
  * 
  */
@@ -654,6 +659,16 @@ export class PrismaClient<
     * ```
     */
   get monthlyAssignment(): Prisma.MonthlyAssignmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.departmentUnassignedMonthlyAssignment`: Exposes CRUD operations for the **DepartmentUnassignedMonthlyAssignment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DepartmentUnassignedMonthlyAssignments
+    * const departmentUnassignedMonthlyAssignments = await prisma.departmentUnassignedMonthlyAssignment.findMany()
+    * ```
+    */
+  get departmentUnassignedMonthlyAssignment(): Prisma.DepartmentUnassignedMonthlyAssignmentDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.monthlyCost`: Exposes CRUD operations for the **MonthlyCost** model.
@@ -1244,6 +1259,7 @@ export namespace Prisma {
     SalaryRevisionSimulation: 'SalaryRevisionSimulation',
     Partner: 'Partner',
     MonthlyAssignment: 'MonthlyAssignment',
+    DepartmentUnassignedMonthlyAssignment: 'DepartmentUnassignedMonthlyAssignment',
     MonthlyCost: 'MonthlyCost',
     TeamMonthlyPl: 'TeamMonthlyPl',
     TeamIndirectCost: 'TeamIndirectCost',
@@ -1275,7 +1291,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "role" | "permission" | "rolePermission" | "department" | "position" | "team" | "teamMembership" | "skillGradeDefinition" | "evaluationPeriod" | "evaluationItem" | "employeeEvaluation" | "evaluationScore" | "evaluationScoreEvidence" | "salaryRecord" | "salaryRevisionRule" | "salaryRevisionSimulation" | "partner" | "monthlyAssignment" | "monthlyCost" | "teamMonthlyPl" | "teamIndirectCost" | "fixedCostSetting" | "departmentFixedCostAllocation" | "departmentMonthlyOtherCost" | "fixedCostAllocation" | "teamTarget" | "approvalLog" | "auditLog" | "employeeSalesRateSetting" | "partnerSalesRateSetting" | "partnerOutsourceRateSetting"
+      modelProps: "user" | "role" | "permission" | "rolePermission" | "department" | "position" | "team" | "teamMembership" | "skillGradeDefinition" | "evaluationPeriod" | "evaluationItem" | "employeeEvaluation" | "evaluationScore" | "evaluationScoreEvidence" | "salaryRecord" | "salaryRevisionRule" | "salaryRevisionSimulation" | "partner" | "monthlyAssignment" | "departmentUnassignedMonthlyAssignment" | "monthlyCost" | "teamMonthlyPl" | "teamIndirectCost" | "fixedCostSetting" | "departmentFixedCostAllocation" | "departmentMonthlyOtherCost" | "fixedCostAllocation" | "teamTarget" | "approvalLog" | "auditLog" | "employeeSalesRateSetting" | "partnerSalesRateSetting" | "partnerOutsourceRateSetting"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2685,6 +2701,80 @@ export namespace Prisma {
           }
         }
       }
+      DepartmentUnassignedMonthlyAssignment: {
+        payload: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>
+        fields: Prisma.DepartmentUnassignedMonthlyAssignmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+          }
+          findFirst: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+          }
+          findMany: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>[]
+          }
+          create: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+          }
+          createMany: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>[]
+          }
+          delete: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+          }
+          update: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload>
+          }
+          aggregate: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDepartmentUnassignedMonthlyAssignment>
+          }
+          groupBy: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentUnassignedMonthlyAssignmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DepartmentUnassignedMonthlyAssignmentCountArgs<ExtArgs>
+            result: $Utils.Optional<DepartmentUnassignedMonthlyAssignmentCountAggregateOutputType> | number
+          }
+        }
+      }
       MonthlyCost: {
         payload: Prisma.$MonthlyCostPayload<ExtArgs>
         fields: Prisma.MonthlyCostFieldRefs
@@ -3762,6 +3852,7 @@ export namespace Prisma {
     salaryRevisionSimulation?: SalaryRevisionSimulationOmit
     partner?: PartnerOmit
     monthlyAssignment?: MonthlyAssignmentOmit
+    departmentUnassignedMonthlyAssignment?: DepartmentUnassignedMonthlyAssignmentOmit
     monthlyCost?: MonthlyCostOmit
     teamMonthlyPl?: TeamMonthlyPlOmit
     teamIndirectCost?: TeamIndirectCostOmit
@@ -3863,6 +3954,7 @@ export namespace Prisma {
     salarySimulations: number
     approvedSalarySimulations: number
     monthlyAssignments: number
+    departmentUnassignedMonthlyAssignments: number
     monthlyCosts: number
     approvalLogs: number
     auditLogs: number
@@ -3877,6 +3969,7 @@ export namespace Prisma {
     salarySimulations?: boolean | UserCountOutputTypeCountSalarySimulationsArgs
     approvedSalarySimulations?: boolean | UserCountOutputTypeCountApprovedSalarySimulationsArgs
     monthlyAssignments?: boolean | UserCountOutputTypeCountMonthlyAssignmentsArgs
+    departmentUnassignedMonthlyAssignments?: boolean | UserCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs
     monthlyCosts?: boolean | UserCountOutputTypeCountMonthlyCostsArgs
     approvalLogs?: boolean | UserCountOutputTypeCountApprovalLogsArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
@@ -3947,6 +4040,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MonthlyAssignmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
   }
 
   /**
@@ -4052,6 +4152,7 @@ export namespace Prisma {
     teams: number
     fixedCostAllocations: number
     monthlyOtherCosts: number
+    unassignedMonthlyAssignments: number
   }
 
   export type DepartmentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4060,6 +4161,7 @@ export namespace Prisma {
     teams?: boolean | DepartmentCountOutputTypeCountTeamsArgs
     fixedCostAllocations?: boolean | DepartmentCountOutputTypeCountFixedCostAllocationsArgs
     monthlyOtherCosts?: boolean | DepartmentCountOutputTypeCountMonthlyOtherCostsArgs
+    unassignedMonthlyAssignments?: boolean | DepartmentCountOutputTypeCountUnassignedMonthlyAssignmentsArgs
   }
 
   // Custom InputTypes
@@ -4106,6 +4208,13 @@ export namespace Prisma {
    */
   export type DepartmentCountOutputTypeCountMonthlyOtherCostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DepartmentMonthlyOtherCostWhereInput
+  }
+
+  /**
+   * DepartmentCountOutputType without action
+   */
+  export type DepartmentCountOutputTypeCountUnassignedMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
   }
 
 
@@ -4449,11 +4558,13 @@ export namespace Prisma {
 
   export type PartnerCountOutputType = {
     monthlyAssignments: number
+    departmentUnassignedMonthlyAssignments: number
     monthlyCosts: number
   }
 
   export type PartnerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     monthlyAssignments?: boolean | PartnerCountOutputTypeCountMonthlyAssignmentsArgs
+    departmentUnassignedMonthlyAssignments?: boolean | PartnerCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs
     monthlyCosts?: boolean | PartnerCountOutputTypeCountMonthlyCostsArgs
   }
 
@@ -4473,6 +4584,13 @@ export namespace Prisma {
    */
   export type PartnerCountOutputTypeCountMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MonthlyAssignmentWhereInput
+  }
+
+  /**
+   * PartnerCountOutputType without action
+   */
+  export type PartnerCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
   }
 
   /**
@@ -4758,6 +4876,7 @@ export namespace Prisma {
     salarySimulations?: boolean | User$salarySimulationsArgs<ExtArgs>
     approvedSalarySimulations?: boolean | User$approvedSalarySimulationsArgs<ExtArgs>
     monthlyAssignments?: boolean | User$monthlyAssignmentsArgs<ExtArgs>
+    departmentUnassignedMonthlyAssignments?: boolean | User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | User$monthlyCostsArgs<ExtArgs>
     employeeSalesRateSetting?: boolean | User$employeeSalesRateSettingArgs<ExtArgs>
     approvalLogs?: boolean | User$approvalLogsArgs<ExtArgs>
@@ -4829,6 +4948,7 @@ export namespace Prisma {
     salarySimulations?: boolean | User$salarySimulationsArgs<ExtArgs>
     approvedSalarySimulations?: boolean | User$approvedSalarySimulationsArgs<ExtArgs>
     monthlyAssignments?: boolean | User$monthlyAssignmentsArgs<ExtArgs>
+    departmentUnassignedMonthlyAssignments?: boolean | User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | User$monthlyCostsArgs<ExtArgs>
     employeeSalesRateSetting?: boolean | User$employeeSalesRateSettingArgs<ExtArgs>
     approvalLogs?: boolean | User$approvalLogsArgs<ExtArgs>
@@ -4860,6 +4980,7 @@ export namespace Prisma {
       salarySimulations: Prisma.$SalaryRevisionSimulationPayload<ExtArgs>[]
       approvedSalarySimulations: Prisma.$SalaryRevisionSimulationPayload<ExtArgs>[]
       monthlyAssignments: Prisma.$MonthlyAssignmentPayload<ExtArgs>[]
+      departmentUnassignedMonthlyAssignments: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>[]
       monthlyCosts: Prisma.$MonthlyCostPayload<ExtArgs>[]
       employeeSalesRateSetting: Prisma.$EmployeeSalesRateSettingPayload<ExtArgs> | null
       approvalLogs: Prisma.$ApprovalLogPayload<ExtArgs>[]
@@ -5283,6 +5404,7 @@ export namespace Prisma {
     salarySimulations<T extends User$salarySimulationsArgs<ExtArgs> = {}>(args?: Subset<T, User$salarySimulationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalaryRevisionSimulationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     approvedSalarySimulations<T extends User$approvedSalarySimulationsArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedSalarySimulationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SalaryRevisionSimulationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyAssignments<T extends User$monthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$monthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    departmentUnassignedMonthlyAssignments<T extends User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyCosts<T extends User$monthlyCostsArgs<ExtArgs> = {}>(args?: Subset<T, User$monthlyCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     employeeSalesRateSetting<T extends User$employeeSalesRateSettingArgs<ExtArgs> = {}>(args?: Subset<T, User$employeeSalesRateSettingArgs<ExtArgs>>): Prisma__EmployeeSalesRateSettingClient<$Result.GetResult<Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     approvalLogs<T extends User$approvalLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$approvalLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5951,6 +6073,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MonthlyAssignmentScalarFieldEnum | MonthlyAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.departmentUnassignedMonthlyAssignments
+   */
+  export type User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[]
   }
 
   /**
@@ -9441,6 +9587,7 @@ export namespace Prisma {
     teams?: boolean | Department$teamsArgs<ExtArgs>
     fixedCostAllocations?: boolean | Department$fixedCostAllocationsArgs<ExtArgs>
     monthlyOtherCosts?: boolean | Department$monthlyOtherCostsArgs<ExtArgs>
+    unassignedMonthlyAssignments?: boolean | Department$unassignedMonthlyAssignmentsArgs<ExtArgs>
     _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["department"]>
 
@@ -9478,6 +9625,7 @@ export namespace Prisma {
     teams?: boolean | Department$teamsArgs<ExtArgs>
     fixedCostAllocations?: boolean | Department$fixedCostAllocationsArgs<ExtArgs>
     monthlyOtherCosts?: boolean | Department$monthlyOtherCostsArgs<ExtArgs>
+    unassignedMonthlyAssignments?: boolean | Department$unassignedMonthlyAssignmentsArgs<ExtArgs>
     _count?: boolean | DepartmentCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type DepartmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9496,6 +9644,7 @@ export namespace Prisma {
       teams: Prisma.$TeamPayload<ExtArgs>[]
       fixedCostAllocations: Prisma.$DepartmentFixedCostAllocationPayload<ExtArgs>[]
       monthlyOtherCosts: Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>[]
+      unassignedMonthlyAssignments: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9903,6 +10052,7 @@ export namespace Prisma {
     teams<T extends Department$teamsArgs<ExtArgs> = {}>(args?: Subset<T, Department$teamsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fixedCostAllocations<T extends Department$fixedCostAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, Department$fixedCostAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentFixedCostAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyOtherCosts<T extends Department$monthlyOtherCostsArgs<ExtArgs> = {}>(args?: Subset<T, Department$monthlyOtherCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentMonthlyOtherCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    unassignedMonthlyAssignments<T extends Department$unassignedMonthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Department$unassignedMonthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10469,6 +10619,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DepartmentMonthlyOtherCostScalarFieldEnum | DepartmentMonthlyOtherCostScalarFieldEnum[]
+  }
+
+  /**
+   * Department.unassignedMonthlyAssignments
+   */
+  export type Department$unassignedMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[]
   }
 
   /**
@@ -25247,6 +25421,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     monthlyAssignments?: boolean | Partner$monthlyAssignmentsArgs<ExtArgs>
+    departmentUnassignedMonthlyAssignments?: boolean | Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | Partner$monthlyCostsArgs<ExtArgs>
     salesRateSetting?: boolean | Partner$salesRateSettingArgs<ExtArgs>
     outsourceRateSetting?: boolean | Partner$outsourceRateSettingArgs<ExtArgs>
@@ -25283,6 +25458,7 @@ export namespace Prisma {
   export type PartnerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "companyName" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["partner"]>
   export type PartnerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     monthlyAssignments?: boolean | Partner$monthlyAssignmentsArgs<ExtArgs>
+    departmentUnassignedMonthlyAssignments?: boolean | Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | Partner$monthlyCostsArgs<ExtArgs>
     salesRateSetting?: boolean | Partner$salesRateSettingArgs<ExtArgs>
     outsourceRateSetting?: boolean | Partner$outsourceRateSettingArgs<ExtArgs>
@@ -25295,6 +25471,7 @@ export namespace Prisma {
     name: "Partner"
     objects: {
       monthlyAssignments: Prisma.$MonthlyAssignmentPayload<ExtArgs>[]
+      departmentUnassignedMonthlyAssignments: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>[]
       monthlyCosts: Prisma.$MonthlyCostPayload<ExtArgs>[]
       salesRateSetting: Prisma.$PartnerSalesRateSettingPayload<ExtArgs> | null
       outsourceRateSetting: Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs> | null
@@ -25701,6 +25878,7 @@ export namespace Prisma {
   export interface Prisma__PartnerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     monthlyAssignments<T extends Partner$monthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$monthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    departmentUnassignedMonthlyAssignments<T extends Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyCosts<T extends Partner$monthlyCostsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$monthlyCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     salesRateSetting<T extends Partner$salesRateSettingArgs<ExtArgs> = {}>(args?: Subset<T, Partner$salesRateSettingArgs<ExtArgs>>): Prisma__PartnerSalesRateSettingClient<$Result.GetResult<Prisma.$PartnerSalesRateSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     outsourceRateSetting<T extends Partner$outsourceRateSettingArgs<ExtArgs> = {}>(args?: Subset<T, Partner$outsourceRateSettingArgs<ExtArgs>>): Prisma__PartnerOutsourceRateSettingClient<$Result.GetResult<Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -26148,6 +26326,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MonthlyAssignmentScalarFieldEnum | MonthlyAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * Partner.departmentUnassignedMonthlyAssignments
+   */
+  export type Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[]
   }
 
   /**
@@ -27473,6 +27675,1268 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: MonthlyAssignmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DepartmentUnassignedMonthlyAssignment
+   */
+
+  export type AggregateDepartmentUnassignedMonthlyAssignment = {
+    _count: DepartmentUnassignedMonthlyAssignmentCountAggregateOutputType | null
+    _avg: DepartmentUnassignedMonthlyAssignmentAvgAggregateOutputType | null
+    _sum: DepartmentUnassignedMonthlyAssignmentSumAggregateOutputType | null
+    _min: DepartmentUnassignedMonthlyAssignmentMinAggregateOutputType | null
+    _max: DepartmentUnassignedMonthlyAssignmentMaxAggregateOutputType | null
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentAvgAggregateOutputType = {
+    unitPrice: number | null
+    salesAmount: number | null
+    outsourcingCost: number | null
+    workRate: number | null
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentSumAggregateOutputType = {
+    unitPrice: number | null
+    salesAmount: number | null
+    outsourcingCost: number | null
+    workRate: number | null
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentMinAggregateOutputType = {
+    id: string | null
+    targetType: $Enums.AssignmentTargetType | null
+    userId: string | null
+    partnerId: string | null
+    departmentId: string | null
+    yearMonth: string | null
+    unitPrice: number | null
+    salesAmount: number | null
+    outsourcingCost: number | null
+    workRate: number | null
+    remarks: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentMaxAggregateOutputType = {
+    id: string | null
+    targetType: $Enums.AssignmentTargetType | null
+    userId: string | null
+    partnerId: string | null
+    departmentId: string | null
+    yearMonth: string | null
+    unitPrice: number | null
+    salesAmount: number | null
+    outsourcingCost: number | null
+    workRate: number | null
+    remarks: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCountAggregateOutputType = {
+    id: number
+    targetType: number
+    userId: number
+    partnerId: number
+    departmentId: number
+    yearMonth: number
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost: number
+    workRate: number
+    remarks: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DepartmentUnassignedMonthlyAssignmentAvgAggregateInputType = {
+    unitPrice?: true
+    salesAmount?: true
+    outsourcingCost?: true
+    workRate?: true
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentSumAggregateInputType = {
+    unitPrice?: true
+    salesAmount?: true
+    outsourcingCost?: true
+    workRate?: true
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentMinAggregateInputType = {
+    id?: true
+    targetType?: true
+    userId?: true
+    partnerId?: true
+    departmentId?: true
+    yearMonth?: true
+    unitPrice?: true
+    salesAmount?: true
+    outsourcingCost?: true
+    workRate?: true
+    remarks?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentMaxAggregateInputType = {
+    id?: true
+    targetType?: true
+    userId?: true
+    partnerId?: true
+    departmentId?: true
+    yearMonth?: true
+    unitPrice?: true
+    salesAmount?: true
+    outsourcingCost?: true
+    workRate?: true
+    remarks?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCountAggregateInputType = {
+    id?: true
+    targetType?: true
+    userId?: true
+    partnerId?: true
+    departmentId?: true
+    yearMonth?: true
+    unitPrice?: true
+    salesAmount?: true
+    outsourcingCost?: true
+    workRate?: true
+    remarks?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DepartmentUnassignedMonthlyAssignment to aggregate.
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentUnassignedMonthlyAssignments to fetch.
+     */
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentUnassignedMonthlyAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentUnassignedMonthlyAssignments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DepartmentUnassignedMonthlyAssignments
+    **/
+    _count?: true | DepartmentUnassignedMonthlyAssignmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DepartmentUnassignedMonthlyAssignmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DepartmentUnassignedMonthlyAssignmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DepartmentUnassignedMonthlyAssignmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DepartmentUnassignedMonthlyAssignmentMaxAggregateInputType
+  }
+
+  export type GetDepartmentUnassignedMonthlyAssignmentAggregateType<T extends DepartmentUnassignedMonthlyAssignmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateDepartmentUnassignedMonthlyAssignment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDepartmentUnassignedMonthlyAssignment[P]>
+      : GetScalarType<T[P], AggregateDepartmentUnassignedMonthlyAssignment[P]>
+  }
+
+
+
+
+  export type DepartmentUnassignedMonthlyAssignmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithAggregationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithAggregationInput[]
+    by: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[] | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum
+    having?: DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DepartmentUnassignedMonthlyAssignmentCountAggregateInputType | true
+    _avg?: DepartmentUnassignedMonthlyAssignmentAvgAggregateInputType
+    _sum?: DepartmentUnassignedMonthlyAssignmentSumAggregateInputType
+    _min?: DepartmentUnassignedMonthlyAssignmentMinAggregateInputType
+    _max?: DepartmentUnassignedMonthlyAssignmentMaxAggregateInputType
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentGroupByOutputType = {
+    id: string
+    targetType: $Enums.AssignmentTargetType
+    userId: string | null
+    partnerId: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost: number
+    workRate: number
+    remarks: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: DepartmentUnassignedMonthlyAssignmentCountAggregateOutputType | null
+    _avg: DepartmentUnassignedMonthlyAssignmentAvgAggregateOutputType | null
+    _sum: DepartmentUnassignedMonthlyAssignmentSumAggregateOutputType | null
+    _min: DepartmentUnassignedMonthlyAssignmentMinAggregateOutputType | null
+    _max: DepartmentUnassignedMonthlyAssignmentMaxAggregateOutputType | null
+  }
+
+  type GetDepartmentUnassignedMonthlyAssignmentGroupByPayload<T extends DepartmentUnassignedMonthlyAssignmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DepartmentUnassignedMonthlyAssignmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DepartmentUnassignedMonthlyAssignmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DepartmentUnassignedMonthlyAssignmentGroupByOutputType[P]>
+            : GetScalarType<T[P], DepartmentUnassignedMonthlyAssignmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    targetType?: boolean
+    userId?: boolean
+    partnerId?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    unitPrice?: boolean
+    salesAmount?: boolean
+    outsourcingCost?: boolean
+    workRate?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>
+    partner?: boolean | DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["departmentUnassignedMonthlyAssignment"]>
+
+  export type DepartmentUnassignedMonthlyAssignmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    targetType?: boolean
+    userId?: boolean
+    partnerId?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    unitPrice?: boolean
+    salesAmount?: boolean
+    outsourcingCost?: boolean
+    workRate?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>
+    partner?: boolean | DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["departmentUnassignedMonthlyAssignment"]>
+
+  export type DepartmentUnassignedMonthlyAssignmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    targetType?: boolean
+    userId?: boolean
+    partnerId?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    unitPrice?: boolean
+    salesAmount?: boolean
+    outsourcingCost?: boolean
+    workRate?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>
+    partner?: boolean | DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["departmentUnassignedMonthlyAssignment"]>
+
+  export type DepartmentUnassignedMonthlyAssignmentSelectScalar = {
+    id?: boolean
+    targetType?: boolean
+    userId?: boolean
+    partnerId?: boolean
+    departmentId?: boolean
+    yearMonth?: boolean
+    unitPrice?: boolean
+    salesAmount?: boolean
+    outsourcingCost?: boolean
+    workRate?: boolean
+    remarks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "targetType" | "userId" | "partnerId" | "departmentId" | "yearMonth" | "unitPrice" | "salesAmount" | "outsourcingCost" | "workRate" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["departmentUnassignedMonthlyAssignment"]>
+  export type DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>
+    partner?: boolean | DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }
+  export type DepartmentUnassignedMonthlyAssignmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>
+    partner?: boolean | DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }
+  export type DepartmentUnassignedMonthlyAssignmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>
+    partner?: boolean | DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>
+    department?: boolean | DepartmentDefaultArgs<ExtArgs>
+  }
+
+  export type $DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DepartmentUnassignedMonthlyAssignment"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+      partner: Prisma.$PartnerPayload<ExtArgs> | null
+      department: Prisma.$DepartmentPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      targetType: $Enums.AssignmentTargetType
+      userId: string | null
+      partnerId: string | null
+      departmentId: string
+      yearMonth: string
+      unitPrice: number
+      salesAmount: number
+      outsourcingCost: number
+      workRate: number
+      remarks: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["departmentUnassignedMonthlyAssignment"]>
+    composites: {}
+  }
+
+  type DepartmentUnassignedMonthlyAssignmentGetPayload<S extends boolean | null | undefined | DepartmentUnassignedMonthlyAssignmentDefaultArgs> = $Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload, S>
+
+  type DepartmentUnassignedMonthlyAssignmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DepartmentUnassignedMonthlyAssignmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DepartmentUnassignedMonthlyAssignmentCountAggregateInputType | true
+    }
+
+  export interface DepartmentUnassignedMonthlyAssignmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DepartmentUnassignedMonthlyAssignment'], meta: { name: 'DepartmentUnassignedMonthlyAssignment' } }
+    /**
+     * Find zero or one DepartmentUnassignedMonthlyAssignment that matches the filter.
+     * @param {DepartmentUnassignedMonthlyAssignmentFindUniqueArgs} args - Arguments to find a DepartmentUnassignedMonthlyAssignment
+     * @example
+     * // Get one DepartmentUnassignedMonthlyAssignment
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DepartmentUnassignedMonthlyAssignmentFindUniqueArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentFindUniqueArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DepartmentUnassignedMonthlyAssignment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DepartmentUnassignedMonthlyAssignmentFindUniqueOrThrowArgs} args - Arguments to find a DepartmentUnassignedMonthlyAssignment
+     * @example
+     * // Get one DepartmentUnassignedMonthlyAssignment
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DepartmentUnassignedMonthlyAssignmentFindUniqueOrThrowArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DepartmentUnassignedMonthlyAssignment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentFindFirstArgs} args - Arguments to find a DepartmentUnassignedMonthlyAssignment
+     * @example
+     * // Get one DepartmentUnassignedMonthlyAssignment
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DepartmentUnassignedMonthlyAssignmentFindFirstArgs>(args?: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentFindFirstArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DepartmentUnassignedMonthlyAssignment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentFindFirstOrThrowArgs} args - Arguments to find a DepartmentUnassignedMonthlyAssignment
+     * @example
+     * // Get one DepartmentUnassignedMonthlyAssignment
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DepartmentUnassignedMonthlyAssignmentFindFirstOrThrowArgs>(args?: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DepartmentUnassignedMonthlyAssignments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DepartmentUnassignedMonthlyAssignments
+     * const departmentUnassignedMonthlyAssignments = await prisma.departmentUnassignedMonthlyAssignment.findMany()
+     * 
+     * // Get first 10 DepartmentUnassignedMonthlyAssignments
+     * const departmentUnassignedMonthlyAssignments = await prisma.departmentUnassignedMonthlyAssignment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const departmentUnassignedMonthlyAssignmentWithIdOnly = await prisma.departmentUnassignedMonthlyAssignment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DepartmentUnassignedMonthlyAssignmentFindManyArgs>(args?: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DepartmentUnassignedMonthlyAssignment.
+     * @param {DepartmentUnassignedMonthlyAssignmentCreateArgs} args - Arguments to create a DepartmentUnassignedMonthlyAssignment.
+     * @example
+     * // Create one DepartmentUnassignedMonthlyAssignment
+     * const DepartmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.create({
+     *   data: {
+     *     // ... data to create a DepartmentUnassignedMonthlyAssignment
+     *   }
+     * })
+     * 
+     */
+    create<T extends DepartmentUnassignedMonthlyAssignmentCreateArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentCreateArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DepartmentUnassignedMonthlyAssignments.
+     * @param {DepartmentUnassignedMonthlyAssignmentCreateManyArgs} args - Arguments to create many DepartmentUnassignedMonthlyAssignments.
+     * @example
+     * // Create many DepartmentUnassignedMonthlyAssignments
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DepartmentUnassignedMonthlyAssignmentCreateManyArgs>(args?: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DepartmentUnassignedMonthlyAssignments and returns the data saved in the database.
+     * @param {DepartmentUnassignedMonthlyAssignmentCreateManyAndReturnArgs} args - Arguments to create many DepartmentUnassignedMonthlyAssignments.
+     * @example
+     * // Create many DepartmentUnassignedMonthlyAssignments
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DepartmentUnassignedMonthlyAssignments and only return the `id`
+     * const departmentUnassignedMonthlyAssignmentWithIdOnly = await prisma.departmentUnassignedMonthlyAssignment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DepartmentUnassignedMonthlyAssignmentCreateManyAndReturnArgs>(args?: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DepartmentUnassignedMonthlyAssignment.
+     * @param {DepartmentUnassignedMonthlyAssignmentDeleteArgs} args - Arguments to delete one DepartmentUnassignedMonthlyAssignment.
+     * @example
+     * // Delete one DepartmentUnassignedMonthlyAssignment
+     * const DepartmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.delete({
+     *   where: {
+     *     // ... filter to delete one DepartmentUnassignedMonthlyAssignment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DepartmentUnassignedMonthlyAssignmentDeleteArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentDeleteArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DepartmentUnassignedMonthlyAssignment.
+     * @param {DepartmentUnassignedMonthlyAssignmentUpdateArgs} args - Arguments to update one DepartmentUnassignedMonthlyAssignment.
+     * @example
+     * // Update one DepartmentUnassignedMonthlyAssignment
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DepartmentUnassignedMonthlyAssignmentUpdateArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentUpdateArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DepartmentUnassignedMonthlyAssignments.
+     * @param {DepartmentUnassignedMonthlyAssignmentDeleteManyArgs} args - Arguments to filter DepartmentUnassignedMonthlyAssignments to delete.
+     * @example
+     * // Delete a few DepartmentUnassignedMonthlyAssignments
+     * const { count } = await prisma.departmentUnassignedMonthlyAssignment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DepartmentUnassignedMonthlyAssignmentDeleteManyArgs>(args?: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DepartmentUnassignedMonthlyAssignments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DepartmentUnassignedMonthlyAssignments
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DepartmentUnassignedMonthlyAssignmentUpdateManyArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DepartmentUnassignedMonthlyAssignments and returns the data updated in the database.
+     * @param {DepartmentUnassignedMonthlyAssignmentUpdateManyAndReturnArgs} args - Arguments to update many DepartmentUnassignedMonthlyAssignments.
+     * @example
+     * // Update many DepartmentUnassignedMonthlyAssignments
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more DepartmentUnassignedMonthlyAssignments and only return the `id`
+     * const departmentUnassignedMonthlyAssignmentWithIdOnly = await prisma.departmentUnassignedMonthlyAssignment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends DepartmentUnassignedMonthlyAssignmentUpdateManyAndReturnArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one DepartmentUnassignedMonthlyAssignment.
+     * @param {DepartmentUnassignedMonthlyAssignmentUpsertArgs} args - Arguments to update or create a DepartmentUnassignedMonthlyAssignment.
+     * @example
+     * // Update or create a DepartmentUnassignedMonthlyAssignment
+     * const departmentUnassignedMonthlyAssignment = await prisma.departmentUnassignedMonthlyAssignment.upsert({
+     *   create: {
+     *     // ... data to create a DepartmentUnassignedMonthlyAssignment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DepartmentUnassignedMonthlyAssignment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DepartmentUnassignedMonthlyAssignmentUpsertArgs>(args: SelectSubset<T, DepartmentUnassignedMonthlyAssignmentUpsertArgs<ExtArgs>>): Prisma__DepartmentUnassignedMonthlyAssignmentClient<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DepartmentUnassignedMonthlyAssignments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentCountArgs} args - Arguments to filter DepartmentUnassignedMonthlyAssignments to count.
+     * @example
+     * // Count the number of DepartmentUnassignedMonthlyAssignments
+     * const count = await prisma.departmentUnassignedMonthlyAssignment.count({
+     *   where: {
+     *     // ... the filter for the DepartmentUnassignedMonthlyAssignments we want to count
+     *   }
+     * })
+    **/
+    count<T extends DepartmentUnassignedMonthlyAssignmentCountArgs>(
+      args?: Subset<T, DepartmentUnassignedMonthlyAssignmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DepartmentUnassignedMonthlyAssignmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DepartmentUnassignedMonthlyAssignment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DepartmentUnassignedMonthlyAssignmentAggregateArgs>(args: Subset<T, DepartmentUnassignedMonthlyAssignmentAggregateArgs>): Prisma.PrismaPromise<GetDepartmentUnassignedMonthlyAssignmentAggregateType<T>>
+
+    /**
+     * Group by DepartmentUnassignedMonthlyAssignment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DepartmentUnassignedMonthlyAssignmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DepartmentUnassignedMonthlyAssignmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DepartmentUnassignedMonthlyAssignmentGroupByArgs['orderBy'] }
+        : { orderBy?: DepartmentUnassignedMonthlyAssignmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DepartmentUnassignedMonthlyAssignmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDepartmentUnassignedMonthlyAssignmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DepartmentUnassignedMonthlyAssignment model
+   */
+  readonly fields: DepartmentUnassignedMonthlyAssignmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DepartmentUnassignedMonthlyAssignment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DepartmentUnassignedMonthlyAssignmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs> = {}>(args?: Subset<T, DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    partner<T extends DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs> = {}>(args?: Subset<T, DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs>>): Prisma__PartnerClient<$Result.GetResult<Prisma.$PartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    department<T extends DepartmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, DepartmentDefaultArgs<ExtArgs>>): Prisma__DepartmentClient<$Result.GetResult<Prisma.$DepartmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DepartmentUnassignedMonthlyAssignment model
+   */
+  interface DepartmentUnassignedMonthlyAssignmentFieldRefs {
+    readonly id: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'String'>
+    readonly targetType: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'AssignmentTargetType'>
+    readonly userId: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'String'>
+    readonly partnerId: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'String'>
+    readonly departmentId: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'String'>
+    readonly yearMonth: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'String'>
+    readonly unitPrice: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'Int'>
+    readonly salesAmount: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'Int'>
+    readonly outsourcingCost: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'Int'>
+    readonly workRate: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'Int'>
+    readonly remarks: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'String'>
+    readonly createdAt: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'DateTime'>
+    readonly updatedAt: FieldRef<"DepartmentUnassignedMonthlyAssignment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DepartmentUnassignedMonthlyAssignment findUnique
+   */
+  export type DepartmentUnassignedMonthlyAssignmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentUnassignedMonthlyAssignment to fetch.
+     */
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment findUniqueOrThrow
+   */
+  export type DepartmentUnassignedMonthlyAssignmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentUnassignedMonthlyAssignment to fetch.
+     */
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment findFirst
+   */
+  export type DepartmentUnassignedMonthlyAssignmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentUnassignedMonthlyAssignment to fetch.
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentUnassignedMonthlyAssignments to fetch.
+     */
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DepartmentUnassignedMonthlyAssignments.
+     */
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentUnassignedMonthlyAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentUnassignedMonthlyAssignments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DepartmentUnassignedMonthlyAssignments.
+     */
+    distinct?: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment findFirstOrThrow
+   */
+  export type DepartmentUnassignedMonthlyAssignmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentUnassignedMonthlyAssignment to fetch.
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentUnassignedMonthlyAssignments to fetch.
+     */
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DepartmentUnassignedMonthlyAssignments.
+     */
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentUnassignedMonthlyAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentUnassignedMonthlyAssignments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DepartmentUnassignedMonthlyAssignments.
+     */
+    distinct?: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment findMany
+   */
+  export type DepartmentUnassignedMonthlyAssignmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter, which DepartmentUnassignedMonthlyAssignments to fetch.
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DepartmentUnassignedMonthlyAssignments to fetch.
+     */
+    orderBy?: DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput | DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DepartmentUnassignedMonthlyAssignments.
+     */
+    cursor?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DepartmentUnassignedMonthlyAssignments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DepartmentUnassignedMonthlyAssignments.
+     */
+    skip?: number
+    distinct?: DepartmentUnassignedMonthlyAssignmentScalarFieldEnum | DepartmentUnassignedMonthlyAssignmentScalarFieldEnum[]
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment create
+   */
+  export type DepartmentUnassignedMonthlyAssignmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DepartmentUnassignedMonthlyAssignment.
+     */
+    data: XOR<DepartmentUnassignedMonthlyAssignmentCreateInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateInput>
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment createMany
+   */
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DepartmentUnassignedMonthlyAssignments.
+     */
+    data: DepartmentUnassignedMonthlyAssignmentCreateManyInput | DepartmentUnassignedMonthlyAssignmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment createManyAndReturn
+   */
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many DepartmentUnassignedMonthlyAssignments.
+     */
+    data: DepartmentUnassignedMonthlyAssignmentCreateManyInput | DepartmentUnassignedMonthlyAssignmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment update
+   */
+  export type DepartmentUnassignedMonthlyAssignmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DepartmentUnassignedMonthlyAssignment.
+     */
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateInput>
+    /**
+     * Choose, which DepartmentUnassignedMonthlyAssignment to update.
+     */
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment updateMany
+   */
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DepartmentUnassignedMonthlyAssignments.
+     */
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateManyMutationInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyInput>
+    /**
+     * Filter which DepartmentUnassignedMonthlyAssignments to update
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * Limit how many DepartmentUnassignedMonthlyAssignments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment updateManyAndReturn
+   */
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * The data used to update DepartmentUnassignedMonthlyAssignments.
+     */
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateManyMutationInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyInput>
+    /**
+     * Filter which DepartmentUnassignedMonthlyAssignments to update
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * Limit how many DepartmentUnassignedMonthlyAssignments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment upsert
+   */
+  export type DepartmentUnassignedMonthlyAssignmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DepartmentUnassignedMonthlyAssignment to update in case it exists.
+     */
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    /**
+     * In case the DepartmentUnassignedMonthlyAssignment found by the `where` argument doesn't exist, create a new DepartmentUnassignedMonthlyAssignment with this data.
+     */
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateInput>
+    /**
+     * In case the DepartmentUnassignedMonthlyAssignment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DepartmentUnassignedMonthlyAssignmentUpdateInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateInput>
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment delete
+   */
+  export type DepartmentUnassignedMonthlyAssignmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
+    /**
+     * Filter which DepartmentUnassignedMonthlyAssignment to delete.
+     */
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment deleteMany
+   */
+  export type DepartmentUnassignedMonthlyAssignmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DepartmentUnassignedMonthlyAssignments to delete
+     */
+    where?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    /**
+     * Limit how many DepartmentUnassignedMonthlyAssignments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment.user
+   */
+  export type DepartmentUnassignedMonthlyAssignment$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment.partner
+   */
+  export type DepartmentUnassignedMonthlyAssignment$partnerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Partner
+     */
+    select?: PartnerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Partner
+     */
+    omit?: PartnerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerInclude<ExtArgs> | null
+    where?: PartnerWhereInput
+  }
+
+  /**
+   * DepartmentUnassignedMonthlyAssignment without action
+   */
+  export type DepartmentUnassignedMonthlyAssignmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DepartmentUnassignedMonthlyAssignment
+     */
+    select?: DepartmentUnassignedMonthlyAssignmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DepartmentUnassignedMonthlyAssignment
+     */
+    omit?: DepartmentUnassignedMonthlyAssignmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DepartmentUnassignedMonthlyAssignmentInclude<ExtArgs> | null
   }
 
 
@@ -42600,6 +44064,25 @@ export namespace Prisma {
   export type MonthlyAssignmentScalarFieldEnum = (typeof MonthlyAssignmentScalarFieldEnum)[keyof typeof MonthlyAssignmentScalarFieldEnum]
 
 
+  export const DepartmentUnassignedMonthlyAssignmentScalarFieldEnum: {
+    id: 'id',
+    targetType: 'targetType',
+    userId: 'userId',
+    partnerId: 'partnerId',
+    departmentId: 'departmentId',
+    yearMonth: 'yearMonth',
+    unitPrice: 'unitPrice',
+    salesAmount: 'salesAmount',
+    outsourcingCost: 'outsourcingCost',
+    workRate: 'workRate',
+    remarks: 'remarks',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DepartmentUnassignedMonthlyAssignmentScalarFieldEnum = (typeof DepartmentUnassignedMonthlyAssignmentScalarFieldEnum)[keyof typeof DepartmentUnassignedMonthlyAssignmentScalarFieldEnum]
+
+
   export const MonthlyCostScalarFieldEnum: {
     id: 'id',
     targetType: 'targetType',
@@ -43132,6 +44615,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationListRelationFilter
     approvedSalarySimulations?: SalaryRevisionSimulationListRelationFilter
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
     employeeSalesRateSetting?: XOR<EmployeeSalesRateSettingNullableScalarRelationFilter, EmployeeSalesRateSettingWhereInput> | null
     approvalLogs?: ApprovalLogListRelationFilter
@@ -43162,6 +44646,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationOrderByRelationAggregateInput
     approvedSalarySimulations?: SalaryRevisionSimulationOrderByRelationAggregateInput
     monthlyAssignments?: MonthlyAssignmentOrderByRelationAggregateInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput
     monthlyCosts?: MonthlyCostOrderByRelationAggregateInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingOrderByWithRelationInput
     approvalLogs?: ApprovalLogOrderByRelationAggregateInput
@@ -43195,6 +44680,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationListRelationFilter
     approvedSalarySimulations?: SalaryRevisionSimulationListRelationFilter
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
     employeeSalesRateSetting?: XOR<EmployeeSalesRateSettingNullableScalarRelationFilter, EmployeeSalesRateSettingWhereInput> | null
     approvalLogs?: ApprovalLogListRelationFilter
@@ -43414,6 +44900,7 @@ export namespace Prisma {
     teams?: TeamListRelationFilter
     fixedCostAllocations?: DepartmentFixedCostAllocationListRelationFilter
     monthlyOtherCosts?: DepartmentMonthlyOtherCostListRelationFilter
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
   }
 
   export type DepartmentOrderByWithRelationInput = {
@@ -43428,6 +44915,7 @@ export namespace Prisma {
     teams?: TeamOrderByRelationAggregateInput
     fixedCostAllocations?: DepartmentFixedCostAllocationOrderByRelationAggregateInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostOrderByRelationAggregateInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput
   }
 
   export type DepartmentWhereUniqueInput = Prisma.AtLeast<{
@@ -43445,6 +44933,7 @@ export namespace Prisma {
     teams?: TeamListRelationFilter
     fixedCostAllocations?: DepartmentFixedCostAllocationListRelationFilter
     monthlyOtherCosts?: DepartmentMonthlyOtherCostListRelationFilter
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
   }, "id">
 
   export type DepartmentOrderByWithAggregationInput = {
@@ -44545,6 +46034,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Partner"> | Date | string
     updatedAt?: DateTimeFilter<"Partner"> | Date | string
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
     salesRateSetting?: XOR<PartnerSalesRateSettingNullableScalarRelationFilter, PartnerSalesRateSettingWhereInput> | null
     outsourceRateSetting?: XOR<PartnerOutsourceRateSettingNullableScalarRelationFilter, PartnerOutsourceRateSettingWhereInput> | null
@@ -44558,6 +46048,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     monthlyAssignments?: MonthlyAssignmentOrderByRelationAggregateInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput
     monthlyCosts?: MonthlyCostOrderByRelationAggregateInput
     salesRateSetting?: PartnerSalesRateSettingOrderByWithRelationInput
     outsourceRateSetting?: PartnerOutsourceRateSettingOrderByWithRelationInput
@@ -44574,6 +46065,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Partner"> | Date | string
     updatedAt?: DateTimeFilter<"Partner"> | Date | string
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
     salesRateSetting?: XOR<PartnerSalesRateSettingNullableScalarRelationFilter, PartnerSalesRateSettingWhereInput> | null
     outsourceRateSetting?: XOR<PartnerOutsourceRateSettingNullableScalarRelationFilter, PartnerOutsourceRateSettingWhereInput> | null
@@ -44699,6 +46191,109 @@ export namespace Prisma {
     remarks?: StringNullableWithAggregatesFilter<"MonthlyAssignment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"MonthlyAssignment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MonthlyAssignment"> | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentWhereInput = {
+    AND?: DepartmentUnassignedMonthlyAssignmentWhereInput | DepartmentUnassignedMonthlyAssignmentWhereInput[]
+    OR?: DepartmentUnassignedMonthlyAssignmentWhereInput[]
+    NOT?: DepartmentUnassignedMonthlyAssignmentWhereInput | DepartmentUnassignedMonthlyAssignmentWhereInput[]
+    id?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    targetType?: EnumAssignmentTargetTypeFilter<"DepartmentUnassignedMonthlyAssignment"> | $Enums.AssignmentTargetType
+    userId?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    partnerId?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    departmentId?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    yearMonth?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    unitPrice?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    salesAmount?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    outsourcingCost?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    workRate?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    remarks?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    createdAt?: DateTimeFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+    updatedAt?: DateTimeFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    partner?: XOR<PartnerNullableScalarRelationFilter, PartnerWhereInput> | null
+    department?: XOR<DepartmentScalarRelationFilter, DepartmentWhereInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentOrderByWithRelationInput = {
+    id?: SortOrder
+    targetType?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    partnerId?: SortOrderInput | SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    partner?: PartnerOrderByWithRelationInput
+    department?: DepartmentOrderByWithRelationInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DepartmentUnassignedMonthlyAssignmentWhereInput | DepartmentUnassignedMonthlyAssignmentWhereInput[]
+    OR?: DepartmentUnassignedMonthlyAssignmentWhereInput[]
+    NOT?: DepartmentUnassignedMonthlyAssignmentWhereInput | DepartmentUnassignedMonthlyAssignmentWhereInput[]
+    targetType?: EnumAssignmentTargetTypeFilter<"DepartmentUnassignedMonthlyAssignment"> | $Enums.AssignmentTargetType
+    userId?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    partnerId?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    departmentId?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    yearMonth?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    unitPrice?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    salesAmount?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    outsourcingCost?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    workRate?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    remarks?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    createdAt?: DateTimeFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+    updatedAt?: DateTimeFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    partner?: XOR<PartnerNullableScalarRelationFilter, PartnerWhereInput> | null
+    department?: XOR<DepartmentScalarRelationFilter, DepartmentWhereInput>
+  }, "id">
+
+  export type DepartmentUnassignedMonthlyAssignmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    targetType?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    partnerId?: SortOrderInput | SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DepartmentUnassignedMonthlyAssignmentCountOrderByAggregateInput
+    _avg?: DepartmentUnassignedMonthlyAssignmentAvgOrderByAggregateInput
+    _max?: DepartmentUnassignedMonthlyAssignmentMaxOrderByAggregateInput
+    _min?: DepartmentUnassignedMonthlyAssignmentMinOrderByAggregateInput
+    _sum?: DepartmentUnassignedMonthlyAssignmentSumOrderByAggregateInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput = {
+    AND?: DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput | DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput[]
+    OR?: DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput[]
+    NOT?: DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput | DepartmentUnassignedMonthlyAssignmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    targetType?: EnumAssignmentTargetTypeWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | $Enums.AssignmentTargetType
+    userId?: StringNullableWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    partnerId?: StringNullableWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    departmentId?: StringWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    yearMonth?: StringWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    unitPrice?: IntWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    salesAmount?: IntWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    outsourcingCost?: IntWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    workRate?: IntWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    remarks?: StringNullableWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
   }
 
   export type MonthlyCostWhereInput = {
@@ -45157,7 +46752,6 @@ export namespace Prisma {
 
   export type DepartmentMonthlyOtherCostWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    departmentId_yearMonth?: DepartmentMonthlyOtherCostDepartmentIdYearMonthCompoundUniqueInput
     AND?: DepartmentMonthlyOtherCostWhereInput | DepartmentMonthlyOtherCostWhereInput[]
     OR?: DepartmentMonthlyOtherCostWhereInput[]
     NOT?: DepartmentMonthlyOtherCostWhereInput | DepartmentMonthlyOtherCostWhereInput[]
@@ -45168,7 +46762,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
     updatedAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
     department?: XOR<DepartmentScalarRelationFilter, DepartmentWhereInput>
-  }, "id" | "departmentId_yearMonth">
+  }, "id">
 
   export type DepartmentMonthlyOtherCostOrderByWithAggregationInput = {
     id?: SortOrder
@@ -45677,6 +47271,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -45704,6 +47299,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -45731,6 +47327,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -45758,6 +47355,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -45981,6 +47579,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateInput = {
@@ -45994,6 +47593,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUpdateInput = {
@@ -46007,6 +47607,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateInput = {
@@ -46020,6 +47621,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentCreateManyInput = {
@@ -47197,6 +48799,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
@@ -47210,6 +48813,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
@@ -47223,6 +48827,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
@@ -47236,6 +48841,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
@@ -47364,6 +48970,115 @@ export namespace Prisma {
     yearMonth?: StringFieldUpdateOperationsInput | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     salesAmount?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    partner?: PartnerCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    department: DepartmentCreateNestedOneWithoutUnassignedMonthlyAssignmentsInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    userId?: string | null
+    partnerId?: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput
+    partner?: PartnerUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput
+    department?: DepartmentUpdateOneRequiredWithoutUnassignedMonthlyAssignmentsNestedInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    partnerId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    userId?: string | null
+    partnerId?: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    partnerId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
     workRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48469,6 +50184,12 @@ export namespace Prisma {
     none?: MonthlyAssignmentWhereInput
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentListRelationFilter = {
+    every?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    some?: DepartmentUnassignedMonthlyAssignmentWhereInput
+    none?: DepartmentUnassignedMonthlyAssignmentWhereInput
+  }
+
   export type MonthlyCostListRelationFilter = {
     every?: MonthlyCostWhereInput
     some?: MonthlyCostWhereInput
@@ -48518,6 +50239,10 @@ export namespace Prisma {
   }
 
   export type MonthlyAssignmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -49887,6 +51612,73 @@ export namespace Prisma {
     _max?: NestedEnumAssignmentTargetTypeFilter<$PrismaModel>
   }
 
+  export type DepartmentScalarRelationFilter = {
+    is?: DepartmentWhereInput
+    isNot?: DepartmentWhereInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    targetType?: SortOrder
+    userId?: SortOrder
+    partnerId?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+    remarks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentAvgOrderByAggregateInput = {
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    targetType?: SortOrder
+    userId?: SortOrder
+    partnerId?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+    remarks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    targetType?: SortOrder
+    userId?: SortOrder
+    partnerId?: SortOrder
+    departmentId?: SortOrder
+    yearMonth?: SortOrder
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+    remarks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentSumOrderByAggregateInput = {
+    unitPrice?: SortOrder
+    salesAmount?: SortOrder
+    outsourcingCost?: SortOrder
+    workRate?: SortOrder
+  }
+
   export type EnumCostTargetTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.CostTargetType | EnumCostTargetTypeFieldRefInput<$PrismaModel>
     in?: $Enums.CostTargetType[] | ListEnumCostTargetTypeFieldRefInput<$PrismaModel>
@@ -50178,11 +51970,6 @@ export namespace Prisma {
     isNot?: FixedCostSettingWhereInput
   }
 
-  export type DepartmentScalarRelationFilter = {
-    is?: DepartmentWhereInput
-    isNot?: DepartmentWhereInput
-  }
-
   export type DepartmentFixedCostAllocationFixedCostSettingIdDepartmentIdCompoundUniqueInput = {
     fixedCostSettingId: string
     departmentId: string
@@ -50221,11 +52008,6 @@ export namespace Prisma {
 
   export type DepartmentFixedCostAllocationSumOrderByAggregateInput = {
     amount?: SortOrder
-  }
-
-  export type DepartmentMonthlyOtherCostDepartmentIdYearMonthCompoundUniqueInput = {
-    departmentId: string
-    yearMonth: string
   }
 
   export type DepartmentMonthlyOtherCostCountOrderByAggregateInput = {
@@ -50642,6 +52424,13 @@ export namespace Prisma {
     connect?: MonthlyAssignmentWhereUniqueInput | MonthlyAssignmentWhereUniqueInput[]
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyUserInputEnvelope
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+  }
+
   export type MonthlyCostCreateNestedManyWithoutUserInput = {
     create?: XOR<MonthlyCostCreateWithoutUserInput, MonthlyCostUncheckedCreateWithoutUserInput> | MonthlyCostCreateWithoutUserInput[] | MonthlyCostUncheckedCreateWithoutUserInput[]
     connectOrCreate?: MonthlyCostCreateOrConnectWithoutUserInput | MonthlyCostCreateOrConnectWithoutUserInput[]
@@ -50723,6 +52512,13 @@ export namespace Prisma {
     connectOrCreate?: MonthlyAssignmentCreateOrConnectWithoutUserInput | MonthlyAssignmentCreateOrConnectWithoutUserInput[]
     createMany?: MonthlyAssignmentCreateManyUserInputEnvelope
     connect?: MonthlyAssignmentWhereUniqueInput | MonthlyAssignmentWhereUniqueInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyUserInputEnvelope
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
   }
 
   export type MonthlyCostUncheckedCreateNestedManyWithoutUserInput = {
@@ -50904,6 +52700,20 @@ export namespace Prisma {
     deleteMany?: MonthlyAssignmentScalarWhereInput | MonthlyAssignmentScalarWhereInput[]
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput[]
+    upsert?: DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutUserInput | DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyUserInputEnvelope
+    set?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    disconnect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    delete?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    update?: DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput | DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutUserInput | DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
+  }
+
   export type MonthlyCostUpdateManyWithoutUserNestedInput = {
     create?: XOR<MonthlyCostCreateWithoutUserInput, MonthlyCostUncheckedCreateWithoutUserInput> | MonthlyCostCreateWithoutUserInput[] | MonthlyCostUncheckedCreateWithoutUserInput[]
     connectOrCreate?: MonthlyCostCreateOrConnectWithoutUserInput | MonthlyCostCreateOrConnectWithoutUserInput[]
@@ -51070,6 +52880,20 @@ export namespace Prisma {
     update?: MonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput | MonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MonthlyAssignmentUpdateManyWithWhereWithoutUserInput | MonthlyAssignmentUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MonthlyAssignmentScalarWhereInput | MonthlyAssignmentScalarWhereInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput[]
+    upsert?: DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutUserInput | DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyUserInputEnvelope
+    set?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    disconnect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    delete?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    update?: DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput | DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutUserInput | DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
   }
 
   export type MonthlyCostUncheckedUpdateManyWithoutUserNestedInput = {
@@ -51319,6 +53143,13 @@ export namespace Prisma {
     connect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInputEnvelope
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+  }
+
   export type DepartmentUncheckedCreateNestedManyWithoutParentInput = {
     create?: XOR<DepartmentCreateWithoutParentInput, DepartmentUncheckedCreateWithoutParentInput> | DepartmentCreateWithoutParentInput[] | DepartmentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: DepartmentCreateOrConnectWithoutParentInput | DepartmentCreateOrConnectWithoutParentInput[]
@@ -51352,6 +53183,13 @@ export namespace Prisma {
     connectOrCreate?: DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput | DepartmentMonthlyOtherCostCreateOrConnectWithoutDepartmentInput[]
     createMany?: DepartmentMonthlyOtherCostCreateManyDepartmentInputEnvelope
     connect?: DepartmentMonthlyOtherCostWhereUniqueInput | DepartmentMonthlyOtherCostWhereUniqueInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInputEnvelope
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
   }
 
   export type DepartmentUpdateOneWithoutChildrenNestedInput = {
@@ -51434,6 +53272,20 @@ export namespace Prisma {
     deleteMany?: DepartmentMonthlyOtherCostScalarWhereInput | DepartmentMonthlyOtherCostScalarWhereInput[]
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput[]
+    upsert?: DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutDepartmentInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInputEnvelope
+    set?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    disconnect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    delete?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    update?: DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutDepartmentInput[]
+    updateMany?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutDepartmentInput[]
+    deleteMany?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
+  }
+
   export type DepartmentUncheckedUpdateManyWithoutParentNestedInput = {
     create?: XOR<DepartmentCreateWithoutParentInput, DepartmentUncheckedCreateWithoutParentInput> | DepartmentCreateWithoutParentInput[] | DepartmentUncheckedCreateWithoutParentInput[]
     connectOrCreate?: DepartmentCreateOrConnectWithoutParentInput | DepartmentCreateOrConnectWithoutParentInput[]
@@ -51502,6 +53354,20 @@ export namespace Prisma {
     update?: DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput | DepartmentMonthlyOtherCostUpdateWithWhereUniqueWithoutDepartmentInput[]
     updateMany?: DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput | DepartmentMonthlyOtherCostUpdateManyWithWhereWithoutDepartmentInput[]
     deleteMany?: DepartmentMonthlyOtherCostScalarWhereInput | DepartmentMonthlyOtherCostScalarWhereInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput[]
+    upsert?: DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutDepartmentInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInputEnvelope
+    set?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    disconnect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    delete?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    update?: DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutDepartmentInput[]
+    updateMany?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutDepartmentInput | DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutDepartmentInput[]
+    deleteMany?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
   }
 
   export type UserCreateNestedManyWithoutPositionInput = {
@@ -52727,6 +54593,13 @@ export namespace Prisma {
     connect?: MonthlyAssignmentWhereUniqueInput | MonthlyAssignmentWhereUniqueInput[]
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInputEnvelope
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+  }
+
   export type MonthlyCostCreateNestedManyWithoutPartnerInput = {
     create?: XOR<MonthlyCostCreateWithoutPartnerInput, MonthlyCostUncheckedCreateWithoutPartnerInput> | MonthlyCostCreateWithoutPartnerInput[] | MonthlyCostUncheckedCreateWithoutPartnerInput[]
     connectOrCreate?: MonthlyCostCreateOrConnectWithoutPartnerInput | MonthlyCostCreateOrConnectWithoutPartnerInput[]
@@ -52751,6 +54624,13 @@ export namespace Prisma {
     connectOrCreate?: MonthlyAssignmentCreateOrConnectWithoutPartnerInput | MonthlyAssignmentCreateOrConnectWithoutPartnerInput[]
     createMany?: MonthlyAssignmentCreateManyPartnerInputEnvelope
     connect?: MonthlyAssignmentWhereUniqueInput | MonthlyAssignmentWhereUniqueInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInputEnvelope
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
   }
 
   export type MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput = {
@@ -52784,6 +54664,20 @@ export namespace Prisma {
     update?: MonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput | MonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput[]
     updateMany?: MonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput | MonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput[]
     deleteMany?: MonthlyAssignmentScalarWhereInput | MonthlyAssignmentScalarWhereInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput[]
+    upsert?: DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutPartnerInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInputEnvelope
+    set?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    disconnect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    delete?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    update?: DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput[]
+    updateMany?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput[]
+    deleteMany?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
   }
 
   export type MonthlyCostUpdateManyWithoutPartnerNestedInput = {
@@ -52832,6 +54726,20 @@ export namespace Prisma {
     update?: MonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput | MonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput[]
     updateMany?: MonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput | MonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput[]
     deleteMany?: MonthlyAssignmentScalarWhereInput | MonthlyAssignmentScalarWhereInput[]
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput = {
+    create?: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput> | DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput[] | DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput[]
+    upsert?: DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutPartnerInput[]
+    createMany?: DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInputEnvelope
+    set?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    disconnect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    delete?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    connect?: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput | DepartmentUnassignedMonthlyAssignmentWhereUniqueInput[]
+    update?: DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput[]
+    updateMany?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput | DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput[]
+    deleteMany?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
   }
 
   export type MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput = {
@@ -52916,6 +54824,52 @@ export namespace Prisma {
     upsert?: TeamUpsertWithoutAssignmentsInput
     connect?: TeamWhereUniqueInput
     update?: XOR<XOR<TeamUpdateToOneWithWhereWithoutAssignmentsInput, TeamUpdateWithoutAssignmentsInput>, TeamUncheckedUpdateWithoutAssignmentsInput>
+  }
+
+  export type UserCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    create?: XOR<UserCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type PartnerCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    create?: XOR<PartnerCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    connectOrCreate?: PartnerCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    connect?: PartnerWhereUniqueInput
+  }
+
+  export type DepartmentCreateNestedOneWithoutUnassignedMonthlyAssignmentsInput = {
+    create?: XOR<DepartmentCreateWithoutUnassignedMonthlyAssignmentsInput, DepartmentUncheckedCreateWithoutUnassignedMonthlyAssignmentsInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutUnassignedMonthlyAssignmentsInput
+    connect?: DepartmentWhereUniqueInput
+  }
+
+  export type UserUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput = {
+    create?: XOR<UserCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    upsert?: UserUpsertWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>, UserUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type PartnerUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput = {
+    create?: XOR<PartnerCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    connectOrCreate?: PartnerCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    upsert?: PartnerUpsertWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    disconnect?: PartnerWhereInput | boolean
+    delete?: PartnerWhereInput | boolean
+    connect?: PartnerWhereUniqueInput
+    update?: XOR<XOR<PartnerUpdateToOneWithWhereWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>, PartnerUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type DepartmentUpdateOneRequiredWithoutUnassignedMonthlyAssignmentsNestedInput = {
+    create?: XOR<DepartmentCreateWithoutUnassignedMonthlyAssignmentsInput, DepartmentUncheckedCreateWithoutUnassignedMonthlyAssignmentsInput>
+    connectOrCreate?: DepartmentCreateOrConnectWithoutUnassignedMonthlyAssignmentsInput
+    upsert?: DepartmentUpsertWithoutUnassignedMonthlyAssignmentsInput
+    connect?: DepartmentWhereUniqueInput
+    update?: XOR<XOR<DepartmentUpdateToOneWithWhereWithoutUnassignedMonthlyAssignmentsInput, DepartmentUpdateWithoutUnassignedMonthlyAssignmentsInput>, DepartmentUncheckedUpdateWithoutUnassignedMonthlyAssignmentsInput>
   }
 
   export type UserCreateNestedOneWithoutMonthlyCostsInput = {
@@ -53749,6 +55703,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutUsersInput = {
@@ -53761,6 +55716,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutUsersInput = {
@@ -54125,6 +56081,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    partner?: PartnerCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    department: DepartmentCreateNestedOneWithoutUnassignedMonthlyAssignmentsInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    partnerId?: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutUserInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyUserInputEnvelope = {
+    data: DepartmentUnassignedMonthlyAssignmentCreateManyUserInput | DepartmentUnassignedMonthlyAssignmentCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type MonthlyCostCreateWithoutUserInput = {
     id?: string
     targetType: $Enums.CostTargetType
@@ -54290,6 +56286,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutUsersInput = {
@@ -54302,6 +56299,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type PositionUpsertWithoutUsersInput = {
@@ -54566,6 +56564,41 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"MonthlyAssignment"> | Date | string
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutUserInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    update: XOR<DepartmentUnassignedMonthlyAssignmentUpdateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutUserInput>
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutUserInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutUserInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateWithoutUserInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutUserInput = {
+    where: DepartmentUnassignedMonthlyAssignmentScalarWhereInput
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateManyMutationInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentScalarWhereInput = {
+    AND?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
+    OR?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
+    NOT?: DepartmentUnassignedMonthlyAssignmentScalarWhereInput | DepartmentUnassignedMonthlyAssignmentScalarWhereInput[]
+    id?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    targetType?: EnumAssignmentTargetTypeFilter<"DepartmentUnassignedMonthlyAssignment"> | $Enums.AssignmentTargetType
+    userId?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    partnerId?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    departmentId?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    yearMonth?: StringFilter<"DepartmentUnassignedMonthlyAssignment"> | string
+    unitPrice?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    salesAmount?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    outsourcingCost?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    workRate?: IntFilter<"DepartmentUnassignedMonthlyAssignment"> | number
+    remarks?: StringNullableFilter<"DepartmentUnassignedMonthlyAssignment"> | string | null
+    createdAt?: DateTimeFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+    updatedAt?: DateTimeFilter<"DepartmentUnassignedMonthlyAssignment"> | Date | string
+  }
+
   export type MonthlyCostUpsertWithWhereUniqueWithoutUserInput = {
     where: MonthlyCostWhereUniqueInput
     update: XOR<MonthlyCostUpdateWithoutUserInput, MonthlyCostUncheckedUpdateWithoutUserInput>
@@ -54705,6 +56738,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -54731,6 +56765,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -54972,6 +57007,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutChildrenInput = {
@@ -54984,6 +57020,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutChildrenInput = {
@@ -55001,6 +57038,7 @@ export namespace Prisma {
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutParentInput = {
@@ -55013,6 +57051,7 @@ export namespace Prisma {
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutParentInput = {
@@ -55045,6 +57084,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -55071,6 +57111,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -55185,6 +57226,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    partner?: PartnerCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    userId?: string | null
+    partnerId?: string | null
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutDepartmentInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInputEnvelope = {
+    data: DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInput | DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type DepartmentUpsertWithoutChildrenInput = {
     update: XOR<DepartmentUpdateWithoutChildrenInput, DepartmentUncheckedUpdateWithoutChildrenInput>
     create: XOR<DepartmentCreateWithoutChildrenInput, DepartmentUncheckedCreateWithoutChildrenInput>
@@ -55206,6 +57287,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutChildrenInput = {
@@ -55218,6 +57300,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUpsertWithWhereUniqueWithoutParentInput = {
@@ -55336,6 +57419,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"DepartmentMonthlyOtherCost"> | Date | string
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutDepartmentInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    update: XOR<DepartmentUnassignedMonthlyAssignmentUpdateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutDepartmentInput>
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutDepartmentInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutDepartmentInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateWithoutDepartmentInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutDepartmentInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutDepartmentInput = {
+    where: DepartmentUnassignedMonthlyAssignmentScalarWhereInput
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateManyMutationInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentInput>
+  }
+
   export type UserCreateWithoutPositionInput = {
     id?: string
     email: string
@@ -55356,6 +57455,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -55382,6 +57482,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -55499,6 +57600,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutTeamsInput = {
@@ -55511,6 +57613,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutTeamsInput = {
@@ -55538,6 +57641,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -55564,6 +57668,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -55892,6 +57997,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutTeamsInput = {
@@ -55904,6 +58010,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type UserUpsertWithoutLedTeamsInput = {
@@ -55937,6 +58044,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -55963,6 +58071,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -56221,6 +58330,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -56247,6 +58357,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -56334,6 +58445,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -56360,6 +58472,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -56996,6 +59109,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -57022,6 +59136,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -57197,6 +59312,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -57223,6 +59339,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -57337,6 +59454,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -57363,6 +59481,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -57568,6 +59687,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -57594,6 +59714,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -57965,6 +60086,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -57991,6 +60113,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -58033,6 +60156,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -58059,6 +60183,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -58153,6 +60278,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -58179,6 +60305,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -58290,6 +60417,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordCreateNestedManyWithoutUserInput
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -58316,6 +60444,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUncheckedCreateNestedManyWithoutUserInput
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -58358,6 +60487,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -58384,6 +60514,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -58513,6 +60644,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUpdateManyWithoutUserNestedInput
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -58539,6 +60671,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -58580,6 +60713,46 @@ export namespace Prisma {
 
   export type MonthlyAssignmentCreateManyPartnerInputEnvelope = {
     data: MonthlyAssignmentCreateManyPartnerInput | MonthlyAssignmentCreateManyPartnerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutDepartmentUnassignedMonthlyAssignmentsInput
+    department: DepartmentCreateNestedOneWithoutUnassignedMonthlyAssignmentsInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    userId?: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateOrConnectWithoutPartnerInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInputEnvelope = {
+    data: DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInput | DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInput[]
     skipDuplicates?: boolean
   }
 
@@ -58675,6 +60848,22 @@ export namespace Prisma {
     data: XOR<MonthlyAssignmentUpdateManyMutationInput, MonthlyAssignmentUncheckedUpdateManyWithoutPartnerInput>
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpsertWithWhereUniqueWithoutPartnerInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    update: XOR<DepartmentUnassignedMonthlyAssignmentUpdateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutPartnerInput>
+    create: XOR<DepartmentUnassignedMonthlyAssignmentCreateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedCreateWithoutPartnerInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateWithWhereUniqueWithoutPartnerInput = {
+    where: DepartmentUnassignedMonthlyAssignmentWhereUniqueInput
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateWithoutPartnerInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutPartnerInput>
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateManyWithWhereWithoutPartnerInput = {
+    where: DepartmentUnassignedMonthlyAssignmentScalarWhereInput
+    data: XOR<DepartmentUnassignedMonthlyAssignmentUpdateManyMutationInput, DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerInput>
+  }
+
   export type MonthlyCostUpsertWithWhereUniqueWithoutPartnerInput = {
     where: MonthlyCostWhereUniqueInput
     update: XOR<MonthlyCostUpdateWithoutPartnerInput, MonthlyCostUncheckedUpdateWithoutPartnerInput>
@@ -58763,6 +60952,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordCreateNestedManyWithoutUserInput
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -58789,6 +60979,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUncheckedCreateNestedManyWithoutUserInput
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -58807,6 +60998,7 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
@@ -58819,6 +61011,7 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
@@ -58899,6 +61092,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUpdateManyWithoutUserNestedInput
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -58925,6 +61119,7 @@ export namespace Prisma {
     salaryRecords?: SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -58949,6 +61144,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
@@ -58961,6 +61157,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
@@ -59011,6 +61208,266 @@ export namespace Prisma {
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
   }
 
+  export type UserCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    employeeCode: string
+    name: string
+    status?: $Enums.UserStatus
+    joinedAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role: RoleCreateNestedOneWithoutUsersInput
+    department?: DepartmentCreateNestedOneWithoutUsersInput
+    position?: PositionCreateNestedOneWithoutUsersInput
+    ledTeams?: TeamCreateNestedManyWithoutLeaderInput
+    teamMemberships?: TeamMembershipCreateNestedManyWithoutUserInput
+    employeeEvaluations?: EmployeeEvaluationCreateNestedManyWithoutUserInput
+    finalizedEvaluations?: EmployeeEvaluationCreateNestedManyWithoutFinalizerInput
+    salaryRecords?: SalaryRecordCreateNestedManyWithoutUserInput
+    salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
+    approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
+    monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
+    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+  }
+
+  export type UserUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    employeeCode: string
+    name: string
+    roleId: string
+    departmentId?: string | null
+    positionId?: string | null
+    status?: $Enums.UserStatus
+    joinedAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ledTeams?: TeamUncheckedCreateNestedManyWithoutLeaderInput
+    teamMemberships?: TeamMembershipUncheckedCreateNestedManyWithoutUserInput
+    employeeEvaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutUserInput
+    finalizedEvaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutFinalizerInput
+    salaryRecords?: SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+    salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
+    approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
+    monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
+    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+  }
+
+  export type UserCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type PartnerCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: string
+    name: string
+    companyName?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
+    monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
+    salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
+    outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
+  }
+
+  export type PartnerUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: string
+    name: string
+    companyName?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
+    monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
+    salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+  }
+
+  export type PartnerCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    where: PartnerWhereUniqueInput
+    create: XOR<PartnerCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type DepartmentCreateWithoutUnassignedMonthlyAssignmentsInput = {
+    id?: string
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parent?: DepartmentCreateNestedOneWithoutChildrenInput
+    children?: DepartmentCreateNestedManyWithoutParentInput
+    users?: UserCreateNestedManyWithoutDepartmentInput
+    teams?: TeamCreateNestedManyWithoutDepartmentInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentUncheckedCreateWithoutUnassignedMonthlyAssignmentsInput = {
+    id?: string
+    name: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    children?: DepartmentUncheckedCreateNestedManyWithoutParentInput
+    users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
+    teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+  }
+
+  export type DepartmentCreateOrConnectWithoutUnassignedMonthlyAssignmentsInput = {
+    where: DepartmentWhereUniqueInput
+    create: XOR<DepartmentCreateWithoutUnassignedMonthlyAssignmentsInput, DepartmentUncheckedCreateWithoutUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type UserUpsertWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    update: XOR<UserUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    create: XOR<UserCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput, UserUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type UserUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    employeeCode?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: RoleUpdateOneRequiredWithoutUsersNestedInput
+    department?: DepartmentUpdateOneWithoutUsersNestedInput
+    position?: PositionUpdateOneWithoutUsersNestedInput
+    ledTeams?: TeamUpdateManyWithoutLeaderNestedInput
+    teamMemberships?: TeamMembershipUpdateManyWithoutUserNestedInput
+    employeeEvaluations?: EmployeeEvaluationUpdateManyWithoutUserNestedInput
+    finalizedEvaluations?: EmployeeEvaluationUpdateManyWithoutFinalizerNestedInput
+    salaryRecords?: SalaryRecordUpdateManyWithoutUserNestedInput
+    salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
+    approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
+    monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
+    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    employeeCode?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    roleId?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    positionId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ledTeams?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
+    teamMemberships?: TeamMembershipUncheckedUpdateManyWithoutUserNestedInput
+    employeeEvaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutUserNestedInput
+    finalizedEvaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutFinalizerNestedInput
+    salaryRecords?: SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+    salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
+    approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
+    monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
+    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  }
+
+  export type PartnerUpsertWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    update: XOR<PartnerUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    create: XOR<PartnerCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+    where?: PartnerWhereInput
+  }
+
+  export type PartnerUpdateToOneWithWhereWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    where?: PartnerWhereInput
+    data: XOR<PartnerUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput, PartnerUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type PartnerUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
+    monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
+    salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
+    outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
+  }
+
+  export type PartnerUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    companyName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
+    monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
+    salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+  }
+
+  export type DepartmentUpsertWithoutUnassignedMonthlyAssignmentsInput = {
+    update: XOR<DepartmentUpdateWithoutUnassignedMonthlyAssignmentsInput, DepartmentUncheckedUpdateWithoutUnassignedMonthlyAssignmentsInput>
+    create: XOR<DepartmentCreateWithoutUnassignedMonthlyAssignmentsInput, DepartmentUncheckedCreateWithoutUnassignedMonthlyAssignmentsInput>
+    where?: DepartmentWhereInput
+  }
+
+  export type DepartmentUpdateToOneWithWhereWithoutUnassignedMonthlyAssignmentsInput = {
+    where?: DepartmentWhereInput
+    data: XOR<DepartmentUpdateWithoutUnassignedMonthlyAssignmentsInput, DepartmentUncheckedUpdateWithoutUnassignedMonthlyAssignmentsInput>
+  }
+
+  export type DepartmentUpdateWithoutUnassignedMonthlyAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: DepartmentUpdateOneWithoutChildrenNestedInput
+    children?: DepartmentUpdateManyWithoutParentNestedInput
+    users?: UserUpdateManyWithoutDepartmentNestedInput
+    teams?: TeamUpdateManyWithoutDepartmentNestedInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+  }
+
+  export type DepartmentUncheckedUpdateWithoutUnassignedMonthlyAssignmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    children?: DepartmentUncheckedUpdateManyWithoutParentNestedInput
+    users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
+    teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
+    fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+  }
+
   export type UserCreateWithoutMonthlyCostsInput = {
     id?: string
     email: string
@@ -59032,6 +61489,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -59058,6 +61516,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -59076,6 +61535,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
   }
@@ -59088,6 +61548,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
   }
@@ -59168,6 +61629,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -59194,6 +61656,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -59218,6 +61681,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
   }
@@ -59230,6 +61694,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
   }
@@ -59572,6 +62037,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutDepartmentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutFixedCostAllocationsInput = {
@@ -59584,6 +62050,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutFixedCostAllocationsInput = {
@@ -59647,6 +62114,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutFixedCostAllocationsInput = {
@@ -59659,6 +62127,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentCreateWithoutMonthlyOtherCostsInput = {
@@ -59671,6 +62140,7 @@ export namespace Prisma {
     users?: UserCreateNestedManyWithoutDepartmentInput
     teams?: TeamCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentUncheckedCreateWithoutMonthlyOtherCostsInput = {
@@ -59683,6 +62153,7 @@ export namespace Prisma {
     users?: UserUncheckedCreateNestedManyWithoutDepartmentInput
     teams?: TeamUncheckedCreateNestedManyWithoutDepartmentInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedCreateNestedManyWithoutDepartmentInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutDepartmentInput
   }
 
   export type DepartmentCreateOrConnectWithoutMonthlyOtherCostsInput = {
@@ -59711,6 +62182,7 @@ export namespace Prisma {
     users?: UserUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutMonthlyOtherCostsInput = {
@@ -59723,6 +62195,7 @@ export namespace Prisma {
     users?: UserUncheckedUpdateManyWithoutDepartmentNestedInput
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type TeamCreateWithoutFixedAllocationsInput = {
@@ -59978,6 +62451,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -60004,6 +62478,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -60046,6 +62521,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -60072,6 +62548,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -60098,6 +62575,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
@@ -60124,6 +62602,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
@@ -60166,6 +62645,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -60192,6 +62672,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -60218,6 +62699,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
@@ -60244,6 +62726,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -60286,6 +62769,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
@@ -60312,6 +62796,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -60325,6 +62810,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
   }
@@ -60337,6 +62823,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
   }
@@ -60365,6 +62852,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
   }
@@ -60377,6 +62865,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
     outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
   }
@@ -60389,6 +62878,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
   }
@@ -60401,6 +62891,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
   }
@@ -60429,6 +62920,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
   }
@@ -60441,6 +62933,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
     salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
   }
@@ -60553,6 +63046,21 @@ export namespace Prisma {
     yearMonth: string
     unitPrice: number
     salesAmount: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyUserInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    partnerId?: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
     workRate?: number
     remarks?: string | null
     createdAt?: Date | string
@@ -60957,6 +63465,51 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    partner?: PartnerUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput
+    department?: DepartmentUpdateOneRequiredWithoutUnassignedMonthlyAssignmentsNestedInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    partnerId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    partnerId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MonthlyCostUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: EnumCostTargetTypeFieldUpdateOperationsInput | $Enums.CostTargetType
@@ -61092,6 +63645,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -61118,6 +63672,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -61220,6 +63775,21 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyDepartmentInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    userId?: string | null
+    partnerId?: string | null
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type DepartmentUpdateWithoutParentInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -61230,6 +63800,7 @@ export namespace Prisma {
     teams?: TeamUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateWithoutParentInput = {
@@ -61242,6 +63813,7 @@ export namespace Prisma {
     teams?: TeamUncheckedUpdateManyWithoutDepartmentNestedInput
     fixedCostAllocations?: DepartmentFixedCostAllocationUncheckedUpdateManyWithoutDepartmentNestedInput
     monthlyOtherCosts?: DepartmentMonthlyOtherCostUncheckedUpdateManyWithoutDepartmentNestedInput
+    unassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentNestedInput
   }
 
   export type DepartmentUncheckedUpdateManyWithoutParentInput = {
@@ -61271,6 +63843,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -61297,6 +63870,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -61411,6 +63985,51 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentUpdateWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput
+    partner?: PartnerUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    partnerId?: NullableStringFieldUpdateOperationsInput | string | null
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutDepartmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    partnerId?: NullableStringFieldUpdateOperationsInput | string | null
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateManyPositionInput = {
     id?: string
     email: string
@@ -61458,6 +64077,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
@@ -61484,6 +64104,7 @@ export namespace Prisma {
     salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
@@ -62597,6 +65218,21 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DepartmentUnassignedMonthlyAssignmentCreateManyPartnerInput = {
+    id?: string
+    targetType: $Enums.AssignmentTargetType
+    userId?: string | null
+    departmentId: string
+    yearMonth: string
+    unitPrice: number
+    salesAmount: number
+    outsourcingCost?: number
+    workRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MonthlyCostCreateManyPartnerInput = {
     id?: string
     targetType: $Enums.CostTargetType
@@ -62646,6 +65282,51 @@ export namespace Prisma {
     yearMonth?: StringFieldUpdateOperationsInput | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     salesAmount?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUpdateWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutDepartmentUnassignedMonthlyAssignmentsNestedInput
+    department?: DepartmentUpdateOneRequiredWithoutUnassignedMonthlyAssignmentsNestedInput
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
+    workRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    departmentId?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    salesAmount?: IntFieldUpdateOperationsInput | number
+    outsourcingCost?: IntFieldUpdateOperationsInput | number
     workRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

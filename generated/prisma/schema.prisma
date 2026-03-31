@@ -87,33 +87,34 @@ datasource db {
 }
 
 model User {
-  id                        String                     @id @default(cuid())
-  email                     String                     @unique
-  passwordHash              String                     @map("password_hash")
-  employeeCode              String                     @unique @map("employee_code")
-  name                      String
-  roleId                    String                     @map("role_id")
-  departmentId              String?                    @map("department_id")
-  positionId                String?                    @map("position_id")
-  status                    UserStatus                 @default(ACTIVE)
-  joinedAt                  DateTime                   @map("joined_at")
-  createdAt                 DateTime                   @default(now()) @map("created_at")
-  updatedAt                 DateTime                   @updatedAt @map("updated_at")
-  role                      Role                       @relation(fields: [roleId], references: [id])
-  department                Department?                @relation(fields: [departmentId], references: [id])
-  position                  Position?                  @relation(fields: [positionId], references: [id])
-  ledTeams                  Team[]                     @relation("TeamLeader")
-  teamMemberships           TeamMembership[]
-  employeeEvaluations       EmployeeEvaluation[]       @relation("EvaluationSubject")
-  finalizedEvaluations      EmployeeEvaluation[]       @relation("EvaluationFinalizer")
-  salaryRecords             SalaryRecord[]
-  salarySimulations         SalaryRevisionSimulation[] @relation("SalarySimulationSubject")
-  approvedSalarySimulations SalaryRevisionSimulation[] @relation("SalarySimulationApprover")
-  monthlyAssignments        MonthlyAssignment[]
-  monthlyCosts              MonthlyCost[]
-  employeeSalesRateSetting  EmployeeSalesRateSetting?
-  approvalLogs              ApprovalLog[]              @relation("ApprovalActor")
-  auditLogs                 AuditLog[]                 @relation("AuditActor")
+  id                                     String                                  @id @default(cuid())
+  email                                  String                                  @unique
+  passwordHash                           String                                  @map("password_hash")
+  employeeCode                           String                                  @unique @map("employee_code")
+  name                                   String
+  roleId                                 String                                  @map("role_id")
+  departmentId                           String?                                 @map("department_id")
+  positionId                             String?                                 @map("position_id")
+  status                                 UserStatus                              @default(ACTIVE)
+  joinedAt                               DateTime                                @map("joined_at")
+  createdAt                              DateTime                                @default(now()) @map("created_at")
+  updatedAt                              DateTime                                @updatedAt @map("updated_at")
+  role                                   Role                                    @relation(fields: [roleId], references: [id])
+  department                             Department?                             @relation(fields: [departmentId], references: [id])
+  position                               Position?                               @relation(fields: [positionId], references: [id])
+  ledTeams                               Team[]                                  @relation("TeamLeader")
+  teamMemberships                        TeamMembership[]
+  employeeEvaluations                    EmployeeEvaluation[]                    @relation("EvaluationSubject")
+  finalizedEvaluations                   EmployeeEvaluation[]                    @relation("EvaluationFinalizer")
+  salaryRecords                          SalaryRecord[]
+  salarySimulations                      SalaryRevisionSimulation[]              @relation("SalarySimulationSubject")
+  approvedSalarySimulations              SalaryRevisionSimulation[]              @relation("SalarySimulationApprover")
+  monthlyAssignments                     MonthlyAssignment[]
+  departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
+  monthlyCosts                           MonthlyCost[]
+  employeeSalesRateSetting               EmployeeSalesRateSetting?
+  approvalLogs                           ApprovalLog[]                           @relation("ApprovalActor")
+  auditLogs                              AuditLog[]                              @relation("AuditActor")
 
   @@map("users")
 }
@@ -153,17 +154,18 @@ model RolePermission {
 }
 
 model Department {
-  id                   String                          @id @default(cuid())
-  name                 String
-  parentId             String?                         @map("parent_id")
-  createdAt            DateTime                        @default(now()) @map("created_at")
-  updatedAt            DateTime                        @updatedAt @map("updated_at")
-  parent               Department?                     @relation("DepartmentHierarchy", fields: [parentId], references: [id])
-  children             Department[]                    @relation("DepartmentHierarchy")
-  users                User[]
-  teams                Team[]
-  fixedCostAllocations DepartmentFixedCostAllocation[]
-  monthlyOtherCosts    DepartmentMonthlyOtherCost[]
+  id                           String                                  @id @default(cuid())
+  name                         String
+  parentId                     String?                                 @map("parent_id")
+  createdAt                    DateTime                                @default(now()) @map("created_at")
+  updatedAt                    DateTime                                @updatedAt @map("updated_at")
+  parent                       Department?                             @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children                     Department[]                            @relation("DepartmentHierarchy")
+  users                        User[]
+  teams                        Team[]
+  fixedCostAllocations         DepartmentFixedCostAllocation[]
+  monthlyOtherCosts            DepartmentMonthlyOtherCost[]
+  unassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
 
   @@map("departments")
 }
@@ -396,16 +398,17 @@ model SalaryRevisionSimulation {
 }
 
 model Partner {
-  id                   String                       @id @default(cuid())
-  name                 String
-  companyName          String?                      @map("company_name")
-  status               String                       @default("ACTIVE")
-  createdAt            DateTime                     @default(now()) @map("created_at")
-  updatedAt            DateTime                     @updatedAt @map("updated_at")
-  monthlyAssignments   MonthlyAssignment[]
-  monthlyCosts         MonthlyCost[]
-  salesRateSetting     PartnerSalesRateSetting?
-  outsourceRateSetting PartnerOutsourceRateSetting?
+  id                                     String                                  @id @default(cuid())
+  name                                   String
+  companyName                            String?                                 @map("company_name")
+  status                                 String                                  @default("ACTIVE")
+  createdAt                              DateTime                                @default(now()) @map("created_at")
+  updatedAt                              DateTime                                @updatedAt @map("updated_at")
+  monthlyAssignments                     MonthlyAssignment[]
+  departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
+  monthlyCosts                           MonthlyCost[]
+  salesRateSetting                       PartnerSalesRateSetting?
+  outsourceRateSetting                   PartnerOutsourceRateSetting?
 
   @@map("partners")
 }
@@ -428,6 +431,30 @@ model MonthlyAssignment {
   team        Team                 @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("monthly_assignments")
+}
+
+model DepartmentUnassignedMonthlyAssignment {
+  id              String               @id @default(cuid())
+  targetType      AssignmentTargetType @map("target_type")
+  userId          String?              @map("user_id")
+  partnerId       String?              @map("partner_id")
+  departmentId    String               @map("department_id")
+  yearMonth       String               @map("year_month")
+  unitPrice       Int                  @map("unit_price")
+  salesAmount     Int                  @map("sales_amount")
+  outsourcingCost Int                  @default(0) @map("outsourcing_cost")
+  workRate        Int                  @default(100) @map("work_rate")
+  remarks         String?
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+  user            User?                @relation(fields: [userId], references: [id])
+  partner         Partner?             @relation(fields: [partnerId], references: [id])
+  department      Department           @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@index([departmentId, yearMonth])
+  @@index([userId, yearMonth])
+  @@index([partnerId, yearMonth])
+  @@map("department_unassigned_monthly_assignments")
 }
 
 model MonthlyCost {
@@ -527,7 +554,7 @@ model DepartmentMonthlyOtherCost {
   updatedAt    DateTime   @updatedAt @map("updated_at")
   department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
-  @@unique([departmentId, yearMonth])
+  @@index([departmentId, yearMonth])
   @@map("department_monthly_other_costs")
 }
 

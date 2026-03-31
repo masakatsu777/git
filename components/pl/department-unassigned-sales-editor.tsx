@@ -10,6 +10,7 @@ type Option = {
   label: string;
   defaultUnitPrice: number;
   defaultWorkRate: number;
+  defaultOutsourceAmount?: number;
 };
 
 type AssignmentRow = {
@@ -20,6 +21,7 @@ type AssignmentRow = {
   partnerName: string;
   unitPrice: number;
   salesAmount: number;
+  outsourcingCost: number;
   workRate: number;
   remarks: string;
 };
@@ -38,23 +40,39 @@ function toNumber(value: string) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function normalizeSalesAmount(unitPrice: number, workRate: number) {
+  return Math.round((unitPrice * workRate) / 100);
+}
+
 function uid(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function withCalculatedSales(row: AssignmentRow): AssignmentRow {
+  return {
+    ...row,
+    salesAmount: normalizeSalesAmount(row.unitPrice, row.workRate),
+  };
 }
 
 export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEdit, employeeOptions, partnerOptions, defaults }: Props) {
   const router = useRouter();
   const [isPending, startSaving] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
-  const [assignments, setAssignments] = useState(defaults);
+  const [assignments, setAssignments] = useState(defaults.map(withCalculatedSales));
 
   const salesTotal = useMemo(() => assignments.reduce((total, row) => total + row.salesAmount, 0), [assignments]);
+  const outsourcingTotal = useMemo(() => assignments.reduce((total, row) => total + (row.targetType === "PARTNER" ? row.outsourcingCost : 0), 0), [assignments]);
+
+  function updateAssignment(rowId: string, updater: (row: AssignmentRow) => AssignmentRow) {
+    setAssignments((current) => current.map((item) => item.id === rowId ? withCalculatedSales(updater(item)) : item));
+  }
 
   function addEmployeeAssignment() {
     const option = employeeOptions[0];
     setAssignments((current) => [
       ...current,
-      {
+      withCalculatedSales({
         id: uid("dept-unassigned-employee"),
         targetType: "EMPLOYEE",
         userId: option?.id ?? null,
@@ -62,9 +80,10 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
         partnerName: "",
         unitPrice: option?.defaultUnitPrice ?? 0,
         salesAmount: option?.defaultUnitPrice ?? 0,
+        outsourcingCost: 0,
         workRate: option?.defaultWorkRate ?? 100,
         remarks: "",
-      },
+      }),
     ]);
   }
 
@@ -72,7 +91,7 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
     const option = partnerOptions[0];
     setAssignments((current) => [
       ...current,
-      {
+      withCalculatedSales({
         id: uid("dept-unassigned-partner"),
         targetType: "PARTNER",
         userId: null,
@@ -80,9 +99,10 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
         partnerName: option?.label ?? "",
         unitPrice: option?.defaultUnitPrice ?? 0,
         salesAmount: option?.defaultUnitPrice ?? 0,
+        outsourcingCost: option?.defaultOutsourceAmount ?? 0,
         workRate: option?.defaultWorkRate ?? 100,
         remarks: "",
-      },
+      }),
     ]);
   }
 
@@ -139,28 +159,28 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
                   const nextType = event.target.value === "PARTNER" ? "PARTNER" : "EMPLOYEE";
                   if (nextType === "PARTNER") {
                     const option = partnerOptions[0];
-                    setAssignments((current) => current.map((item) => item.id === row.id ? {
+                    updateAssignment(row.id, (item) => ({
                       ...item,
                       targetType: "PARTNER",
                       userId: null,
                       partnerId: option?.id ?? null,
                       partnerName: option?.label ?? "",
                       unitPrice: option?.defaultUnitPrice ?? 0,
-                      salesAmount: option?.defaultUnitPrice ?? 0,
+                      outsourcingCost: option?.defaultOutsourceAmount ?? 0,
                       workRate: option?.defaultWorkRate ?? 100,
-                    } : item));
+                    }));
                   } else {
                     const option = employeeOptions[0];
-                    setAssignments((current) => current.map((item) => item.id === row.id ? {
+                    updateAssignment(row.id, (item) => ({
                       ...item,
                       targetType: "EMPLOYEE",
                       userId: option?.id ?? null,
                       partnerId: null,
                       partnerName: "",
                       unitPrice: option?.defaultUnitPrice ?? 0,
-                      salesAmount: option?.defaultUnitPrice ?? 0,
+                      outsourcingCost: 0,
                       workRate: option?.defaultWorkRate ?? 100,
-                    } : item));
+                    }));
                   }
                 }}
                 className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
@@ -175,13 +195,13 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
                   onChange={(event) => {
                     const selectedId = event.target.value || null;
                     const option = employeeOptions.find((item) => item.id === selectedId);
-                    setAssignments((current) => current.map((item) => item.id === row.id ? {
+                    updateAssignment(row.id, (item) => ({
                       ...item,
                       userId: selectedId,
                       unitPrice: option?.defaultUnitPrice ?? item.unitPrice,
-                      salesAmount: option?.defaultUnitPrice ?? item.salesAmount,
                       workRate: option?.defaultWorkRate ?? item.workRate,
-                    } : item));
+                      outsourcingCost: 0,
+                    }));
                   }}
                   className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
                 >
@@ -194,14 +214,14 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
                   onChange={(event) => {
                     const selectedId = event.target.value || null;
                     const option = partnerOptions.find((item) => item.id === selectedId);
-                    setAssignments((current) => current.map((item) => item.id === row.id ? {
+                    updateAssignment(row.id, (item) => ({
                       ...item,
                       partnerId: selectedId,
                       partnerName: option?.label ?? "",
                       unitPrice: option?.defaultUnitPrice ?? item.unitPrice,
-                      salesAmount: option?.defaultUnitPrice ?? item.salesAmount,
+                      outsourcingCost: option?.defaultOutsourceAmount ?? item.outsourcingCost,
                       workRate: option?.defaultWorkRate ?? item.workRate,
-                    } : item));
+                    }));
                   }}
                   className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
                 >
@@ -212,23 +232,27 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
                 type="text"
                 value={row.remarks}
                 disabled={!canEdit || isPending}
-                onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, remarks: event.target.value } : item))}
+                onChange={(event) => updateAssignment(row.id, (item) => ({ ...item, remarks: event.target.value }))}
                 className="rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm"
                 placeholder="備考特記"
               />
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-4">
               <label className="text-xs text-stone-500">
                 単価
-                <input type="number" value={row.unitPrice} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, unitPrice: toNumber(event.target.value) } : item))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" />
+                <input type="number" value={row.unitPrice} disabled={!canEdit || isPending} onChange={(event) => updateAssignment(row.id, (item) => ({ ...item, unitPrice: toNumber(event.target.value) }))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" />
               </label>
               <label className="text-xs text-stone-500">
                 売上額
-                <input type="number" value={row.salesAmount} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, salesAmount: toNumber(event.target.value) } : item))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" />
+                <input type="number" value={row.salesAmount} disabled className="mt-1 w-full rounded-2xl border border-stone-200 bg-stone-100 px-3 py-2 text-sm text-stone-500" />
+              </label>
+              <label className="text-xs text-stone-500">
+                {row.targetType === "PARTNER" ? "外注費" : "外注費(固定)"}
+                <input type="number" value={row.outsourcingCost} disabled={row.targetType !== "PARTNER" || !canEdit || isPending} onChange={(event) => updateAssignment(row.id, (item) => ({ ...item, outsourcingCost: toNumber(event.target.value) }))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 disabled:bg-stone-100 disabled:text-stone-500" />
               </label>
               <label className="text-xs text-stone-500">
                 稼働率
-                <input type="number" value={row.workRate} disabled={!canEdit || isPending} onChange={(event) => setAssignments((current) => current.map((item) => item.id === row.id ? { ...item, workRate: toNumber(event.target.value) } : item))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" />
+                <input type="number" value={row.workRate} disabled={!canEdit || isPending} onChange={(event) => updateAssignment(row.id, (item) => ({ ...item, workRate: toNumber(event.target.value) }))} className="mt-1 w-full rounded-2xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900" />
               </label>
             </div>
             <div className="flex justify-end">
@@ -241,6 +265,7 @@ export function DepartmentUnassignedSalesEditor({ departmentId, yearMonth, canEd
       </div>
 
       <p className="text-sm text-stone-500">売上合計: {formatCurrencyWithUnit(salesTotal)}</p>
+      <p className="text-sm text-stone-500">外注費合計: {formatCurrencyWithUnit(outsourcingTotal)}</p>
       <div className="flex flex-wrap gap-3">
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-stone-950 px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:bg-stone-300">
           {isPending ? "処理中..." : "未所属売上を保存する"}

@@ -314,6 +314,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         partnerId: true,
         departmentId: true,
         salesAmount: true,
+        outsourcingCost: true,
         partner: {
           select: {
             id: true,
@@ -590,6 +591,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     const existing = partnerRows.get(key);
     if (existing) {
       existing.salesTotal += toNumber(row.salesAmount);
+      existing.outsourcingCost += toNumber(row.outsourcingCost);
       continue;
     }
     partnerRows.set(key, {
@@ -605,7 +607,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       teamName: "未所属",
       salesTotal: toNumber(row.salesAmount),
       directLaborCost: 0,
-      outsourcingCost: 0,
+      outsourcingCost: toNumber(row.outsourcingCost),
       indirectCostAllocation: 0,
       fixedCostAllocation: 0,
       finalGrossProfit: 0,

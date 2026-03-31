@@ -17,6 +17,7 @@ export type DepartmentUnassignedSalesOption = {
   label: string;
   defaultUnitPrice: number;
   defaultWorkRate: number;
+  defaultOutsourceAmount?: number;
 };
 
 export type DepartmentUnassignedSalesAssignment = {
@@ -27,6 +28,7 @@ export type DepartmentUnassignedSalesAssignment = {
   label: string;
   unitPrice: number;
   salesAmount: number;
+  outsourcingCost: number;
   workRate: number;
   remarks: string;
 };
@@ -53,6 +55,7 @@ export type SaveDepartmentUnassignedSalesInput = {
     partnerName: string;
     unitPrice: number;
     salesAmount: number;
+    outsourcingCost: number;
     workRate: number;
     remarks: string;
   }>;
@@ -134,6 +137,7 @@ export async function getDepartmentUnassignedSalesBundle(
           partnerId: true,
           unitPrice: true,
           salesAmount: true,
+          outsourcingCost: true,
           workRate: true,
           remarks: true,
           user: { select: { name: true } },
@@ -186,6 +190,11 @@ export async function getDepartmentUnassignedSalesBundle(
                   defaultWorkRate: true,
                 },
               },
+              outsourceRateSetting: {
+                select: {
+                  amount: true,
+                },
+              },
             },
           })
         : Promise.resolve([]),
@@ -205,6 +214,7 @@ export async function getDepartmentUnassignedSalesBundle(
         label: row.user?.name ?? row.partner?.name ?? "未設定",
         unitPrice: num(row.unitPrice),
         salesAmount: num(row.salesAmount),
+        outsourcingCost: num(row.outsourcingCost),
         workRate: num(row.workRate),
         remarks: row.remarks ?? "",
       })),
@@ -219,6 +229,7 @@ export async function getDepartmentUnassignedSalesBundle(
         label: row.name,
         defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
         defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
+        defaultOutsourceAmount: num(row.outsourceRateSetting?.amount),
       })),
       source: "database",
     };
@@ -314,6 +325,7 @@ export async function saveDepartmentUnassignedSales(input: SaveDepartmentUnassig
             yearMonth: input.yearMonth,
             unitPrice: row.unitPrice,
             salesAmount: normalizeSalesAmount(row.unitPrice, row.workRate),
+            outsourcingCost: 0,
             workRate: row.workRate,
             remarks: row.remarks || null,
           });
@@ -328,7 +340,8 @@ export async function saveDepartmentUnassignedSales(input: SaveDepartmentUnassig
           departmentId: input.departmentId,
           yearMonth: input.yearMonth,
           unitPrice: row.unitPrice,
-          salesAmount: row.salesAmount,
+          salesAmount: normalizeSalesAmount(row.unitPrice, row.workRate),
+          outsourcingCost: row.outsourcingCost,
           workRate: row.workRate,
           remarks: row.remarks || null,
         });

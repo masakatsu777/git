@@ -442,6 +442,7 @@ model DepartmentUnassignedMonthlyAssignment {
   yearMonth    String               @map("year_month")
   unitPrice    Int                  @map("unit_price")
   salesAmount  Int                  @map("sales_amount")
+  outsourcingCost Int               @default(0) @map("outsourcing_cost")
   workRate     Int                  @default(100) @map("work_rate")
   remarks      String?
   createdAt    DateTime             @default(now()) @map("created_at")

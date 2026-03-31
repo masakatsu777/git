@@ -345,6 +345,22 @@ exports.Prisma.MonthlyAssignmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DepartmentUnassignedMonthlyAssignmentScalarFieldEnum = {
+  id: 'id',
+  targetType: 'targetType',
+  userId: 'userId',
+  partnerId: 'partnerId',
+  departmentId: 'departmentId',
+  yearMonth: 'yearMonth',
+  unitPrice: 'unitPrice',
+  salesAmount: 'salesAmount',
+  outsourcingCost: 'outsourcingCost',
+  workRate: 'workRate',
+  remarks: 'remarks',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.MonthlyCostScalarFieldEnum = {
   id: 'id',
   targetType: 'targetType',
@@ -611,6 +627,7 @@ exports.Prisma.ModelName = {
   SalaryRevisionSimulation: 'SalaryRevisionSimulation',
   Partner: 'Partner',
   MonthlyAssignment: 'MonthlyAssignment',
+  DepartmentUnassignedMonthlyAssignment: 'DepartmentUnassignedMonthlyAssignment',
   MonthlyCost: 'MonthlyCost',
   TeamMonthlyPl: 'TeamMonthlyPl',
   TeamIndirectCost: 'TeamIndirectCost',
