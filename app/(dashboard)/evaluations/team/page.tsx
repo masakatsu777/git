@@ -8,7 +8,7 @@ import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
-import { getDepartmentScopedTeamIds, getVisibleTeamOptions } from "@/lib/pl/service";
+import { getVisibleTeamOptions } from "@/lib/pl/service";
 
 export default async function TeamEvaluationPage({
   searchParams,
@@ -32,11 +32,13 @@ export default async function TeamEvaluationPage({
   const periods = await getEvaluationPeriodOptions();
   const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
 
-  const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
-  const teamOptions = user.role === "employee"
+  const visibleTeamIds = user.teamIds;
+  const teamOptions = user.role === "employee" || user.role === "leader"
     ? []
-    : await getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.role === "leader" ? visibleTeamIds : user.teamIds);
-  const defaultTeamId = params.teamId ?? teamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
+    : await getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.teamIds);
+  const defaultTeamId = user.role === "leader"
+    ? user.teamIds[0] ?? "team-platform"
+    : params.teamId ?? teamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
   const requestedTeamId = defaultTeamId;
   const effectiveMemberId = user.role === "employee" ? user.id : params.memberId;
 
