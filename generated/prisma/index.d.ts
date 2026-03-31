@@ -18261,7 +18261,7 @@ export namespace Prisma {
     id: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId: string | null
     status: $Enums.EvaluationStatus
     selfComment: string | null
     managerComment: string | null
@@ -18318,7 +18318,7 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     evaluationPeriod?: boolean | EvaluationPeriodDefaultArgs<ExtArgs>
-    team?: boolean | TeamDefaultArgs<ExtArgs>
+    team?: boolean | EmployeeEvaluation$teamArgs<ExtArgs>
     itSkillGrade?: boolean | EmployeeEvaluation$itSkillGradeArgs<ExtArgs>
     businessSkillGrade?: boolean | EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>
     finalizer?: boolean | EmployeeEvaluation$finalizerArgs<ExtArgs>
@@ -18348,7 +18348,7 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     evaluationPeriod?: boolean | EvaluationPeriodDefaultArgs<ExtArgs>
-    team?: boolean | TeamDefaultArgs<ExtArgs>
+    team?: boolean | EmployeeEvaluation$teamArgs<ExtArgs>
     itSkillGrade?: boolean | EmployeeEvaluation$itSkillGradeArgs<ExtArgs>
     businessSkillGrade?: boolean | EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>
     finalizer?: boolean | EmployeeEvaluation$finalizerArgs<ExtArgs>
@@ -18375,7 +18375,7 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     evaluationPeriod?: boolean | EvaluationPeriodDefaultArgs<ExtArgs>
-    team?: boolean | TeamDefaultArgs<ExtArgs>
+    team?: boolean | EmployeeEvaluation$teamArgs<ExtArgs>
     itSkillGrade?: boolean | EmployeeEvaluation$itSkillGradeArgs<ExtArgs>
     businessSkillGrade?: boolean | EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>
     finalizer?: boolean | EmployeeEvaluation$finalizerArgs<ExtArgs>
@@ -18406,7 +18406,7 @@ export namespace Prisma {
   export type EmployeeEvaluationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     evaluationPeriod?: boolean | EvaluationPeriodDefaultArgs<ExtArgs>
-    team?: boolean | TeamDefaultArgs<ExtArgs>
+    team?: boolean | EmployeeEvaluation$teamArgs<ExtArgs>
     itSkillGrade?: boolean | EmployeeEvaluation$itSkillGradeArgs<ExtArgs>
     businessSkillGrade?: boolean | EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>
     finalizer?: boolean | EmployeeEvaluation$finalizerArgs<ExtArgs>
@@ -18417,7 +18417,7 @@ export namespace Prisma {
   export type EmployeeEvaluationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     evaluationPeriod?: boolean | EvaluationPeriodDefaultArgs<ExtArgs>
-    team?: boolean | TeamDefaultArgs<ExtArgs>
+    team?: boolean | EmployeeEvaluation$teamArgs<ExtArgs>
     itSkillGrade?: boolean | EmployeeEvaluation$itSkillGradeArgs<ExtArgs>
     businessSkillGrade?: boolean | EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>
     finalizer?: boolean | EmployeeEvaluation$finalizerArgs<ExtArgs>
@@ -18425,7 +18425,7 @@ export namespace Prisma {
   export type EmployeeEvaluationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     evaluationPeriod?: boolean | EvaluationPeriodDefaultArgs<ExtArgs>
-    team?: boolean | TeamDefaultArgs<ExtArgs>
+    team?: boolean | EmployeeEvaluation$teamArgs<ExtArgs>
     itSkillGrade?: boolean | EmployeeEvaluation$itSkillGradeArgs<ExtArgs>
     businessSkillGrade?: boolean | EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>
     finalizer?: boolean | EmployeeEvaluation$finalizerArgs<ExtArgs>
@@ -18436,7 +18436,7 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       evaluationPeriod: Prisma.$EvaluationPeriodPayload<ExtArgs>
-      team: Prisma.$TeamPayload<ExtArgs>
+      team: Prisma.$TeamPayload<ExtArgs> | null
       itSkillGrade: Prisma.$SkillGradeDefinitionPayload<ExtArgs> | null
       businessSkillGrade: Prisma.$SkillGradeDefinitionPayload<ExtArgs> | null
       finalizer: Prisma.$UserPayload<ExtArgs> | null
@@ -18447,7 +18447,7 @@ export namespace Prisma {
       id: string
       userId: string
       evaluationPeriodId: string
-      teamId: string
+      teamId: string | null
       status: $Enums.EvaluationStatus
       selfComment: string | null
       managerComment: string | null
@@ -18858,7 +18858,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     evaluationPeriod<T extends EvaluationPeriodDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EvaluationPeriodDefaultArgs<ExtArgs>>): Prisma__EvaluationPeriodClient<$Result.GetResult<Prisma.$EvaluationPeriodPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    team<T extends TeamDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeamDefaultArgs<ExtArgs>>): Prisma__TeamClient<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    team<T extends EmployeeEvaluation$teamArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeEvaluation$teamArgs<ExtArgs>>): Prisma__TeamClient<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     itSkillGrade<T extends EmployeeEvaluation$itSkillGradeArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeEvaluation$itSkillGradeArgs<ExtArgs>>): Prisma__SkillGradeDefinitionClient<$Result.GetResult<Prisma.$SkillGradeDefinitionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     businessSkillGrade<T extends EmployeeEvaluation$businessSkillGradeArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeEvaluation$businessSkillGradeArgs<ExtArgs>>): Prisma__SkillGradeDefinitionClient<$Result.GetResult<Prisma.$SkillGradeDefinitionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     finalizer<T extends EmployeeEvaluation$finalizerArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeEvaluation$finalizerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -19304,6 +19304,25 @@ export namespace Prisma {
      * Limit how many EmployeeEvaluations to delete.
      */
     limit?: number
+  }
+
+  /**
+   * EmployeeEvaluation.team
+   */
+  export type EmployeeEvaluation$teamArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Team
+     */
+    select?: TeamSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Team
+     */
+    omit?: TeamOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInclude<ExtArgs> | null
+    where?: TeamWhereInput
   }
 
   /**
@@ -45484,7 +45503,7 @@ export namespace Prisma {
     id?: StringFilter<"EmployeeEvaluation"> | string
     userId?: StringFilter<"EmployeeEvaluation"> | string
     evaluationPeriodId?: StringFilter<"EmployeeEvaluation"> | string
-    teamId?: StringFilter<"EmployeeEvaluation"> | string
+    teamId?: StringNullableFilter<"EmployeeEvaluation"> | string | null
     status?: EnumEvaluationStatusFilter<"EmployeeEvaluation"> | $Enums.EvaluationStatus
     selfComment?: StringNullableFilter<"EmployeeEvaluation"> | string | null
     managerComment?: StringNullableFilter<"EmployeeEvaluation"> | string | null
@@ -45501,7 +45520,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"EmployeeEvaluation"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     evaluationPeriod?: XOR<EvaluationPeriodScalarRelationFilter, EvaluationPeriodWhereInput>
-    team?: XOR<TeamScalarRelationFilter, TeamWhereInput>
+    team?: XOR<TeamNullableScalarRelationFilter, TeamWhereInput> | null
     itSkillGrade?: XOR<SkillGradeDefinitionNullableScalarRelationFilter, SkillGradeDefinitionWhereInput> | null
     businessSkillGrade?: XOR<SkillGradeDefinitionNullableScalarRelationFilter, SkillGradeDefinitionWhereInput> | null
     finalizer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -45513,7 +45532,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     evaluationPeriodId?: SortOrder
-    teamId?: SortOrder
+    teamId?: SortOrderInput | SortOrder
     status?: SortOrder
     selfComment?: SortOrderInput | SortOrder
     managerComment?: SortOrderInput | SortOrder
@@ -45546,7 +45565,7 @@ export namespace Prisma {
     NOT?: EmployeeEvaluationWhereInput | EmployeeEvaluationWhereInput[]
     userId?: StringFilter<"EmployeeEvaluation"> | string
     evaluationPeriodId?: StringFilter<"EmployeeEvaluation"> | string
-    teamId?: StringFilter<"EmployeeEvaluation"> | string
+    teamId?: StringNullableFilter<"EmployeeEvaluation"> | string | null
     status?: EnumEvaluationStatusFilter<"EmployeeEvaluation"> | $Enums.EvaluationStatus
     selfComment?: StringNullableFilter<"EmployeeEvaluation"> | string | null
     managerComment?: StringNullableFilter<"EmployeeEvaluation"> | string | null
@@ -45563,7 +45582,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"EmployeeEvaluation"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     evaluationPeriod?: XOR<EvaluationPeriodScalarRelationFilter, EvaluationPeriodWhereInput>
-    team?: XOR<TeamScalarRelationFilter, TeamWhereInput>
+    team?: XOR<TeamNullableScalarRelationFilter, TeamWhereInput> | null
     itSkillGrade?: XOR<SkillGradeDefinitionNullableScalarRelationFilter, SkillGradeDefinitionWhereInput> | null
     businessSkillGrade?: XOR<SkillGradeDefinitionNullableScalarRelationFilter, SkillGradeDefinitionWhereInput> | null
     finalizer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -45575,7 +45594,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     evaluationPeriodId?: SortOrder
-    teamId?: SortOrder
+    teamId?: SortOrderInput | SortOrder
     status?: SortOrder
     selfComment?: SortOrderInput | SortOrder
     managerComment?: SortOrderInput | SortOrder
@@ -45604,7 +45623,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"EmployeeEvaluation"> | string
     userId?: StringWithAggregatesFilter<"EmployeeEvaluation"> | string
     evaluationPeriodId?: StringWithAggregatesFilter<"EmployeeEvaluation"> | string
-    teamId?: StringWithAggregatesFilter<"EmployeeEvaluation"> | string
+    teamId?: StringNullableWithAggregatesFilter<"EmployeeEvaluation"> | string | null
     status?: EnumEvaluationStatusWithAggregatesFilter<"EmployeeEvaluation"> | $Enums.EvaluationStatus
     selfComment?: StringNullableWithAggregatesFilter<"EmployeeEvaluation"> | string | null
     managerComment?: StringNullableWithAggregatesFilter<"EmployeeEvaluation"> | string | null
@@ -48242,7 +48261,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
@@ -48254,7 +48273,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -48288,7 +48307,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
@@ -48300,7 +48319,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48323,7 +48342,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -48359,7 +48378,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51093,6 +51112,11 @@ export namespace Prisma {
     isNot?: EvaluationPeriodWhereInput
   }
 
+  export type TeamNullableScalarRelationFilter = {
+    is?: TeamWhereInput | null
+    isNot?: TeamWhereInput | null
+  }
+
   export type EmployeeEvaluationUserIdEvaluationPeriodIdCompoundUniqueInput = {
     userId: string
     evaluationPeriodId: string
@@ -51691,11 +51715,6 @@ export namespace Prisma {
     in?: $Enums.CostCategory[] | ListEnumCostCategoryFieldRefInput<$PrismaModel>
     notIn?: $Enums.CostCategory[] | ListEnumCostCategoryFieldRefInput<$PrismaModel>
     not?: NestedEnumCostCategoryFilter<$PrismaModel> | $Enums.CostCategory
-  }
-
-  export type TeamNullableScalarRelationFilter = {
-    is?: TeamWhereInput | null
-    isNot?: TeamWhereInput | null
   }
 
   export type MonthlyCostCountOrderByAggregateInput = {
@@ -54312,10 +54331,12 @@ export namespace Prisma {
     update?: XOR<XOR<EvaluationPeriodUpdateToOneWithWhereWithoutEmployeeEvaluationsInput, EvaluationPeriodUpdateWithoutEmployeeEvaluationsInput>, EvaluationPeriodUncheckedUpdateWithoutEmployeeEvaluationsInput>
   }
 
-  export type TeamUpdateOneRequiredWithoutEvaluationsNestedInput = {
+  export type TeamUpdateOneWithoutEvaluationsNestedInput = {
     create?: XOR<TeamCreateWithoutEvaluationsInput, TeamUncheckedCreateWithoutEvaluationsInput>
     connectOrCreate?: TeamCreateOrConnectWithoutEvaluationsInput
     upsert?: TeamUpsertWithoutEvaluationsInput
+    disconnect?: TeamWhereInput | boolean
+    delete?: TeamWhereInput | boolean
     connect?: TeamWhereUniqueInput
     update?: XOR<XOR<TeamUpdateToOneWithWhereWithoutEvaluationsInput, TeamUpdateWithoutEvaluationsInput>, TeamUncheckedUpdateWithoutEvaluationsInput>
   }
@@ -55837,7 +55858,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
@@ -55848,7 +55869,7 @@ export namespace Prisma {
   export type EmployeeEvaluationUncheckedCreateWithoutUserInput = {
     id?: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -55892,7 +55913,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     scores?: EvaluationScoreCreateNestedManyWithoutEmployeeEvaluationInput
@@ -55903,7 +55924,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -56415,7 +56436,7 @@ export namespace Prisma {
     id?: StringFilter<"EmployeeEvaluation"> | string
     userId?: StringFilter<"EmployeeEvaluation"> | string
     evaluationPeriodId?: StringFilter<"EmployeeEvaluation"> | string
-    teamId?: StringFilter<"EmployeeEvaluation"> | string
+    teamId?: StringNullableFilter<"EmployeeEvaluation"> | string | null
     status?: EnumEvaluationStatusFilter<"EmployeeEvaluation"> | $Enums.EvaluationStatus
     selfComment?: StringNullableFilter<"EmployeeEvaluation"> | string | null
     managerComment?: StringNullableFilter<"EmployeeEvaluation"> | string | null
@@ -58567,7 +58588,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
     scores?: EvaluationScoreCreateNestedManyWithoutEmployeeEvaluationInput
@@ -58578,7 +58599,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -58621,7 +58642,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
     scores?: EvaluationScoreCreateNestedManyWithoutEmployeeEvaluationInput
@@ -58632,7 +58653,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -58775,7 +58796,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
@@ -58786,7 +58807,7 @@ export namespace Prisma {
   export type EmployeeEvaluationUncheckedCreateWithoutEvaluationPeriodInput = {
     id?: string
     userId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -59768,7 +59789,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
@@ -59779,7 +59800,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -59899,7 +59920,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
@@ -59910,7 +59931,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60363,7 +60384,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutEmployeeEvaluationsInput
     evaluationPeriod: EvaluationPeriodCreateNestedOneWithoutEmployeeEvaluationsInput
-    team: TeamCreateNestedOneWithoutEvaluationsInput
+    team?: TeamCreateNestedOneWithoutEvaluationsInput
     itSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutItSkillEvaluationsInput
     businessSkillGrade?: SkillGradeDefinitionCreateNestedOneWithoutBusinessEvaluationsInput
     finalizer?: UserCreateNestedOneWithoutFinalizedEvaluationsInput
@@ -60374,7 +60395,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -60584,7 +60605,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
@@ -60595,7 +60616,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62960,7 +62981,7 @@ export namespace Prisma {
   export type EmployeeEvaluationCreateManyUserInput = {
     id?: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -62981,7 +63002,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -63186,7 +63207,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
@@ -63197,7 +63218,7 @@ export namespace Prisma {
   export type EmployeeEvaluationUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63219,7 +63240,7 @@ export namespace Prisma {
   export type EmployeeEvaluationUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63251,7 +63272,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     scores?: EvaluationScoreUpdateManyWithoutEmployeeEvaluationNestedInput
@@ -63262,7 +63283,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -63284,7 +63305,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64620,7 +64641,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -64640,7 +64661,7 @@ export namespace Prisma {
     id?: string
     userId: string
     evaluationPeriodId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -64727,7 +64748,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
     scores?: EvaluationScoreUpdateManyWithoutEmployeeEvaluationNestedInput
@@ -64738,7 +64759,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64760,7 +64781,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64791,7 +64812,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
     evaluationPeriod?: EvaluationPeriodUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
     scores?: EvaluationScoreUpdateManyWithoutEmployeeEvaluationNestedInput
@@ -64802,7 +64823,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64824,7 +64845,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     evaluationPeriodId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64843,7 +64864,7 @@ export namespace Prisma {
   export type EmployeeEvaluationCreateManyEvaluationPeriodInput = {
     id?: string
     userId: string
-    teamId: string
+    teamId?: string | null
     status?: $Enums.EvaluationStatus
     selfComment?: string | null
     managerComment?: string | null
@@ -64899,7 +64920,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutEmployeeEvaluationsNestedInput
-    team?: TeamUpdateOneRequiredWithoutEvaluationsNestedInput
+    team?: TeamUpdateOneWithoutEvaluationsNestedInput
     itSkillGrade?: SkillGradeDefinitionUpdateOneWithoutItSkillEvaluationsNestedInput
     businessSkillGrade?: SkillGradeDefinitionUpdateOneWithoutBusinessEvaluationsNestedInput
     finalizer?: UserUpdateOneWithoutFinalizedEvaluationsNestedInput
@@ -64910,7 +64931,7 @@ export namespace Prisma {
   export type EmployeeEvaluationUncheckedUpdateWithoutEvaluationPeriodInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -64932,7 +64953,7 @@ export namespace Prisma {
   export type EmployeeEvaluationUncheckedUpdateManyWithoutEvaluationPeriodInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    teamId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumEvaluationStatusFieldUpdateOperationsInput | $Enums.EvaluationStatus
     selfComment?: NullableStringFieldUpdateOperationsInput | string | null
     managerComment?: NullableStringFieldUpdateOperationsInput | string | null

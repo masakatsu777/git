@@ -412,18 +412,21 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
     const coveredYearMonths = buildPeriodYearMonths(period.startDate, period.endDate);
     const teamSnapshotMap = new Map();
     await Promise.all(evaluations.map(async (evaluation) => {
-      const key = evaluation.team.id;
+      const key = evaluation.team?.id;
+      if (!key) {
+        return;
+      }
       if (!teamSnapshotMap.has(key)) {
         const existingMonths = await prisma.teamMonthlyPl.findMany({
           where: {
-            teamId: evaluation.team.id,
+            teamId: key,
             yearMonth: { in: coveredYearMonths },
           },
           select: { yearMonth: true },
           orderBy: { yearMonth: 'asc' },
         });
         const targetMonths = existingMonths.map((row) => row.yearMonth);
-        const snapshots = await Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(evaluation.team.id, yearMonth)));
+        const snapshots = await Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(key, yearMonth)));
         teamSnapshotMap.set(key, snapshots);
       }
     }));
@@ -453,7 +456,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const selfGrowthBaseAmount = 0;
         const synergyBaseAmount = 0;
         const baseSalaryReference = finalReview.gradeSalaryAmount;
-        const snapshots = (teamSnapshotMap.get(evaluation.team.id) ?? []) as Array<{ salesTotal: number; finalGrossProfit: number; targetGrossProfitRate: number }>;
+        const snapshots = (evaluation.team?.id ? teamSnapshotMap.get(evaluation.team.id) : []) as Array<{ salesTotal: number; finalGrossProfit: number; targetGrossProfitRate: number }>;
         const periodSalesTotal = snapshots.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
         const periodFinalGrossProfit = snapshots.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0);
         const periodTargetGrossProfitRate = snapshots.length > 0
@@ -474,7 +477,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         return {
           userId: evaluation.userId,
           employeeName: evaluation.user.name,
-          teamName: evaluation.team.name,
+          teamName: evaluation.team?.name ?? "未所属",
           evaluationPeriodId: period.id,
           evaluationStatus: evaluation.status,
           finalScoreTotal: finalReview.finalScoreTotal,

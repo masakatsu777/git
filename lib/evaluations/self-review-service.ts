@@ -602,9 +602,6 @@ export async function saveSelfReviewBundle(userId: string, role: string, teamId:
       }))?.teamId ??
       null;
 
-    if (!resolvedTeamId) {
-      throw new Error("所属チームが見つからないため自己評価を保存できません。ユーザー管理で所属を確認してください。");
-    }
 
     await prisma.$transaction(async (tx) => {
       await tx.employeeEvaluation.upsert({

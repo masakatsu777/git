@@ -559,8 +559,8 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       return {
         userId: evaluation.userId,
         name: evaluation.user.name,
-        teamId: evaluation.team.id,
-        teamName: evaluation.team.name,
+        teamId: evaluation.team?.id ?? "",
+        teamName: evaluation.team?.name ?? "未所属",
         positionName: evaluation.user.position?.name ?? "未設定",
         positionId: evaluation.user.positionId,
         status: evaluation.status,
