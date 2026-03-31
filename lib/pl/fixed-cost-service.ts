@@ -387,6 +387,36 @@ export async function getPerPersonFixedCostAllocation(yearMonth: string): Promis
   };
 }
 
+
+export async function getDepartmentPerPersonFixedCostAllocation(yearMonth: string, departmentId?: string | null): Promise<{
+  totalDepartmentFixedCost: number;
+  departmentHeadcount: number;
+  perPersonAmount: number;
+}> {
+  const [rows, { totalActiveHeadcount, headcounts, unassignedHeadcountByDepartment }] = await Promise.all([
+    getCompanyFixedCosts(yearMonth),
+    getHeadcounts(yearMonth),
+  ]);
+
+  const normalizedDepartmentId = departmentId ?? "";
+  const departmentHeadcount = normalizedDepartmentId
+    ? headcounts.filter((row) => row.departmentId === normalizedDepartmentId).reduce((total, row) => total + row.count, 0)
+      + (unassignedHeadcountByDepartment[normalizedDepartmentId] ?? 0)
+    : totalActiveHeadcount;
+  const totalDepartmentFixedCost = rows.reduce((total, row) => {
+    const amount = normalizedDepartmentId
+      ? row.departmentAllocations.find((allocation) => allocation.departmentId === normalizedDepartmentId)?.amount ?? 0
+      : row.amount;
+    return total + amount;
+  }, 0);
+
+  return {
+    totalDepartmentFixedCost,
+    departmentHeadcount,
+    perPersonAmount: departmentHeadcount === 0 ? 0 : round(totalDepartmentFixedCost / departmentHeadcount),
+  };
+}
+
 export async function getTeamFixedCostAllocationSummary(teamId: string, yearMonth: string): Promise<TeamFixedCostAllocationSummary> {
   try {
     const [rows, { totalActiveHeadcount, headcounts, unassignedHeadcountByDepartment }, team] = await Promise.all([

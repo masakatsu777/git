@@ -2,7 +2,7 @@ import { UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { calculateGrossProfit } from "@/lib/pl/calculations";
-import { getPerPersonFixedCostAllocation } from "@/lib/pl/fixed-cost-service";
+import { getDepartmentPerPersonFixedCostAllocation } from "@/lib/pl/fixed-cost-service";
 import { getCompanyTargetGrossProfitRate, getVisibleYearMonthOptions } from "@/lib/pl/service";
 
 export type PersonalProfitRow = {
@@ -111,7 +111,7 @@ export async function getPersonalMonthlyProfitByUser(userId: string, yearMonth: 
   }
 
   const { end } = getMonthRange(yearMonth);
-  const [user, perPersonFixedCost, companyTargetGrossProfitRate, assignedRows, unassignedRows] = await Promise.all([
+  const [user, companyTargetGrossProfitRate, assignedRows, unassignedRows] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -133,7 +133,6 @@ export async function getPersonalMonthlyProfitByUser(userId: string, yearMonth: 
         },
       },
     }),
-    getPerPersonFixedCostAllocation(yearMonth),
     getCompanyTargetGrossProfitRate(yearMonth),
     prisma.monthlyAssignment.findMany({
       where: { userId, yearMonth },
@@ -149,6 +148,7 @@ export async function getPersonalMonthlyProfitByUser(userId: string, yearMonth: 
     return null;
   }
 
+  const departmentFixedCost = await getDepartmentPerPersonFixedCostAllocation(yearMonth, user.department?.id);
   const salaryRecord = user.salaryRecords[0];
   const salesTotal = assignedRows.reduce((sum, row) => sum + toNumber(row.salesAmount), 0)
     + unassignedRows.reduce((sum, row) => sum + toNumber(row.salesAmount), 0);
@@ -161,7 +161,7 @@ export async function getPersonalMonthlyProfitByUser(userId: string, yearMonth: 
     directLaborCost,
     outsourcingCost: 0,
     indirectCost: 0,
-    fixedCostAllocation: perPersonFixedCost.perPersonAmount,
+    fixedCostAllocation: departmentFixedCost.perPersonAmount,
     targetGrossProfitRate: companyTargetGrossProfitRate,
   });
 

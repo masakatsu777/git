@@ -2,7 +2,7 @@ import { UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { calculateGrossProfit } from "@/lib/pl/calculations";
-import { getPerPersonFixedCostAllocation } from "@/lib/pl/fixed-cost-service";
+import { getDepartmentPerPersonFixedCostAllocation } from "@/lib/pl/fixed-cost-service";
 import { getCompanyTargetGrossProfitRate } from "@/lib/pl/service";
 
 export type UnassignedPersonalProfitRow = {
@@ -38,7 +38,7 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
   }
 
   const { start, end } = getMonthRange(yearMonth);
-  const [users, perPersonFixedCost, companyTargetGrossProfitRate] = await Promise.all([
+  const [users, companyTargetGrossProfitRate] = await Promise.all([
     prisma.user.findMany({
       where: {
         status: UserStatus.ACTIVE,
@@ -73,11 +73,11 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
         },
       },
     }),
-    getPerPersonFixedCostAllocation(yearMonth),
     getCompanyTargetGrossProfitRate(yearMonth),
   ]);
 
-  return users.map((user) => {
+  return Promise.all(users.map(async (user) => {
+    const departmentFixedCost = await getDepartmentPerPersonFixedCostAllocation(yearMonth, user.department?.id);
     const salaryRecord = user.salaryRecords[0];
     const salesTotal = user.departmentUnassignedMonthlyAssignments.reduce((sum, row) => sum + toNumber(row.salesAmount), 0);
     const directLaborCost = salaryRecord
@@ -89,7 +89,7 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
       directLaborCost,
       outsourcingCost: 0,
       indirectCost: 0,
-      fixedCostAllocation: perPersonFixedCost.perPersonAmount,
+      fixedCostAllocation: departmentFixedCost.perPersonAmount,
       targetGrossProfitRate: companyTargetGrossProfitRate,
     });
 
@@ -108,7 +108,7 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
       varianceAmount: calculated.varianceAmount,
       varianceRate: calculated.varianceRate,
     };
-  });
+  }));
 }
 
 export async function getUnassignedPersonalProfitByUser(userId: string, yearMonth: string): Promise<UnassignedPersonalProfitRow | null> {
