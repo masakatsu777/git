@@ -4,6 +4,10 @@ import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { getTeamFixedCostAllocationSummary } from "@/lib/pl/fixed-cost-service";
 import { getTeamLaborCostSummary } from "@/lib/pl/labor-cost-service";
 
+function normalizeSalesAmount(unitPrice: number, workRate: number) {
+  return Math.round((unitPrice * workRate) / 100);
+}
+
 export type AssignmentDetail = {
   id: string;
   targetType: "EMPLOYEE" | "PARTNER";
@@ -540,7 +544,7 @@ export async function copyPreviousTeamMonthlyDetails(teamId: string, yearMonth: 
       partnerId: row.partnerId,
       partnerName: row.targetType === "PARTNER" ? row.label : "",
       unitPrice: row.unitPrice,
-      salesAmount: row.salesAmount,
+      salesAmount: normalizeSalesAmount(row.unitPrice, row.workRate),
       workRate: row.workRate,
       remarks: row.remarks,
     })),
@@ -654,7 +658,7 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
             teamId: input.teamId,
             yearMonth: input.yearMonth,
             unitPrice: row.unitPrice,
-            salesAmount: row.salesAmount,
+            salesAmount: normalizeSalesAmount(row.unitPrice, row.workRate),
             workRate: row.workRate,
             remarks: row.remarks || null,
           };

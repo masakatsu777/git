@@ -195,8 +195,8 @@ export async function getPersonalAnnualProfitByUser(
   }
 
   const resolvedFiscalStartMonth = fiscalStartMonth && fiscalStartMonth >= 1 && fiscalStartMonth <= 12 ? fiscalStartMonth : 4;
-  const yearMonthOptions = await getVisibleYearMonthOptions(undefined);
-  const fiscalYears = Array.from(new Set(yearMonthOptions.map((option) => parseFiscalYear(option.yearMonth, resolvedFiscalStartMonth)))).sort((a, b) => b - a);
+  const allYearMonthOptions = await getVisibleYearMonthOptions(undefined);
+  const fiscalYears = Array.from(new Set(allYearMonthOptions.map((option) => parseFiscalYear(option.yearMonth, resolvedFiscalStartMonth)))).sort((a, b) => b - a);
   const resolvedFiscalYear = fiscalYear ?? fiscalYears[0] ?? new Date().getFullYear();
   const fiscalMonths = buildFiscalYearMonths(resolvedFiscalYear, resolvedFiscalStartMonth);
   const normalizedRange = normalizeRange(fiscalMonths, rangeStartYearMonth, rangeEndYearMonth);
@@ -248,7 +248,7 @@ export async function getPersonalAnnualProfitByUser(
       },
       options: (fiscalYears.length > 0 ? fiscalYears : [resolvedFiscalYear]).map((year) => ({ fiscalYear: year, label: buildFiscalYearLabel(year, resolvedFiscalStartMonth) })),
       fiscalStartMonthOptions: Array.from({ length: 12 }, (_, index) => ({ month: index + 1, label: buildFiscalStartMonthLabel(index + 1) })),
-      yearMonthOptions,
+      yearMonthOptions: fiscalMonths.map((yearMonth) => ({ yearMonth })),
     };
   }
 
@@ -291,6 +291,6 @@ export async function getPersonalAnnualProfitByUser(
     },
     options: (fiscalYears.length > 0 ? fiscalYears : [resolvedFiscalYear]).map((year) => ({ fiscalYear: year, label: buildFiscalYearLabel(year, resolvedFiscalStartMonth) })),
     fiscalStartMonthOptions: Array.from({ length: 12 }, (_, index) => ({ month: index + 1, label: buildFiscalStartMonthLabel(index + 1) })),
-    yearMonthOptions,
+    yearMonthOptions: fiscalMonths.map((yearMonth) => ({ yearMonth })),
   };
 }

@@ -3,6 +3,10 @@ import { AssignmentTargetType, UserStatus, type Prisma } from "@/generated/prism
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { getVisibleYearMonthOptions } from "@/lib/pl/service";
 
+function normalizeSalesAmount(unitPrice: number, workRate: number) {
+  return Math.round((unitPrice * workRate) / 100);
+}
+
 export type DepartmentOption = {
   id: string;
   name: string;
@@ -309,7 +313,7 @@ export async function saveDepartmentUnassignedSales(input: SaveDepartmentUnassig
             departmentId: input.departmentId,
             yearMonth: input.yearMonth,
             unitPrice: row.unitPrice,
-            salesAmount: row.salesAmount,
+            salesAmount: normalizeSalesAmount(row.unitPrice, row.workRate),
             workRate: row.workRate,
             remarks: row.remarks || null,
           });
