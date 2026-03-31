@@ -590,6 +590,16 @@ export async function saveSelfReviewBundle(userId: string, role: string, teamId:
         },
         select: { teamId: true },
       }))?.teamId ??
+      (await prisma.teamMembership.findFirst({
+        where: { userId, isPrimary: true },
+        orderBy: [{ endDate: "desc" }, { startDate: "desc" }],
+        select: { teamId: true },
+      }))?.teamId ??
+      (await prisma.employeeEvaluation.findFirst({
+        where: { userId },
+        orderBy: { updatedAt: "desc" },
+        select: { teamId: true },
+      }))?.teamId ??
       null;
 
     if (!resolvedTeamId) {
