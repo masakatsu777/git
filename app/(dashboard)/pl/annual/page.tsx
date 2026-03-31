@@ -5,7 +5,6 @@ import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
 import { AnnualEvaluationSummaryExportButton } from "@/components/evaluations/annual-evaluation-summary-export-button";
-import { AnnualTargetRateEditor } from "@/components/pl/annual-target-rate-editor";
 import { AnnualTrendChart } from "@/components/pl/annual-trend-chart";
 import { AnnualDashboardExportButton } from "@/components/pl/annual-dashboard-export-button";
 import { getAnnualDashboardBundle } from "@/lib/pl/annual-service";
@@ -162,15 +161,6 @@ export default async function AnnualPlPage({
 
           </div>
         </header>
-
-        <section className="mt-8">
-          <AnnualTargetRateEditor
-            fiscalYear={bundle.fiscalYear}
-            fiscalStartMonth={bundle.fiscalStartMonth}
-            targetGrossProfitRate={bundle.totals.targetGrossProfitRate}
-            canEdit={canViewAll}
-          />
-        </section>
 
         <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">

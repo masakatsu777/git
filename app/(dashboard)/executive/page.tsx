@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SessionActionButton } from "@/components/auth/session-action-button";
+import { AnnualTargetRateEditor } from "@/components/pl/annual-target-rate-editor";
 import { AnnualTrendChart } from "@/components/pl/annual-trend-chart";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
@@ -151,6 +152,15 @@ export default async function ExecutiveDashboardPage({
             </button>
           </form>
         </header>
+
+        <section className="mt-8">
+          <AnnualTargetRateEditor
+            fiscalYear={bundle.fiscalYear}
+            fiscalStartMonth={bundle.fiscalStartMonth}
+            targetGrossProfitRate={bundle.companyTargetGrossProfitRate}
+            canEdit={canView}
+          />
+        </section>
 
         <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {kpis.map((kpi) => (
