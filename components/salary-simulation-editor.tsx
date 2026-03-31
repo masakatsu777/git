@@ -272,7 +272,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           <table className="min-w-[1760px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-4 py-3 font-medium">氏名</th>
+                <th className="w-32 px-3 py-3 font-medium">氏名</th>
                 <th className="w-24 px-3 py-3 font-medium">チーム</th>
                 <th className="w-28 px-3 py-3 font-medium">現在給与</th>
                 <th className="w-20 px-3 py-3 font-medium">等級</th>
@@ -294,8 +294,8 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                 const rowLocked = row.status !== "DRAFT";
                 return (
                   <tr key={row.userId} className="border-t border-slate-200 align-top">
-                    <td className="px-3 py-3 font-medium text-slate-950">{row.employeeName}</td>
-                    <td className="px-3 py-3 text-slate-700">{row.teamName}</td>
+                    <td className="w-32 px-3 py-3 font-medium text-slate-950">{row.employeeName}</td>
+                    <td className="w-24 px-3 py-3 text-slate-700">{row.teamName}</td>
                     <td className="px-3 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
                     <td className="px-3 py-3 text-slate-700">S{row.selfGrowthPoint} / B{row.synergyPoint}</td>
                     <td className="px-3 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
