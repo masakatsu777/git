@@ -2,6 +2,8 @@ import { getAnnualEvaluationSummaryBundle } from "@/lib/evaluations/annual-summa
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getOrganizationBundle } from "@/lib/organization/organization-service";
 import { getAnnualDashboardBundle } from "@/lib/pl/annual-service";
+import { calculateGrossProfit } from "@/lib/pl/calculations";
+import { getTeamMonthlyDetails } from "@/lib/pl/detail-service";
 import { getCompanyTargetGrossProfitRate, getVisibleTeamMonthlySnapshots, getVisibleYearMonthOptions } from "@/lib/pl/service";
 import { getUnassignedPersonalProfitRows } from "@/lib/pl/unassigned-profit-service";
 import { getSalarySimulationBundle } from "@/lib/salary-simulations/salary-simulation-service";
@@ -113,6 +115,42 @@ function normalizeRange(options: string[], requestedStart?: string, requestedEnd
   };
 }
 
+async function getVisibleExecutiveMonthlyRows(yearMonth: string) {
+  const snapshots = await getVisibleTeamMonthlySnapshots(yearMonth);
+  const details = await Promise.all(snapshots.map((snapshot) => getTeamMonthlyDetails(snapshot.teamId, yearMonth)));
+  const detailMap = new Map(details.map((detail) => [detail.teamId, detail]));
+
+  return snapshots.map((snapshot) => {
+    const detail = detailMap.get(snapshot.teamId);
+    if (!detail) {
+      return snapshot;
+    }
+
+    const unassignedEmployeeIdSet = new Set(detail.unassignedEmployeeIds);
+    const unassignedPartnerIdSet = new Set(detail.unassignedPartnerIds);
+    const visibleAssignments = detail.assignments.filter((row) => {
+      if (row.targetType === "EMPLOYEE") {
+        return !row.userId || !unassignedEmployeeIdSet.has(row.userId);
+      }
+
+      return !row.partnerId || !unassignedPartnerIdSet.has(row.partnerId);
+    });
+    const recalculated = calculateGrossProfit({
+      salesTotal: visibleAssignments.reduce((sum, row) => sum + row.salesAmount, 0),
+      directLaborCost: detail.directLaborCostTotal,
+      outsourcingCost: detail.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
+      indirectCost: detail.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
+      fixedCostAllocation: detail.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
+      targetGrossProfitRate: snapshot.targetGrossProfitRate,
+    });
+
+    return {
+      ...snapshot,
+      ...recalculated,
+    };
+  });
+}
+
 
 export async function getExecutiveDashboardBundle(input?: {
   rangeStartYearMonth?: string;
@@ -136,7 +174,7 @@ export async function getExecutiveDashboardBundle(input?: {
   const resolvedFiscalYear = input?.fiscalYear ?? parseFiscalYearFromYearMonth(normalizedRange.end, resolvedFiscalStartMonth);
 
   const [monthlyRowsByMonth, annualBundle, evaluationSummary, salaryBundle, companyTargetGrossProfitRate, unassignedRowsByMonth] = await Promise.all([
-    Promise.all(normalizedRange.months.map((yearMonth) => getVisibleTeamMonthlySnapshots(yearMonth))),
+    Promise.all(normalizedRange.months.map((yearMonth) => getVisibleExecutiveMonthlyRows(yearMonth))),
     getAnnualDashboardBundle(resolvedFiscalYear, resolvedFiscalStartMonth, visibleTeamIds, undefined, normalizedRange.start, normalizedRange.end),
     getAnnualEvaluationSummaryBundle(resolvedFiscalYear, resolvedFiscalStartMonth),
     getSalarySimulationBundle(resolvedEvaluationPeriodId),
