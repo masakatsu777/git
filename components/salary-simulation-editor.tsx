@@ -131,7 +131,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
   }
 
   function handleExportCsv() {
-    const headers = ["評価期間", "氏名", "チーム", "現在給与", "等級", "自動算出昇給額", "最終昇給額", "調整額", "調整理由", "管理者状態", "役員状態", "操作", "ランク"];
+    const headers = ["評価期間", "氏名", "チーム", "現在給与", "等級", "評価額", "粗利差額配分", "決定額", "調整額", "調整理由", "管理者状態", "役員状態", "操作", "ランク"];
     const lines = [
       headers.join(","),
       ...visibleRows.map((row) => {
@@ -141,8 +141,9 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           row.employeeName,
           row.teamName,
           row.currentSalary,
-          `${row.selfGrowthGradeCode} / ${row.synergyGradeCode}`,
+          `S${row.selfGrowthPoint} / B${row.synergyPoint}`,
           row.finalSalaryReference,
+          row.grossProfitDeductionAmount,
           row.newSalary,
           adjustmentAmount,
           row.adjustmentReason,
@@ -216,7 +217,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           <p className="mt-2 text-lg font-semibold text-slate-950">{rows.length} 名</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">自動算出総額</p>
+          <p className="text-sm text-slate-500">評価額総額</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalAutoAmount)}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
@@ -274,7 +275,8 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                 <th className="px-4 py-3 font-medium">チーム</th>
                 <th className="px-4 py-3 font-medium">現在給与</th>
                 <th className="px-4 py-3 font-medium">等級</th>
-                <th className="px-4 py-3 font-medium">自動算出額</th>
+                <th className="px-4 py-3 font-medium">評価額</th>
+                <th className="px-4 py-3 font-medium">粗利差額配分</th>
                 <th className="px-4 py-3 font-medium">決定額</th>
                 <th className="px-4 py-3 font-medium">調整額</th>
                 <th className="px-4 py-3 font-medium">調整理由</th>
@@ -293,8 +295,9 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                     <td className="px-4 py-3 font-medium text-slate-950">{row.employeeName}</td>
                     <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
                     <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.selfGrowthGradeCode} / {row.synergyGradeCode}</td>
+                    <td className="px-4 py-3 text-slate-700">S{row.selfGrowthPoint} / B{row.synergyPoint}</td>
                     <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
+                    <td className={`px-4 py-3 font-semibold ${row.grossProfitDeductionAmount < 0 ? "text-rose-700" : row.grossProfitDeductionAmount > 0 ? "text-emerald-700" : "text-slate-700"}`}>{formatSignedCurrencyWithUnit(row.grossProfitDeductionAmount)}</td>
                     <td className="px-4 py-3">
                       <input
                         type="number"
@@ -323,7 +326,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
               })}
               {visibleRows.length === 0 ? (
                 <tr className="border-t border-slate-200">
-                  <td colSpan={12} className="px-4 py-8 text-center text-slate-500">条件に一致する対象者がありません。</td>
+                  <td colSpan={13} className="px-4 py-8 text-center text-slate-500">条件に一致する対象者がありません。</td>
                 </tr>
               ) : null}
             </tbody>
