@@ -7,10 +7,8 @@ import { writeApprovalLog, writeAuditLog } from "@/lib/audit/log-service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import { deriveRatingFromScore } from "@/lib/salary-rules/salary-revision-rule-service";
-import { getSalaryStructureBundle } from "@/lib/salary-structure/salary-structure-service";
-import { getGradeSalarySettingBundle } from "@/lib/grade-salary/grade-salary-setting-service";
-import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
 import { getTeamMonthlySnapshot } from "@/lib/pl/service";
+import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 
 export type SalarySimulationRow = {
   userId: string;
@@ -79,32 +77,6 @@ function round(value: number) {
   return Math.round(value * 100) / 100;
 }
 
-function roundInt(value: number) {
-  return Math.round(value);
-}
-
-function calculateAxisPoints(scores: Array<{ score: unknown; evaluationItem: { axis: string; weight: unknown } }>) {
-  let selfGrowthPoint = 0;
-  let synergyPoint = 0;
-
-  for (const row of scores) {
-    const amount = toNumber(row.score) * toNumber(row.evaluationItem.weight);
-    if (row.evaluationItem.axis === "SYNERGY") {
-      synergyPoint += amount;
-    } else {
-      selfGrowthPoint += amount;
-    }
-  }
-
-  const roundedSelfGrowthPoint = roundInt(selfGrowthPoint);
-  const roundedSynergyPoint = roundInt(synergyPoint);
-  return {
-    selfGrowthPoint: roundedSelfGrowthPoint,
-    synergyPoint: roundedSynergyPoint,
-    totalGradePoint: roundedSelfGrowthPoint + roundedSynergyPoint,
-  };
-}
-
 const adjustmentReasonsPath = path.join(process.cwd(), "data", "settings", "salary-simulation-adjustments.json");
 
 function normalizeOverallGradeCode(overallGradeName: string) {
@@ -115,19 +87,6 @@ function toYearMonth(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${year}-${month}`;
-}
-
-type SalaryStructureBandRef = { code: string; amount: number };
-
-type GrossProfitAdjustmentRef = { minRate: number; maxRate: number | null; multiplier: number };
-
-function getBandAmount(bands: SalaryStructureBandRef[], code: string) {
-  return Number(bands.find((band) => band.code === code)?.amount ?? 0);
-}
-
-function resolveGrossProfitMultiplier(rows: GrossProfitAdjustmentRef[], achievementRate: number) {
-  const matched = rows.find((row) => achievementRate >= row.minRate && (row.maxRate == null || achievementRate <= row.maxRate));
-  return Number(matched?.multiplier ?? 1);
 }
 
 type AdjustmentReasonStore = Record<string, Record<string, string>>;
@@ -398,11 +357,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
   try {
     const period = await resolvePeriod(evaluationPeriodId);
 
-    const [salaryStructure, gradeSalarySetting, adjustmentReasonStore] = await Promise.all([
-      getSalaryStructureBundle(),
-      getGradeSalarySettingBundle(),
-      readAdjustmentReasons(),
-    ]);
+    const adjustmentReasonStore = await readAdjustmentReasons();
 
     const rules = await prisma.salaryRevisionRule.findMany({
       where: { evaluationPeriodId: period.id },
@@ -473,23 +428,31 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
       }
     }));
 
+    const finalReviewEntries = await Promise.all(
+      evaluations.map(async (evaluation) => [evaluation.userId, await getFinalReviewBundle(evaluation.userId, period.id)] as const),
+    );
+    const finalReviewMap = new Map(finalReviewEntries);
+
     return {
       evaluationPeriodId: period.id,
       periodName: period.name,
       rows: evaluations.map((evaluation) => {
-        const currentSalary = toNumber(evaluation.user.salaryRecords[0]?.baseSalary) + toNumber(evaluation.user.salaryRecords[0]?.allowance);
         const saved = evaluation.user.salarySimulations[0];
-        const finalRating = evaluation.finalRating ?? deriveRatingFromScore(toNumber(evaluation.finalScoreTotal));
-        const overall = judgeOverallGrade(
-          evaluation.itSkillGrade?.rankOrder ? Math.round(evaluation.itSkillGrade.rankOrder / 10) : 0,
-          evaluation.businessSkillGrade?.rankOrder ? Math.round(evaluation.businessSkillGrade.rankOrder / 10) : 0,
-        );
-        const ruleRange = resolveRuleRange(finalRating, overall.gradeName, ratingRules, overallGradeRules);
-        const selfGrowthGradeCode = `SG${evaluation.itSkillGrade?.rankOrder ? Math.round(evaluation.itSkillGrade.rankOrder / 10) : 1}`;
-        const synergyGradeCode = `KG${evaluation.businessSkillGrade?.rankOrder ? Math.round(evaluation.businessSkillGrade.rankOrder / 10) : 1}`;
-        const selfGrowthBaseAmount = getBandAmount(salaryStructure.selfGrowthBands, selfGrowthGradeCode);
-        const synergyBaseAmount = getBandAmount(salaryStructure.synergyBands, synergyGradeCode);
-        const baseSalaryReference = selfGrowthBaseAmount + synergyBaseAmount;
+        const finalReview = finalReviewMap.get(evaluation.userId);
+        if (!finalReview) {
+          throw new Error(`最終評価結果が見つかりません: ${evaluation.userId}`);
+        }
+
+        const currentSalary = finalReview.currentSalary;
+        const finalRating = finalReview.finalRating === "-"
+          ? (evaluation.finalRating ?? deriveRatingFromScore(finalReview.finalScoreTotal))
+          : finalReview.finalRating;
+        const ruleRange = resolveRuleRange(finalRating, finalReview.overallGradeName, ratingRules, overallGradeRules);
+        const selfGrowthGradeCode = `SG${Math.max(1, Math.round(finalReview.selfGrowthPoint / 10) || 1)}`;
+        const synergyGradeCode = `KG${Math.max(1, Math.round(finalReview.synergyPoint / 10) || 1)}`;
+        const selfGrowthBaseAmount = 0;
+        const synergyBaseAmount = 0;
+        const baseSalaryReference = finalReview.gradeSalaryAmount;
         const snapshots = (teamSnapshotMap.get(evaluation.team.id) ?? []) as Array<{ salesTotal: number; finalGrossProfit: number; targetGrossProfitRate: number }>;
         const periodSalesTotal = snapshots.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
         const periodFinalGrossProfit = snapshots.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0);
@@ -498,16 +461,15 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
           : 0;
         const periodActualGrossProfitRate = periodSalesTotal === 0 ? 0 : round((periodFinalGrossProfit / periodSalesTotal) * 100);
         const grossProfitAchievementRate = periodTargetGrossProfitRate <= 0 ? 100 : round((periodActualGrossProfitRate / periodTargetGrossProfitRate) * 100);
-        const grossProfitVarianceRate = round(periodActualGrossProfitRate - periodTargetGrossProfitRate);
-        const grossProfitMultiplier = resolveGrossProfitMultiplier(salaryStructure.grossProfitAdjustments, grossProfitAchievementRate);
-        const finalSalaryReference = Math.round(baseSalaryReference * grossProfitMultiplier);
+        const grossProfitVarianceRate = finalReview.grossProfitVarianceRate;
+        const grossProfitMultiplier = 1;
+        const finalSalaryReference = finalReview.gradeSalaryAmount;
         const newSalary = saved ? toNumber(saved.newSalary) : finalSalaryReference;
         const proposedRaiseAmount = round(newSalary - currentSalary);
         const proposedRaiseRate = currentSalary === 0 ? 0 : round((proposedRaiseAmount / currentSalary) * 100);
-        const points = calculateAxisPoints(evaluation.scores);
-        const gradeCalculationAmount = points.totalGradePoint * gradeSalarySetting.pointUnitAmount;
-        const gradeSalaryAmount = gradeSalarySetting.baseAmount + gradeCalculationAmount;
-        const grossProfitDeductionAmount = Math.round(gradeSalaryAmount * (grossProfitVarianceRate / 100));
+        const gradeCalculationAmount = finalReview.salaryTotalGradePoint * finalReview.pointUnitAmount;
+        const gradeSalaryAmount = finalReview.gradeSalaryAmount;
+        const grossProfitDeductionAmount = finalReview.grossProfitDeductionAmount;
 
         return {
           userId: evaluation.userId,
@@ -515,9 +477,9 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
           teamName: evaluation.team.name,
           evaluationPeriodId: period.id,
           evaluationStatus: evaluation.status,
-          finalScoreTotal: toNumber(evaluation.finalScoreTotal),
+          finalScoreTotal: finalReview.finalScoreTotal,
           finalRating,
-          overallGradeName: overall.gradeName,
+          overallGradeName: finalReview.overallGradeName,
           selfGrowthGradeCode,
           synergyGradeCode,
           selfGrowthBaseAmount,
@@ -537,11 +499,11 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
           newSalary,
           adjustmentReason: getAdjustmentReason(adjustmentReasonStore, period.id, evaluation.userId),
           status: saved?.status ?? SalarySimulationStatus.DRAFT,
-          selfGrowthPoint: points.selfGrowthPoint,
-          synergyPoint: points.synergyPoint,
-          totalGradePoint: points.totalGradePoint,
-          gradeBaseAmount: gradeSalarySetting.baseAmount,
-          pointUnitAmount: gradeSalarySetting.pointUnitAmount,
+          selfGrowthPoint: finalReview.selfGrowthPoint,
+          synergyPoint: finalReview.synergyPoint,
+          totalGradePoint: finalReview.totalGradePoint,
+          gradeBaseAmount: finalReview.gradeBaseAmount,
+          pointUnitAmount: finalReview.pointUnitAmount,
           gradeCalculationAmount,
           gradeSalaryAmount,
         };
