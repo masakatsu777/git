@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     if (user.role === "leader" && !visibleTeamIds.includes(teamId)) {
       return NextResponse.json({ message: "同部署のチームのみ参照できます" }, { status: 403 });
     }
-    if (!canEditManagerReview(user, teamId)) {
+    if (!canEditManagerReview(user, teamId, String(body.userId ?? ""))) {
       return NextResponse.json({ message: "上長評価の入力権限がありません" }, { status: 403 });
     }
 

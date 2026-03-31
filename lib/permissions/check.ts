@@ -28,7 +28,10 @@ export function canViewManagerReview(user: SessionUser, teamId: string, memberId
   return false;
 }
 
-export function canEditManagerReview(user: SessionUser, teamId: string): boolean {
+export function canEditManagerReview(user: SessionUser, teamId: string, memberId?: string): boolean {
+  if (user.role === "leader" && memberId === user.id) {
+    return false;
+  }
   return hasPermission(user, "evaluation:team:write") && canAccessTeam(user, teamId);
 }
 

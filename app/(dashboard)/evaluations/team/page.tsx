@@ -65,7 +65,14 @@ export default async function TeamEvaluationPage({
     getManagerReviewBundle(requestedTeamId, effectiveMemberId, params.evaluationPeriodId),
     getFinalReviewBundle(effectiveMemberId, params.evaluationPeriodId),
   ]);
-  const canEdit = canEditManagerReview(user, bundle.teamId) && bundle.periodStatus === "OPEN";
+  if (user.role === "leader" && !params.memberId && bundle.selectedUserId === user.id) {
+    const firstOtherMember = bundle.members.find((member) => member.userId !== user.id);
+    if (firstOtherMember) {
+      redirect(`/evaluations/team?evaluationPeriodId=${bundle.evaluationPeriodId}&teamId=${bundle.teamId}&memberId=${firstOtherMember.userId}`);
+    }
+  }
+
+  const canEdit = canEditManagerReview(user, bundle.teamId, bundle.selectedUserId) && bundle.periodStatus === "OPEN";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
   return (
