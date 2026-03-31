@@ -155,7 +155,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     };
   }
 
-  const [departments, teams, employeeAssignments, partnerAssignments, partnerCosts, users, fixedCostsByMonth, otherCostMapByMonth] = await Promise.all([
+  const [departments, teams, employeeAssignments, unassignedEmployeeAssignments, partnerAssignments, unassignedPartnerAssignments, partnerCosts, users, fixedCostsByMonth, otherCostMapByMonth] = await Promise.all([
     prisma.department.findMany({
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true },
@@ -238,6 +238,51 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
         },
       },
     }),
+    prisma.departmentUnassignedMonthlyAssignment.findMany({
+      where: {
+        yearMonth: { in: rangeYearMonths },
+        targetType: "EMPLOYEE",
+        ...(resolvedTeamId ? { departmentId: "__no_match__" } : {}),
+        ...(resolvedDepartmentId ? { departmentId: resolvedDepartmentId } : {}),
+      },
+      select: {
+        userId: true,
+        departmentId: true,
+        yearMonth: true,
+        salesAmount: true,
+        user: {
+          select: {
+            id: true,
+            employeeCode: true,
+            name: true,
+            department: { select: { id: true, name: true } },
+            salaryRecords: {
+              where: { effectiveFrom: { lte: rangeEnd } },
+              orderBy: { effectiveFrom: "desc" },
+              select: {
+                effectiveFrom: true,
+                baseSalary: true,
+                allowance: true,
+                socialInsurance: true,
+                otherFixedCost: true,
+              },
+            },
+            monthlyCosts: {
+              where: {
+                yearMonth: { in: rangeYearMonths },
+                targetType: CostTargetType.EMPLOYEE,
+                costCategory: { in: [CostCategory.SALARY, CostCategory.OTHER] },
+              },
+              select: {
+                yearMonth: true,
+                costCategory: true,
+                amount: true,
+              },
+            },
+          },
+        },
+      },
+    }),
     prisma.monthlyAssignment.findMany({
       where: {
         yearMonth: { in: rangeYearMonths },
@@ -248,6 +293,26 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       select: {
         partnerId: true,
         teamId: true,
+        salesAmount: true,
+        partner: {
+          select: {
+            id: true,
+            name: true,
+            companyName: true,
+          },
+        },
+      },
+    }),
+    prisma.departmentUnassignedMonthlyAssignment.findMany({
+      where: {
+        yearMonth: { in: rangeYearMonths },
+        targetType: "PARTNER",
+        ...(resolvedTeamId ? { departmentId: "__no_match__" } : {}),
+        ...(resolvedDepartmentId ? { departmentId: resolvedDepartmentId } : {}),
+      },
+      select: {
+        partnerId: true,
+        departmentId: true,
         salesAmount: true,
         partner: {
           select: {
@@ -298,6 +363,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
   ]);
 
   const departmentOptions = [{ id: "", name: "全社" }, ...departments.map((department) => ({ id: department.id, name: department.name }))];
+  const departmentNameMap = new Map(departments.map((department) => [department.id, department.name]));
   const teamOptions = teams.map((team) => ({ id: team.id, name: team.name, departmentId: team.departmentId ?? "" }));
 
   const fixedCostContextByMonth = new Map(
@@ -419,6 +485,65 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     });
   }
 
+  for (const row of unassignedEmployeeAssignments) {
+    if (!row.userId || !row.user) {
+      continue;
+    }
+    const user = row.user;
+    const departmentId = row.departmentId || user.department?.id || "";
+    const departmentName = user.department?.name ?? departmentNameMap.get(departmentId) ?? "未設定";
+    const key = `${row.userId}:UNASSIGNED`;
+    const monthlyCostMap = new Map(user.monthlyCosts.map((cost) => [`${cost.yearMonth}:${cost.costCategory}`, toNumber(cost.amount)]));
+    const directLaborCost = rangeYearMonths.reduce((sum, currentYearMonth) => {
+      const monthEnd = getMonthRange(currentYearMonth).end;
+      const salaryRecord = user.salaryRecords.find((record) => new Date(record.effectiveFrom).getTime() <= monthEnd.getTime());
+      const fixedLaborCost = salaryRecord
+        ? toNumber(salaryRecord.baseSalary) + toNumber(salaryRecord.allowance) + toNumber(salaryRecord.socialInsurance) + toNumber(salaryRecord.otherFixedCost)
+        : 0;
+      const overtimeAmount = monthlyCostMap.get(`${currentYearMonth}:${CostCategory.SALARY}`) ?? 0;
+      const otherAmount = monthlyCostMap.get(`${currentYearMonth}:${CostCategory.OTHER}`) ?? 0;
+      return sum + fixedLaborCost + overtimeAmount + otherAmount;
+    }, 0);
+    const departmentHeadcount = departmentHeadcountMap.get(departmentId) ?? 0;
+    const fixedCostAllocation = departmentHeadcount > 0
+      ? rangeYearMonths.reduce((sum, currentYearMonth) => {
+          const fixedCostContext = fixedCostContextByMonth.get(currentYearMonth);
+          const departmentAmount = departmentId
+            ? (fixedCostContext?.departmentAmounts.get(departmentId) ?? 0)
+            : (fixedCostContext?.totalAmount ?? 0);
+          return sum + Math.round(departmentAmount / departmentHeadcount);
+        }, 0)
+      : 0;
+
+    const existing = employeeRows.get(key);
+    if (existing) {
+      existing.salesTotal += toNumber(row.salesAmount);
+      existing.directLaborCost = directLaborCost;
+      existing.fixedCostAllocation = fixedCostAllocation;
+      continue;
+    }
+
+    employeeRows.set(key, {
+      key,
+      subjectType: "EMPLOYEE",
+      membershipStatus: "UNASSIGNED",
+      entityId: user.id,
+      displayName: user.name,
+      secondaryLabel: user.employeeCode,
+      departmentId,
+      departmentName,
+      teamId: "",
+      teamName: "未所属",
+      salesTotal: toNumber(row.salesAmount),
+      directLaborCost,
+      outsourcingCost: 0,
+      indirectCostAllocation: 0,
+      fixedCostAllocation,
+      finalGrossProfit: 0,
+      grossProfitRate: 0,
+    });
+  }
+
   const partnerRows = new Map<string, ProfitBreakdownRow>();
   for (const row of partnerAssignments) {
     if (!row.partnerId || !row.partner) {
@@ -448,6 +573,39 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       salesTotal: toNumber(row.salesAmount),
       directLaborCost: 0,
       outsourcingCost: partnerCostMap.get(key) ?? 0,
+      indirectCostAllocation: 0,
+      fixedCostAllocation: 0,
+      finalGrossProfit: 0,
+      grossProfitRate: 0,
+    });
+  }
+
+  for (const row of unassignedPartnerAssignments) {
+    if (!row.partnerId || !row.partner) {
+      continue;
+    }
+    const departmentId = row.departmentId ?? "";
+    const departmentName = departmentNameMap.get(departmentId) ?? "未設定";
+    const key = `${row.partnerId}:UNASSIGNED`;
+    const existing = partnerRows.get(key);
+    if (existing) {
+      existing.salesTotal += toNumber(row.salesAmount);
+      continue;
+    }
+    partnerRows.set(key, {
+      key,
+      subjectType: "PARTNER",
+      membershipStatus: "UNASSIGNED",
+      entityId: row.partner.id,
+      displayName: row.partner.name,
+      secondaryLabel: row.partner.companyName ?? "",
+      departmentId,
+      departmentName,
+      teamId: "",
+      teamName: "未所属",
+      salesTotal: toNumber(row.salesAmount),
+      directLaborCost: 0,
+      outsourcingCost: 0,
       indirectCostAllocation: 0,
       fixedCostAllocation: 0,
       finalGrossProfit: 0,
