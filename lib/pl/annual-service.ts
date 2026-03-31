@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { calculateGrossProfit } from "@/lib/pl/calculations";
+import { getTeamMonthlyDetails } from "@/lib/pl/detail-service";
 import { getTeamMonthlySnapshot, getVisibleTeamOptions, getVisibleYearMonthOptions, saveMonthlyTargetRates, type TeamMonthlySnapshot } from "@/lib/pl/service";
 
 export type FiscalYearOption = {
@@ -250,6 +252,36 @@ function sumTotals(rows: TeamAnnualSnapshot[]): AnnualDashboardTotals {
   };
 }
 
+async function getVisibleTeamMonthlySnapshot(teamId: string, yearMonth: string): Promise<TeamMonthlySnapshot> {
+  const [snapshot, detail] = await Promise.all([
+    getTeamMonthlySnapshot(teamId, yearMonth),
+    getTeamMonthlyDetails(teamId, yearMonth),
+  ]);
+
+  const unassignedEmployeeIdSet = new Set(detail.unassignedEmployeeIds);
+  const unassignedPartnerIdSet = new Set(detail.unassignedPartnerIds);
+  const visibleAssignments = detail.assignments.filter((row) => {
+    if (row.targetType === "EMPLOYEE") {
+      return !row.userId || !unassignedEmployeeIdSet.has(row.userId);
+    }
+
+    return !row.partnerId || !unassignedPartnerIdSet.has(row.partnerId);
+  });
+  const recalculated = calculateGrossProfit({
+    salesTotal: visibleAssignments.reduce((sum, row) => sum + row.salesAmount, 0),
+    directLaborCost: detail.directLaborCostTotal,
+    outsourcingCost: detail.outsourcingCosts.reduce((sum, row) => sum + row.amount, 0),
+    indirectCost: detail.teamExpenses.reduce((sum, row) => sum + row.amount, 0),
+    fixedCostAllocation: detail.fixedCostSummary.allocations.reduce((sum, row) => sum + row.allocatedAmount, 0),
+    targetGrossProfitRate: snapshot.targetGrossProfitRate,
+  });
+
+  return {
+    ...snapshot,
+    ...recalculated,
+  };
+}
+
 export async function getAnnualDashboardBundle(
   fiscalYear?: number,
   fiscalStartMonth?: number,
@@ -297,8 +329,8 @@ export async function getAnnualDashboardBundle(
         const previousMonthsForTeam = existingPreviousMonths.map((row) => row.yearMonth);
 
         const [snapshots, previousSnapshots] = await Promise.all([
-          Promise.all(currentMonths.map((yearMonth) => getTeamMonthlySnapshot(team.teamId, yearMonth))),
-          Promise.all(previousMonthsForTeam.map((yearMonth) => getTeamMonthlySnapshot(team.teamId, yearMonth))),
+          Promise.all(currentMonths.map((yearMonth) => getVisibleTeamMonthlySnapshot(team.teamId, yearMonth))),
+          Promise.all(previousMonthsForTeam.map((yearMonth) => getVisibleTeamMonthlySnapshot(team.teamId, yearMonth))),
         ]);
 
         return sumSnapshots(team.teamId, team.teamName, targetFiscalYear, resolvedFiscalStartMonth, snapshots, previousSnapshots);
