@@ -225,7 +225,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
 
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
-    const [team, itemRows] = await Promise.all([
+    const [team, itemRows, standaloneUser] = await Promise.all([
       prisma.team.findUniqueOrThrow({
         where: { id: teamId },
         select: {
@@ -247,6 +247,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
                       managerComment: true,
                       selfScoreTotal: true,
                       managerScoreTotal: true,
+                      team: { select: { id: true, name: true } },
                       scores: {
                         where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER] } },
                         select: {
@@ -289,12 +290,58 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
           evidenceRequired: true,
         },
       }),
+      selectedUserId
+        ? prisma.user.findUnique({
+            where: { id: selectedUserId },
+            select: {
+              id: true,
+              name: true,
+              employeeEvaluations: {
+                where: { evaluationPeriodId: period.id },
+                select: {
+                  id: true,
+                  status: true,
+                  selfComment: true,
+                  managerComment: true,
+                  selfScoreTotal: true,
+                  managerScoreTotal: true,
+                  team: { select: { id: true, name: true } },
+                  scores: {
+                    where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER] } },
+                    select: {
+                      evaluationItemId: true,
+                      reviewType: true,
+                      score: true,
+                      comment: true,
+                      evidences: {
+                        select: {
+                          id: true,
+                          summary: true,
+                          targetName: true,
+                          periodNote: true,
+                        },
+                      },
+                    },
+                  },
+                },
+                take: 1,
+              },
+            },
+          })
+        : Promise.resolve(null),
     ]);
 
     const visibilityMap = await getUserMenuVisibilityMap(team.memberships.map((membership) => membership.user.id));
     const visibleMemberships = team.memberships.filter((membership) => visibilityMap[membership.user.id]?.philosophyPractice);
 
-    const members = visibleMemberships.map((membership) => {
+    const members: Array<{
+      userId: string;
+      name: string;
+      status: string;
+      selfScoreTotal: number;
+      managerScoreTotal: number;
+      evaluation: NonNullable<(typeof visibleMemberships)[number]["user"]["employeeEvaluations"][number]> | undefined;
+    }> = visibleMemberships.map((membership) => {
       const evaluation = membership.user.employeeEvaluations[0];
       return {
         userId: membership.user.id,
@@ -305,6 +352,18 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
         evaluation,
       };
     });
+
+    const standaloneEvaluation = standaloneUser?.employeeEvaluations[0];
+    if (selectedUserId && standaloneUser && !members.some((member) => member.userId == selectedUserId)) {
+      members.unshift({
+        userId: standaloneUser.id,
+        name: standaloneUser.name,
+        status: standaloneEvaluation?.status ?? EvaluationStatus.SELF_REVIEW,
+        selfScoreTotal: toNumber(standaloneEvaluation?.selfScoreTotal),
+        managerScoreTotal: toNumber(standaloneEvaluation?.selfScoreTotal),
+        evaluation: standaloneEvaluation,
+      });
+    }
 
     const target = members.find((member) => member.userId === selectedUserId) ?? members[0];
     if (!target) {
@@ -367,8 +426,8 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       evaluationPeriodId: period.id,
       periodName: period.name,
       periodStatus: period.status,
-      teamId: team.id,
-      teamName: team.name,
+      teamId: target.evaluation?.team?.id ?? team.id,
+      teamName: target.evaluation?.team?.name ?? "未所属",
       members: members.map((member) => ({
         userId: member.userId,
         name: member.name,
