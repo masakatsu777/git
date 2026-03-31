@@ -305,20 +305,26 @@ export async function getCompanyTargetGrossProfitRate(yearMonth: string): Promis
   }
 
   try {
-    const [target, monthlyPl] = await Promise.all([
-      prisma.teamTarget.findFirst({
+    const [targets, monthlyPls] = await Promise.all([
+      prisma.teamTarget.findMany({
         where: { yearMonth },
-        orderBy: [{ updatedAt: "desc" }],
         select: { grossProfitRateTarget: true },
       }),
-      prisma.teamMonthlyPl.findFirst({
+      prisma.teamMonthlyPl.findMany({
         where: { yearMonth },
-        orderBy: [{ updatedAt: "desc" }],
         select: { targetGrossProfitRate: true },
       }),
     ]);
 
-    return Number(target?.grossProfitRateTarget ?? monthlyPl?.targetGrossProfitRate ?? 0);
+    if (targets.length > 0) {
+      return Math.round((targets.reduce((sum, row) => sum + Number(row.grossProfitRateTarget ?? 0), 0) / targets.length) * 100) / 100;
+    }
+
+    if (monthlyPls.length > 0) {
+      return Math.round((monthlyPls.reduce((sum, row) => sum + Number(row.targetGrossProfitRate ?? 0), 0) / monthlyPls.length) * 100) / 100;
+    }
+
+    return 0;
   } catch {
     return fallbackSnapshots.find((snapshot) => snapshot.yearMonth === yearMonth)?.targetGrossProfitRate ?? 0;
   }
