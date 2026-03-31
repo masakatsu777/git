@@ -158,9 +158,11 @@ export default async function DashboardPage({
             <Link href="/executive" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               トップ経営ダッシュボード
             </Link>
-            <Link href="/pl/annual" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-              年度ダッシュボード
-            </Link>
+            {(!showPersonalProfit || canViewAll) ? (
+              <Link href="/pl/annual" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
+                年度ダッシュボード
+              </Link>
+            ) : null}
             <Link href="/pl/annual-personal" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               個人年度
             </Link>

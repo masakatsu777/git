@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { hasPermission } from "@/lib/permissions/check";
@@ -26,6 +27,10 @@ export default async function AnnualPlPage({
   const user = await getSessionUser();
   const params = await searchParams;
   const canViewAll = hasPermission(user, PERMISSIONS.plAllRead);
+
+  if (!canViewAll && user.teamIds.length === 0) {
+    redirect("/pl/annual-personal");
+  }
   const visibleTeamIds = canViewAll ? undefined : user.teamIds;
   const bundle = await getAnnualDashboardBundle(
     parseNumber(params.fiscalYear),

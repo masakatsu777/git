@@ -14,6 +14,7 @@ type DashboardLayoutProps = {
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
   const user = await getSessionUser();
   const visibility = await getUserMenuVisibility(user.id, user.role);
+  const hasPrimaryTeam = user.teamIds.length > 0;
   const items = [
     { href: "/menu", label: "メニュー" },
   ];
@@ -21,7 +22,6 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   if (visibility.philosophyPractice) {
     items.push(
       { href: "/dashboard", label: "月次" },
-      { href: "/pl/annual", label: "年度" },
       { href: "/pl/annual-personal", label: "個人年度" },
       { href: "/evaluations/my", label: "自己評価" },
       { href: "/evaluations/result", label: "マイ評価結果" },
@@ -29,6 +29,10 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       { href: "/evaluations/finalize", label: "最終評価" },
       { href: "/salary/simulations", label: "昇給" },
     );
+
+    if (hasPrimaryTeam || hasPermission(user, PERMISSIONS.plAllRead)) {
+      items.splice(2, 0, { href: "/pl/annual", label: "年度" });
+    }
   }
 
   if (hasPermission(user, PERMISSIONS.plAllRead)) {
