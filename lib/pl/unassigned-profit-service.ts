@@ -56,7 +56,7 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
         employeeCode: true,
         name: true,
         department: { select: { id: true, name: true } },
-        monthlyAssignments: {
+        departmentUnassignedMonthlyAssignments: {
           where: { yearMonth },
           select: { salesAmount: true },
         },
@@ -79,7 +79,7 @@ export async function getUnassignedPersonalProfitRows(yearMonth: string): Promis
 
   return users.map((user) => {
     const salaryRecord = user.salaryRecords[0];
-    const salesTotal = user.monthlyAssignments.reduce((sum, row) => sum + toNumber(row.salesAmount), 0);
+    const salesTotal = user.departmentUnassignedMonthlyAssignments.reduce((sum, row) => sum + toNumber(row.salesAmount), 0);
     const directLaborCost = salaryRecord
       ? toNumber(salaryRecord.baseSalary) + toNumber(salaryRecord.allowance) + toNumber(salaryRecord.socialInsurance) + toNumber(salaryRecord.otherFixedCost)
       : 0;

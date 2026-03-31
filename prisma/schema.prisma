@@ -110,6 +110,7 @@ model User {
   salarySimulations         SalaryRevisionSimulation[] @relation("SalarySimulationSubject")
   approvedSalarySimulations SalaryRevisionSimulation[] @relation("SalarySimulationApprover")
   monthlyAssignments        MonthlyAssignment[]
+  departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
   monthlyCosts              MonthlyCost[]
   employeeSalesRateSetting  EmployeeSalesRateSetting?
   approvalLogs              ApprovalLog[]              @relation("ApprovalActor")
@@ -164,6 +165,7 @@ model Department {
   teams                Team[]
   fixedCostAllocations DepartmentFixedCostAllocation[]
   monthlyOtherCosts    DepartmentMonthlyOtherCost[]
+  unassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
 
   @@map("departments")
 }
@@ -403,6 +405,7 @@ model Partner {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   monthlyAssignments MonthlyAssignment[]
+  departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
   monthlyCosts MonthlyCost[]
   salesRateSetting PartnerSalesRateSetting?
   outsourceRateSetting PartnerOutsourceRateSetting?
@@ -428,6 +431,29 @@ model MonthlyAssignment {
   team        Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("monthly_assignments")
+}
+
+model DepartmentUnassignedMonthlyAssignment {
+  id           String               @id @default(cuid())
+  targetType   AssignmentTargetType @map("target_type")
+  userId       String?              @map("user_id")
+  partnerId    String?              @map("partner_id")
+  departmentId String               @map("department_id")
+  yearMonth    String               @map("year_month")
+  unitPrice    Int                  @map("unit_price")
+  salesAmount  Int                  @map("sales_amount")
+  workRate     Int                  @default(100) @map("work_rate")
+  remarks      String?
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
+  user         User?                @relation(fields: [userId], references: [id])
+  partner      Partner?             @relation(fields: [partnerId], references: [id])
+  department   Department           @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@index([departmentId, yearMonth])
+  @@index([userId, yearMonth])
+  @@index([partnerId, yearMonth])
+  @@map("department_unassigned_monthly_assignments")
 }
 
 model MonthlyCost {

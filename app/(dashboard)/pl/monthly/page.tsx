@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { MonthlyPlDetailEditor } from "@/components/pl/monthly-pl-detail-editor";
 import { MonthlyPlEditor } from "@/components/pl/monthly-pl-editor";
-import { UnassignedSalesEditor } from "@/components/pl/unassigned-sales-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canAccessTeam, hasPermission } from "@/lib/permissions/check";
 import { PERMISSIONS } from "@/lib/permissions/definitions";
@@ -52,13 +51,6 @@ export default async function MonthlyPlPage({
     }
 
     return !row.partnerId || !unassignedPartnerIdSet.has(row.partnerId);
-  });
-  const unassignedAssignments = details.assignments.filter((row) => {
-    if (row.targetType === "EMPLOYEE") {
-      return Boolean(row.userId) && row.userId !== null && unassignedEmployeeIdSet.has(row.userId);
-    }
-
-    return Boolean(row.partnerId) && row.partnerId !== null && unassignedPartnerIdSet.has(row.partnerId);
   });
   const effectiveSnapshot = calculateGrossProfit({
     salesTotal: (canManageUnassignedSales ? details.assignments : teamAssignments).reduce((sum, row) => sum + row.salesAmount, 0),
@@ -150,6 +142,11 @@ export default async function MonthlyPlPage({
                   </Link>
                 </>
               ) : null}
+              {canManageUnassignedSales ? (
+                <Link href={`/pl/unassigned-monthly?departmentId=${details.departmentId}&yearMonth=${yearMonth}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
+                  未所属売上入力
+                </Link>
+              ) : null}
               {canEdit ? (
                 <span className="rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold text-stone-950">編集可能</span>
               ) : (
@@ -202,32 +199,6 @@ export default async function MonthlyPlPage({
                 grossProfitTarget: Math.round(snapshot.salesTotal * (snapshot.targetGrossProfitRate / 100)),
               }}
             />
-
-            {canManageUnassignedSales ? (
-              <UnassignedSalesEditor
-                key={JSON.stringify({
-                  teamId: details.teamId,
-                  yearMonth: details.yearMonth,
-                  assignments: unassignedAssignments,
-                })}
-                teamId={details.teamId}
-                yearMonth={details.yearMonth}
-                canEdit={canManageUnassignedSales}
-                employeeOptions={details.unassignedEmployeeOptions}
-                partnerOptions={details.unassignedPartnerOptions}
-                defaults={unassignedAssignments.map((row) => ({
-                  id: row.id,
-                  targetType: row.targetType,
-                  userId: row.userId,
-                  partnerId: row.partnerId,
-                  partnerName: row.label,
-                  unitPrice: row.unitPrice,
-                  salesAmount: row.salesAmount,
-                  workRate: row.workRate,
-                  remarks: row.remarks,
-                }))}
-              />
-            ) : null}
 
             <MonthlyPlEditor
               key={JSON.stringify({

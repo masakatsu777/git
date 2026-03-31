@@ -22,6 +22,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     items.push(
       { href: "/dashboard", label: "月次" },
       { href: "/pl/annual", label: "年度" },
+      { href: "/pl/annual-personal", label: "個人年度" },
       { href: "/evaluations/my", label: "自己評価" },
       { href: "/evaluations/result", label: "マイ評価結果" },
       { href: "/evaluations/team", label: "上長評価" },
@@ -37,6 +38,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   if (user.role === "admin" || user.role === "president") {
     items.push(
       { href: "/pl/breakdown", label: "粗利内訳" },
+      { href: "/pl/unassigned-monthly", label: "未所属売上" },
       { href: "/settings/other-costs", label: "その他コスト" },
     );
   }

@@ -42,6 +42,7 @@ export type PlDetailOption = {
 export type TeamMonthlyDetailBundle = {
   teamId: string;
   teamName: string;
+  departmentId: string;
   yearMonth: string;
   assignments: AssignmentDetail[];
   outsourcingCosts: OutsourcingCostDetail[];
@@ -142,6 +143,7 @@ const fallbackSummary = {
 const fallbackBundle: TeamMonthlyDetailBundle = {
   teamId: "team-platform",
   teamName: "プラットフォームチーム",
+  departmentId: "",
   yearMonth: "2026-03",
   assignments: [
     {
@@ -415,6 +417,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
     return {
       teamId: team.id,
       teamName: team.name,
+      departmentId: team.departmentId ?? "",
       yearMonth,
       assignments: team.assignments.map((row) => ({
         id: row.id,

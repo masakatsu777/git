@@ -152,6 +152,9 @@ export default async function DashboardPage({
             <Link href="/pl/annual" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
               年度ダッシュボード
             </Link>
+            <Link href="/pl/annual-personal" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
+              個人年度
+            </Link>
             {canManageSalary ? (
               <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 社員コスト設定
