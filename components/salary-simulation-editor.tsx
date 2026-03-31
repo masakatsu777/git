@@ -269,23 +269,23 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
 
       <div className="overflow-hidden rounded-2xl border border-slate-200">
         <div className="overflow-x-auto">
-          <table className="min-w-[2000px] text-left text-sm">
+          <table className="min-w-[1760px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">氏名</th>
-                <th className="w-32 px-4 py-3 font-medium">チーム</th>
-                <th className="px-4 py-3 font-medium">現在給与</th>
-                <th className="w-28 px-4 py-3 font-medium">等級</th>
-                <th className="px-4 py-3 font-medium">評価額</th>
-                <th className="px-4 py-3 font-medium">粗利差額配分</th>
-                <th className="w-32 px-4 py-3 font-medium">決定額</th>
-                <th className="w-32 px-4 py-3 font-medium">実質昇給額</th>
-                <th className="w-32 px-4 py-3 font-medium">評価調整額</th>
-                <th className="px-4 py-3 font-medium">調整理由</th>
-                <th className="w-28 px-4 py-3 font-medium">管理者状態</th>
-                <th className="w-28 px-4 py-3 font-medium">役員状態</th>
-                <th className="w-24 px-4 py-3 font-medium">操作</th>
-                <th className="w-20 px-4 py-3 font-medium">ランク</th>
+                <th className="w-24 px-3 py-3 font-medium">チーム</th>
+                <th className="w-28 px-3 py-3 font-medium">現在給与</th>
+                <th className="w-20 px-3 py-3 font-medium">等級</th>
+                <th className="w-28 px-3 py-3 font-medium">評価額</th>
+                <th className="w-28 px-3 py-3 font-medium">粗利差額配分</th>
+                <th className="w-28 px-3 py-3 font-medium">決定額</th>
+                <th className="w-28 px-3 py-3 font-medium">実質昇給額</th>
+                <th className="w-28 px-3 py-3 font-medium">評価調整額</th>
+                <th className="w-48 px-3 py-3 font-medium">調整理由</th>
+                <th className="w-20 px-3 py-3 font-medium">管理者状態</th>
+                <th className="w-20 px-3 py-3 font-medium">役員状態</th>
+                <th className="w-16 px-3 py-3 font-medium">操作</th>
+                <th className="w-14 px-3 py-3 font-medium">ランク</th>
               </tr>
             </thead>
             <tbody>
@@ -294,36 +294,36 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                 const rowLocked = row.status !== "DRAFT";
                 return (
                   <tr key={row.userId} className="border-t border-slate-200 align-top">
-                    <td className="px-4 py-3 font-medium text-slate-950">{row.employeeName}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
-                    <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
-                    <td className="px-4 py-3 text-slate-700">S{row.selfGrowthPoint} / B{row.synergyPoint}</td>
-                    <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
-                    <td className={`px-4 py-3 font-semibold ${row.grossProfitDeductionAmount < 0 ? "text-rose-700" : row.grossProfitDeductionAmount > 0 ? "text-emerald-700" : "text-slate-700"}`}>{formatSignedCurrencyWithUnit(row.grossProfitDeductionAmount)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-3 font-medium text-slate-950">{row.employeeName}</td>
+                    <td className="px-3 py-3 text-slate-700">{row.teamName}</td>
+                    <td className="px-3 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
+                    <td className="px-3 py-3 text-slate-700">S{row.selfGrowthPoint} / B{row.synergyPoint}</td>
+                    <td className="px-3 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
+                    <td className={`px-3 py-3 font-semibold ${row.grossProfitDeductionAmount < 0 ? "text-rose-700" : row.grossProfitDeductionAmount > 0 ? "text-emerald-700" : "text-slate-700"}`}>{formatSignedCurrencyWithUnit(row.grossProfitDeductionAmount)}</td>
+                    <td className="px-3 py-3">
                       <input
                         type="number"
                         value={row.newSalary}
                         disabled={!canEdit || isPending || rowLocked}
                         onChange={(event) => updateDecisionAmount(row.userId, toNumber(event.target.value))}
-                        className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm disabled:bg-slate-100"
+                        className="w-24 rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-sm disabled:bg-slate-100"
                       />
                     </td>
-                    <td className={`px-4 py-3 font-semibold ${row.newSalary - row.currentSalary === 0 ? "text-slate-700" : row.newSalary - row.currentSalary > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(row.newSalary - row.currentSalary)}</td>
-                    <td className={`px-4 py-3 font-semibold ${adjustmentAmount === 0 ? "text-slate-700" : adjustmentAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(adjustmentAmount)}</td>
-                    <td className="px-4 py-3">
+                    <td className={`px-3 py-3 font-semibold ${row.newSalary - row.currentSalary === 0 ? "text-slate-700" : row.newSalary - row.currentSalary > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(row.newSalary - row.currentSalary)}</td>
+                    <td className={`px-3 py-3 font-semibold ${adjustmentAmount === 0 ? "text-slate-700" : adjustmentAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(adjustmentAmount)}</td>
+                    <td className="px-3 py-3">
                       <textarea
                         value={row.adjustmentReason}
                         disabled={!canEdit || isPending || rowLocked}
                         onChange={(event) => updateAdjustmentReason(row.userId, event.target.value)}
                         placeholder={requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) ? "調整理由を入力" : "必要に応じて入力"}
-                        className={`min-h-[72px] w-56 rounded-xl border px-3 py-2 text-sm disabled:bg-slate-100 ${requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim() ? "border-amber-300 bg-amber-50" : "border-slate-200 bg-white"}`}
+                        className={`min-h-[64px] w-44 rounded-xl border px-3 py-2 text-sm disabled:bg-slate-100 ${requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim() ? "border-amber-300 bg-amber-50" : "border-slate-200 bg-white"}`}
                       />
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{getManagerState(row)}</td>
-                    <td className="px-4 py-3 text-slate-700">{getExecutiveState(row.status)}</td>
-                    <td className="px-4 py-3 text-slate-700">{getRowActionLabel(row, canEdit, canApprove, canApply)}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.finalRating}</td>
+                    <td className="px-3 py-3 text-slate-700">{getManagerState(row)}</td>
+                    <td className="px-3 py-3 text-slate-700">{getExecutiveState(row.status)}</td>
+                    <td className="px-3 py-3 text-slate-700">{getRowActionLabel(row, canEdit, canApprove, canApply)}</td>
+                    <td className="px-3 py-3 text-slate-700">{row.finalRating}</td>
                   </tr>
                 );
               })}
