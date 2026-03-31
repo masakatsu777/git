@@ -45,7 +45,7 @@ export default async function SalaryRevisionRulesPage() {
                 ダッシュボードへ
               </Link>
               <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                昇給シミュレーションへ
+                昇給決定へ
               </Link>
             </div>
           </div>
@@ -54,7 +54,7 @@ export default async function SalaryRevisionRulesPage() {
 
         <section className="mt-8 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
           <h2 className="text-lg font-semibold text-slate-950">昇給ルールの使われ方</h2>
-          <p className="mt-1 text-sm text-slate-500">昇給シミュレーションでは、次の順でルールを参照します。</p>
+          <p className="mt-1 text-sm text-slate-500">昇給決定では、次の順でルールを参照します。</p>
           <div className="mt-4 grid gap-3 md:grid-cols-3">
             <article className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-700">1</p>

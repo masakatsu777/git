@@ -443,7 +443,7 @@ export default async function AnnualPlPage({
                 <p className="mt-1 text-sm text-slate-500">年度に含まれる半期評価ごとの状況です。</p>
               </div>
               <Link href="/salary/simulations" className="text-sm font-medium text-emerald-700">
-                昇給シミュレーションへ
+                昇給決定へ
               </Link>
             </div>
             <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">

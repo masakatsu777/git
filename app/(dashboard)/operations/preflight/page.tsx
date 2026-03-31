@@ -29,7 +29,7 @@ const sections = [
   {
     title: "昇給運用",
     items: [
-      { label: "昇給シミュレーション", href: "/salary/simulations", note: "決定額、差額、調整理由、承認を確認" },
+      { label: "昇給決定", href: "/salary/simulations", note: "決定額、差額、調整理由、承認を確認" },
       { label: "監査ログ", href: "/settings/audit-logs?action=SALARY_SIMULATION", note: "保存、承認、反映ログを確認" },
     ],
   },

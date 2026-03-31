@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as { evaluationPeriodId?: string };
     const bundle = await approveSalarySimulationBundle(user.id, String(body.evaluationPeriodId ?? "period-2025-h2"));
     return NextResponse.json({
-      message: bundle.source === "database" ? "昇給シミュレーションを承認しました" : "DB未接続のためプレビューのみ更新しました",
+      message: bundle.source === "database" ? "昇給決定を承認しました" : "DB未接続のためプレビューのみ更新しました",
       data: bundle,
     });
   } catch (error) {

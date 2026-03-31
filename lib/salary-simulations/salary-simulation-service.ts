@@ -159,6 +159,94 @@ function buildSimulationAuditRows(rows: Array<{ employeeName: string; newSalary:
   }));
 }
 
+async function upsertSalarySimulationRows(
+  tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0],
+  input: { evaluationPeriodId: string; rows: Array<{ userId: string; newSalary: number; adjustmentReason: string }> },
+  adjustmentReasonStore: AdjustmentReasonStore,
+) {
+  const auditRows: Array<{ employeeName: string; newSalary: number; diffAmount: number; adjustmentReason: string }> = [];
+
+  for (const row of input.rows) {
+    const evaluation = await tx.employeeEvaluation.findUniqueOrThrow({
+      where: {
+        userId_evaluationPeriodId: {
+          userId: row.userId,
+          evaluationPeriodId: input.evaluationPeriodId,
+        },
+      },
+      select: {
+        id: true,
+        user: { select: { name: true } },
+      },
+    });
+
+    const existingSimulation = await tx.salaryRevisionSimulation.findUnique({
+      where: {
+        userId_evaluationPeriodId: {
+          userId: row.userId,
+          evaluationPeriodId: input.evaluationPeriodId,
+        },
+      },
+      select: { status: true },
+    });
+
+    if (existingSimulation && existingSimulation.status !== SalarySimulationStatus.DRAFT) {
+      throw new Error(`承認済または反映済のため編集できません: ${evaluation.user.name}`);
+    }
+
+    const latestSalary = await tx.salaryRecord.findFirst({
+      where: { userId: row.userId },
+      orderBy: { effectiveFrom: "desc" },
+      select: { baseSalary: true, allowance: true },
+    });
+
+    const currentSalary = toNumber(latestSalary?.baseSalary) + toNumber(latestSalary?.allowance);
+    const newSalary = row.newSalary;
+    const proposedRaiseAmount = round(newSalary - currentSalary);
+    const proposedRaiseRate = currentSalary === 0 ? 0 : round((proposedRaiseAmount / currentSalary) * 100);
+
+    await tx.salaryRevisionSimulation.upsert({
+      where: {
+        userId_evaluationPeriodId: {
+          userId: row.userId,
+          evaluationPeriodId: input.evaluationPeriodId,
+        },
+      },
+      update: {
+        currentSalary,
+        proposedRaiseRate,
+        proposedRaiseAmount,
+        newSalary,
+        status: SalarySimulationStatus.DRAFT,
+        approvedBy: null,
+        approvedAt: null,
+      },
+      create: {
+        userId: row.userId,
+        evaluationPeriodId: input.evaluationPeriodId,
+        employeeEvaluationId: evaluation.id,
+        currentSalary,
+        proposedRaiseRate,
+        proposedRaiseAmount,
+        newSalary,
+        status: SalarySimulationStatus.DRAFT,
+      },
+    });
+
+    adjustmentReasonStore[input.evaluationPeriodId] ??= {};
+    const normalizedReason = row.adjustmentReason.trim();
+    adjustmentReasonStore[input.evaluationPeriodId][row.userId] = normalizedReason;
+    auditRows.push({
+      employeeName: evaluation.user.name,
+      newSalary,
+      diffAmount: newSalary - currentSalary,
+      adjustmentReason: normalizedReason,
+    });
+  }
+
+  return auditRows;
+}
+
 function resolveRuleRange(
   rating: string,
   overallGradeName: string,
@@ -468,67 +556,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
 export async function saveSalarySimulationBundle(input: SaveSalarySimulationInput & { actedBy?: string }): Promise<SalarySimulationBundle> {
   try {
     const adjustmentReasonStore = await readAdjustmentReasons();
-    const auditRows: Array<{ employeeName: string; newSalary: number; diffAmount: number; adjustmentReason: string }> = [];
-    await prisma.$transaction(async (tx) => {
-      for (const row of input.rows) {
-        const evaluation = await tx.employeeEvaluation.findUniqueOrThrow({
-          where: {
-            userId_evaluationPeriodId: {
-              userId: row.userId,
-              evaluationPeriodId: input.evaluationPeriodId,
-            },
-          },
-          select: { id: true, user: { select: { name: true } } },
-        });
-
-        const latestSalary = await tx.salaryRecord.findFirst({
-          where: { userId: row.userId },
-          orderBy: { effectiveFrom: "desc" },
-          select: { baseSalary: true, allowance: true },
-        });
-
-        const currentSalary = toNumber(latestSalary?.baseSalary) + toNumber(latestSalary?.allowance);
-        const newSalary = row.newSalary;
-        const proposedRaiseAmount = round(newSalary - currentSalary);
-        const proposedRaiseRate = currentSalary === 0 ? 0 : round((proposedRaiseAmount / currentSalary) * 100);
-
-        await tx.salaryRevisionSimulation.upsert({
-          where: {
-            userId_evaluationPeriodId: {
-              userId: row.userId,
-              evaluationPeriodId: input.evaluationPeriodId,
-            },
-          },
-          update: {
-            currentSalary,
-            proposedRaiseRate,
-            proposedRaiseAmount,
-            newSalary,
-            status: SalarySimulationStatus.DRAFT,
-          },
-          create: {
-            userId: row.userId,
-            evaluationPeriodId: input.evaluationPeriodId,
-            employeeEvaluationId: evaluation.id,
-            currentSalary,
-            proposedRaiseRate,
-            proposedRaiseAmount,
-            newSalary,
-            status: SalarySimulationStatus.DRAFT,
-          },
-        });
-
-        adjustmentReasonStore[input.evaluationPeriodId] ??= {};
-        const normalizedReason = row.adjustmentReason.trim();
-        adjustmentReasonStore[input.evaluationPeriodId][row.userId] = normalizedReason;
-        auditRows.push({
-          employeeName: evaluation.user.name,
-          newSalary,
-          diffAmount: newSalary - currentSalary,
-          adjustmentReason: normalizedReason,
-        });
-      }
-    });
+    const auditRows = await prisma.$transaction((tx) => upsertSalarySimulationRows(tx, input, adjustmentReasonStore));
 
     await writeAdjustmentReasons(adjustmentReasonStore);
     await writeAuditLog({
@@ -571,14 +599,30 @@ export async function approveSalarySimulationBundle(approvedBy: string, evaluati
   try {
     const period = await resolvePeriod(evaluationPeriodId);
     const bundleBeforeApprove = await getSalarySimulationBundle(evaluationPeriodId);
-    await prisma.salaryRevisionSimulation.updateMany({
-      where: { evaluationPeriodId: period.id },
-      data: {
-        status: SalarySimulationStatus.APPROVED,
-        approvedBy,
-        approvedAt: new Date(),
-      },
+    const adjustmentReasonStore = await readAdjustmentReasons();
+    await prisma.$transaction(async (tx) => {
+      await upsertSalarySimulationRows(
+        tx,
+        {
+          evaluationPeriodId: period.id,
+          rows: bundleBeforeApprove.rows.map((row) => ({
+            userId: row.userId,
+            newSalary: row.newSalary,
+            adjustmentReason: row.adjustmentReason,
+          })),
+        },
+        adjustmentReasonStore,
+      );
+      await tx.salaryRevisionSimulation.updateMany({
+        where: { evaluationPeriodId: period.id },
+        data: {
+          status: SalarySimulationStatus.APPROVED,
+          approvedBy,
+          approvedAt: new Date(),
+        },
+      });
     });
+    await writeAdjustmentReasons(adjustmentReasonStore);
     await writeApprovalLog({
       actedBy: approvedBy,
       targetType: "salary_revision_simulation",

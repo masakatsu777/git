@@ -27,7 +27,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       { href: "/evaluations/result", label: "マイ評価結果" },
       { href: "/evaluations/team", label: "上長評価" },
       { href: "/evaluations/finalize", label: "最終評価" },
-      { href: "/salary/simulations", label: "昇給" },
+      { href: "/salary/simulations", label: "昇給決定" },
     );
 
     if (hasPrimaryTeam || hasPermission(user, PERMISSIONS.plAllRead)) {

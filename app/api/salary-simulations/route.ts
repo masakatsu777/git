@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
-      message: bundle.source === "database" ? "昇給シミュレーションを保存しました" : "DB未接続のためプレビューのみ更新しました",
+      message: bundle.source === "database" ? "昇給決定内容を保存しました" : "DB未接続のためプレビューのみ更新しました",
       data: bundle,
     });
   } catch (error) {

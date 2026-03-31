@@ -54,14 +54,14 @@ export default async function OverallGradeSalaryRulesPage() {
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">総合等級別昇給ルール</h1>
-              <p className="mt-2 text-sm text-slate-300">総合等級 G1〜G5 ごとの昇給率レンジを管理し、昇給シミュレーションの初期値と推奨レンジに反映します。</p>
+              <p className="mt-2 text-sm text-slate-300">総合等級 G1〜G5 ごとの昇給率レンジを管理し、昇給決定の初期値と推奨レンジに反映します。</p>
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 ダッシュボードへ
               </Link>
               <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                昇給シミュレーションへ
+                昇給決定へ
               </Link>
             </div>
           </div>
@@ -70,7 +70,7 @@ export default async function OverallGradeSalaryRulesPage() {
 
         <section className="mt-8 rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
           <h2 className="text-lg font-semibold text-slate-950">昇給ルールの使われ方</h2>
-          <p className="mt-1 text-sm text-slate-500">昇給シミュレーションでは、次の順でルールを参照します。</p>
+          <p className="mt-1 text-sm text-slate-500">昇給決定では、次の順でルールを参照します。</p>
           <div className="mt-4 grid gap-3 md:grid-cols-3">
             <article className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-700">1</p>
@@ -95,7 +95,7 @@ export default async function OverallGradeSalaryRulesPage() {
             canEdit={canView}
             defaults={bundle}
             title="総合等級別昇給ルール"
-            description="総合等級ごとの下限、上限、標準昇給率を設定します。総合等級ルールがある場合は、昇給シミュレーションでこちらを優先して使います。"
+            description="総合等級ごとの下限、上限、標準昇給率を設定します。総合等級ルールがある場合は、昇給決定でこちらを優先して使います。"
             ruleLabel="総合等級"
             saveLabel="総合等級別昇給ルールを保存"
             endpoint="/api/overall-grade-salary-rules"

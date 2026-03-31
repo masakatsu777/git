@@ -45,7 +45,7 @@ export default async function AuditLogsPage({
                 ユーザー管理
               </Link>
               <Link href="/salary/simulations" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                昇給シミュレーション
+                昇給決定
               </Link>
             </div>
           </div>
