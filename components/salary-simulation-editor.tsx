@@ -135,16 +135,15 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
     const lines = [
       headers.join(","),
       ...visibleRows.map((row) => {
-        const autoRaiseAmount = row.finalSalaryReference - row.currentSalary;
         const adjustmentAmount = row.newSalary - row.finalSalaryReference;
         return [
           defaults.periodName,
           row.employeeName,
           row.teamName,
           row.currentSalary,
-          row.overallGradeName,
-          autoRaiseAmount,
-          row.proposedRaiseAmount,
+          `${row.selfGrowthGradeCode} / ${row.synergyGradeCode}`,
+          row.finalSalaryReference,
+          row.newSalary,
           adjustmentAmount,
           row.adjustmentReason,
           getManagerState(row),
@@ -165,16 +164,17 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
     URL.revokeObjectURL(url);
   }
 
-  function updateFinalRaiseAmount(userId: string, nextRaiseAmount: number) {
+  function updateDecisionAmount(userId: string, nextSalary: number) {
     setRows((current) =>
       current.map((item) => {
         if (item.userId !== userId) return item;
-        const newSalary = item.currentSalary + nextRaiseAmount;
-        const proposedRaiseRate = item.currentSalary === 0 ? 0 : round((nextRaiseAmount / item.currentSalary) * 100);
+        const newSalary = nextSalary;
+        const proposedRaiseAmount = round(newSalary - item.currentSalary);
+        const proposedRaiseRate = item.currentSalary === 0 ? 0 : round((proposedRaiseAmount / item.currentSalary) * 100);
         return {
           ...item,
           newSalary,
-          proposedRaiseAmount: nextRaiseAmount,
+          proposedRaiseAmount,
           proposedRaiseRate,
           isWithinRecommendedRange: proposedRaiseRate >= item.recommendedMinRaiseRate && proposedRaiseRate <= item.recommendedMaxRaiseRate,
         };
@@ -186,8 +186,8 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
     setRows((current) => current.map((item) => (item.userId === userId ? { ...item, adjustmentReason } : item)));
   }
 
-  const totalAutoRaise = useMemo(() => rows.reduce((sum, row) => sum + (row.finalSalaryReference - row.currentSalary), 0), [rows]);
-  const totalFinalRaise = useMemo(() => rows.reduce((sum, row) => sum + row.proposedRaiseAmount, 0), [rows]);
+  const totalAutoAmount = useMemo(() => rows.reduce((sum, row) => sum + row.finalSalaryReference, 0), [rows]);
+  const totalDecisionAmount = useMemo(() => rows.reduce((sum, row) => sum + row.newSalary, 0), [rows]);
   const unapprovedCount = useMemo(() => rows.filter((row) => row.status === "DRAFT").length, [rows]);
   const missingReasonCount = useMemo(
     () => rows.filter((row) => requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim()).length,
@@ -206,7 +206,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">昇給決定</h2>
-          <p className="mt-1 text-sm text-slate-500">管理者は最終昇給額と調整理由を入力し、役員は承認、承認後に社員コストへ反映します。</p>
+          <p className="mt-1 text-sm text-slate-500">管理者は決定額と調整理由を入力し、役員は承認、承認後に社員コストへ反映します。</p>
         </div>
       </div>
 
@@ -217,11 +217,11 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">自動算出総額</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalAutoRaise)}</p>
+          <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalAutoAmount)}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">最終昇給総額</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalFinalRaise)}</p>
+          <p className="text-sm text-slate-500">決定総額</p>
+          <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalDecisionAmount)}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">未承認 / 理由不足</p>
@@ -274,8 +274,8 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                 <th className="px-4 py-3 font-medium">チーム</th>
                 <th className="px-4 py-3 font-medium">現在給与</th>
                 <th className="px-4 py-3 font-medium">等級</th>
-                <th className="px-4 py-3 font-medium">自動算出昇給額</th>
-                <th className="px-4 py-3 font-medium">最終昇給額</th>
+                <th className="px-4 py-3 font-medium">自動算出額</th>
+                <th className="px-4 py-3 font-medium">決定額</th>
                 <th className="px-4 py-3 font-medium">調整額</th>
                 <th className="px-4 py-3 font-medium">調整理由</th>
                 <th className="px-4 py-3 font-medium">管理者状態</th>
@@ -286,7 +286,6 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
             </thead>
             <tbody>
               {visibleRows.map((row) => {
-                const autoRaiseAmount = row.finalSalaryReference - row.currentSalary;
                 const adjustmentAmount = row.newSalary - row.finalSalaryReference;
                 const rowLocked = row.status !== "DRAFT";
                 return (
@@ -294,14 +293,14 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                     <td className="px-4 py-3 font-medium text-slate-950">{row.employeeName}</td>
                     <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
                     <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.overallGradeName}</td>
-                    <td className={`px-4 py-3 font-semibold ${autoRaiseAmount === 0 ? "text-slate-700" : autoRaiseAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(autoRaiseAmount)}</td>
+                    <td className="px-4 py-3 text-slate-700">{row.selfGrowthGradeCode} / {row.synergyGradeCode}</td>
+                    <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
                     <td className="px-4 py-3">
                       <input
                         type="number"
-                        value={row.proposedRaiseAmount}
+                        value={row.newSalary}
                         disabled={!canEdit || isPending || rowLocked}
-                        onChange={(event) => updateFinalRaiseAmount(row.userId, toNumber(event.target.value))}
+                        onChange={(event) => updateDecisionAmount(row.userId, toNumber(event.target.value))}
                         className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm disabled:bg-slate-100"
                       />
                     </td>

@@ -49,7 +49,7 @@ export default async function SalarySimulationPage({
           <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">昇給決定</h1>
-              <p className="mt-2 text-sm text-slate-300">最終評価が確定した対象者について、自動算出昇給額・調整額・最終昇給額を管理し、管理者調整と役員承認を進めます。</p>
+              <p className="mt-2 text-sm text-slate-300">最終評価が確定した対象者について、自動算出額・決定額・調整額を管理し、管理者調整と役員承認を進めます。</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                 <label className="text-sm text-slate-200">
                   評価期間
