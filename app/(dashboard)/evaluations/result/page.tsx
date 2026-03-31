@@ -152,9 +152,9 @@ export default async function EvaluationResultPage({
         <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-slate-950">参考本給額</h2>
+              <h2 className="text-xl font-semibold text-slate-950">参考評価額</h2>
               <p className="mt-2 text-sm leading-7 text-slate-600">
-                評価点から計算した参考本給額を表示します。年次昇給の確定前でも、自律成長力と協調相乗力の積み上がりを金額で確認できます。
+                評価点から計算した参考評価額を表示します。年次昇給の確定前でも、自律成長力と協調相乗力の積み上がりを金額で確認できます。
               </p>
             </div>
             <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${toStatusTone(salaryRow?.status ?? "DRAFT")}`}>
@@ -164,11 +164,11 @@ export default async function EvaluationResultPage({
 
           {!salaryRow ? (
             <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考本給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.gradeSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.gradeSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(displaySalaryRow.currentSalary)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考本給額 {formatCurrency(displaySalaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(displaySalaryRow.currentSalary)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考評価額 {formatCurrency(displaySalaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(displaySalaryRow.currentSalary)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利差異率</p><p className={`mt-3 text-2xl font-semibold ${displaySalaryRow.grossProfitVarianceRate < 0 ? "text-rose-700" : displaySalaryRow.grossProfitVarianceRate > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatPercent(displaySalaryRow.grossProfitVarianceRate)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利差額配分</p><p className={`mt-3 text-2xl font-semibold ${displaySalaryRow.grossProfitDeductionAmount < 0 ? "text-rose-700" : displaySalaryRow.grossProfitDeductionAmount > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatSignedCurrencyWithUnit(displaySalaryRow.grossProfitDeductionAmount)}</p><p className="mt-1 text-sm text-slate-500">目標粗利との差額を配分する場合の目安金額です。</p></article>
               <div className="md:col-span-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
@@ -177,31 +177,31 @@ export default async function EvaluationResultPage({
             </div>
           ) : !hasFinalizedAnnualRaise ? (
             <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考本給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.baseSalaryReference)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利補正</p><p className="mt-3 text-2xl font-semibold text-slate-950">{salaryRow.grossProfitMultiplier} 倍</p><p className="mt-1 text-sm text-slate-500">粗利達成率 {formatPercent(salaryRow.grossProfitAchievementRate)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利差異率</p><p className={`mt-3 text-2xl font-semibold ${salaryRow.grossProfitVarianceRate < 0 ? "text-rose-700" : salaryRow.grossProfitVarianceRate > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatPercent(salaryRow.grossProfitVarianceRate)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利差額配分</p><p className={`mt-3 text-2xl font-semibold ${salaryRow.grossProfitDeductionAmount < 0 ? "text-rose-700" : salaryRow.grossProfitDeductionAmount > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatSignedCurrencyWithUnit(salaryRow.grossProfitDeductionAmount)}</p><p className="mt-1 text-sm text-slate-500">目標粗利との差額を配分する場合の目安金額です。</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考本給額 {formatCurrency(salaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(salaryRow.currentSalary)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考評価額 {formatCurrency(salaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(salaryRow.currentSalary)}</p></article>
               <div className="md:col-span-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-800">
                 年次昇給はまだ確定していません。ここでは参考値のみ表示しています。決定額は承認後に反映されます。
               </div>
             </div>
           ) : (
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考本給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.gradeSalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.newSalary)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(selfGrowthSalaryAmount)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">協調相乗評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(synergySalaryAmount)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利差異率</p><p className={`mt-3 text-2xl font-semibold ${salaryRow.grossProfitVarianceRate < 0 ? "text-rose-700" : salaryRow.grossProfitVarianceRate > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatPercent(salaryRow.grossProfitVarianceRate)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">粗利差額配分</p><p className={`mt-3 text-2xl font-semibold ${salaryRow.grossProfitDeductionAmount < 0 ? "text-rose-700" : salaryRow.grossProfitDeductionAmount > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatSignedCurrencyWithUnit(salaryRow.grossProfitDeductionAmount)}</p><p className="mt-1 text-sm text-slate-500">目標粗利との差額を配分する場合の目安金額です。</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考本給額 {formatCurrency(salaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(salaryRow.currentSalary)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現給差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">参考評価額 {formatCurrency(salaryRow.gradeSalaryAmount)} - 現在本給 {formatCurrency(salaryRow.currentSalary)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">昇給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.proposedRaiseAmount)}</p><p className="mt-1 text-sm text-slate-500">昇給率 {formatPercent(salaryRow.proposedRaiseRate)}</p></article>
               <div className="xl:col-span-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-700">
                 <p className="font-semibold text-slate-950">新しい等級・給与計算</p>
-                <p className="mt-2">自律成長給 {formatCurrency(selfGrowthSalaryAmount)} + 協調相乗給 {formatCurrency(synergySalaryAmount)} = 参考本給額 {formatCurrency(salaryRow.gradeSalaryAmount)}</p>
+                <p className="mt-2">自律成長評価 {formatCurrency(selfGrowthSalaryAmount)} + 協調相乗評価 {formatCurrency(synergySalaryAmount)} = 参考評価額 {formatCurrency(salaryRow.gradeSalaryAmount)}</p>
               </div>
               <div className="xl:col-span-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-700">
                 <p className="font-semibold text-slate-950">調整理由</p>

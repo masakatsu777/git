@@ -68,7 +68,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
       (row) => requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim(),
     );
     if (invalidRows.length > 0) {
-      setMessage(`調整額が大きい行は理由が必要です: ${invalidRows.map((row) => row.employeeName).join("、")}`);
+      setMessage(`評価調整額が大きい行は理由が必要です: ${invalidRows.map((row) => row.employeeName).join("、")}`);
       return;
     }
 
@@ -99,7 +99,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
       (row) => requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim(),
     );
     if (invalidRows.length > 0) {
-      setMessage(`調整額が大きい行の理由を入力してから承認してください: ${invalidRows.map((row) => row.employeeName).join("、")}`);
+      setMessage(`評価調整額が大きい行の理由を入力してから承認してください: ${invalidRows.map((row) => row.employeeName).join("、")}`);
       return;
     }
 
@@ -131,7 +131,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
   }
 
   function handleExportCsv() {
-    const headers = ["評価期間", "氏名", "チーム", "現在給与", "等級", "評価額", "粗利差額配分", "決定額", "調整額", "調整理由", "管理者状態", "役員状態", "操作", "ランク"];
+    const headers = ["評価期間", "氏名", "チーム", "現在給与", "等級", "評価額", "粗利差額配分", "決定額", "実質昇給額", "評価調整額", "調整理由", "管理者状態", "役員状態", "操作", "ランク"];
     const lines = [
       headers.join(","),
       ...visibleRows.map((row) => {
@@ -145,6 +145,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           row.finalSalaryReference,
           row.grossProfitDeductionAmount,
           row.newSalary,
+          row.newSalary - row.currentSalary,
           adjustmentAmount,
           row.adjustmentReason,
           getManagerState(row),
@@ -239,7 +240,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
               onChange={(event) => setShowOnlyLargeDiff(event.target.checked)}
               className="h-4 w-4 rounded border-slate-300"
             />
-            調整額が大きい行のみ表示
+            評価調整額が大きい行のみ表示
           </label>
           <label className="inline-flex items-center gap-2 text-sm text-slate-700">
             <input
@@ -268,22 +269,23 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
 
       <div className="overflow-hidden rounded-2xl border border-slate-200">
         <div className="overflow-x-auto">
-          <table className="min-w-[1900px] text-left text-sm">
+          <table className="min-w-[2000px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">氏名</th>
-                <th className="px-4 py-3 font-medium">チーム</th>
+                <th className="w-32 px-4 py-3 font-medium">チーム</th>
                 <th className="px-4 py-3 font-medium">現在給与</th>
-                <th className="px-4 py-3 font-medium">等級</th>
+                <th className="w-28 px-4 py-3 font-medium">等級</th>
                 <th className="px-4 py-3 font-medium">評価額</th>
                 <th className="px-4 py-3 font-medium">粗利差額配分</th>
-                <th className="px-4 py-3 font-medium">決定額</th>
-                <th className="px-4 py-3 font-medium">調整額</th>
+                <th className="w-32 px-4 py-3 font-medium">決定額</th>
+                <th className="w-32 px-4 py-3 font-medium">実質昇給額</th>
+                <th className="w-32 px-4 py-3 font-medium">評価調整額</th>
                 <th className="px-4 py-3 font-medium">調整理由</th>
-                <th className="px-4 py-3 font-medium">管理者状態</th>
-                <th className="px-4 py-3 font-medium">役員状態</th>
-                <th className="px-4 py-3 font-medium">操作</th>
-                <th className="px-4 py-3 font-medium">ランク</th>
+                <th className="w-28 px-4 py-3 font-medium">管理者状態</th>
+                <th className="w-28 px-4 py-3 font-medium">役員状態</th>
+                <th className="w-24 px-4 py-3 font-medium">操作</th>
+                <th className="w-20 px-4 py-3 font-medium">ランク</th>
               </tr>
             </thead>
             <tbody>
@@ -307,6 +309,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                         className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm disabled:bg-slate-100"
                       />
                     </td>
+                    <td className={`px-4 py-3 font-semibold ${row.newSalary - row.currentSalary === 0 ? "text-slate-700" : row.newSalary - row.currentSalary > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(row.newSalary - row.currentSalary)}</td>
                     <td className={`px-4 py-3 font-semibold ${adjustmentAmount === 0 ? "text-slate-700" : adjustmentAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(adjustmentAmount)}</td>
                     <td className="px-4 py-3">
                       <textarea
@@ -326,7 +329,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
               })}
               {visibleRows.length === 0 ? (
                 <tr className="border-t border-slate-200">
-                  <td colSpan={13} className="px-4 py-8 text-center text-slate-500">条件に一致する対象者がありません。</td>
+                  <td colSpan={15} className="px-4 py-8 text-center text-slate-500">条件に一致する対象者がありません。</td>
                 </tr>
               ) : null}
             </tbody>
