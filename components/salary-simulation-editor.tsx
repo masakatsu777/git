@@ -34,42 +34,28 @@ function requiresAdjustmentReason(newSalary: number, finalSalaryReference: numbe
   return Math.abs(newSalary - finalSalaryReference) >= threshold;
 }
 
-function getStatusTone(status: string) {
-  if (status === "APPLIED") {
-    return "bg-emerald-50 text-emerald-700";
-  }
-  if (status === "APPROVED") {
-    return "bg-sky-50 text-sky-700";
-  }
-  return "bg-slate-100 text-slate-700";
-}
-
 function getManagerState(row: SalarySimulationRow) {
-  if (row.status === "APPLIED" || row.status === "APPROVED") {
-    return "調整完了";
-  }
-  if (row.newSalary !== row.finalSalaryReference || row.adjustmentReason.trim()) {
-    return "調整済";
-  }
+  if (row.status === "APPLIED" || row.status === "APPROVED") return "調整完了";
+  if (row.newSalary !== row.finalSalaryReference || row.adjustmentReason.trim()) return "調整済";
   return "未調整";
 }
 
 function getExecutiveState(status: string) {
-  if (status === "APPLIED" || status === "APPROVED") {
-    return "承認済";
-  }
-  return "未承認";
+  return status === "APPLIED" || status === "APPROVED" ? "承認済" : "未承認";
 }
 
-function getApplyState(status: string) {
-  return status === "APPLIED" ? "反映済" : "未反映";
+function getRowActionLabel(row: SalarySimulationRow, canEdit: boolean, canApprove: boolean, canApply: boolean) {
+  if (row.status === "APPLIED") return "完了";
+  if (row.status === "APPROVED") return canApply ? "反映待ち" : "承認済";
+  if (canApprove) return "承認待ち";
+  if (canEdit) return "調整入力";
+  return "確認";
 }
 
 export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults }: SalarySimulationEditorProps) {
   const router = useRouter();
   const [rows, setRows] = useState(defaults.rows);
   const [message, setMessage] = useState<string | null>(null);
-  const [showOnlyOutOfRange, setShowOnlyOutOfRange] = useState(false);
   const [showOnlyLargeDiff, setShowOnlyLargeDiff] = useState(false);
   const [showOnlyMissingReason, setShowOnlyMissingReason] = useState(false);
   const [largeDiffThreshold, setLargeDiffThreshold] = useState(10000);
@@ -129,62 +115,6 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
     });
   }
 
-  function handleExportCsv() {
-    const headers = [
-      "評価期間",
-      "氏名",
-      "チーム",
-      "最終評価点",
-      "期待充足ランク",
-      "総合等級",
-      "現在月額",
-      "自動算出月額",
-      "自動算出昇給額",
-      "調整額",
-      "最終決定月額",
-      "最終昇給額",
-      "調整理由",
-      "管理者状態",
-      "役員状態",
-      "反映状態",
-    ];
-    const lines = [
-      headers.join(","),
-      ...visibleRows.map((row) => {
-        const autoRaiseAmount = row.finalSalaryReference - row.currentSalary;
-        const adjustmentAmount = row.newSalary - row.finalSalaryReference;
-        const finalRaiseAmount = row.newSalary - row.currentSalary;
-        return [
-          defaults.periodName,
-          row.employeeName,
-          row.teamName,
-          row.finalScoreTotal,
-          row.finalRating,
-          row.overallGradeName,
-          row.currentSalary,
-          row.finalSalaryReference,
-          autoRaiseAmount,
-          adjustmentAmount,
-          row.newSalary,
-          finalRaiseAmount,
-          row.adjustmentReason,
-          getManagerState(row),
-          getExecutiveState(row.status),
-          getApplyState(row.status),
-        ].map(escapeCsv).join(",");
-      }),
-    ];
-
-    const bom = "\uFEFF";
-    const blob = new Blob([bom + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `salary-decision-${defaults.evaluationPeriodId}${showOnlyOutOfRange ? "-out-of-range" : ""}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
-
   async function handleApply() {
     setMessage(null);
 
@@ -200,20 +130,51 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
     });
   }
 
-  function updateDecisionSalary(userId: string, nextSalary: number) {
+  function handleExportCsv() {
+    const headers = ["評価期間", "氏名", "チーム", "現在給与", "等級", "自動算出昇給額", "最終昇給額", "調整額", "調整理由", "管理者状態", "役員状態", "操作", "ランク"];
+    const lines = [
+      headers.join(","),
+      ...visibleRows.map((row) => {
+        const autoRaiseAmount = row.finalSalaryReference - row.currentSalary;
+        const adjustmentAmount = row.newSalary - row.finalSalaryReference;
+        return [
+          defaults.periodName,
+          row.employeeName,
+          row.teamName,
+          row.currentSalary,
+          row.overallGradeName,
+          autoRaiseAmount,
+          row.proposedRaiseAmount,
+          adjustmentAmount,
+          row.adjustmentReason,
+          getManagerState(row),
+          getExecutiveState(row.status),
+          getRowActionLabel(row, canEdit, canApprove, canApply),
+          row.finalRating,
+        ].map(escapeCsv).join(",");
+      }),
+    ];
+
+    const bom = "\uFEFF";
+    const blob = new Blob([bom + lines.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `salary-decision-${defaults.evaluationPeriodId}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function updateFinalRaiseAmount(userId: string, nextRaiseAmount: number) {
     setRows((current) =>
       current.map((item) => {
-        if (item.userId !== userId) {
-          return item;
-        }
-
-        const proposedRaiseAmount = round(nextSalary - item.currentSalary);
-        const proposedRaiseRate = item.currentSalary === 0 ? 0 : round((proposedRaiseAmount / item.currentSalary) * 100);
-
+        if (item.userId !== userId) return item;
+        const newSalary = item.currentSalary + nextRaiseAmount;
+        const proposedRaiseRate = item.currentSalary === 0 ? 0 : round((nextRaiseAmount / item.currentSalary) * 100);
         return {
           ...item,
-          newSalary: nextSalary,
-          proposedRaiseAmount,
+          newSalary,
+          proposedRaiseAmount: nextRaiseAmount,
           proposedRaiseRate,
           isWithinRecommendedRange: proposedRaiseRate >= item.recommendedMinRaiseRate && proposedRaiseRate <= item.recommendedMaxRaiseRate,
         };
@@ -234,11 +195,10 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
   );
 
   const visibleRows = rows.filter((row) => {
-    const matchesRange = showOnlyOutOfRange ? !row.isWithinRecommendedRange : true;
-    const diffAmount = Math.abs(row.newSalary - row.finalSalaryReference);
-    const matchesLargeDiff = showOnlyLargeDiff ? diffAmount >= largeDiffThreshold : true;
+    const adjustmentAmount = Math.abs(row.newSalary - row.finalSalaryReference);
+    const matchesLargeDiff = showOnlyLargeDiff ? adjustmentAmount >= largeDiffThreshold : true;
     const matchesMissingReason = showOnlyMissingReason ? requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim() : true;
-    return matchesRange && matchesLargeDiff && matchesMissingReason;
+    return matchesLargeDiff && matchesMissingReason;
   });
 
   return (
@@ -246,16 +206,11 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">昇給決定</h2>
-          <p className="mt-1 text-sm text-slate-500">最終評価が確定した対象者だけを表示しています。管理者は調整額と理由を入力し、役員は承認、承認後に社員コストへ反映します。</p>
+          <p className="mt-1 text-sm text-slate-500">管理者は最終昇給額と調整理由を入力し、役員は承認、承認後に社員コストへ反映します。</p>
         </div>
-        {!canEdit && !canApprove && !canApply ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : null}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">評価期間</p>
-          <p className="mt-2 text-lg font-semibold text-slate-950">{defaults.periodName}</p>
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
           <p className="text-sm text-slate-500">対象人数</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{rows.length} 名</p>
@@ -265,7 +220,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalAutoRaise)}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
-          <p className="text-sm text-slate-500">最終決定総額</p>
+          <p className="text-sm text-slate-500">最終昇給総額</p>
           <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrencyWithUnit(totalFinalRaise)}</p>
         </div>
         <div className="rounded-2xl bg-slate-50 px-4 py-4">
@@ -276,15 +231,6 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-4">
-          <label className="inline-flex items-center gap-2 text-sm text-slate-700">
-            <input
-              type="checkbox"
-              checked={showOnlyOutOfRange}
-              onChange={(event) => setShowOnlyOutOfRange(event.target.checked)}
-              className="h-4 w-4 rounded border-slate-300"
-            />
-            レンジ外のみ表示
-          </label>
           <label className="inline-flex items-center gap-2 text-sm text-slate-700">
             <input
               type="checkbox"
@@ -321,61 +267,45 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
 
       <div className="overflow-hidden rounded-2xl border border-slate-200">
         <div className="overflow-x-auto">
-          <table className="min-w-[2500px] text-left text-sm">
+          <table className="min-w-[1900px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-medium">氏名</th>
                 <th className="px-4 py-3 font-medium">チーム</th>
-                <th className="px-4 py-3 font-medium">最終評価点</th>
-                <th className="px-4 py-3 font-medium">期待充足ランク</th>
-                <th className="px-4 py-3 font-medium">総合等級</th>
-                <th className="px-4 py-3 font-medium">現在月額</th>
-                <th className="px-4 py-3 font-medium">自動算出月額</th>
+                <th className="px-4 py-3 font-medium">現在給与</th>
+                <th className="px-4 py-3 font-medium">等級</th>
                 <th className="px-4 py-3 font-medium">自動算出昇給額</th>
-                <th className="px-4 py-3 font-medium">調整額</th>
-                <th className="px-4 py-3 font-medium">最終決定月額</th>
                 <th className="px-4 py-3 font-medium">最終昇給額</th>
-                <th className="px-4 py-3 font-medium">推奨レンジ</th>
-                <th className="px-4 py-3 font-medium">判定</th>
+                <th className="px-4 py-3 font-medium">調整額</th>
                 <th className="px-4 py-3 font-medium">調整理由</th>
                 <th className="px-4 py-3 font-medium">管理者状態</th>
                 <th className="px-4 py-3 font-medium">役員状態</th>
-                <th className="px-4 py-3 font-medium">反映状態</th>
+                <th className="px-4 py-3 font-medium">操作</th>
+                <th className="px-4 py-3 font-medium">ランク</th>
               </tr>
             </thead>
             <tbody>
               {visibleRows.map((row) => {
                 const autoRaiseAmount = row.finalSalaryReference - row.currentSalary;
                 const adjustmentAmount = row.newSalary - row.finalSalaryReference;
-                const finalRaiseAmount = row.newSalary - row.currentSalary;
                 const rowLocked = row.status !== "DRAFT";
                 return (
                   <tr key={row.userId} className="border-t border-slate-200 align-top">
                     <td className="px-4 py-3 font-medium text-slate-950">{row.employeeName}</td>
                     <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.finalScoreTotal}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.finalRating}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.overallGradeName}</td>
                     <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalary)}</td>
-                    <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.finalSalaryReference)}</td>
+                    <td className="px-4 py-3 text-slate-700">{row.overallGradeName}</td>
                     <td className={`px-4 py-3 font-semibold ${autoRaiseAmount === 0 ? "text-slate-700" : autoRaiseAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(autoRaiseAmount)}</td>
-                    <td className={`px-4 py-3 font-semibold ${adjustmentAmount === 0 ? "text-slate-700" : adjustmentAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(adjustmentAmount)}</td>
                     <td className="px-4 py-3">
                       <input
                         type="number"
-                        value={row.newSalary}
+                        value={row.proposedRaiseAmount}
                         disabled={!canEdit || isPending || rowLocked}
-                        onChange={(event) => updateDecisionSalary(row.userId, toNumber(event.target.value))}
+                        onChange={(event) => updateFinalRaiseAmount(row.userId, toNumber(event.target.value))}
                         className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm disabled:bg-slate-100"
                       />
                     </td>
-                    <td className={`px-4 py-3 font-semibold ${finalRaiseAmount === 0 ? "text-slate-700" : finalRaiseAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(finalRaiseAmount)}</td>
-                    <td className="px-4 py-3 text-slate-700">{row.recommendedMinRaiseRate}% - {row.recommendedMaxRaiseRate}%</td>
-                    <td className="px-4 py-3">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${row.isWithinRecommendedRange ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-                        {row.isWithinRecommendedRange ? "レンジ内" : "レンジ外"}
-                      </span>
-                    </td>
+                    <td className={`px-4 py-3 font-semibold ${adjustmentAmount === 0 ? "text-slate-700" : adjustmentAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(adjustmentAmount)}</td>
                     <td className="px-4 py-3">
                       <textarea
                         value={row.adjustmentReason}
@@ -384,19 +314,17 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                         placeholder={requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) ? "調整理由を入力" : "必要に応じて入力"}
                         className={`min-h-[72px] w-56 rounded-xl border px-3 py-2 text-sm disabled:bg-slate-100 ${requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim() ? "border-amber-300 bg-amber-50" : "border-slate-200 bg-white"}`}
                       />
-                      {requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) ? <p className="mt-1 text-xs text-amber-700">調整額が大きいため理由が必要です</p> : null}
                     </td>
                     <td className="px-4 py-3 text-slate-700">{getManagerState(row)}</td>
                     <td className="px-4 py-3 text-slate-700">{getExecutiveState(row.status)}</td>
-                    <td className="px-4 py-3">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusTone(row.status)}`}>{getApplyState(row.status)}</span>
-                    </td>
+                    <td className="px-4 py-3 text-slate-700">{getRowActionLabel(row, canEdit, canApprove, canApply)}</td>
+                    <td className="px-4 py-3 text-slate-700">{row.finalRating}</td>
                   </tr>
                 );
               })}
               {visibleRows.length === 0 ? (
                 <tr className="border-t border-slate-200">
-                  <td colSpan={17} className="px-4 py-8 text-center text-slate-500">条件に一致する対象者がありません。</td>
+                  <td colSpan={12} className="px-4 py-8 text-center text-slate-500">条件に一致する対象者がありません。</td>
                 </tr>
               ) : null}
             </tbody>
