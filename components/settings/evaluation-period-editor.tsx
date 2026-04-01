@@ -196,7 +196,6 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
                   </td>
                   <td className="px-4 py-3 text-slate-700">
                     <p className="font-semibold text-slate-950">{row.evaluationCount}件</p>
-                    <p className="mt-1 text-xs text-slate-500">{row.id ? `ID: ${row.id}` : "保存後にIDを採番します"}</p>
                   </td>
                   <td className="px-4 py-3">
                     {row.id ? (
