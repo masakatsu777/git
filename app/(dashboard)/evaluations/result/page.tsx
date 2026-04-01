@@ -109,7 +109,7 @@ export default async function EvaluationResultPage({
             <div>
               <h1 className="text-3xl font-semibold">マイ評価結果</h1>
               <p className="mt-2 text-sm text-slate-300">
-                半期の評価結果と、年1回の昇給結果をまとめて確認できます。
+                自己評価結果を金額換算します。
               </p>
               <p className="mt-2 text-sm text-amber-200">{getDisplayStageLabel(finalReview.displayStage)}</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
