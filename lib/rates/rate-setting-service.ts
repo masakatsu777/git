@@ -56,6 +56,8 @@ export type SaveRateSettingsInput = {
   employeeRates: EmployeeRateRow[];
   partnerRates: PartnerRateRow[];
   deletedPartnerIds: string[];
+  deletedEmployeeRateIds: string[];
+  deletedPartnerRateIds: string[];
 };
 
 function toNumber(value: unknown) {
@@ -323,24 +325,59 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
             })).map((row) => row.userId),
           );
 
+      if (input.deletedEmployeeRateIds.length > 0) {
+        await (tx.employeeSalesRateSetting as any).deleteMany({ where: { id: { in: input.deletedEmployeeRateIds } } });
+      }
+
+      if (input.deletedPartnerRateIds.length > 0) {
+        const salesIds = input.deletedPartnerRateIds.map((value) => value.split(":")[0]).filter((value) => value && value !== "none" && !value.startsWith("draft-"));
+        const outsourceIds = input.deletedPartnerRateIds.map((value) => value.split(":")[1]).filter((value) => value && value !== "none" && !value.startsWith("draft-"));
+        if (salesIds.length > 0) {
+          await (tx.partnerSalesRateSetting as any).deleteMany({ where: { id: { in: salesIds } } });
+        }
+        if (outsourceIds.length > 0) {
+          await (tx.partnerOutsourceRateSetting as any).deleteMany({ where: { id: { in: outsourceIds } } });
+        }
+      }
+
       for (const row of input.employeeRates) {
         if (allowedUserIds && !allowedUserIds.has(row.userId)) continue;
-        const effectiveFrom = new Date(`${row.effectiveFrom}T00:00:00+09:00`);
-        await (tx.employeeSalesRateSetting as any).upsert({
-          where: { userId_effectiveFrom: { userId: row.userId, effectiveFrom } },
-          update: {
-            unitPrice: row.unitPrice,
-            defaultWorkRate: row.defaultWorkRate,
-            remarks: row.remarks || null,
-          },
-          create: {
+        const historyRows = row.history.length > 0
+          ? row.history
+          : [{
+              id: `draft-${row.userId}`,
+              effectiveFrom: row.effectiveFrom,
+              unitPrice: row.unitPrice,
+              defaultWorkRate: row.defaultWorkRate,
+              remarks: row.remarks,
+            }];
+
+        for (const historyRow of historyRows) {
+          const effectiveFrom = new Date(`${historyRow.effectiveFrom}T00:00:00+09:00`);
+          const payload = {
             userId: row.userId,
             effectiveFrom,
-            unitPrice: row.unitPrice,
-            defaultWorkRate: row.defaultWorkRate,
-            remarks: row.remarks || null,
-          },
-        });
+            unitPrice: historyRow.unitPrice,
+            defaultWorkRate: historyRow.defaultWorkRate,
+            remarks: historyRow.remarks || null,
+          };
+          if (historyRow.id && !historyRow.id.startsWith("draft-")) {
+            await (tx.employeeSalesRateSetting as any).update({
+              where: { id: historyRow.id },
+              data: payload,
+            });
+          } else {
+            await (tx.employeeSalesRateSetting as any).upsert({
+              where: { userId_effectiveFrom: { userId: row.userId, effectiveFrom } },
+              update: {
+                unitPrice: historyRow.unitPrice,
+                defaultWorkRate: historyRow.defaultWorkRate,
+                remarks: historyRow.remarks || null,
+              },
+              create: payload,
+            });
+          }
+        }
       }
 
       for (const row of input.partnerRates) {
@@ -360,37 +397,76 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
               select: { id: true },
             });
 
-        const effectiveFrom = new Date(`${row.effectiveFrom}T00:00:00+09:00`);
+        const historyRows = row.history.length > 0
+          ? row.history
+          : [{
+              id: `draft-sales-${partner.id}:draft-out-${partner.id}`,
+              effectiveFrom: row.effectiveFrom,
+              unitPrice: row.salesUnitPrice,
+              defaultWorkRate: row.defaultWorkRate,
+              outsourceAmount: row.outsourceAmount,
+              remarks: row.note,
+            }];
 
-        await (tx.partnerSalesRateSetting as any).upsert({
-          where: { partnerId_effectiveFrom: { partnerId: partner.id, effectiveFrom } },
-          update: {
-            unitPrice: row.salesUnitPrice,
-            defaultWorkRate: row.defaultWorkRate,
-            remarks: row.jurisdictionTeamId || null,
-          },
-          create: {
-            partnerId: partner.id,
-            effectiveFrom,
-            unitPrice: row.salesUnitPrice,
-            defaultWorkRate: row.defaultWorkRate,
-            remarks: row.jurisdictionTeamId || null,
-          },
-        });
+        for (const historyRow of historyRows) {
+          const effectiveFrom = new Date(`${historyRow.effectiveFrom}T00:00:00+09:00`);
+          const [salesId = "", outsourceId = ""] = String(historyRow.id ?? "").split(":");
 
-        await (tx.partnerOutsourceRateSetting as any).upsert({
-          where: { partnerId_effectiveFrom: { partnerId: partner.id, effectiveFrom } },
-          update: {
-            amount: row.outsourceAmount,
-            remarks: row.note.trim() || null,
-          },
-          create: {
-            partnerId: partner.id,
-            effectiveFrom,
-            amount: row.outsourceAmount,
-            remarks: row.note.trim() || null,
-          },
-        });
+          if (salesId && salesId !== "none" && !salesId.startsWith("draft-")) {
+            await (tx.partnerSalesRateSetting as any).update({
+              where: { id: salesId },
+              data: {
+                partnerId: partner.id,
+                effectiveFrom,
+                unitPrice: historyRow.unitPrice,
+                defaultWorkRate: historyRow.defaultWorkRate,
+                remarks: row.jurisdictionTeamId || null,
+              },
+            });
+          } else {
+            await (tx.partnerSalesRateSetting as any).upsert({
+              where: { partnerId_effectiveFrom: { partnerId: partner.id, effectiveFrom } },
+              update: {
+                unitPrice: historyRow.unitPrice,
+                defaultWorkRate: historyRow.defaultWorkRate,
+                remarks: row.jurisdictionTeamId || null,
+              },
+              create: {
+                partnerId: partner.id,
+                effectiveFrom,
+                unitPrice: historyRow.unitPrice,
+                defaultWorkRate: historyRow.defaultWorkRate,
+                remarks: row.jurisdictionTeamId || null,
+              },
+            });
+          }
+
+          if (outsourceId && outsourceId !== "none" && !outsourceId.startsWith("draft-")) {
+            await (tx.partnerOutsourceRateSetting as any).update({
+              where: { id: outsourceId },
+              data: {
+                partnerId: partner.id,
+                effectiveFrom,
+                amount: historyRow.outsourceAmount ?? 0,
+                remarks: historyRow.remarks || null,
+              },
+            });
+          } else {
+            await (tx.partnerOutsourceRateSetting as any).upsert({
+              where: { partnerId_effectiveFrom: { partnerId: partner.id, effectiveFrom } },
+              update: {
+                amount: historyRow.outsourceAmount ?? 0,
+                remarks: historyRow.remarks || null,
+              },
+              create: {
+                partnerId: partner.id,
+                effectiveFrom,
+                amount: historyRow.outsourceAmount ?? 0,
+                remarks: historyRow.remarks || null,
+              },
+            });
+          }
+        }
       }
 
       for (const partnerId of input.deletedPartnerIds) {

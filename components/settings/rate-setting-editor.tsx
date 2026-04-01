@@ -28,24 +28,71 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults, 
   const [expandedEmployeeId, setExpandedEmployeeId] = useState<string | null>(null);
   const [expandedPartnerId, setExpandedPartnerId] = useState<string | null>(null);
   const [deletedPartnerIds, setDeletedPartnerIds] = useState<string[]>([]);
+  const [deletedEmployeeRateIds, setDeletedEmployeeRateIds] = useState<string[]>([]);
+  const [deletedPartnerRateIds, setDeletedPartnerRateIds] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
 
   async function handleSave() {
     setMessage(null);
 
+    const normalizedEmployeeRates = employeeRates.map((row) => {
+      const history = row.history.length > 0 ? [...row.history] : [{ id: `draft-${row.userId}`, effectiveFrom: row.effectiveFrom, unitPrice: row.unitPrice, defaultWorkRate: row.defaultWorkRate, remarks: row.remarks }];
+      history[0] = {
+        ...history[0],
+        effectiveFrom: row.effectiveFrom,
+        unitPrice: row.unitPrice,
+        defaultWorkRate: row.defaultWorkRate,
+        remarks: row.remarks,
+      };
+      return { ...row, history };
+    });
+
+    const normalizedPartnerRates = partnerRates.map((row) => {
+      const history = row.history.length > 0 ? [...row.history] : [{ id: `draft-sales-${row.partnerId}:draft-out-${row.partnerId}`, effectiveFrom: row.effectiveFrom, unitPrice: row.salesUnitPrice, defaultWorkRate: row.defaultWorkRate, outsourceAmount: row.outsourceAmount, remarks: row.note }];
+      history[0] = {
+        ...history[0],
+        effectiveFrom: row.effectiveFrom,
+        unitPrice: row.salesUnitPrice,
+        defaultWorkRate: row.defaultWorkRate,
+        outsourceAmount: row.outsourceAmount,
+        remarks: row.note,
+      };
+      return { ...row, history };
+    });
+
     startSaving(async () => {
       const response = await fetch("/api/rate-settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ employeeRates, partnerRates, deletedPartnerIds }),
+        body: JSON.stringify({
+          employeeRates: normalizedEmployeeRates,
+          partnerRates: normalizedPartnerRates,
+          deletedPartnerIds,
+          deletedEmployeeRateIds,
+          deletedPartnerRateIds,
+        }),
       });
 
-      const result = (await response.json()) as { message?: string };
+      const result = (await response.json()) as {
+        message?: string;
+        data?: {
+          employeeRates?: EmployeeRateRow[];
+          partnerRates?: PartnerRateRow[];
+        };
+      };
       setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
 
       if (response.ok) {
+        if (result.data?.employeeRates) {
+          setEmployeeRates(result.data.employeeRates);
+        }
+        if (result.data?.partnerRates) {
+          setPartnerRates(result.data.partnerRates);
+        }
         setDeletedPartnerIds([]);
+        setDeletedEmployeeRateIds([]);
+        setDeletedPartnerRateIds([]);
         router.refresh();
       }
     });
@@ -75,6 +122,76 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults, 
     setPartnerRates((current) => current.filter((row) => row.partnerId !== target.partnerId));
     if (!target.partnerId.startsWith("new-")) {
       setDeletedPartnerIds((current) => [...current, target.partnerId]);
+    }
+  }
+  function updateEmployeeHistoryRow(userId: string, historyId: string, key: "effectiveFrom" | "unitPrice" | "defaultWorkRate" | "remarks", value: string) {
+    setEmployeeRates((current) => current.map((row) => {
+      if (row.userId !== userId) return row;
+      const history = row.history.map((historyRow) => historyRow.id === historyId ? {
+        ...historyRow,
+        [key]: key === "remarks" || key === "effectiveFrom" ? value : toNumber(value),
+      } : historyRow);
+      if (row.history[0]?.id !== historyId) {
+        return { ...row, history };
+      }
+      const currentHistory = history[0];
+      return {
+        ...row,
+        effectiveFrom: currentHistory?.effectiveFrom ?? row.effectiveFrom,
+        unitPrice: currentHistory?.unitPrice ?? row.unitPrice,
+        defaultWorkRate: currentHistory?.defaultWorkRate ?? row.defaultWorkRate,
+        remarks: currentHistory?.remarks ?? row.remarks,
+        history,
+      };
+    }));
+  }
+
+  function removeEmployeeHistoryRow(userId: string, historyId: string) {
+    setEmployeeRates((current) => current.map((row) => {
+      if (row.userId !== userId) return row;
+      return {
+        ...row,
+        history: row.history.filter((historyRow) => historyRow.id !== historyId),
+      };
+    }));
+    if (!historyId.startsWith("draft-")) {
+      setDeletedEmployeeRateIds((current) => Array.from(new Set([...current, historyId])));
+    }
+  }
+
+  function updatePartnerHistoryRow(partnerId: string, historyId: string, key: "effectiveFrom" | "unitPrice" | "defaultWorkRate" | "outsourceAmount" | "remarks", value: string) {
+    setPartnerRates((current) => current.map((row) => {
+      if (row.partnerId !== partnerId) return row;
+      const history = row.history.map((historyRow) => historyRow.id === historyId ? {
+        ...historyRow,
+        [key]: key === "remarks" || key === "effectiveFrom" ? value : toNumber(value),
+      } : historyRow);
+      if (row.history[0]?.id !== historyId) {
+        return { ...row, history };
+      }
+      const currentHistory = history[0];
+      return {
+        ...row,
+        effectiveFrom: currentHistory?.effectiveFrom ?? row.effectiveFrom,
+        salesUnitPrice: currentHistory?.unitPrice ?? row.salesUnitPrice,
+        defaultWorkRate: currentHistory?.defaultWorkRate ?? row.defaultWorkRate,
+        outsourceAmount: currentHistory?.outsourceAmount ?? row.outsourceAmount,
+        note: currentHistory?.remarks ?? row.note,
+        history,
+      };
+    }));
+  }
+
+  function removePartnerHistoryRow(partnerId: string, historyId: string) {
+    setPartnerRates((current) => current.map((row) => {
+      if (row.partnerId !== partnerId) return row;
+      return {
+        ...row,
+        history: row.history.filter((historyRow) => historyRow.id !== historyId),
+      };
+    }));
+    if (!historyId.includes("draft-")) {
+      setDeletedPartnerRateIds((current) => Array.from(new Set([...current, historyId])));
     }
   }
 
@@ -140,15 +257,17 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults, 
                                     <th className="px-3 py-2 font-medium">標準単価</th>
                                     <th className="px-3 py-2 font-medium">標準稼働率</th>
                                     <th className="px-3 py-2 font-medium">備考</th>
+                                    <th className="px-3 py-2 font-medium">操作</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {row.history.map((historyRow) => (
+                                  {row.history.map((historyRow, index) => (
                                     <tr key={historyRow.id} className="border-t border-slate-100">
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.effectiveFrom}</td>
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.unitPrice.toLocaleString("ja-JP")} 円</td>
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.defaultWorkRate}%</td>
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.remarks || "-"}</td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="date" value={historyRow.effectiveFrom} disabled={!canEdit || isPending} onChange={(event) => updateEmployeeHistoryRow(row.userId, historyRow.id, "effectiveFrom", event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="number" value={historyRow.unitPrice} disabled={!canEdit || isPending} onChange={(event) => updateEmployeeHistoryRow(row.userId, historyRow.id, "unitPrice", event.target.value)} className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="number" value={historyRow.defaultWorkRate} disabled={!canEdit || isPending} onChange={(event) => updateEmployeeHistoryRow(row.userId, historyRow.id, "defaultWorkRate", event.target.value)} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="text" value={historyRow.remarks} disabled={!canEdit || isPending} onChange={(event) => updateEmployeeHistoryRow(row.userId, historyRow.id, "remarks", event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2">{canEdit && index > 0 ? <button type="button" onClick={() => removeEmployeeHistoryRow(row.userId, historyRow.id)} disabled={isPending} className="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600">削除</button> : <span className="text-xs text-slate-400">{index === 0 ? "現在値" : "-"}</span>}</td>
                                     </tr>
                                   ))}
                                 </tbody>
@@ -249,16 +368,18 @@ export function RateSettingEditor({ canEdit, employeeDefaults, partnerDefaults, 
                                     <th className="px-3 py-2 font-medium">標準稼働率</th>
                                     <th className="px-3 py-2 font-medium">外注費</th>
                                     <th className="px-3 py-2 font-medium">備考</th>
+                                    <th className="px-3 py-2 font-medium">操作</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {row.history.map((historyRow) => (
+                                  {row.history.map((historyRow, index) => (
                                     <tr key={historyRow.id} className="border-t border-slate-100">
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.effectiveFrom}</td>
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.unitPrice.toLocaleString("ja-JP")} 円</td>
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.defaultWorkRate}%</td>
-                                      <td className="px-3 py-2 text-slate-700">{(historyRow.outsourceAmount ?? 0).toLocaleString("ja-JP")} 円</td>
-                                      <td className="px-3 py-2 text-slate-700">{historyRow.remarks || "-"}</td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="date" value={historyRow.effectiveFrom} disabled={!canEdit || isPending} onChange={(event) => updatePartnerHistoryRow(row.partnerId, historyRow.id, "effectiveFrom", event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="number" value={historyRow.unitPrice} disabled={!canEdit || isPending} onChange={(event) => updatePartnerHistoryRow(row.partnerId, historyRow.id, "unitPrice", event.target.value)} className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="number" value={historyRow.defaultWorkRate} disabled={!canEdit || isPending} onChange={(event) => updatePartnerHistoryRow(row.partnerId, historyRow.id, "defaultWorkRate", event.target.value)} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="number" value={historyRow.outsourceAmount ?? 0} disabled={!canEdit || isPending} onChange={(event) => updatePartnerHistoryRow(row.partnerId, historyRow.id, "outsourceAmount", event.target.value)} className="w-32 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2 text-slate-700"><input type="text" value={historyRow.remarks} disabled={!canEdit || isPending} onChange={(event) => updatePartnerHistoryRow(row.partnerId, historyRow.id, "remarks", event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" /></td>
+                                      <td className="px-3 py-2">{canEdit && index > 0 ? <button type="button" onClick={() => removePartnerHistoryRow(row.partnerId, historyRow.id)} disabled={isPending} className="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600">削除</button> : <span className="text-xs text-slate-400">{index === 0 ? "現在値" : "-"}</span>}</td>
                                     </tr>
                                   ))}
                                 </tbody>

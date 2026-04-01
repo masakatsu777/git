@@ -38,6 +38,8 @@ export async function POST(request: Request) {
       employeeRates?: Array<Record<string, unknown>>;
       partnerRates?: Array<Record<string, unknown>>;
       deletedPartnerIds?: unknown[];
+      deletedEmployeeRateIds?: unknown[];
+      deletedPartnerRateIds?: unknown[];
     };
 
     const result = await saveRateSettingsBundle({
@@ -51,7 +53,13 @@ export async function POST(request: Request) {
         unitPrice: toNumber(row.unitPrice),
         defaultWorkRate: toNumber(row.defaultWorkRate),
         remarks: String(row.remarks ?? ""),
-        history: [],
+        history: (Array.isArray(row.history) ? row.history : []).map((historyRow) => ({
+          id: String((historyRow as Record<string, unknown>).id ?? ""),
+          effectiveFrom: String((historyRow as Record<string, unknown>).effectiveFrom ?? "2026-04-01"),
+          unitPrice: toNumber((historyRow as Record<string, unknown>).unitPrice),
+          defaultWorkRate: toNumber((historyRow as Record<string, unknown>).defaultWorkRate),
+          remarks: String((historyRow as Record<string, unknown>).remarks ?? ""),
+        })),
       })),
       partnerRates: (body.partnerRates ?? []).map((row) => ({
         partnerId: String(row.partnerId ?? ""),
@@ -64,9 +72,18 @@ export async function POST(request: Request) {
         outsourceAmount: toNumber(row.outsourceAmount),
         affiliation: String(row.affiliation ?? ""),
         note: String(row.note ?? ""),
-        history: [],
+        history: (Array.isArray(row.history) ? row.history : []).map((historyRow) => ({
+          id: String((historyRow as Record<string, unknown>).id ?? ""),
+          effectiveFrom: String((historyRow as Record<string, unknown>).effectiveFrom ?? "2026-04-01"),
+          unitPrice: toNumber((historyRow as Record<string, unknown>).unitPrice),
+          defaultWorkRate: toNumber((historyRow as Record<string, unknown>).defaultWorkRate),
+          outsourceAmount: toNumber((historyRow as Record<string, unknown>).outsourceAmount),
+          remarks: String((historyRow as Record<string, unknown>).remarks ?? ""),
+        })),
       })),
       deletedPartnerIds: (body.deletedPartnerIds ?? []).map((value) => String(value ?? "")).filter(Boolean),
+      deletedEmployeeRateIds: (body.deletedEmployeeRateIds ?? []).map((value) => String(value ?? "")).filter(Boolean),
+      deletedPartnerRateIds: (body.deletedPartnerRateIds ?? []).map((value) => String(value ?? "")).filter(Boolean),
     }, user);
 
     return NextResponse.json({
