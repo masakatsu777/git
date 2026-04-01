@@ -217,7 +217,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">自己評価入力</h2>
-          <p className="mt-1 text-sm text-slate-500">大分類ごとに開いて入力し、半期の自己評価を整理します。</p>
+
         </div>
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">入力受付中</span>}
       </div>
@@ -323,7 +323,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         <div>
           <span className="inline-flex items-center rounded-full border border-sky-300 bg-white/85 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-sky-700">協調相乗力 / 継続実践評価</span>
           <h3 className="mt-3 font-semibold text-slate-950">協調相乗力</h3>
-          <p className="mt-1 text-sm text-slate-600">大分類ごとに開いて、半期を通じた継続実践を入力します。</p>
+          <p className="mt-1 text-sm text-slate-600">大分類ごとに開いて、継続実践を確認します。</p>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {synergyGuide.map((guide) => (
@@ -333,7 +333,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
             </article>
           ))}
         </div>
-        <p className="mt-4 text-sm text-slate-500">単発ではなく、半期を通じた継続実践かどうかで評価します。</p>
+        <p className="mt-4 text-sm text-slate-500">単発ではなく、継続的に実践しているかどうかがポイントです。</p>
         <div className="mt-6 space-y-4">
           {synergyCategories.map((group) => {
             const status = getCategoryStatus(group.items);
@@ -407,7 +407,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
           onChange={(event) => setSelfComment(event.target.value)}
           rows={5}
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-          placeholder="半期全体の振り返り、成果、課題、次期に向けた改善を入力"
+          placeholder="全体の振り返り、成果、課題、次期に向けた改善を入力"
         />
       </section>
 
