@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+
+import { SessionActionButton } from "@/components/auth/session-action-button";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -60,6 +62,13 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
               </Link>
             );
           })}
+          <SessionActionButton
+            mode="logout"
+            redirectTo="/login"
+            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 lg:hidden"
+          >
+            ログアウト
+          </SessionActionButton>
         </nav>
       </div>
     </div>
