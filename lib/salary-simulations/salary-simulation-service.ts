@@ -386,6 +386,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
               where: { evaluationPeriodId: period.id },
               take: 1,
               select: {
+                currentSalary: true,
                 proposedRaiseRate: true,
                 proposedRaiseAmount: true,
                 newSalary: true,
@@ -446,7 +447,7 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
           throw new Error(`最終評価結果が見つかりません: ${evaluation.userId}`);
         }
 
-        const currentSalary = finalReview.currentSalary;
+        const currentSalary = saved ? toNumber(saved.currentSalary) : finalReview.currentSalary;
         const finalRating = finalReview.finalRating === "-"
           ? (evaluation.finalRating ?? deriveRatingFromScore(finalReview.finalScoreTotal))
           : finalReview.finalRating;
@@ -468,8 +469,8 @@ export async function getSalarySimulationBundle(evaluationPeriodId?: string): Pr
         const grossProfitMultiplier = 1;
         const finalSalaryReference = finalReview.gradeSalaryAmount;
         const newSalary = saved ? toNumber(saved.newSalary) : finalSalaryReference;
-        const proposedRaiseAmount = round(newSalary - currentSalary);
-        const proposedRaiseRate = currentSalary === 0 ? 0 : round((proposedRaiseAmount / currentSalary) * 100);
+        const proposedRaiseAmount = saved ? round(toNumber(saved.proposedRaiseAmount)) : round(newSalary - currentSalary);
+        const proposedRaiseRate = saved ? round(toNumber(saved.proposedRaiseRate)) : currentSalary === 0 ? 0 : round((proposedRaiseAmount / currentSalary) * 100);
         const gradeCalculationAmount = finalReview.salaryTotalGradePoint * finalReview.pointUnitAmount;
         const gradeSalaryAmount = finalReview.gradeSalaryAmount;
         const grossProfitDeductionAmount = finalReview.grossProfitDeductionAmount;
