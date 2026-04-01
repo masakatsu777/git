@@ -441,7 +441,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
     });
 
     const standaloneEvaluation = standaloneUser?.employeeEvaluations[0];
-    if (selectedUserId && standaloneUser && !members.some((member) => member.userId == selectedUserId)) {
+    if (teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID && selectedUserId && standaloneUser && !members.some((member) => member.userId == selectedUserId)) {
       members.unshift({
         userId: standaloneUser.id,
         name: standaloneUser.name,

@@ -121,7 +121,6 @@ export default async function TeamEvaluationPage({
               {teamOptions.length > 0 ? (
                 <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                   <input type="hidden" name="evaluationPeriodId" value={bundle.evaluationPeriodId} />
-                  {effectiveMemberId ? <input type="hidden" name="memberId" value={effectiveMemberId} /> : null}
                   <label className="text-sm text-slate-200">
                     評価対象チーム
                     <select
