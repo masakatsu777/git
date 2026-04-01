@@ -30,6 +30,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
 
+
   function updateHistoryRow(userId: string, historyId: string, key: keyof SalaryRecordHistoryRow, value: string) {
     setRows((current) => current.map((row) => {
       if (row.userId !== userId) return row;
@@ -115,10 +116,16 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
         }),
       });
 
-      const result = (await response.json()) as { message?: string };
+      const result = (await response.json()) as {
+        message?: string;
+        data?: { rows?: SalaryRecordEditorRow[] };
+      };
       setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
 
       if (response.ok) {
+        if (result.data?.rows) {
+          setRows(result.data.rows);
+        }
         setDeletedIds([]);
         router.refresh();
       }
