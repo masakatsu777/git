@@ -90,15 +90,18 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           yearMonth,
-          rows: rows.map((row) => ({
-            id: row.id,
-            userId: row.userId,
-            effectiveFrom: row.effectiveFrom,
-            baseSalary: row.baseSalary,
-            allowance: row.allowance,
-            socialInsurance: row.socialInsurance,
-            otherFixedCost: row.otherFixedCost,
-          })),
+          rows: rows.map((row) => {
+            const currentHistory = row.history.find((historyRow) => historyRow.id === row.id) ?? row.history[0];
+            return {
+              id: currentHistory?.id ?? row.id,
+              userId: row.userId,
+              effectiveFrom: currentHistory?.effectiveFrom ?? row.effectiveFrom,
+              baseSalary: currentHistory?.baseSalary ?? row.baseSalary,
+              allowance: currentHistory?.allowance ?? row.allowance,
+              socialInsurance: currentHistory?.socialInsurance ?? row.socialInsurance,
+              otherFixedCost: currentHistory?.otherFixedCost ?? row.otherFixedCost,
+            };
+          }),
           historyRows: rows.flatMap((row) => row.history.map((historyRow) => ({
             id: historyRow.id,
             userId: row.userId,
