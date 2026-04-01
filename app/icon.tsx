@@ -19,12 +19,12 @@ export default function Icon() {
           justifyContent: "center",
           background: "linear-gradient(135deg, #020617 0%, #0f172a 55%, #1d4ed8 100%)",
           color: "white",
-          fontSize: 148,
+          fontSize: 126,
           fontWeight: 700,
-          letterSpacing: -8,
+          letterSpacing: -10,
         }}
       >
-        GM
+        GIT
       </div>
     ),
     size,
