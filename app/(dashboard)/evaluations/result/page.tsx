@@ -153,7 +153,7 @@ export default async function EvaluationResultPage({
               <div>
                 <h2 className="text-xl font-semibold text-slate-950">年次昇給結果</h2>
                 <p className="mt-2 text-sm leading-7 text-slate-600">
-                  役員承認後の決定額と調整理由を表示します。進行中の期間は上段の評価サマリーをご確認ください。
+                  決定額と調整理由を表示します。進行中の期間は上段の評価サマリーをご確認ください。
                 </p>
               </div>
               <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${toStatusTone(salaryRow.status)}`}>
@@ -164,7 +164,7 @@ export default async function EvaluationResultPage({
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">決定額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.newSalary)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">昇給額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.proposedRaiseAmount)}</p><p className="mt-1 text-sm text-slate-500">昇給率 {formatPercent(salaryRow.proposedRaiseRate)}</p></article>
-              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.currentSalary)}</p></article>
+              <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">旧本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrency(salaryRow.currentSalary)}</p></article>
               <article className="rounded-2xl bg-slate-50 p-5"><p className="text-sm text-slate-500">決定差額</p><p className={`mt-3 text-2xl font-semibold ${referenceSalaryDiffAmount === 0 ? "text-slate-950" : referenceSalaryDiffAmount > 0 ? "text-emerald-700" : "text-rose-700"}`}>{formatSignedCurrencyWithUnit(referenceSalaryDiffAmount)}</p><p className="mt-1 text-sm text-slate-500">決定額 {formatCurrency(salaryRow.newSalary)} - 現在本給 {formatCurrency(salaryRow.currentSalary)}</p></article>
               <div className="xl:col-span-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 text-sm text-slate-700">
                 <p className="font-semibold text-slate-950">調整理由</p>
