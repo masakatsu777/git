@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { Fragment, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { formatCurrencyWithUnit } from "@/lib/format/currency";
+import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 
 import type { SalaryRecordEditorRow } from "@/lib/salary/salary-record-service";
 
@@ -26,6 +26,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
   const router = useRouter();
   const [rows, setRows] = useState(defaults);
   const [message, setMessage] = useState<string | null>(null);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
 
   function updateRow(id: string, key: keyof SalaryRecordEditorRow, value: string) {
@@ -100,38 +101,95 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
                 <th className="px-4 py-3 font-medium">社保</th>
                 <th className="px-4 py-3 font-medium">その他固定費</th>
                 <th className="px-4 py-3 font-medium">月次人件費</th>
+                <th className="px-4 py-3 font-medium">履歴</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
-                <tr key={row.id} className="border-t border-slate-200 align-top">
-                  <td className="px-4 py-3 font-medium text-slate-950">{row.employeeCode}</td>
-                  <td className="px-4 py-3 text-slate-700">{row.employeeName}</td>
-                  <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="date"
-                      value={row.effectiveFrom}
-                      disabled={!canEdit || isPending}
-                      onChange={(event) => updateRow(row.id, "effectiveFrom", event.target.value)}
-                      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <input type="number" value={row.baseSalary} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "baseSalary", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <input type="number" value={row.allowance} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "allowance", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <input type="number" value={row.socialInsurance} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "socialInsurance", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <input type="number" value={row.otherFixedCost} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "otherFixedCost", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                  </td>
-                  <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.total)}</td>
-                </tr>
-              ))}
+              {rows.map((row) => {
+                const expanded = expandedUserId === row.userId;
+                return (
+                  <Fragment key={row.id}>
+                    <tr className="border-t border-slate-200 align-top">
+                      <td className="px-4 py-3 font-medium text-slate-950">{row.employeeCode}</td>
+                      <td className="px-4 py-3 text-slate-700">{row.employeeName}</td>
+                      <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
+                      <td className="px-4 py-3">
+                        <input
+                          type="date"
+                          value={row.effectiveFrom}
+                          disabled={!canEdit || isPending}
+                          onChange={(event) => updateRow(row.id, "effectiveFrom", event.target.value)}
+                          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <input type="number" value={row.baseSalary} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "baseSalary", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <input type="number" value={row.allowance} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "allowance", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <input type="number" value={row.socialInsurance} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "socialInsurance", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                      </td>
+                      <td className="px-4 py-3">
+                        <input type="number" value={row.otherFixedCost} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "otherFixedCost", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.total)}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedUserId(expanded ? null : row.userId)}
+                          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+                        >
+                          {expanded ? "履歴を閉じる" : `履歴を見る${row.history.length > 0 ? ` (${row.history.length})` : ""}`}
+                        </button>
+                      </td>
+                    </tr>
+                    {expanded ? (
+                      <tr className="border-t border-slate-100 bg-slate-50/70">
+                        <td colSpan={10} className="px-4 py-4">
+                          {row.history.length > 0 ? (
+                            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                              <div className="overflow-x-auto">
+                                <table className="min-w-[760px] text-left text-xs sm:text-sm">
+                                  <thead className="bg-slate-50 text-slate-500">
+                                    <tr>
+                                      <th className="px-3 py-2 font-medium">適用開始日</th>
+                                      <th className="px-3 py-2 font-medium">基本給</th>
+                                      <th className="px-3 py-2 font-medium">手当</th>
+                                      <th className="px-3 py-2 font-medium">社保</th>
+                                      <th className="px-3 py-2 font-medium">その他固定費</th>
+                                      <th className="px-3 py-2 font-medium">合計</th>
+                                      <th className="px-3 py-2 font-medium">前回差額</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {row.history.map((historyRow) => (
+                                      <tr key={historyRow.id} className="border-t border-slate-100">
+                                        <td className="px-3 py-2 text-slate-700">{historyRow.effectiveFrom}</td>
+                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.baseSalary)}</td>
+                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.allowance)}</td>
+                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.socialInsurance)}</td>
+                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.otherFixedCost)}</td>
+                                        <td className="px-3 py-2 font-semibold text-slate-950">{formatCurrencyWithUnit(historyRow.total)}</td>
+                                        <td className={`px-3 py-2 font-semibold ${historyRow.diffFromPrevious === null || historyRow.diffFromPrevious === 0 ? "text-slate-500" : historyRow.diffFromPrevious > 0 ? "text-emerald-700" : "text-rose-700"}`}>
+                                          {historyRow.diffFromPrevious === null ? "-" : formatSignedCurrencyWithUnit(historyRow.diffFromPrevious)}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-slate-500">履歴はまだありません。</p>
+                          )}
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

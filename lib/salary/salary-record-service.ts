@@ -2,6 +2,17 @@ import { UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 
+export type SalaryRecordHistoryRow = {
+  id: string;
+  effectiveFrom: string;
+  baseSalary: number;
+  allowance: number;
+  socialInsurance: number;
+  otherFixedCost: number;
+  total: number;
+  diffFromPrevious: number | null;
+};
+
 export type SalaryRecordEditorRow = {
   id: string;
   userId: string;
@@ -15,6 +26,7 @@ export type SalaryRecordEditorRow = {
   otherFixedCost: number;
   total: number;
   hasPersistedRecord: boolean;
+  history: SalaryRecordHistoryRow[];
 };
 
 export type SalaryRecordBundle = {
@@ -74,6 +86,18 @@ const fallbackRows: SalaryRecordEditorRow[] = [
     otherFixedCost: 20000,
     total: 370000,
     hasPersistedRecord: true,
+    history: [
+      {
+        id: "salary-demo-member1-history-1",
+        effectiveFrom: "2026-03-01",
+        baseSalary: 280000,
+        allowance: 20000,
+        socialInsurance: 50000,
+        otherFixedCost: 20000,
+        total: 370000,
+        diffFromPrevious: null,
+      },
+    ],
   },
   {
     id: "salary-demo-leader",
@@ -88,6 +112,18 @@ const fallbackRows: SalaryRecordEditorRow[] = [
     otherFixedCost: 20000,
     total: 540000,
     hasPersistedRecord: true,
+    history: [
+      {
+        id: "salary-demo-leader-history-1",
+        effectiveFrom: "2026-03-01",
+        baseSalary: 420000,
+        allowance: 30000,
+        socialInsurance: 70000,
+        otherFixedCost: 20000,
+        total: 540000,
+        diffFromPrevious: null,
+      },
+    ],
   },
 ];
 
@@ -120,9 +156,7 @@ export async function getSalaryRecordBundle(yearMonth: string): Promise<SalaryRe
           },
         },
         salaryRecords: {
-          where: { effectiveFrom: { lte: end } },
           orderBy: { effectiveFrom: "desc" },
-          take: 1,
           select: {
             id: true,
             effectiveFrom: true,
@@ -138,7 +172,35 @@ export async function getSalaryRecordBundle(yearMonth: string): Promise<SalaryRe
     return {
       yearMonth,
       rows: users.map((user) => {
-        const current = user.salaryRecords[0];
+        const current = user.salaryRecords.find((record) => record.effectiveFrom.getTime() <= end.getTime());
+        const history = user.salaryRecords.map((record, index) => {
+          const historyRow = {
+            id: record.id,
+            effectiveFrom: formatDate(record.effectiveFrom),
+            baseSalary: toNumber(record.baseSalary),
+            allowance: toNumber(record.allowance),
+            socialInsurance: toNumber(record.socialInsurance),
+            otherFixedCost: toNumber(record.otherFixedCost),
+            total: 0,
+            diffFromPrevious: null as number | null,
+          };
+          const total = totalOf(historyRow);
+          const olderRecord = user.salaryRecords[index + 1];
+          const olderTotal = olderRecord
+            ? totalOf({
+                baseSalary: toNumber(olderRecord.baseSalary),
+                allowance: toNumber(olderRecord.allowance),
+                socialInsurance: toNumber(olderRecord.socialInsurance),
+                otherFixedCost: toNumber(olderRecord.otherFixedCost),
+              })
+            : null;
+          return {
+            ...historyRow,
+            total,
+            diffFromPrevious: olderTotal === null ? null : total - olderTotal,
+          };
+        });
+
         const row = {
           id: current?.id ?? `draft-${user.id}`,
           userId: user.id,
@@ -152,6 +214,7 @@ export async function getSalaryRecordBundle(yearMonth: string): Promise<SalaryRe
           otherFixedCost: toNumber(current?.otherFixedCost),
           total: 0,
           hasPersistedRecord: Boolean(current),
+          history,
         };
 
         return {
@@ -226,6 +289,7 @@ export async function saveSalaryRecordBundle(input: SaveSalaryRecordInput): Prom
         otherFixedCost: row.otherFixedCost,
         total: totalOf(row),
         hasPersistedRecord: !row.id.startsWith("draft-"),
+        history: [],
       })),
       source: "fallback",
     };
