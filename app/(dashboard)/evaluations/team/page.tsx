@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { ManagerReviewEditor } from "@/components/evaluations/manager-review-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { getManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
+import { UNASSIGNED_MANAGER_REVIEW_TEAM_ID, getManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
 import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
@@ -33,12 +33,17 @@ export default async function TeamEvaluationPage({
   const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
 
   const visibleTeamIds = user.teamIds;
-  const teamOptions = user.role === "employee" || user.role === "leader"
+  const baseTeamOptions = user.role === "employee" || user.role === "leader"
     ? []
     : await getVisibleTeamOptions(user.role === "admin" || user.role === "president" ? undefined : user.teamIds);
+  const teamOptions = user.role === "admin" || user.role === "president"
+    ? [{ teamId: UNASSIGNED_MANAGER_REVIEW_TEAM_ID, teamName: "未所属" }, ...baseTeamOptions]
+    : baseTeamOptions;
   const defaultTeamId = user.role === "leader"
     ? user.teamIds[0] ?? "team-platform"
-    : params.teamId ?? teamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform";
+    : user.role === "employee" && user.teamIds.length === 0
+      ? UNASSIGNED_MANAGER_REVIEW_TEAM_ID
+      : params.teamId ?? teamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? UNASSIGNED_MANAGER_REVIEW_TEAM_ID;
   const requestedTeamId = defaultTeamId;
   const effectiveMemberId = user.role === "employee" ? user.id : params.memberId;
 
@@ -149,7 +154,7 @@ export default async function TeamEvaluationPage({
         </header>
 
         <div className="mt-8">
-          <ManagerReviewEditor key={`${bundle.evaluationPeriodId}:${bundle.teamId}:${bundle.selectedUserId}`} canEdit={canEdit} defaults={user.role === "employee" ? { ...bundle, members: bundle.members.filter((member) => member.userId === user.id) } : bundle} summary={resultSummary} />
+          <ManagerReviewEditor key={`${bundle.evaluationPeriodId}:${bundle.teamId}:${bundle.selectedUserId}`} canEdit={canEdit} canBulkApprove={user.role === "admin" || user.role === "president"} defaults={user.role === "employee" ? { ...bundle, members: bundle.members.filter((member) => member.userId === user.id) } : bundle} summary={resultSummary} />
         </div>
       </div>
     </main>

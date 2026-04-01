@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { canEditManagerReview, canViewManagerReview } from "@/lib/permissions/check";
-import { getManagerReviewBundle, saveManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
+import { UNASSIGNED_MANAGER_REVIEW_TEAM_ID, getManagerReviewBundle, saveManagerReviewBundle } from "@/lib/evaluations/manager-review-service";
 import { getDepartmentScopedTeamIds, getVisibleTeamOptions } from "@/lib/pl/service";
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const effectiveMemberId = user.role === "employee" ? user.id : requestedMemberId;
 
   try {
-    if (user.role === "leader" && !visibleTeamIds.includes(requestedTeamId)) {
+    if (user.role === "leader" && requestedTeamId !== UNASSIGNED_MANAGER_REVIEW_TEAM_ID && !visibleTeamIds.includes(requestedTeamId)) {
       return NextResponse.json({ message: "同部署のチームのみ参照できます" }, { status: 403 });
     }
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const visibleTeamIds = user.role === "leader" ? await getDepartmentScopedTeamIds(user.teamIds) : user.teamIds;
     const availableTeamOptions = user.role === "admin" || user.role === "president" ? await getVisibleTeamOptions() : [];
     const teamId = String(body.teamId ?? availableTeamOptions[0]?.teamId ?? visibleTeamIds[0] ?? user.teamIds[0] ?? "team-platform");
-    if (user.role === "leader" && !visibleTeamIds.includes(teamId)) {
+    if (user.role === "leader" && teamId !== UNASSIGNED_MANAGER_REVIEW_TEAM_ID && !visibleTeamIds.includes(teamId)) {
       return NextResponse.json({ message: "同部署のチームのみ参照できます" }, { status: 403 });
     }
     if (!canEditManagerReview(user, teamId, String(body.userId ?? ""))) {

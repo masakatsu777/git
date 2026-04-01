@@ -14,6 +14,7 @@ import type {
 
 type ManagerReviewEditorProps = {
   canEdit: boolean;
+  canBulkApprove: boolean;
   defaults: ManagerReviewBundle;
   summary: FinalReviewBundle;
 };
@@ -215,7 +216,7 @@ function getOverallStatusTone(status: OverallManagerStatus) {
   }
 }
 
-export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerReviewEditorProps) {
+export function ManagerReviewEditor({ canEdit, canBulkApprove, defaults, summary }: ManagerReviewEditorProps) {
   const router = useRouter();
   const [items, setItems] = useState(defaults.items);
   const [managerComment, setManagerComment] = useState(defaults.managerComment);
@@ -244,6 +245,10 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
 
   function toggleDetails(key: string) {
     setOpenedDetails((current) => ({ ...current, [key]: !current[key] }));
+  }
+
+  function approveAllCategories() {
+    setItems((current) => current.map((item) => ({ ...item, managerReviewStatus: "APPROVED" as const })));
   }
 
   function saveWithMode(mode: "save" | "approve") {
@@ -505,11 +510,16 @@ export function ManagerReviewEditor({ canEdit, defaults, summary }: ManagerRevie
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
+        {canBulkApprove ? (
+          <button type="button" onClick={approveAllCategories} disabled={!canEdit || isPending} className="rounded-full border border-emerald-300 bg-white px-5 py-2 text-sm font-semibold text-emerald-700 disabled:bg-slate-100 disabled:text-slate-400">
+            全大分類を承認
+          </button>
+        ) : null}
         <button type="button" onClick={() => saveWithMode("save")} disabled={!canEdit || isPending} className="rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-semibold text-slate-700 disabled:bg-slate-100 disabled:text-slate-400">
           {isPending ? "処理中..." : "下書き保存"}
         </button>
         <button type="button" onClick={() => saveWithMode("approve")} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
-          {isPending ? "処理中..." : "全体を承認して保存"}
+          {isPending ? "処理中..." : canBulkApprove ? "一括承認して保存" : "全体を承認して保存"}
         </button>
         <span className="text-sm text-slate-500">現在の本人評価加重点: {managerTotal}</span>
       </div>

@@ -1,4 +1,4 @@
-import { EvaluationPeriodStatus, EvaluationStatus, ReviewType } from "@/generated/prisma";
+import { EvaluationPeriodStatus, EvaluationStatus, ReviewType, UserStatus } from "@/generated/prisma";
 
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 import {
@@ -63,6 +63,8 @@ export type ManagerReviewBundle = {
   items: ManagerReviewItem[];
   source: "database" | "fallback";
 };
+
+export const UNASSIGNED_MANAGER_REVIEW_TEAM_ID = "__unassigned__";
 
 export type SaveManagerReviewInput = {
   evaluationPeriodId: string;
@@ -226,54 +228,86 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
     const [team, itemRows, standaloneUser] = await Promise.all([
-      prisma.team.findUniqueOrThrow({
-        where: { id: teamId },
-        select: {
-          id: true,
-          name: true,
-          memberships: {
-            where: { isPrimary: true, endDate: null },
-            select: {
+      teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID
+        ? Promise.resolve({
+            id: UNASSIGNED_MANAGER_REVIEW_TEAM_ID,
+            name: "未所属",
+            memberships: [] as Array<{
               user: {
+                id: string;
+                name: string;
+                employeeEvaluations: Array<{
+                  id: string;
+                  status: EvaluationStatus;
+                  selfComment: string | null;
+                  managerComment: string | null;
+                  selfScoreTotal: unknown;
+                  managerScoreTotal: unknown;
+                  team: { id: string; name: string } | null;
+                  scores: Array<{
+                    evaluationItemId: string;
+                    reviewType: ReviewType;
+                    score: unknown;
+                    comment: string | null;
+                    evidences: Array<{
+                      id: string;
+                      summary: string;
+                      targetName: string | null;
+                      periodNote: string | null;
+                    }>;
+                  }>;
+                }>;
+              };
+            }>,
+          })
+        : prisma.team.findUniqueOrThrow({
+            where: { id: teamId },
+            select: {
+              id: true,
+              name: true,
+              memberships: {
+                where: { isPrimary: true, endDate: null },
                 select: {
-                  id: true,
-                  name: true,
-                  employeeEvaluations: {
-                    where: { evaluationPeriodId: period.id },
+                  user: {
                     select: {
                       id: true,
-                      status: true,
-                      selfComment: true,
-                      managerComment: true,
-                      selfScoreTotal: true,
-                      managerScoreTotal: true,
-                      team: { select: { id: true, name: true } },
-                      scores: {
-                        where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER] } },
+                      name: true,
+                      employeeEvaluations: {
+                        where: { evaluationPeriodId: period.id },
                         select: {
-                          evaluationItemId: true,
-                          reviewType: true,
-                          score: true,
-                          comment: true,
-                          evidences: {
+                          id: true,
+                          status: true,
+                          selfComment: true,
+                          managerComment: true,
+                          selfScoreTotal: true,
+                          managerScoreTotal: true,
+                          team: { select: { id: true, name: true } },
+                          scores: {
+                            where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER] } },
                             select: {
-                              id: true,
-                              summary: true,
-                              targetName: true,
-                              periodNote: true,
+                              evaluationItemId: true,
+                              reviewType: true,
+                              score: true,
+                              comment: true,
+                              evidences: {
+                                select: {
+                                  id: true,
+                                  summary: true,
+                                  targetName: true,
+                                  periodNote: true,
+                                },
+                              },
                             },
                           },
                         },
+                        take: 1,
                       },
                     },
-                    take: 1,
                   },
                 },
               },
             },
-          },
-        },
-      }),
+          }),
       prisma.evaluationItem.findMany({
         where: { isActive: true },
         orderBy: [{ displayOrder: "asc" }, { createdAt: "asc" }],
@@ -334,6 +368,59 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
     const visibilityMap = await getUserMenuVisibilityMap(team.memberships.map((membership) => membership.user.id));
     const visibleMemberships = team.memberships.filter((membership) => visibilityMap[membership.user.id]?.philosophyPractice);
 
+    const visibleUnassignedUsers = teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID
+      ? await prisma.user.findMany({
+          where: {
+            status: UserStatus.ACTIVE,
+            teamMemberships: {
+              none: {
+                isPrimary: true,
+                endDate: null,
+              },
+            },
+          },
+          orderBy: [{ employeeCode: "asc" }, { name: "asc" }],
+          select: {
+            id: true,
+            name: true,
+            employeeEvaluations: {
+              where: { evaluationPeriodId: period.id },
+              select: {
+                id: true,
+                status: true,
+                selfComment: true,
+                managerComment: true,
+                selfScoreTotal: true,
+                managerScoreTotal: true,
+                team: { select: { id: true, name: true } },
+                scores: {
+                  where: { reviewType: { in: [ReviewType.SELF, ReviewType.MANAGER] } },
+                  select: {
+                    evaluationItemId: true,
+                    reviewType: true,
+                    score: true,
+                    comment: true,
+                    evidences: {
+                      select: {
+                        id: true,
+                        summary: true,
+                        targetName: true,
+                        periodNote: true,
+                      },
+                    },
+                  },
+                },
+              },
+              take: 1,
+            },
+          },
+        })
+      : [];
+
+    const sourceMemberships = teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID
+      ? visibleUnassignedUsers.map((user) => ({ user }))
+      : visibleMemberships;
+
     const members: Array<{
       userId: string;
       name: string;
@@ -341,7 +428,7 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       selfScoreTotal: number;
       managerScoreTotal: number;
       evaluation: NonNullable<(typeof visibleMemberships)[number]["user"]["employeeEvaluations"][number]> | undefined;
-    }> = visibleMemberships.map((membership) => {
+    }> = sourceMemberships.map((membership) => {
       const evaluation = membership.user.employeeEvaluations[0];
       return {
         userId: membership.user.id,
@@ -426,8 +513,8 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       evaluationPeriodId: period.id,
       periodName: period.name,
       periodStatus: period.status,
-      teamId: target.evaluation?.team?.id ?? team.id,
-      teamName: target.evaluation?.team?.name ?? "未所属",
+      teamId: target.evaluation?.team?.id ?? (teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID ? UNASSIGNED_MANAGER_REVIEW_TEAM_ID : team.id),
+      teamName: target.evaluation?.team?.name ?? (teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID ? "未所属" : team.name),
       members: members.map((member) => ({
         userId: member.userId,
         name: member.name,
@@ -495,7 +582,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
           },
         },
         update: {
-          teamId,
+          teamId: teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID ? null : teamId,
           status: nextStatus,
           managerComment: input.managerComment,
           managerScoreTotal: total,
@@ -503,7 +590,7 @@ export async function saveManagerReviewBundle(teamId: string, input: SaveManager
         create: {
           userId: input.userId,
           evaluationPeriodId: input.evaluationPeriodId,
-          teamId,
+          teamId: teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID ? null : teamId,
           status: nextStatus,
           managerComment: input.managerComment,
           managerScoreTotal: total,
