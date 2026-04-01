@@ -62,8 +62,14 @@ function toNumber(value: unknown) {
   return Number(value ?? 0);
 }
 
-function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10);
+function formatDate(value: Date) {
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(value);
 }
 
 export function canManageRateSettings(user: SessionUser) {

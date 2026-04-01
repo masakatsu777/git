@@ -66,7 +66,13 @@ function getMonthRange(yearMonth: string) {
 }
 
 function formatDate(value: Date) {
-  return value.toISOString().slice(0, 10);
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(value);
 }
 
 function toNumber(value: unknown) {
