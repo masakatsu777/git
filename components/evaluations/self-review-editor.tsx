@@ -243,7 +243,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
 
       <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-4">
         <h3 className="font-semibold text-slate-950">自律成長力</h3>
-        <p className="mt-1 text-sm text-slate-600">大分類一覧から必要な項目を開いて入力します。前回上長評価でクリアだった大分類は、初期値として 2 が入ることがあります。</p>
+        <p className="mt-1 text-sm text-slate-600">前回上長評価でクリアだった大分類は、初期値として 2 が入ることがあります。</p>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           {selfGrowthGuide.map((guide) => (
             <article key={guide.score} className="rounded-2xl border border-emerald-200 bg-white px-4 py-4 text-sm text-slate-700">
@@ -323,7 +323,7 @@ export function SelfReviewEditor({ canEdit, defaults }: SelfReviewEditorProps) {
         <div>
           <span className="inline-flex items-center rounded-full border border-sky-300 bg-white/85 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-sky-700">協調相乗力 / 継続実践評価</span>
           <h3 className="mt-3 font-semibold text-slate-950">協調相乗力</h3>
-          <p className="mt-1 text-sm text-slate-600">大分類ごとに開いて、継続実践を確認します。</p>
+          <p className="mt-1 text-sm text-slate-600">継続実践を確認します。</p>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {synergyGuide.map((guide) => (
