@@ -23,8 +23,8 @@ const PERIOD_TYPE_OPTIONS: ReadonlyArray<{ value: PeriodTypeValue; label: string
 const STATUS_OPTIONS: ReadonlyArray<{ value: EvaluationPeriodStatusValue; label: string }> = [
   { value: "DRAFT", label: "準備中" },
   { value: "OPEN", label: "入力受付中" },
-  { value: "CLOSED", label: "閲覧専用" },
-  { value: "FINALIZED", label: "最終確定済み" },
+  { value: "CLOSED", label: "最終評価中" },
+  { value: "FINALIZED", label: "閲覧専用" },
 ];
 
 
@@ -220,10 +220,11 @@ export function EvaluationPeriodEditor({ canEdit, defaults }: EvaluationPeriodEd
       <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
         <p className="font-semibold">運用メモ</p>
         <ul className="mt-2 space-y-1 text-amber-800">
-          <li>OPEN: 自己評価・上長評価を入力できます。</li>
-          <li>CLOSED: 最終評価のみ確定できます。</li>
-          <li>FINALIZED: すべて閲覧専用です。</li>
-        </ul>
+            <li>DRAFT: 準備中です。評価入力や最終評価はまだ開始しません。</li>
+            <li>OPEN: 自己評価と上長評価を入力できます。</li>
+            <li>CLOSED: 自己評価と上長評価は締切済みで、最終評価の確認と確定を行います。</li>
+            <li>FINALIZED: 最終確定済みで、すべて閲覧専用です。</li>
+          </ul>
       </div>
 
       {message ? <p className="text-sm text-slate-600">{message}</p> : null}
