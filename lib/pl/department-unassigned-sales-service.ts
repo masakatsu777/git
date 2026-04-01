@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AssignmentTargetType, UserStatus, type Prisma } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
@@ -126,7 +127,7 @@ export async function getDepartmentUnassignedSalesBundle(
   const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
 
   try {
-    const [rows, employees, partners] = await Promise.all([
+    const [rows, employees, partners]: [any[], any[], any[]] = await Promise.all([
       prisma.departmentUnassignedMonthlyAssignment.findMany({
         where: { departmentId: resolvedDepartmentId, yearMonth: resolvedYearMonth },
         orderBy: { createdAt: "asc" },
@@ -161,42 +162,47 @@ export async function getDepartmentUnassignedSalesBundle(
             select: {
               id: true,
               name: true,
-              employeeSalesRateSetting: {
+              employeeSalesRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
                 select: {
                   unitPrice: true,
                   defaultWorkRate: true,
                 },
               },
             },
-          })
+          } as any)
         : Promise.resolve([]),
       includeOptions
         ? prisma.partner.findMany({
             where: {
               status: "ACTIVE",
-              OR: [
-                { salesRateSetting: null },
-                { salesRateSetting: { is: { remarks: null } } },
-                { salesRateSetting: { is: { remarks: "" } } },
-              ],
             },
             orderBy: { name: "asc" },
             select: {
               id: true,
               name: true,
-              salesRateSetting: {
+              salesRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
                 select: {
                   unitPrice: true,
                   defaultWorkRate: true,
+                  remarks: true,
                 },
               },
-              outsourceRateSetting: {
+              outsourceRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
                 select: {
                   amount: true,
                 },
               },
             },
-          })
+          } as any)
         : Promise.resolve([]),
     ]);
 
@@ -221,16 +227,22 @@ export async function getDepartmentUnassignedSalesBundle(
       employeeOptions: employees.map((row) => ({
         id: row.id,
         label: row.name,
-        defaultUnitPrice: num(row.employeeSalesRateSetting?.unitPrice),
-        defaultWorkRate: num(row.employeeSalesRateSetting?.defaultWorkRate ?? 100),
+        defaultUnitPrice: num(row.employeeSalesRateSettings[0]?.unitPrice),
+        defaultWorkRate: num(row.employeeSalesRateSettings[0]?.defaultWorkRate ?? 100),
       })),
-      partnerOptions: partners.map((row) => ({
-        id: row.id,
-        label: row.name,
-        defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
-        defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
-        defaultOutsourceAmount: num(row.outsourceRateSetting?.amount),
-      })),
+      partnerOptions: partners
+        .filter((row) => {
+          const salesRateSetting = row.salesRateSettings[0];
+          const remarks = salesRateSetting?.remarks ?? "";
+          return remarks === "";
+        })
+        .map((row) => ({
+          id: row.id,
+          label: row.name,
+          defaultUnitPrice: num(row.salesRateSettings[0]?.unitPrice),
+          defaultWorkRate: num(row.salesRateSettings[0]?.defaultWorkRate ?? 100),
+          defaultOutsourceAmount: num(row.outsourceRateSettings[0]?.amount),
+        })),
       source: "database",
     };
   } catch (error) {
@@ -295,18 +307,21 @@ export async function saveDepartmentUnassignedSales(input: SaveDepartmentUnassig
             where: {
               id: { in: requestedPartnerIds },
               status: "ACTIVE",
-              OR: [
-                { salesRateSetting: null },
-                { salesRateSetting: { is: { remarks: null } } },
-                { salesRateSetting: { is: { remarks: "" } } },
-              ],
             },
-            select: { id: true },
+            select: {
+              id: true,
+              salesRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
+                select: { remarks: true },
+              },
+            },
           }),
     ]);
 
-    const eligibleUserIds = new Set(eligibleUsers.map((row) => row.id));
-    const eligiblePartnerIds = new Set(eligiblePartners.map((row) => row.id));
+    const eligibleUserIds = new Set((eligibleUsers as any[]).map((row: any) => row.id));
+    const eligiblePartnerIds = new Set((eligiblePartners as any[]).filter((row: any) => (row.salesRateSettings[0]?.remarks ?? "") === "").map((row: any) => row.id));
 
     await prisma.$transaction(async (tx) => {
       await tx.departmentUnassignedMonthlyAssignment.deleteMany({

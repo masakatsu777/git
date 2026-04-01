@@ -46,6 +46,16 @@ export type SaveSalaryRecordInput = {
     socialInsurance: number;
     otherFixedCost: number;
   }>;
+  historyRows: Array<{
+    id: string;
+    userId: string;
+    effectiveFrom: string;
+    baseSalary: number;
+    allowance: number;
+    socialInsurance: number;
+    otherFixedCost: number;
+  }>;
+  deletedIds: string[];
 };
 
 function getMonthRange(yearMonth: string) {
@@ -236,7 +246,28 @@ export async function getSalaryRecordBundle(yearMonth: string): Promise<SalaryRe
 export async function saveSalaryRecordBundle(input: SaveSalaryRecordInput): Promise<SalaryRecordBundle> {
   try {
     await prisma.$transaction(async (tx) => {
-      for (const row of input.rows) {
+      if (input.deletedIds.length > 0) {
+        await tx.salaryRecord.deleteMany({
+          where: { id: { in: input.deletedIds } },
+        });
+      }
+
+      const uniqueRows = new Map<string, {
+        id: string;
+        userId: string;
+        effectiveFrom: string;
+        baseSalary: number;
+        allowance: number;
+        socialInsurance: number;
+        otherFixedCost: number;
+      }>();
+
+      for (const row of [...input.historyRows, ...input.rows]) {
+        const key = row.id && !row.id.startsWith("draft-") ? row.id : `${row.userId}:${row.effectiveFrom}`;
+        uniqueRows.set(key, row);
+      }
+
+      for (const row of uniqueRows.values()) {
         const payload = {
           userId: row.userId,
           effectiveFrom: new Date(`${row.effectiveFrom}T00:00:00+09:00`),
@@ -289,7 +320,18 @@ export async function saveSalaryRecordBundle(input: SaveSalaryRecordInput): Prom
         otherFixedCost: row.otherFixedCost,
         total: totalOf(row),
         hasPersistedRecord: !row.id.startsWith("draft-"),
-        history: [],
+        history: input.historyRows
+          .filter((historyRow) => historyRow.userId === row.userId)
+          .map((historyRow) => ({
+            id: historyRow.id,
+            effectiveFrom: historyRow.effectiveFrom,
+            baseSalary: historyRow.baseSalary,
+            allowance: historyRow.allowance,
+            socialInsurance: historyRow.socialInsurance,
+            otherFixedCost: historyRow.otherFixedCost,
+            total: totalOf(historyRow),
+            diffFromPrevious: null,
+          })),
       })),
       source: "fallback",
     };

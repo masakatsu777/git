@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserStatus } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
@@ -8,15 +9,26 @@ export type TeamOption = {
   teamName: string;
 };
 
+export type RateHistoryRow = {
+  id: string;
+  effectiveFrom: string;
+  unitPrice: number;
+  defaultWorkRate: number;
+  outsourceAmount?: number;
+  remarks: string;
+};
+
 export type EmployeeRateRow = {
   userId: string;
   employeeCode: string;
   employeeName: string;
   teamId: string;
   teamName: string;
+  effectiveFrom: string;
   unitPrice: number;
   defaultWorkRate: number;
   remarks: string;
+  history: RateHistoryRow[];
 };
 
 export type PartnerRateRow = {
@@ -24,11 +36,13 @@ export type PartnerRateRow = {
   partnerName: string;
   jurisdictionTeamId: string;
   jurisdictionTeamName: string;
+  effectiveFrom: string;
   salesUnitPrice: number;
   defaultWorkRate: number;
   outsourceAmount: number;
   affiliation: string;
   note: string;
+  history: RateHistoryRow[];
 };
 
 export type RateSettingsBundle = {
@@ -48,6 +62,10 @@ function toNumber(value: unknown) {
   return Number(value ?? 0);
 }
 
+function formatDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
 export function canManageRateSettings(user: SessionUser) {
   return user.role === "admin" || user.role === "president" || user.role === "leader";
 }
@@ -64,9 +82,19 @@ const fallbackBundle: RateSettingsBundle = {
       employeeName: "主任 次郎",
       teamId: "team-platform",
       teamName: "プラットフォームチーム",
+      effectiveFrom: "2026-04-01",
       unitPrice: 950000,
       defaultWorkRate: 100,
       remarks: "基幹案件標準単価",
+      history: [
+        {
+          id: "demo-leader-rate-1",
+          effectiveFrom: "2026-04-01",
+          unitPrice: 950000,
+          defaultWorkRate: 100,
+          remarks: "基幹案件標準単価",
+        },
+      ],
     },
     {
       userId: "demo-member1",
@@ -74,9 +102,19 @@ const fallbackBundle: RateSettingsBundle = {
       employeeName: "開発 一郎",
       teamId: "team-platform",
       teamName: "プラットフォームチーム",
+      effectiveFrom: "2026-04-01",
       unitPrice: 800000,
       defaultWorkRate: 100,
       remarks: "開発支援標準単価",
+      history: [
+        {
+          id: "demo-member1-rate-1",
+          effectiveFrom: "2026-04-01",
+          unitPrice: 800000,
+          defaultWorkRate: 100,
+          remarks: "開発支援標準単価",
+        },
+      ],
     },
   ],
   partnerRates: [
@@ -85,11 +123,22 @@ const fallbackBundle: RateSettingsBundle = {
       partnerName: "協力会社A",
       jurisdictionTeamId: "team-platform",
       jurisdictionTeamName: "プラットフォームチーム",
+      effectiveFrom: "2026-04-01",
       salesUnitPrice: 700000,
       defaultWorkRate: 100,
       outsourceAmount: 620000,
       affiliation: "プラットフォームチーム",
       note: "標準外注費",
+      history: [
+        {
+          id: "demo-partner-rate-1",
+          effectiveFrom: "2026-04-01",
+          unitPrice: 700000,
+          defaultWorkRate: 100,
+          outsourceAmount: 620000,
+          remarks: "標準外注費",
+        },
+      ],
     },
   ],
   teamOptions: [
@@ -112,13 +161,17 @@ function filterBundle(bundle: RateSettingsBundle, user: SessionUser): RateSettin
   };
 }
 
+function latestByDate(rows: any[]) {
+  return [...rows].sort((a, b) => b.effectiveFrom.getTime() - a.effectiveFrom.getTime())[0] as any;
+}
+
 export async function getRateSettingsBundle(user: SessionUser): Promise<RateSettingsBundle> {
   if (!hasDatabaseUrl()) {
     return filterBundle(fallbackBundle, user);
   }
 
   try {
-    const [users, partners, teams] = await Promise.all([
+    const [users, partners, teams]: [any[], any[], any[]] = await Promise.all([
       prisma.user.findMany({
         where: { status: UserStatus.ACTIVE },
         orderBy: { employeeCode: "asc" },
@@ -131,15 +184,18 @@ export async function getRateSettingsBundle(user: SessionUser): Promise<RateSett
             take: 1,
             select: { teamId: true, team: { select: { name: true } } },
           },
-          employeeSalesRateSetting: {
+          employeeSalesRateSettings: {
+            orderBy: { effectiveFrom: "desc" },
             select: {
+              id: true,
+              effectiveFrom: true,
               unitPrice: true,
               defaultWorkRate: true,
               remarks: true,
             },
           },
         },
-      }),
+      } as any),
       prisma.partner.findMany({
         where: { status: "ACTIVE" },
         orderBy: { name: "asc" },
@@ -147,21 +203,27 @@ export async function getRateSettingsBundle(user: SessionUser): Promise<RateSett
           id: true,
           name: true,
           companyName: true,
-          salesRateSetting: {
+          salesRateSettings: {
+            orderBy: { effectiveFrom: "desc" },
             select: {
+              id: true,
+              effectiveFrom: true,
               unitPrice: true,
               defaultWorkRate: true,
               remarks: true,
             },
           },
-          outsourceRateSetting: {
+          outsourceRateSettings: {
+            orderBy: { effectiveFrom: "desc" },
             select: {
+              id: true,
+              effectiveFrom: true,
               amount: true,
               remarks: true,
             },
           },
         },
-      }),
+      } as any),
       prisma.team.findMany({
         where: { isActive: true },
         orderBy: { name: "asc" },
@@ -172,28 +234,61 @@ export async function getRateSettingsBundle(user: SessionUser): Promise<RateSett
     const teamNameMap = new Map(teams.map((team) => [team.id, team.name]));
 
     const bundle: RateSettingsBundle = {
-      employeeRates: users.map((user) => ({
-        userId: user.id,
-        employeeCode: user.employeeCode,
-        employeeName: user.name,
-        teamId: user.teamMemberships[0]?.teamId ?? "",
-        teamName: user.teamMemberships[0]?.team.name ?? "未所属",
-        unitPrice: toNumber(user.employeeSalesRateSetting?.unitPrice),
-        defaultWorkRate: toNumber(user.employeeSalesRateSetting?.defaultWorkRate ?? 100),
-        remarks: user.employeeSalesRateSetting?.remarks ?? "",
-      })),
-      partnerRates: partners.map((partner) => {
-        const jurisdictionTeamId = partner.salesRateSetting?.remarks ?? "";
+      employeeRates: users.map((user: any) => {
+        const latest = latestByDate(user.employeeSalesRateSettings as any);
+        return {
+          userId: user.id,
+          employeeCode: user.employeeCode,
+          employeeName: user.name,
+          teamId: user.teamMemberships[0]?.teamId ?? "",
+          teamName: user.teamMemberships[0]?.team.name ?? "未所属",
+          effectiveFrom: latest ? formatDate(latest.effectiveFrom) : "2026-04-01",
+          unitPrice: toNumber(latest?.unitPrice),
+          defaultWorkRate: toNumber(latest?.defaultWorkRate ?? 100),
+          remarks: latest?.remarks ?? "",
+          history: user.employeeSalesRateSettings.map((row: any) => ({
+            id: row.id,
+            effectiveFrom: formatDate(row.effectiveFrom),
+            unitPrice: toNumber(row.unitPrice),
+            defaultWorkRate: toNumber(row.defaultWorkRate ?? 100),
+            remarks: row.remarks ?? "",
+          })),
+        };
+      }),
+      partnerRates: partners.map((partner: any) => {
+        const latestSales = latestByDate(partner.salesRateSettings as any);
+        const latestOutsource = latestByDate(partner.outsourceRateSettings as any);
+        const currentEffectiveFrom = latestSales?.effectiveFrom ?? latestOutsource?.effectiveFrom ?? new Date("2026-04-01T00:00:00+09:00");
+        const historyDates = Array.from(new Set([
+          ...partner.salesRateSettings.map((row: any) => formatDate(row.effectiveFrom)),
+          ...partner.outsourceRateSettings.map((row: any) => formatDate(row.effectiveFrom)),
+        ])).sort((a, b) => (a < b ? 1 : -1));
+        const history = historyDates.map((effectiveFrom) => {
+          const salesRow = partner.salesRateSettings.find((row: any) => formatDate(row.effectiveFrom) === effectiveFrom);
+          const outsourceRow = partner.outsourceRateSettings.find((row: any) => formatDate(row.effectiveFrom) === effectiveFrom);
+          return {
+            id: `${salesRow?.id ?? "none"}:${outsourceRow?.id ?? "none"}`,
+            effectiveFrom,
+            unitPrice: toNumber(salesRow?.unitPrice),
+            defaultWorkRate: toNumber(salesRow?.defaultWorkRate ?? 100),
+            outsourceAmount: toNumber(outsourceRow?.amount),
+            remarks: outsourceRow?.remarks ?? salesRow?.remarks ?? "",
+          };
+        });
+
+        const jurisdictionTeamId = latestSales?.remarks ?? "";
         return {
           partnerId: partner.id,
           partnerName: partner.name,
           jurisdictionTeamId,
           jurisdictionTeamName: teamNameMap.get(jurisdictionTeamId) ?? "未設定",
-          salesUnitPrice: toNumber(partner.salesRateSetting?.unitPrice),
-          defaultWorkRate: toNumber(partner.salesRateSetting?.defaultWorkRate ?? 100),
-          outsourceAmount: toNumber(partner.outsourceRateSetting?.amount),
+          effectiveFrom: formatDate(currentEffectiveFrom),
+          salesUnitPrice: toNumber(latestSales?.unitPrice),
+          defaultWorkRate: toNumber(latestSales?.defaultWorkRate ?? 100),
+          outsourceAmount: toNumber(latestOutsource?.amount),
           affiliation: partner.companyName ?? "",
-          note: partner.outsourceRateSetting?.remarks ?? "",
+          note: latestOutsource?.remarks ?? "",
+          history,
         };
       }),
       teamOptions: teams.map((team) => ({ teamId: team.id, teamName: team.name })),
@@ -222,22 +317,11 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
             })).map((row) => row.userId),
           );
 
-      const allowedPartnerIds = canManageAllRateSettings(user)
-        ? null
-        : new Set(
-            (await tx.partnerSalesRateSetting.findMany({
-              where: { remarks: { in: user.teamIds } },
-              select: { partnerId: true },
-            })).map((row) => row.partnerId),
-          );
-
       for (const row of input.employeeRates) {
-        if (allowedUserIds && !allowedUserIds.has(row.userId)) {
-          continue;
-        }
-
-        await tx.employeeSalesRateSetting.upsert({
-          where: { userId: row.userId },
+        if (allowedUserIds && !allowedUserIds.has(row.userId)) continue;
+        const effectiveFrom = new Date(`${row.effectiveFrom}T00:00:00+09:00`);
+        await (tx.employeeSalesRateSetting as any).upsert({
+          where: { userId_effectiveFrom: { userId: row.userId, effectiveFrom } },
           update: {
             unitPrice: row.unitPrice,
             defaultWorkRate: row.defaultWorkRate,
@@ -245,6 +329,7 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
           },
           create: {
             userId: row.userId,
+            effectiveFrom,
             unitPrice: row.unitPrice,
             defaultWorkRate: row.defaultWorkRate,
             remarks: row.remarks || null,
@@ -253,41 +338,26 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
       }
 
       for (const row of input.partnerRates) {
-        if (!canManageAllRateSettings(user) && !user.teamIds.includes(row.jurisdictionTeamId)) {
-          continue;
-        }
-
+        if (!canManageAllRateSettings(user) && !user.teamIds.includes(row.jurisdictionTeamId)) continue;
         const normalizedName = row.partnerName.trim();
-        if (!normalizedName) {
-          continue;
-        }
+        if (!normalizedName) continue;
 
         const persistedPartnerId = row.partnerId.startsWith("new-") ? "" : row.partnerId;
-        if (allowedPartnerIds && persistedPartnerId && !allowedPartnerIds.has(persistedPartnerId)) {
-          continue;
-        }
-
         const partner = persistedPartnerId
           ? await tx.partner.update({
               where: { id: persistedPartnerId },
-              data: {
-                name: normalizedName,
-                companyName: row.affiliation.trim() || null,
-                status: "ACTIVE",
-              },
+              data: { name: normalizedName, companyName: row.affiliation.trim() || null, status: "ACTIVE" },
               select: { id: true },
             })
           : await tx.partner.create({
-              data: {
-                name: normalizedName,
-                companyName: row.affiliation.trim() || null,
-                status: "ACTIVE",
-              },
+              data: { name: normalizedName, companyName: row.affiliation.trim() || null, status: "ACTIVE" },
               select: { id: true },
             });
 
-        await tx.partnerSalesRateSetting.upsert({
-          where: { partnerId: partner.id },
+        const effectiveFrom = new Date(`${row.effectiveFrom}T00:00:00+09:00`);
+
+        await (tx.partnerSalesRateSetting as any).upsert({
+          where: { partnerId_effectiveFrom: { partnerId: partner.id, effectiveFrom } },
           update: {
             unitPrice: row.salesUnitPrice,
             defaultWorkRate: row.defaultWorkRate,
@@ -295,20 +365,22 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
           },
           create: {
             partnerId: partner.id,
+            effectiveFrom,
             unitPrice: row.salesUnitPrice,
             defaultWorkRate: row.defaultWorkRate,
             remarks: row.jurisdictionTeamId || null,
           },
         });
 
-        await tx.partnerOutsourceRateSetting.upsert({
-          where: { partnerId: partner.id },
+        await (tx.partnerOutsourceRateSetting as any).upsert({
+          where: { partnerId_effectiveFrom: { partnerId: partner.id, effectiveFrom } },
           update: {
             amount: row.outsourceAmount,
             remarks: row.note.trim() || null,
           },
           create: {
             partnerId: partner.id,
+            effectiveFrom,
             amount: row.outsourceAmount,
             remarks: row.note.trim() || null,
           },
@@ -316,18 +388,8 @@ export async function saveRateSettingsBundle(input: SaveRateSettingsInput, user:
       }
 
       for (const partnerId of input.deletedPartnerIds) {
-        if (!partnerId || partnerId.startsWith("new-")) {
-          continue;
-        }
-
-        if (allowedPartnerIds && !allowedPartnerIds.has(partnerId)) {
-          continue;
-        }
-
-        await tx.partner.update({
-          where: { id: partnerId },
-          data: { status: "INACTIVE" },
-        });
+        if (!partnerId || partnerId.startsWith("new-")) continue;
+        await tx.partner.update({ where: { id: partnerId }, data: { status: "INACTIVE" } });
       }
     });
 

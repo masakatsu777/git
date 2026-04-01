@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 
-import type { SalaryRecordEditorRow } from "@/lib/salary/salary-record-service";
+import type { SalaryRecordEditorRow, SalaryRecordHistoryRow } from "@/lib/salary/salary-record-service";
 
 type SalaryRecordEditorProps = {
   yearMonth: string;
@@ -22,9 +22,14 @@ function totalOf(row: Pick<SalaryRecordEditorRow, "baseSalary" | "allowance" | "
   return row.baseSalary + row.allowance + row.socialInsurance + row.otherFixedCost;
 }
 
+function historyTotalOf(row: Pick<SalaryRecordHistoryRow, "baseSalary" | "allowance" | "socialInsurance" | "otherFixedCost">) {
+  return row.baseSalary + row.allowance + row.socialInsurance + row.otherFixedCost;
+}
+
 export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecordEditorProps) {
   const router = useRouter();
   const [rows, setRows] = useState(defaults);
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
@@ -38,11 +43,74 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
         [key]: key === "effectiveFrom" ? value : toNumber(value),
       } as SalaryRecordEditorRow;
 
+      const nextHistory = row.history.map((historyRow) => historyRow.id === row.id
+        ? {
+            ...historyRow,
+            [key]: key === "effectiveFrom" ? value : toNumber(value),
+            total: historyTotalOf({
+              ...historyRow,
+              [key]: key === "effectiveFrom" ? value : toNumber(value),
+            } as SalaryRecordHistoryRow),
+          }
+        : historyRow);
+
       return {
         ...next,
         total: totalOf(next),
+        history: nextHistory,
       };
     }));
+  }
+
+  function updateHistoryRow(userId: string, historyId: string, key: keyof SalaryRecordHistoryRow, value: string) {
+    setRows((current) => current.map((row) => {
+      if (row.userId !== userId) return row;
+
+      const history = row.history.map((historyRow) => {
+        if (historyRow.id !== historyId) return historyRow;
+        const nextHistoryRow = {
+          ...historyRow,
+          [key]: key === "effectiveFrom" ? value : toNumber(value),
+        } as SalaryRecordHistoryRow;
+        return {
+          ...nextHistoryRow,
+          total: historyTotalOf(nextHistoryRow),
+        };
+      });
+
+      if (row.id !== historyId) {
+        return { ...row, history };
+      }
+
+      const currentHistory = history.find((historyRow) => historyRow.id === historyId);
+      if (!currentHistory) {
+        return { ...row, history };
+      }
+
+      return {
+        ...row,
+        effectiveFrom: currentHistory.effectiveFrom,
+        baseSalary: currentHistory.baseSalary,
+        allowance: currentHistory.allowance,
+        socialInsurance: currentHistory.socialInsurance,
+        otherFixedCost: currentHistory.otherFixedCost,
+        total: currentHistory.total,
+        history,
+      };
+    }));
+  }
+
+  function removeHistoryRow(userId: string, historyId: string) {
+    setRows((current) => current.map((row) => {
+      if (row.userId !== userId) return row;
+      return {
+        ...row,
+        history: row.history.filter((historyRow) => historyRow.id !== historyId),
+      };
+    }));
+    if (!historyId.startsWith("draft-")) {
+      setDeletedIds((current) => Array.from(new Set([...current, historyId])));
+    }
   }
 
   async function handleSave() {
@@ -63,6 +131,16 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
             socialInsurance: row.socialInsurance,
             otherFixedCost: row.otherFixedCost,
           })),
+          historyRows: rows.flatMap((row) => row.history.map((historyRow) => ({
+            id: historyRow.id,
+            userId: row.userId,
+            effectiveFrom: historyRow.effectiveFrom,
+            baseSalary: historyRow.baseSalary,
+            allowance: historyRow.allowance,
+            socialInsurance: historyRow.socialInsurance,
+            otherFixedCost: historyRow.otherFixedCost,
+          }))),
+          deletedIds,
         }),
       });
 
@@ -70,6 +148,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
       setMessage(result.message ?? (response.ok ? "保存しました" : "保存に失敗しました"));
 
       if (response.ok) {
+        setDeletedIds([]);
         router.refresh();
       }
     });
@@ -151,7 +230,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
                           {row.history.length > 0 ? (
                             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
                               <div className="overflow-x-auto">
-                                <table className="min-w-[760px] text-left text-xs sm:text-sm">
+                                <table className="min-w-[980px] text-left text-xs sm:text-sm">
                                   <thead className="bg-slate-50 text-slate-500">
                                     <tr>
                                       <th className="px-3 py-2 font-medium">適用開始日</th>
@@ -161,22 +240,56 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
                                       <th className="px-3 py-2 font-medium">その他固定費</th>
                                       <th className="px-3 py-2 font-medium">合計</th>
                                       <th className="px-3 py-2 font-medium">前回差額</th>
+                                      <th className="px-3 py-2 font-medium">操作</th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {row.history.map((historyRow) => (
-                                      <tr key={historyRow.id} className="border-t border-slate-100">
-                                        <td className="px-3 py-2 text-slate-700">{historyRow.effectiveFrom}</td>
-                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.baseSalary)}</td>
-                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.allowance)}</td>
-                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.socialInsurance)}</td>
-                                        <td className="px-3 py-2 text-slate-700">{formatCurrencyWithUnit(historyRow.otherFixedCost)}</td>
-                                        <td className="px-3 py-2 font-semibold text-slate-950">{formatCurrencyWithUnit(historyRow.total)}</td>
-                                        <td className={`px-3 py-2 font-semibold ${historyRow.diffFromPrevious === null || historyRow.diffFromPrevious === 0 ? "text-slate-500" : historyRow.diffFromPrevious > 0 ? "text-emerald-700" : "text-rose-700"}`}>
-                                          {historyRow.diffFromPrevious === null ? "-" : formatSignedCurrencyWithUnit(historyRow.diffFromPrevious)}
-                                        </td>
-                                      </tr>
-                                    ))}
+                                    {row.history.map((historyRow) => {
+                                      const isCurrentHistory = historyRow.id === row.id;
+                                      return (
+                                        <tr key={historyRow.id} className="border-t border-slate-100">
+                                          <td className="px-3 py-2 text-slate-700">
+                                            <input
+                                              type="date"
+                                              value={historyRow.effectiveFrom}
+                                              disabled={!canEdit || isPending}
+                                              onChange={(event) => updateHistoryRow(row.userId, historyRow.id, "effectiveFrom", event.target.value)}
+                                              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                                            />
+                                          </td>
+                                          <td className="px-3 py-2 text-slate-700">
+                                            <input type="number" value={historyRow.baseSalary} disabled={!canEdit || isPending} onChange={(event) => updateHistoryRow(row.userId, historyRow.id, "baseSalary", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                                          </td>
+                                          <td className="px-3 py-2 text-slate-700">
+                                            <input type="number" value={historyRow.allowance} disabled={!canEdit || isPending} onChange={(event) => updateHistoryRow(row.userId, historyRow.id, "allowance", event.target.value)} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                                          </td>
+                                          <td className="px-3 py-2 text-slate-700">
+                                            <input type="number" value={historyRow.socialInsurance} disabled={!canEdit || isPending} onChange={(event) => updateHistoryRow(row.userId, historyRow.id, "socialInsurance", event.target.value)} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                                          </td>
+                                          <td className="px-3 py-2 text-slate-700">
+                                            <input type="number" value={historyRow.otherFixedCost} disabled={!canEdit || isPending} onChange={(event) => updateHistoryRow(row.userId, historyRow.id, "otherFixedCost", event.target.value)} className="w-24 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
+                                          </td>
+                                          <td className="px-3 py-2 font-semibold text-slate-950">{formatCurrencyWithUnit(historyRow.total)}</td>
+                                          <td className={`px-3 py-2 font-semibold ${historyRow.diffFromPrevious === null || historyRow.diffFromPrevious === 0 ? "text-slate-500" : historyRow.diffFromPrevious > 0 ? "text-emerald-700" : "text-rose-700"}`}>
+                                            {historyRow.diffFromPrevious === null ? "-" : formatSignedCurrencyWithUnit(historyRow.diffFromPrevious)}
+                                          </td>
+                                          <td className="px-3 py-2">
+                                            {canEdit && !isCurrentHistory ? (
+                                              <button
+                                                type="button"
+                                                onClick={() => removeHistoryRow(row.userId, historyRow.id)}
+                                                disabled={isPending}
+                                                className="rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600"
+                                              >
+                                                削除
+                                              </button>
+                                            ) : (
+                                              <span className="text-xs text-slate-400">{isCurrentHistory ? "現在値" : "-"}</span>
+                                            )}
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
                                   </tbody>
                                 </table>
                               </div>
@@ -206,4 +319,3 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
     </section>
   );
 }
-

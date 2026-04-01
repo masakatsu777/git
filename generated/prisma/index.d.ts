@@ -3956,6 +3956,7 @@ export namespace Prisma {
     monthlyAssignments: number
     departmentUnassignedMonthlyAssignments: number
     monthlyCosts: number
+    employeeSalesRateSettings: number
     approvalLogs: number
     auditLogs: number
   }
@@ -3971,6 +3972,7 @@ export namespace Prisma {
     monthlyAssignments?: boolean | UserCountOutputTypeCountMonthlyAssignmentsArgs
     departmentUnassignedMonthlyAssignments?: boolean | UserCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs
     monthlyCosts?: boolean | UserCountOutputTypeCountMonthlyCostsArgs
+    employeeSalesRateSettings?: boolean | UserCountOutputTypeCountEmployeeSalesRateSettingsArgs
     approvalLogs?: boolean | UserCountOutputTypeCountApprovalLogsArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   }
@@ -4054,6 +4056,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountMonthlyCostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MonthlyCostWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountEmployeeSalesRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmployeeSalesRateSettingWhereInput
   }
 
   /**
@@ -4560,12 +4569,16 @@ export namespace Prisma {
     monthlyAssignments: number
     departmentUnassignedMonthlyAssignments: number
     monthlyCosts: number
+    salesRateSettings: number
+    outsourceRateSettings: number
   }
 
   export type PartnerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     monthlyAssignments?: boolean | PartnerCountOutputTypeCountMonthlyAssignmentsArgs
     departmentUnassignedMonthlyAssignments?: boolean | PartnerCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs
     monthlyCosts?: boolean | PartnerCountOutputTypeCountMonthlyCostsArgs
+    salesRateSettings?: boolean | PartnerCountOutputTypeCountSalesRateSettingsArgs
+    outsourceRateSettings?: boolean | PartnerCountOutputTypeCountOutsourceRateSettingsArgs
   }
 
   // Custom InputTypes
@@ -4598,6 +4611,20 @@ export namespace Prisma {
    */
   export type PartnerCountOutputTypeCountMonthlyCostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MonthlyCostWhereInput
+  }
+
+  /**
+   * PartnerCountOutputType without action
+   */
+  export type PartnerCountOutputTypeCountSalesRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerSalesRateSettingWhereInput
+  }
+
+  /**
+   * PartnerCountOutputType without action
+   */
+  export type PartnerCountOutputTypeCountOutsourceRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerOutsourceRateSettingWhereInput
   }
 
 
@@ -4878,7 +4905,7 @@ export namespace Prisma {
     monthlyAssignments?: boolean | User$monthlyAssignmentsArgs<ExtArgs>
     departmentUnassignedMonthlyAssignments?: boolean | User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | User$monthlyCostsArgs<ExtArgs>
-    employeeSalesRateSetting?: boolean | User$employeeSalesRateSettingArgs<ExtArgs>
+    employeeSalesRateSettings?: boolean | User$employeeSalesRateSettingsArgs<ExtArgs>
     approvalLogs?: boolean | User$approvalLogsArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -4950,7 +4977,7 @@ export namespace Prisma {
     monthlyAssignments?: boolean | User$monthlyAssignmentsArgs<ExtArgs>
     departmentUnassignedMonthlyAssignments?: boolean | User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | User$monthlyCostsArgs<ExtArgs>
-    employeeSalesRateSetting?: boolean | User$employeeSalesRateSettingArgs<ExtArgs>
+    employeeSalesRateSettings?: boolean | User$employeeSalesRateSettingsArgs<ExtArgs>
     approvalLogs?: boolean | User$approvalLogsArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -4982,7 +5009,7 @@ export namespace Prisma {
       monthlyAssignments: Prisma.$MonthlyAssignmentPayload<ExtArgs>[]
       departmentUnassignedMonthlyAssignments: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>[]
       monthlyCosts: Prisma.$MonthlyCostPayload<ExtArgs>[]
-      employeeSalesRateSetting: Prisma.$EmployeeSalesRateSettingPayload<ExtArgs> | null
+      employeeSalesRateSettings: Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>[]
       approvalLogs: Prisma.$ApprovalLogPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     }
@@ -5406,7 +5433,7 @@ export namespace Prisma {
     monthlyAssignments<T extends User$monthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$monthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     departmentUnassignedMonthlyAssignments<T extends User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyCosts<T extends User$monthlyCostsArgs<ExtArgs> = {}>(args?: Subset<T, User$monthlyCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    employeeSalesRateSetting<T extends User$employeeSalesRateSettingArgs<ExtArgs> = {}>(args?: Subset<T, User$employeeSalesRateSettingArgs<ExtArgs>>): Prisma__EmployeeSalesRateSettingClient<$Result.GetResult<Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    employeeSalesRateSettings<T extends User$employeeSalesRateSettingsArgs<ExtArgs> = {}>(args?: Subset<T, User$employeeSalesRateSettingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     approvalLogs<T extends User$approvalLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$approvalLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -6124,9 +6151,9 @@ export namespace Prisma {
   }
 
   /**
-   * User.employeeSalesRateSetting
+   * User.employeeSalesRateSettings
    */
-  export type User$employeeSalesRateSettingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$employeeSalesRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the EmployeeSalesRateSetting
      */
@@ -6140,6 +6167,11 @@ export namespace Prisma {
      */
     include?: EmployeeSalesRateSettingInclude<ExtArgs> | null
     where?: EmployeeSalesRateSettingWhereInput
+    orderBy?: EmployeeSalesRateSettingOrderByWithRelationInput | EmployeeSalesRateSettingOrderByWithRelationInput[]
+    cursor?: EmployeeSalesRateSettingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmployeeSalesRateSettingScalarFieldEnum | EmployeeSalesRateSettingScalarFieldEnum[]
   }
 
   /**
@@ -25442,8 +25474,8 @@ export namespace Prisma {
     monthlyAssignments?: boolean | Partner$monthlyAssignmentsArgs<ExtArgs>
     departmentUnassignedMonthlyAssignments?: boolean | Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | Partner$monthlyCostsArgs<ExtArgs>
-    salesRateSetting?: boolean | Partner$salesRateSettingArgs<ExtArgs>
-    outsourceRateSetting?: boolean | Partner$outsourceRateSettingArgs<ExtArgs>
+    salesRateSettings?: boolean | Partner$salesRateSettingsArgs<ExtArgs>
+    outsourceRateSettings?: boolean | Partner$outsourceRateSettingsArgs<ExtArgs>
     _count?: boolean | PartnerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["partner"]>
 
@@ -25479,8 +25511,8 @@ export namespace Prisma {
     monthlyAssignments?: boolean | Partner$monthlyAssignmentsArgs<ExtArgs>
     departmentUnassignedMonthlyAssignments?: boolean | Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | Partner$monthlyCostsArgs<ExtArgs>
-    salesRateSetting?: boolean | Partner$salesRateSettingArgs<ExtArgs>
-    outsourceRateSetting?: boolean | Partner$outsourceRateSettingArgs<ExtArgs>
+    salesRateSettings?: boolean | Partner$salesRateSettingsArgs<ExtArgs>
+    outsourceRateSettings?: boolean | Partner$outsourceRateSettingsArgs<ExtArgs>
     _count?: boolean | PartnerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type PartnerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -25492,8 +25524,8 @@ export namespace Prisma {
       monthlyAssignments: Prisma.$MonthlyAssignmentPayload<ExtArgs>[]
       departmentUnassignedMonthlyAssignments: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>[]
       monthlyCosts: Prisma.$MonthlyCostPayload<ExtArgs>[]
-      salesRateSetting: Prisma.$PartnerSalesRateSettingPayload<ExtArgs> | null
-      outsourceRateSetting: Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs> | null
+      salesRateSettings: Prisma.$PartnerSalesRateSettingPayload<ExtArgs>[]
+      outsourceRateSettings: Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -25899,8 +25931,8 @@ export namespace Prisma {
     monthlyAssignments<T extends Partner$monthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$monthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     departmentUnassignedMonthlyAssignments<T extends Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyCosts<T extends Partner$monthlyCostsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$monthlyCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    salesRateSetting<T extends Partner$salesRateSettingArgs<ExtArgs> = {}>(args?: Subset<T, Partner$salesRateSettingArgs<ExtArgs>>): Prisma__PartnerSalesRateSettingClient<$Result.GetResult<Prisma.$PartnerSalesRateSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    outsourceRateSetting<T extends Partner$outsourceRateSettingArgs<ExtArgs> = {}>(args?: Subset<T, Partner$outsourceRateSettingArgs<ExtArgs>>): Prisma__PartnerOutsourceRateSettingClient<$Result.GetResult<Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    salesRateSettings<T extends Partner$salesRateSettingsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$salesRateSettingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerSalesRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    outsourceRateSettings<T extends Partner$outsourceRateSettingsArgs<ExtArgs> = {}>(args?: Subset<T, Partner$outsourceRateSettingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -26396,9 +26428,9 @@ export namespace Prisma {
   }
 
   /**
-   * Partner.salesRateSetting
+   * Partner.salesRateSettings
    */
-  export type Partner$salesRateSettingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Partner$salesRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the PartnerSalesRateSetting
      */
@@ -26412,12 +26444,17 @@ export namespace Prisma {
      */
     include?: PartnerSalesRateSettingInclude<ExtArgs> | null
     where?: PartnerSalesRateSettingWhereInput
+    orderBy?: PartnerSalesRateSettingOrderByWithRelationInput | PartnerSalesRateSettingOrderByWithRelationInput[]
+    cursor?: PartnerSalesRateSettingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PartnerSalesRateSettingScalarFieldEnum | PartnerSalesRateSettingScalarFieldEnum[]
   }
 
   /**
-   * Partner.outsourceRateSetting
+   * Partner.outsourceRateSettings
    */
-  export type Partner$outsourceRateSettingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Partner$outsourceRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the PartnerOutsourceRateSetting
      */
@@ -26431,6 +26468,11 @@ export namespace Prisma {
      */
     include?: PartnerOutsourceRateSettingInclude<ExtArgs> | null
     where?: PartnerOutsourceRateSettingWhereInput
+    orderBy?: PartnerOutsourceRateSettingOrderByWithRelationInput | PartnerOutsourceRateSettingOrderByWithRelationInput[]
+    cursor?: PartnerOutsourceRateSettingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PartnerOutsourceRateSettingScalarFieldEnum | PartnerOutsourceRateSettingScalarFieldEnum[]
   }
 
   /**
@@ -40501,7 +40543,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingMinAggregateOutputType = {
+    id: string | null
     userId: string | null
+    effectiveFrom: Date | null
     unitPrice: number | null
     defaultWorkRate: number | null
     remarks: string | null
@@ -40510,7 +40554,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingMaxAggregateOutputType = {
+    id: string | null
     userId: string | null
+    effectiveFrom: Date | null
     unitPrice: number | null
     defaultWorkRate: number | null
     remarks: string | null
@@ -40519,7 +40565,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingCountAggregateOutputType = {
+    id: number
     userId: number
+    effectiveFrom: number
     unitPrice: number
     defaultWorkRate: number
     remarks: number
@@ -40540,7 +40588,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingMinAggregateInputType = {
+    id?: true
     userId?: true
+    effectiveFrom?: true
     unitPrice?: true
     defaultWorkRate?: true
     remarks?: true
@@ -40549,7 +40599,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingMaxAggregateInputType = {
+    id?: true
     userId?: true
+    effectiveFrom?: true
     unitPrice?: true
     defaultWorkRate?: true
     remarks?: true
@@ -40558,7 +40610,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingCountAggregateInputType = {
+    id?: true
     userId?: true
+    effectiveFrom?: true
     unitPrice?: true
     defaultWorkRate?: true
     remarks?: true
@@ -40654,7 +40708,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingGroupByOutputType = {
+    id: string
     userId: string
+    effectiveFrom: Date
     unitPrice: number
     defaultWorkRate: number
     remarks: string | null
@@ -40682,7 +40738,9 @@ export namespace Prisma {
 
 
   export type EmployeeSalesRateSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     userId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -40692,7 +40750,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["employeeSalesRateSetting"]>
 
   export type EmployeeSalesRateSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     userId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -40702,7 +40762,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["employeeSalesRateSetting"]>
 
   export type EmployeeSalesRateSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     userId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -40712,7 +40774,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["employeeSalesRateSetting"]>
 
   export type EmployeeSalesRateSettingSelectScalar = {
+    id?: boolean
     userId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -40720,7 +40784,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type EmployeeSalesRateSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "unitPrice" | "defaultWorkRate" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeSalesRateSetting"]>
+  export type EmployeeSalesRateSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "effectiveFrom" | "unitPrice" | "defaultWorkRate" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["employeeSalesRateSetting"]>
   export type EmployeeSalesRateSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -40737,7 +40801,9 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
+      id: string
       userId: string
+      effectiveFrom: Date
       unitPrice: number
       defaultWorkRate: number
       remarks: string | null
@@ -40826,8 +40892,8 @@ export namespace Prisma {
      * // Get first 10 EmployeeSalesRateSettings
      * const employeeSalesRateSettings = await prisma.employeeSalesRateSetting.findMany({ take: 10 })
      * 
-     * // Only select the `userId`
-     * const employeeSalesRateSettingWithUserIdOnly = await prisma.employeeSalesRateSetting.findMany({ select: { userId: true } })
+     * // Only select the `id`
+     * const employeeSalesRateSettingWithIdOnly = await prisma.employeeSalesRateSetting.findMany({ select: { id: true } })
      * 
      */
     findMany<T extends EmployeeSalesRateSettingFindManyArgs>(args?: SelectSubset<T, EmployeeSalesRateSettingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -40871,9 +40937,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many EmployeeSalesRateSettings and only return the `userId`
-     * const employeeSalesRateSettingWithUserIdOnly = await prisma.employeeSalesRateSetting.createManyAndReturn({
-     *   select: { userId: true },
+     * // Create many EmployeeSalesRateSettings and only return the `id`
+     * const employeeSalesRateSettingWithIdOnly = await prisma.employeeSalesRateSetting.createManyAndReturn({
+     *   select: { id: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -40962,9 +41028,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more EmployeeSalesRateSettings and only return the `userId`
-     * const employeeSalesRateSettingWithUserIdOnly = await prisma.employeeSalesRateSetting.updateManyAndReturn({
-     *   select: { userId: true },
+     * // Update zero or more EmployeeSalesRateSettings and only return the `id`
+     * const employeeSalesRateSettingWithIdOnly = await prisma.employeeSalesRateSetting.updateManyAndReturn({
+     *   select: { id: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -41167,7 +41233,9 @@ export namespace Prisma {
    * Fields of the EmployeeSalesRateSetting model
    */
   interface EmployeeSalesRateSettingFieldRefs {
+    readonly id: FieldRef<"EmployeeSalesRateSetting", 'String'>
     readonly userId: FieldRef<"EmployeeSalesRateSetting", 'String'>
+    readonly effectiveFrom: FieldRef<"EmployeeSalesRateSetting", 'DateTime'>
     readonly unitPrice: FieldRef<"EmployeeSalesRateSetting", 'Int'>
     readonly defaultWorkRate: FieldRef<"EmployeeSalesRateSetting", 'Int'>
     readonly remarks: FieldRef<"EmployeeSalesRateSetting", 'String'>
@@ -41610,7 +41678,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingMinAggregateOutputType = {
+    id: string | null
     partnerId: string | null
+    effectiveFrom: Date | null
     unitPrice: number | null
     defaultWorkRate: number | null
     remarks: string | null
@@ -41619,7 +41689,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingMaxAggregateOutputType = {
+    id: string | null
     partnerId: string | null
+    effectiveFrom: Date | null
     unitPrice: number | null
     defaultWorkRate: number | null
     remarks: string | null
@@ -41628,7 +41700,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingCountAggregateOutputType = {
+    id: number
     partnerId: number
+    effectiveFrom: number
     unitPrice: number
     defaultWorkRate: number
     remarks: number
@@ -41649,7 +41723,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingMinAggregateInputType = {
+    id?: true
     partnerId?: true
+    effectiveFrom?: true
     unitPrice?: true
     defaultWorkRate?: true
     remarks?: true
@@ -41658,7 +41734,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingMaxAggregateInputType = {
+    id?: true
     partnerId?: true
+    effectiveFrom?: true
     unitPrice?: true
     defaultWorkRate?: true
     remarks?: true
@@ -41667,7 +41745,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingCountAggregateInputType = {
+    id?: true
     partnerId?: true
+    effectiveFrom?: true
     unitPrice?: true
     defaultWorkRate?: true
     remarks?: true
@@ -41763,7 +41843,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingGroupByOutputType = {
+    id: string
     partnerId: string
+    effectiveFrom: Date
     unitPrice: number
     defaultWorkRate: number
     remarks: string | null
@@ -41791,7 +41873,9 @@ export namespace Prisma {
 
 
   export type PartnerSalesRateSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -41801,7 +41885,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["partnerSalesRateSetting"]>
 
   export type PartnerSalesRateSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -41811,7 +41897,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["partnerSalesRateSetting"]>
 
   export type PartnerSalesRateSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -41821,7 +41909,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["partnerSalesRateSetting"]>
 
   export type PartnerSalesRateSettingSelectScalar = {
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     unitPrice?: boolean
     defaultWorkRate?: boolean
     remarks?: boolean
@@ -41829,7 +41919,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type PartnerSalesRateSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"partnerId" | "unitPrice" | "defaultWorkRate" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["partnerSalesRateSetting"]>
+  export type PartnerSalesRateSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "partnerId" | "effectiveFrom" | "unitPrice" | "defaultWorkRate" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["partnerSalesRateSetting"]>
   export type PartnerSalesRateSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     partner?: boolean | PartnerDefaultArgs<ExtArgs>
   }
@@ -41846,7 +41936,9 @@ export namespace Prisma {
       partner: Prisma.$PartnerPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
+      id: string
       partnerId: string
+      effectiveFrom: Date
       unitPrice: number
       defaultWorkRate: number
       remarks: string | null
@@ -41935,8 +42027,8 @@ export namespace Prisma {
      * // Get first 10 PartnerSalesRateSettings
      * const partnerSalesRateSettings = await prisma.partnerSalesRateSetting.findMany({ take: 10 })
      * 
-     * // Only select the `partnerId`
-     * const partnerSalesRateSettingWithPartnerIdOnly = await prisma.partnerSalesRateSetting.findMany({ select: { partnerId: true } })
+     * // Only select the `id`
+     * const partnerSalesRateSettingWithIdOnly = await prisma.partnerSalesRateSetting.findMany({ select: { id: true } })
      * 
      */
     findMany<T extends PartnerSalesRateSettingFindManyArgs>(args?: SelectSubset<T, PartnerSalesRateSettingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerSalesRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -41980,9 +42072,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many PartnerSalesRateSettings and only return the `partnerId`
-     * const partnerSalesRateSettingWithPartnerIdOnly = await prisma.partnerSalesRateSetting.createManyAndReturn({
-     *   select: { partnerId: true },
+     * // Create many PartnerSalesRateSettings and only return the `id`
+     * const partnerSalesRateSettingWithIdOnly = await prisma.partnerSalesRateSetting.createManyAndReturn({
+     *   select: { id: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -42071,9 +42163,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more PartnerSalesRateSettings and only return the `partnerId`
-     * const partnerSalesRateSettingWithPartnerIdOnly = await prisma.partnerSalesRateSetting.updateManyAndReturn({
-     *   select: { partnerId: true },
+     * // Update zero or more PartnerSalesRateSettings and only return the `id`
+     * const partnerSalesRateSettingWithIdOnly = await prisma.partnerSalesRateSetting.updateManyAndReturn({
+     *   select: { id: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -42276,7 +42368,9 @@ export namespace Prisma {
    * Fields of the PartnerSalesRateSetting model
    */
   interface PartnerSalesRateSettingFieldRefs {
+    readonly id: FieldRef<"PartnerSalesRateSetting", 'String'>
     readonly partnerId: FieldRef<"PartnerSalesRateSetting", 'String'>
+    readonly effectiveFrom: FieldRef<"PartnerSalesRateSetting", 'DateTime'>
     readonly unitPrice: FieldRef<"PartnerSalesRateSetting", 'Int'>
     readonly defaultWorkRate: FieldRef<"PartnerSalesRateSetting", 'Int'>
     readonly remarks: FieldRef<"PartnerSalesRateSetting", 'String'>
@@ -42717,7 +42811,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingMinAggregateOutputType = {
+    id: string | null
     partnerId: string | null
+    effectiveFrom: Date | null
     amount: number | null
     remarks: string | null
     createdAt: Date | null
@@ -42725,7 +42821,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingMaxAggregateOutputType = {
+    id: string | null
     partnerId: string | null
+    effectiveFrom: Date | null
     amount: number | null
     remarks: string | null
     createdAt: Date | null
@@ -42733,7 +42831,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingCountAggregateOutputType = {
+    id: number
     partnerId: number
+    effectiveFrom: number
     amount: number
     remarks: number
     createdAt: number
@@ -42751,7 +42851,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingMinAggregateInputType = {
+    id?: true
     partnerId?: true
+    effectiveFrom?: true
     amount?: true
     remarks?: true
     createdAt?: true
@@ -42759,7 +42861,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingMaxAggregateInputType = {
+    id?: true
     partnerId?: true
+    effectiveFrom?: true
     amount?: true
     remarks?: true
     createdAt?: true
@@ -42767,7 +42871,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingCountAggregateInputType = {
+    id?: true
     partnerId?: true
+    effectiveFrom?: true
     amount?: true
     remarks?: true
     createdAt?: true
@@ -42862,7 +42968,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingGroupByOutputType = {
+    id: string
     partnerId: string
+    effectiveFrom: Date
     amount: number
     remarks: string | null
     createdAt: Date
@@ -42889,7 +42997,9 @@ export namespace Prisma {
 
 
   export type PartnerOutsourceRateSettingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     amount?: boolean
     remarks?: boolean
     createdAt?: boolean
@@ -42898,7 +43008,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["partnerOutsourceRateSetting"]>
 
   export type PartnerOutsourceRateSettingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     amount?: boolean
     remarks?: boolean
     createdAt?: boolean
@@ -42907,7 +43019,9 @@ export namespace Prisma {
   }, ExtArgs["result"]["partnerOutsourceRateSetting"]>
 
   export type PartnerOutsourceRateSettingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     amount?: boolean
     remarks?: boolean
     createdAt?: boolean
@@ -42916,14 +43030,16 @@ export namespace Prisma {
   }, ExtArgs["result"]["partnerOutsourceRateSetting"]>
 
   export type PartnerOutsourceRateSettingSelectScalar = {
+    id?: boolean
     partnerId?: boolean
+    effectiveFrom?: boolean
     amount?: boolean
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type PartnerOutsourceRateSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"partnerId" | "amount" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["partnerOutsourceRateSetting"]>
+  export type PartnerOutsourceRateSettingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "partnerId" | "effectiveFrom" | "amount" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["partnerOutsourceRateSetting"]>
   export type PartnerOutsourceRateSettingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     partner?: boolean | PartnerDefaultArgs<ExtArgs>
   }
@@ -42940,7 +43056,9 @@ export namespace Prisma {
       partner: Prisma.$PartnerPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
+      id: string
       partnerId: string
+      effectiveFrom: Date
       amount: number
       remarks: string | null
       createdAt: Date
@@ -43028,8 +43146,8 @@ export namespace Prisma {
      * // Get first 10 PartnerOutsourceRateSettings
      * const partnerOutsourceRateSettings = await prisma.partnerOutsourceRateSetting.findMany({ take: 10 })
      * 
-     * // Only select the `partnerId`
-     * const partnerOutsourceRateSettingWithPartnerIdOnly = await prisma.partnerOutsourceRateSetting.findMany({ select: { partnerId: true } })
+     * // Only select the `id`
+     * const partnerOutsourceRateSettingWithIdOnly = await prisma.partnerOutsourceRateSetting.findMany({ select: { id: true } })
      * 
      */
     findMany<T extends PartnerOutsourceRateSettingFindManyArgs>(args?: SelectSubset<T, PartnerOutsourceRateSettingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerOutsourceRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -43073,9 +43191,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many PartnerOutsourceRateSettings and only return the `partnerId`
-     * const partnerOutsourceRateSettingWithPartnerIdOnly = await prisma.partnerOutsourceRateSetting.createManyAndReturn({
-     *   select: { partnerId: true },
+     * // Create many PartnerOutsourceRateSettings and only return the `id`
+     * const partnerOutsourceRateSettingWithIdOnly = await prisma.partnerOutsourceRateSetting.createManyAndReturn({
+     *   select: { id: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -43164,9 +43282,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more PartnerOutsourceRateSettings and only return the `partnerId`
-     * const partnerOutsourceRateSettingWithPartnerIdOnly = await prisma.partnerOutsourceRateSetting.updateManyAndReturn({
-     *   select: { partnerId: true },
+     * // Update zero or more PartnerOutsourceRateSettings and only return the `id`
+     * const partnerOutsourceRateSettingWithIdOnly = await prisma.partnerOutsourceRateSetting.updateManyAndReturn({
+     *   select: { id: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -43369,7 +43487,9 @@ export namespace Prisma {
    * Fields of the PartnerOutsourceRateSetting model
    */
   interface PartnerOutsourceRateSettingFieldRefs {
+    readonly id: FieldRef<"PartnerOutsourceRateSetting", 'String'>
     readonly partnerId: FieldRef<"PartnerOutsourceRateSetting", 'String'>
+    readonly effectiveFrom: FieldRef<"PartnerOutsourceRateSetting", 'DateTime'>
     readonly amount: FieldRef<"PartnerOutsourceRateSetting", 'Int'>
     readonly remarks: FieldRef<"PartnerOutsourceRateSetting", 'String'>
     readonly createdAt: FieldRef<"PartnerOutsourceRateSetting", 'DateTime'>
@@ -44251,7 +44371,9 @@ export namespace Prisma {
 
 
   export const EmployeeSalesRateSettingScalarFieldEnum: {
+    id: 'id',
     userId: 'userId',
+    effectiveFrom: 'effectiveFrom',
     unitPrice: 'unitPrice',
     defaultWorkRate: 'defaultWorkRate',
     remarks: 'remarks',
@@ -44263,7 +44385,9 @@ export namespace Prisma {
 
 
   export const PartnerSalesRateSettingScalarFieldEnum: {
+    id: 'id',
     partnerId: 'partnerId',
+    effectiveFrom: 'effectiveFrom',
     unitPrice: 'unitPrice',
     defaultWorkRate: 'defaultWorkRate',
     remarks: 'remarks',
@@ -44275,7 +44399,9 @@ export namespace Prisma {
 
 
   export const PartnerOutsourceRateSettingScalarFieldEnum: {
+    id: 'id',
     partnerId: 'partnerId',
+    effectiveFrom: 'effectiveFrom',
     amount: 'amount',
     remarks: 'remarks',
     createdAt: 'createdAt',
@@ -44636,7 +44762,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
-    employeeSalesRateSetting?: XOR<EmployeeSalesRateSettingNullableScalarRelationFilter, EmployeeSalesRateSettingWhereInput> | null
+    employeeSalesRateSettings?: EmployeeSalesRateSettingListRelationFilter
     approvalLogs?: ApprovalLogListRelationFilter
     auditLogs?: AuditLogListRelationFilter
   }
@@ -44667,7 +44793,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentOrderByRelationAggregateInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput
     monthlyCosts?: MonthlyCostOrderByRelationAggregateInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingOrderByWithRelationInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingOrderByRelationAggregateInput
     approvalLogs?: ApprovalLogOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
   }
@@ -44701,7 +44827,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
-    employeeSalesRateSetting?: XOR<EmployeeSalesRateSettingNullableScalarRelationFilter, EmployeeSalesRateSettingWhereInput> | null
+    employeeSalesRateSettings?: EmployeeSalesRateSettingListRelationFilter
     approvalLogs?: ApprovalLogListRelationFilter
     auditLogs?: AuditLogListRelationFilter
   }, "id" | "email" | "employeeCode">
@@ -46055,8 +46181,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
-    salesRateSetting?: XOR<PartnerSalesRateSettingNullableScalarRelationFilter, PartnerSalesRateSettingWhereInput> | null
-    outsourceRateSetting?: XOR<PartnerOutsourceRateSettingNullableScalarRelationFilter, PartnerOutsourceRateSettingWhereInput> | null
+    salesRateSettings?: PartnerSalesRateSettingListRelationFilter
+    outsourceRateSettings?: PartnerOutsourceRateSettingListRelationFilter
   }
 
   export type PartnerOrderByWithRelationInput = {
@@ -46069,8 +46195,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentOrderByRelationAggregateInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput
     monthlyCosts?: MonthlyCostOrderByRelationAggregateInput
-    salesRateSetting?: PartnerSalesRateSettingOrderByWithRelationInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingOrderByWithRelationInput
+    salesRateSettings?: PartnerSalesRateSettingOrderByRelationAggregateInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingOrderByRelationAggregateInput
   }
 
   export type PartnerWhereUniqueInput = Prisma.AtLeast<{
@@ -46086,8 +46212,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentListRelationFilter
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
-    salesRateSetting?: XOR<PartnerSalesRateSettingNullableScalarRelationFilter, PartnerSalesRateSettingWhereInput> | null
-    outsourceRateSetting?: XOR<PartnerOutsourceRateSettingNullableScalarRelationFilter, PartnerOutsourceRateSettingWhereInput> | null
+    salesRateSettings?: PartnerSalesRateSettingListRelationFilter
+    outsourceRateSettings?: PartnerOutsourceRateSettingListRelationFilter
   }, "id">
 
   export type PartnerOrderByWithAggregationInput = {
@@ -47092,7 +47218,9 @@ export namespace Prisma {
     AND?: EmployeeSalesRateSettingWhereInput | EmployeeSalesRateSettingWhereInput[]
     OR?: EmployeeSalesRateSettingWhereInput[]
     NOT?: EmployeeSalesRateSettingWhereInput | EmployeeSalesRateSettingWhereInput[]
+    id?: StringFilter<"EmployeeSalesRateSetting"> | string
     userId?: StringFilter<"EmployeeSalesRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
     unitPrice?: IntFilter<"EmployeeSalesRateSetting"> | number
     defaultWorkRate?: IntFilter<"EmployeeSalesRateSetting"> | number
     remarks?: StringNullableFilter<"EmployeeSalesRateSetting"> | string | null
@@ -47102,7 +47230,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingOrderByWithRelationInput = {
+    id?: SortOrder
     userId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrderInput | SortOrder
@@ -47112,20 +47242,25 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingWhereUniqueInput = Prisma.AtLeast<{
-    userId?: string
+    id?: string
+    userId_effectiveFrom?: EmployeeSalesRateSettingUserIdEffectiveFromCompoundUniqueInput
     AND?: EmployeeSalesRateSettingWhereInput | EmployeeSalesRateSettingWhereInput[]
     OR?: EmployeeSalesRateSettingWhereInput[]
     NOT?: EmployeeSalesRateSettingWhereInput | EmployeeSalesRateSettingWhereInput[]
+    userId?: StringFilter<"EmployeeSalesRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
     unitPrice?: IntFilter<"EmployeeSalesRateSetting"> | number
     defaultWorkRate?: IntFilter<"EmployeeSalesRateSetting"> | number
     remarks?: StringNullableFilter<"EmployeeSalesRateSetting"> | string | null
     createdAt?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
     updatedAt?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "userId">
+  }, "id" | "userId_effectiveFrom">
 
   export type EmployeeSalesRateSettingOrderByWithAggregationInput = {
+    id?: SortOrder
     userId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrderInput | SortOrder
@@ -47142,7 +47277,9 @@ export namespace Prisma {
     AND?: EmployeeSalesRateSettingScalarWhereWithAggregatesInput | EmployeeSalesRateSettingScalarWhereWithAggregatesInput[]
     OR?: EmployeeSalesRateSettingScalarWhereWithAggregatesInput[]
     NOT?: EmployeeSalesRateSettingScalarWhereWithAggregatesInput | EmployeeSalesRateSettingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EmployeeSalesRateSetting"> | string
     userId?: StringWithAggregatesFilter<"EmployeeSalesRateSetting"> | string
+    effectiveFrom?: DateTimeWithAggregatesFilter<"EmployeeSalesRateSetting"> | Date | string
     unitPrice?: IntWithAggregatesFilter<"EmployeeSalesRateSetting"> | number
     defaultWorkRate?: IntWithAggregatesFilter<"EmployeeSalesRateSetting"> | number
     remarks?: StringNullableWithAggregatesFilter<"EmployeeSalesRateSetting"> | string | null
@@ -47154,7 +47291,9 @@ export namespace Prisma {
     AND?: PartnerSalesRateSettingWhereInput | PartnerSalesRateSettingWhereInput[]
     OR?: PartnerSalesRateSettingWhereInput[]
     NOT?: PartnerSalesRateSettingWhereInput | PartnerSalesRateSettingWhereInput[]
+    id?: StringFilter<"PartnerSalesRateSetting"> | string
     partnerId?: StringFilter<"PartnerSalesRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
     unitPrice?: IntFilter<"PartnerSalesRateSetting"> | number
     defaultWorkRate?: IntFilter<"PartnerSalesRateSetting"> | number
     remarks?: StringNullableFilter<"PartnerSalesRateSetting"> | string | null
@@ -47164,7 +47303,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingOrderByWithRelationInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrderInput | SortOrder
@@ -47174,20 +47315,25 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingWhereUniqueInput = Prisma.AtLeast<{
-    partnerId?: string
+    id?: string
+    partnerId_effectiveFrom?: PartnerSalesRateSettingPartnerIdEffectiveFromCompoundUniqueInput
     AND?: PartnerSalesRateSettingWhereInput | PartnerSalesRateSettingWhereInput[]
     OR?: PartnerSalesRateSettingWhereInput[]
     NOT?: PartnerSalesRateSettingWhereInput | PartnerSalesRateSettingWhereInput[]
+    partnerId?: StringFilter<"PartnerSalesRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
     unitPrice?: IntFilter<"PartnerSalesRateSetting"> | number
     defaultWorkRate?: IntFilter<"PartnerSalesRateSetting"> | number
     remarks?: StringNullableFilter<"PartnerSalesRateSetting"> | string | null
     createdAt?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
     updatedAt?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
     partner?: XOR<PartnerScalarRelationFilter, PartnerWhereInput>
-  }, "partnerId">
+  }, "id" | "partnerId_effectiveFrom">
 
   export type PartnerSalesRateSettingOrderByWithAggregationInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrderInput | SortOrder
@@ -47204,7 +47350,9 @@ export namespace Prisma {
     AND?: PartnerSalesRateSettingScalarWhereWithAggregatesInput | PartnerSalesRateSettingScalarWhereWithAggregatesInput[]
     OR?: PartnerSalesRateSettingScalarWhereWithAggregatesInput[]
     NOT?: PartnerSalesRateSettingScalarWhereWithAggregatesInput | PartnerSalesRateSettingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PartnerSalesRateSetting"> | string
     partnerId?: StringWithAggregatesFilter<"PartnerSalesRateSetting"> | string
+    effectiveFrom?: DateTimeWithAggregatesFilter<"PartnerSalesRateSetting"> | Date | string
     unitPrice?: IntWithAggregatesFilter<"PartnerSalesRateSetting"> | number
     defaultWorkRate?: IntWithAggregatesFilter<"PartnerSalesRateSetting"> | number
     remarks?: StringNullableWithAggregatesFilter<"PartnerSalesRateSetting"> | string | null
@@ -47216,7 +47364,9 @@ export namespace Prisma {
     AND?: PartnerOutsourceRateSettingWhereInput | PartnerOutsourceRateSettingWhereInput[]
     OR?: PartnerOutsourceRateSettingWhereInput[]
     NOT?: PartnerOutsourceRateSettingWhereInput | PartnerOutsourceRateSettingWhereInput[]
+    id?: StringFilter<"PartnerOutsourceRateSetting"> | string
     partnerId?: StringFilter<"PartnerOutsourceRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
     amount?: IntFilter<"PartnerOutsourceRateSetting"> | number
     remarks?: StringNullableFilter<"PartnerOutsourceRateSetting"> | string | null
     createdAt?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
@@ -47225,7 +47375,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingOrderByWithRelationInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     amount?: SortOrder
     remarks?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -47234,19 +47386,24 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingWhereUniqueInput = Prisma.AtLeast<{
-    partnerId?: string
+    id?: string
+    partnerId_effectiveFrom?: PartnerOutsourceRateSettingPartnerIdEffectiveFromCompoundUniqueInput
     AND?: PartnerOutsourceRateSettingWhereInput | PartnerOutsourceRateSettingWhereInput[]
     OR?: PartnerOutsourceRateSettingWhereInput[]
     NOT?: PartnerOutsourceRateSettingWhereInput | PartnerOutsourceRateSettingWhereInput[]
+    partnerId?: StringFilter<"PartnerOutsourceRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
     amount?: IntFilter<"PartnerOutsourceRateSetting"> | number
     remarks?: StringNullableFilter<"PartnerOutsourceRateSetting"> | string | null
     createdAt?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
     updatedAt?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
     partner?: XOR<PartnerScalarRelationFilter, PartnerWhereInput>
-  }, "partnerId">
+  }, "id" | "partnerId_effectiveFrom">
 
   export type PartnerOutsourceRateSettingOrderByWithAggregationInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     amount?: SortOrder
     remarks?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -47262,7 +47419,9 @@ export namespace Prisma {
     AND?: PartnerOutsourceRateSettingScalarWhereWithAggregatesInput | PartnerOutsourceRateSettingScalarWhereWithAggregatesInput[]
     OR?: PartnerOutsourceRateSettingScalarWhereWithAggregatesInput[]
     NOT?: PartnerOutsourceRateSettingScalarWhereWithAggregatesInput | PartnerOutsourceRateSettingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PartnerOutsourceRateSetting"> | string
     partnerId?: StringWithAggregatesFilter<"PartnerOutsourceRateSetting"> | string
+    effectiveFrom?: DateTimeWithAggregatesFilter<"PartnerOutsourceRateSetting"> | Date | string
     amount?: IntWithAggregatesFilter<"PartnerOutsourceRateSetting"> | number
     remarks?: StringNullableWithAggregatesFilter<"PartnerOutsourceRateSetting"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PartnerOutsourceRateSetting"> | Date | string
@@ -47292,7 +47451,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -47320,7 +47479,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -47348,7 +47507,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -47376,7 +47535,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -48820,8 +48979,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerUncheckedCreateInput = {
@@ -48834,8 +48993,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerUpdateInput = {
@@ -48848,8 +49007,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUpdateManyWithoutPartnerNestedInput
   }
 
   export type PartnerUncheckedUpdateInput = {
@@ -48862,8 +49021,8 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
   }
 
   export type PartnerCreateManyInput = {
@@ -49926,16 +50085,20 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingCreateInput = {
+    id?: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutEmployeeSalesRateSettingInput
+    user: UserCreateNestedOneWithoutEmployeeSalesRateSettingsInput
   }
 
   export type EmployeeSalesRateSettingUncheckedCreateInput = {
+    id?: string
     userId: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -49944,16 +50107,20 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutEmployeeSalesRateSettingNestedInput
+    user?: UserUpdateOneRequiredWithoutEmployeeSalesRateSettingsNestedInput
   }
 
   export type EmployeeSalesRateSettingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -49962,7 +50129,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingCreateManyInput = {
+    id?: string
     userId: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -49971,6 +50140,8 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -49979,7 +50150,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -49988,16 +50161,20 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingCreateInput = {
+    id?: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    partner: PartnerCreateNestedOneWithoutSalesRateSettingInput
+    partner: PartnerCreateNestedOneWithoutSalesRateSettingsInput
   }
 
   export type PartnerSalesRateSettingUncheckedCreateInput = {
+    id?: string
     partnerId: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -50006,16 +50183,20 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    partner?: PartnerUpdateOneRequiredWithoutSalesRateSettingNestedInput
+    partner?: PartnerUpdateOneRequiredWithoutSalesRateSettingsNestedInput
   }
 
   export type PartnerSalesRateSettingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     partnerId?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50024,7 +50205,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingCreateManyInput = {
+    id?: string
     partnerId: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -50033,6 +50216,8 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50041,7 +50226,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     partnerId?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     unitPrice?: IntFieldUpdateOperationsInput | number
     defaultWorkRate?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50050,15 +50237,19 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingCreateInput = {
+    id?: string
+    effectiveFrom: Date | string
     amount: number
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    partner: PartnerCreateNestedOneWithoutOutsourceRateSettingInput
+    partner: PartnerCreateNestedOneWithoutOutsourceRateSettingsInput
   }
 
   export type PartnerOutsourceRateSettingUncheckedCreateInput = {
+    id?: string
     partnerId: string
+    effectiveFrom: Date | string
     amount: number
     remarks?: string | null
     createdAt?: Date | string
@@ -50066,15 +50257,19 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    partner?: PartnerUpdateOneRequiredWithoutOutsourceRateSettingNestedInput
+    partner?: PartnerUpdateOneRequiredWithoutOutsourceRateSettingsNestedInput
   }
 
   export type PartnerOutsourceRateSettingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     partnerId?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50082,7 +50277,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingCreateManyInput = {
+    id?: string
     partnerId: string
+    effectiveFrom: Date | string
     amount: number
     remarks?: string | null
     createdAt?: Date | string
@@ -50090,6 +50287,8 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50097,7 +50296,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     partnerId?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50215,9 +50416,10 @@ export namespace Prisma {
     none?: MonthlyCostWhereInput
   }
 
-  export type EmployeeSalesRateSettingNullableScalarRelationFilter = {
-    is?: EmployeeSalesRateSettingWhereInput | null
-    isNot?: EmployeeSalesRateSettingWhereInput | null
+  export type EmployeeSalesRateSettingListRelationFilter = {
+    every?: EmployeeSalesRateSettingWhereInput
+    some?: EmployeeSalesRateSettingWhereInput
+    none?: EmployeeSalesRateSettingWhereInput
   }
 
   export type ApprovalLogListRelationFilter = {
@@ -50266,6 +50468,10 @@ export namespace Prisma {
   }
 
   export type MonthlyCostOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EmployeeSalesRateSettingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -51520,14 +51726,24 @@ export namespace Prisma {
     _max?: NestedEnumSalarySimulationStatusFilter<$PrismaModel>
   }
 
-  export type PartnerSalesRateSettingNullableScalarRelationFilter = {
-    is?: PartnerSalesRateSettingWhereInput | null
-    isNot?: PartnerSalesRateSettingWhereInput | null
+  export type PartnerSalesRateSettingListRelationFilter = {
+    every?: PartnerSalesRateSettingWhereInput
+    some?: PartnerSalesRateSettingWhereInput
+    none?: PartnerSalesRateSettingWhereInput
   }
 
-  export type PartnerOutsourceRateSettingNullableScalarRelationFilter = {
-    is?: PartnerOutsourceRateSettingWhereInput | null
-    isNot?: PartnerOutsourceRateSettingWhereInput | null
+  export type PartnerOutsourceRateSettingListRelationFilter = {
+    every?: PartnerOutsourceRateSettingWhereInput
+    some?: PartnerOutsourceRateSettingWhereInput
+    none?: PartnerOutsourceRateSettingWhereInput
+  }
+
+  export type PartnerSalesRateSettingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PartnerOutsourceRateSettingOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type PartnerCountOrderByAggregateInput = {
@@ -52258,8 +52474,15 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type EmployeeSalesRateSettingUserIdEffectiveFromCompoundUniqueInput = {
+    userId: string
+    effectiveFrom: Date | string
+  }
+
   export type EmployeeSalesRateSettingCountOrderByAggregateInput = {
+    id?: SortOrder
     userId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrder
@@ -52273,7 +52496,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingMaxOrderByAggregateInput = {
+    id?: SortOrder
     userId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrder
@@ -52282,7 +52507,9 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingMinOrderByAggregateInput = {
+    id?: SortOrder
     userId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrder
@@ -52300,8 +52527,15 @@ export namespace Prisma {
     isNot?: PartnerWhereInput
   }
 
+  export type PartnerSalesRateSettingPartnerIdEffectiveFromCompoundUniqueInput = {
+    partnerId: string
+    effectiveFrom: Date | string
+  }
+
   export type PartnerSalesRateSettingCountOrderByAggregateInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrder
@@ -52315,7 +52549,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingMaxOrderByAggregateInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrder
@@ -52324,7 +52560,9 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingMinOrderByAggregateInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     unitPrice?: SortOrder
     defaultWorkRate?: SortOrder
     remarks?: SortOrder
@@ -52337,8 +52575,15 @@ export namespace Prisma {
     defaultWorkRate?: SortOrder
   }
 
+  export type PartnerOutsourceRateSettingPartnerIdEffectiveFromCompoundUniqueInput = {
+    partnerId: string
+    effectiveFrom: Date | string
+  }
+
   export type PartnerOutsourceRateSettingCountOrderByAggregateInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     amount?: SortOrder
     remarks?: SortOrder
     createdAt?: SortOrder
@@ -52350,7 +52595,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingMaxOrderByAggregateInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     amount?: SortOrder
     remarks?: SortOrder
     createdAt?: SortOrder
@@ -52358,7 +52605,9 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingMinOrderByAggregateInput = {
+    id?: SortOrder
     partnerId?: SortOrder
+    effectiveFrom?: SortOrder
     amount?: SortOrder
     remarks?: SortOrder
     createdAt?: SortOrder
@@ -52457,10 +52706,11 @@ export namespace Prisma {
     connect?: MonthlyCostWhereUniqueInput | MonthlyCostWhereUniqueInput[]
   }
 
-  export type EmployeeSalesRateSettingCreateNestedOneWithoutUserInput = {
-    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput>
-    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput
-    connect?: EmployeeSalesRateSettingWhereUniqueInput
+  export type EmployeeSalesRateSettingCreateNestedManyWithoutUserInput = {
+    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput> | EmployeeSalesRateSettingCreateWithoutUserInput[] | EmployeeSalesRateSettingUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput | EmployeeSalesRateSettingCreateOrConnectWithoutUserInput[]
+    createMany?: EmployeeSalesRateSettingCreateManyUserInputEnvelope
+    connect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
   }
 
   export type ApprovalLogCreateNestedManyWithoutActorInput = {
@@ -52547,10 +52797,11 @@ export namespace Prisma {
     connect?: MonthlyCostWhereUniqueInput | MonthlyCostWhereUniqueInput[]
   }
 
-  export type EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput>
-    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput
-    connect?: EmployeeSalesRateSettingWhereUniqueInput
+  export type EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput> | EmployeeSalesRateSettingCreateWithoutUserInput[] | EmployeeSalesRateSettingUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput | EmployeeSalesRateSettingCreateOrConnectWithoutUserInput[]
+    createMany?: EmployeeSalesRateSettingCreateManyUserInputEnvelope
+    connect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
   }
 
   export type ApprovalLogUncheckedCreateNestedManyWithoutActorInput = {
@@ -52747,14 +52998,18 @@ export namespace Prisma {
     deleteMany?: MonthlyCostScalarWhereInput | MonthlyCostScalarWhereInput[]
   }
 
-  export type EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput = {
-    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput>
-    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput
-    upsert?: EmployeeSalesRateSettingUpsertWithoutUserInput
-    disconnect?: EmployeeSalesRateSettingWhereInput | boolean
-    delete?: EmployeeSalesRateSettingWhereInput | boolean
-    connect?: EmployeeSalesRateSettingWhereUniqueInput
-    update?: XOR<XOR<EmployeeSalesRateSettingUpdateToOneWithWhereWithoutUserInput, EmployeeSalesRateSettingUpdateWithoutUserInput>, EmployeeSalesRateSettingUncheckedUpdateWithoutUserInput>
+  export type EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput> | EmployeeSalesRateSettingCreateWithoutUserInput[] | EmployeeSalesRateSettingUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput | EmployeeSalesRateSettingCreateOrConnectWithoutUserInput[]
+    upsert?: EmployeeSalesRateSettingUpsertWithWhereUniqueWithoutUserInput | EmployeeSalesRateSettingUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EmployeeSalesRateSettingCreateManyUserInputEnvelope
+    set?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    disconnect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    delete?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    connect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    update?: EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput | EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput | EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EmployeeSalesRateSettingScalarWhereInput | EmployeeSalesRateSettingScalarWhereInput[]
   }
 
   export type ApprovalLogUpdateManyWithoutActorNestedInput = {
@@ -52929,14 +53184,18 @@ export namespace Prisma {
     deleteMany?: MonthlyCostScalarWhereInput | MonthlyCostScalarWhereInput[]
   }
 
-  export type EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput>
-    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput
-    upsert?: EmployeeSalesRateSettingUpsertWithoutUserInput
-    disconnect?: EmployeeSalesRateSettingWhereInput | boolean
-    delete?: EmployeeSalesRateSettingWhereInput | boolean
-    connect?: EmployeeSalesRateSettingWhereUniqueInput
-    update?: XOR<XOR<EmployeeSalesRateSettingUpdateToOneWithWhereWithoutUserInput, EmployeeSalesRateSettingUpdateWithoutUserInput>, EmployeeSalesRateSettingUncheckedUpdateWithoutUserInput>
+  export type EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput> | EmployeeSalesRateSettingCreateWithoutUserInput[] | EmployeeSalesRateSettingUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput | EmployeeSalesRateSettingCreateOrConnectWithoutUserInput[]
+    upsert?: EmployeeSalesRateSettingUpsertWithWhereUniqueWithoutUserInput | EmployeeSalesRateSettingUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: EmployeeSalesRateSettingCreateManyUserInputEnvelope
+    set?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    disconnect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    delete?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    connect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+    update?: EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput | EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput | EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: EmployeeSalesRateSettingScalarWhereInput | EmployeeSalesRateSettingScalarWhereInput[]
   }
 
   export type ApprovalLogUncheckedUpdateManyWithoutActorNestedInput = {
@@ -54628,16 +54887,18 @@ export namespace Prisma {
     connect?: MonthlyCostWhereUniqueInput | MonthlyCostWhereUniqueInput[]
   }
 
-  export type PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput = {
-    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput
-    connect?: PartnerSalesRateSettingWhereUniqueInput
+  export type PartnerSalesRateSettingCreateNestedManyWithoutPartnerInput = {
+    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput> | PartnerSalesRateSettingCreateWithoutPartnerInput[] | PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput | PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput[]
+    createMany?: PartnerSalesRateSettingCreateManyPartnerInputEnvelope
+    connect?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
   }
 
-  export type PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput = {
-    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput
-    connect?: PartnerOutsourceRateSettingWhereUniqueInput
+  export type PartnerOutsourceRateSettingCreateNestedManyWithoutPartnerInput = {
+    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput> | PartnerOutsourceRateSettingCreateWithoutPartnerInput[] | PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput | PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput[]
+    createMany?: PartnerOutsourceRateSettingCreateManyPartnerInputEnvelope
+    connect?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
   }
 
   export type MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput = {
@@ -54661,16 +54922,18 @@ export namespace Prisma {
     connect?: MonthlyCostWhereUniqueInput | MonthlyCostWhereUniqueInput[]
   }
 
-  export type PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput = {
-    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput
-    connect?: PartnerSalesRateSettingWhereUniqueInput
+  export type PartnerSalesRateSettingUncheckedCreateNestedManyWithoutPartnerInput = {
+    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput> | PartnerSalesRateSettingCreateWithoutPartnerInput[] | PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput | PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput[]
+    createMany?: PartnerSalesRateSettingCreateManyPartnerInputEnvelope
+    connect?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
   }
 
-  export type PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput = {
-    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput
-    connect?: PartnerOutsourceRateSettingWhereUniqueInput
+  export type PartnerOutsourceRateSettingUncheckedCreateNestedManyWithoutPartnerInput = {
+    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput> | PartnerOutsourceRateSettingCreateWithoutPartnerInput[] | PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput | PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput[]
+    createMany?: PartnerOutsourceRateSettingCreateManyPartnerInputEnvelope
+    connect?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
   }
 
   export type MonthlyAssignmentUpdateManyWithoutPartnerNestedInput = {
@@ -54715,24 +54978,32 @@ export namespace Prisma {
     deleteMany?: MonthlyCostScalarWhereInput | MonthlyCostScalarWhereInput[]
   }
 
-  export type PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput = {
-    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput
-    upsert?: PartnerSalesRateSettingUpsertWithoutPartnerInput
-    disconnect?: PartnerSalesRateSettingWhereInput | boolean
-    delete?: PartnerSalesRateSettingWhereInput | boolean
-    connect?: PartnerSalesRateSettingWhereUniqueInput
-    update?: XOR<XOR<PartnerSalesRateSettingUpdateToOneWithWhereWithoutPartnerInput, PartnerSalesRateSettingUpdateWithoutPartnerInput>, PartnerSalesRateSettingUncheckedUpdateWithoutPartnerInput>
+  export type PartnerSalesRateSettingUpdateManyWithoutPartnerNestedInput = {
+    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput> | PartnerSalesRateSettingCreateWithoutPartnerInput[] | PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput | PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput[]
+    upsert?: PartnerSalesRateSettingUpsertWithWhereUniqueWithoutPartnerInput | PartnerSalesRateSettingUpsertWithWhereUniqueWithoutPartnerInput[]
+    createMany?: PartnerSalesRateSettingCreateManyPartnerInputEnvelope
+    set?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    disconnect?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    delete?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    connect?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    update?: PartnerSalesRateSettingUpdateWithWhereUniqueWithoutPartnerInput | PartnerSalesRateSettingUpdateWithWhereUniqueWithoutPartnerInput[]
+    updateMany?: PartnerSalesRateSettingUpdateManyWithWhereWithoutPartnerInput | PartnerSalesRateSettingUpdateManyWithWhereWithoutPartnerInput[]
+    deleteMany?: PartnerSalesRateSettingScalarWhereInput | PartnerSalesRateSettingScalarWhereInput[]
   }
 
-  export type PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput = {
-    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput
-    upsert?: PartnerOutsourceRateSettingUpsertWithoutPartnerInput
-    disconnect?: PartnerOutsourceRateSettingWhereInput | boolean
-    delete?: PartnerOutsourceRateSettingWhereInput | boolean
-    connect?: PartnerOutsourceRateSettingWhereUniqueInput
-    update?: XOR<XOR<PartnerOutsourceRateSettingUpdateToOneWithWhereWithoutPartnerInput, PartnerOutsourceRateSettingUpdateWithoutPartnerInput>, PartnerOutsourceRateSettingUncheckedUpdateWithoutPartnerInput>
+  export type PartnerOutsourceRateSettingUpdateManyWithoutPartnerNestedInput = {
+    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput> | PartnerOutsourceRateSettingCreateWithoutPartnerInput[] | PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput | PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput[]
+    upsert?: PartnerOutsourceRateSettingUpsertWithWhereUniqueWithoutPartnerInput | PartnerOutsourceRateSettingUpsertWithWhereUniqueWithoutPartnerInput[]
+    createMany?: PartnerOutsourceRateSettingCreateManyPartnerInputEnvelope
+    set?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    disconnect?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    delete?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    connect?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    update?: PartnerOutsourceRateSettingUpdateWithWhereUniqueWithoutPartnerInput | PartnerOutsourceRateSettingUpdateWithWhereUniqueWithoutPartnerInput[]
+    updateMany?: PartnerOutsourceRateSettingUpdateManyWithWhereWithoutPartnerInput | PartnerOutsourceRateSettingUpdateManyWithWhereWithoutPartnerInput[]
+    deleteMany?: PartnerOutsourceRateSettingScalarWhereInput | PartnerOutsourceRateSettingScalarWhereInput[]
   }
 
   export type MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput = {
@@ -54777,24 +55048,32 @@ export namespace Prisma {
     deleteMany?: MonthlyCostScalarWhereInput | MonthlyCostScalarWhereInput[]
   }
 
-  export type PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput = {
-    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput
-    upsert?: PartnerSalesRateSettingUpsertWithoutPartnerInput
-    disconnect?: PartnerSalesRateSettingWhereInput | boolean
-    delete?: PartnerSalesRateSettingWhereInput | boolean
-    connect?: PartnerSalesRateSettingWhereUniqueInput
-    update?: XOR<XOR<PartnerSalesRateSettingUpdateToOneWithWhereWithoutPartnerInput, PartnerSalesRateSettingUpdateWithoutPartnerInput>, PartnerSalesRateSettingUncheckedUpdateWithoutPartnerInput>
+  export type PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput = {
+    create?: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput> | PartnerSalesRateSettingCreateWithoutPartnerInput[] | PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput | PartnerSalesRateSettingCreateOrConnectWithoutPartnerInput[]
+    upsert?: PartnerSalesRateSettingUpsertWithWhereUniqueWithoutPartnerInput | PartnerSalesRateSettingUpsertWithWhereUniqueWithoutPartnerInput[]
+    createMany?: PartnerSalesRateSettingCreateManyPartnerInputEnvelope
+    set?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    disconnect?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    delete?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    connect?: PartnerSalesRateSettingWhereUniqueInput | PartnerSalesRateSettingWhereUniqueInput[]
+    update?: PartnerSalesRateSettingUpdateWithWhereUniqueWithoutPartnerInput | PartnerSalesRateSettingUpdateWithWhereUniqueWithoutPartnerInput[]
+    updateMany?: PartnerSalesRateSettingUpdateManyWithWhereWithoutPartnerInput | PartnerSalesRateSettingUpdateManyWithWhereWithoutPartnerInput[]
+    deleteMany?: PartnerSalesRateSettingScalarWhereInput | PartnerSalesRateSettingScalarWhereInput[]
   }
 
-  export type PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput = {
-    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput>
-    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput
-    upsert?: PartnerOutsourceRateSettingUpsertWithoutPartnerInput
-    disconnect?: PartnerOutsourceRateSettingWhereInput | boolean
-    delete?: PartnerOutsourceRateSettingWhereInput | boolean
-    connect?: PartnerOutsourceRateSettingWhereUniqueInput
-    update?: XOR<XOR<PartnerOutsourceRateSettingUpdateToOneWithWhereWithoutPartnerInput, PartnerOutsourceRateSettingUpdateWithoutPartnerInput>, PartnerOutsourceRateSettingUncheckedUpdateWithoutPartnerInput>
+  export type PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerNestedInput = {
+    create?: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput> | PartnerOutsourceRateSettingCreateWithoutPartnerInput[] | PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput[]
+    connectOrCreate?: PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput | PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput[]
+    upsert?: PartnerOutsourceRateSettingUpsertWithWhereUniqueWithoutPartnerInput | PartnerOutsourceRateSettingUpsertWithWhereUniqueWithoutPartnerInput[]
+    createMany?: PartnerOutsourceRateSettingCreateManyPartnerInputEnvelope
+    set?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    disconnect?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    delete?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    connect?: PartnerOutsourceRateSettingWhereUniqueInput | PartnerOutsourceRateSettingWhereUniqueInput[]
+    update?: PartnerOutsourceRateSettingUpdateWithWhereUniqueWithoutPartnerInput | PartnerOutsourceRateSettingUpdateWithWhereUniqueWithoutPartnerInput[]
+    updateMany?: PartnerOutsourceRateSettingUpdateManyWithWhereWithoutPartnerInput | PartnerOutsourceRateSettingUpdateManyWithWhereWithoutPartnerInput[]
+    deleteMany?: PartnerOutsourceRateSettingScalarWhereInput | PartnerOutsourceRateSettingScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutMonthlyAssignmentsInput = {
@@ -55177,46 +55456,46 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
   }
 
-  export type UserCreateNestedOneWithoutEmployeeSalesRateSettingInput = {
-    create?: XOR<UserCreateWithoutEmployeeSalesRateSettingInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingInput>
-    connectOrCreate?: UserCreateOrConnectWithoutEmployeeSalesRateSettingInput
+  export type UserCreateNestedOneWithoutEmployeeSalesRateSettingsInput = {
+    create?: XOR<UserCreateWithoutEmployeeSalesRateSettingsInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEmployeeSalesRateSettingsInput
     connect?: UserWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutEmployeeSalesRateSettingNestedInput = {
-    create?: XOR<UserCreateWithoutEmployeeSalesRateSettingInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingInput>
-    connectOrCreate?: UserCreateOrConnectWithoutEmployeeSalesRateSettingInput
-    upsert?: UserUpsertWithoutEmployeeSalesRateSettingInput
+  export type UserUpdateOneRequiredWithoutEmployeeSalesRateSettingsNestedInput = {
+    create?: XOR<UserCreateWithoutEmployeeSalesRateSettingsInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutEmployeeSalesRateSettingsInput
+    upsert?: UserUpsertWithoutEmployeeSalesRateSettingsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmployeeSalesRateSettingInput, UserUpdateWithoutEmployeeSalesRateSettingInput>, UserUncheckedUpdateWithoutEmployeeSalesRateSettingInput>
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutEmployeeSalesRateSettingsInput, UserUpdateWithoutEmployeeSalesRateSettingsInput>, UserUncheckedUpdateWithoutEmployeeSalesRateSettingsInput>
   }
 
-  export type PartnerCreateNestedOneWithoutSalesRateSettingInput = {
-    create?: XOR<PartnerCreateWithoutSalesRateSettingInput, PartnerUncheckedCreateWithoutSalesRateSettingInput>
-    connectOrCreate?: PartnerCreateOrConnectWithoutSalesRateSettingInput
+  export type PartnerCreateNestedOneWithoutSalesRateSettingsInput = {
+    create?: XOR<PartnerCreateWithoutSalesRateSettingsInput, PartnerUncheckedCreateWithoutSalesRateSettingsInput>
+    connectOrCreate?: PartnerCreateOrConnectWithoutSalesRateSettingsInput
     connect?: PartnerWhereUniqueInput
   }
 
-  export type PartnerUpdateOneRequiredWithoutSalesRateSettingNestedInput = {
-    create?: XOR<PartnerCreateWithoutSalesRateSettingInput, PartnerUncheckedCreateWithoutSalesRateSettingInput>
-    connectOrCreate?: PartnerCreateOrConnectWithoutSalesRateSettingInput
-    upsert?: PartnerUpsertWithoutSalesRateSettingInput
+  export type PartnerUpdateOneRequiredWithoutSalesRateSettingsNestedInput = {
+    create?: XOR<PartnerCreateWithoutSalesRateSettingsInput, PartnerUncheckedCreateWithoutSalesRateSettingsInput>
+    connectOrCreate?: PartnerCreateOrConnectWithoutSalesRateSettingsInput
+    upsert?: PartnerUpsertWithoutSalesRateSettingsInput
     connect?: PartnerWhereUniqueInput
-    update?: XOR<XOR<PartnerUpdateToOneWithWhereWithoutSalesRateSettingInput, PartnerUpdateWithoutSalesRateSettingInput>, PartnerUncheckedUpdateWithoutSalesRateSettingInput>
+    update?: XOR<XOR<PartnerUpdateToOneWithWhereWithoutSalesRateSettingsInput, PartnerUpdateWithoutSalesRateSettingsInput>, PartnerUncheckedUpdateWithoutSalesRateSettingsInput>
   }
 
-  export type PartnerCreateNestedOneWithoutOutsourceRateSettingInput = {
-    create?: XOR<PartnerCreateWithoutOutsourceRateSettingInput, PartnerUncheckedCreateWithoutOutsourceRateSettingInput>
-    connectOrCreate?: PartnerCreateOrConnectWithoutOutsourceRateSettingInput
+  export type PartnerCreateNestedOneWithoutOutsourceRateSettingsInput = {
+    create?: XOR<PartnerCreateWithoutOutsourceRateSettingsInput, PartnerUncheckedCreateWithoutOutsourceRateSettingsInput>
+    connectOrCreate?: PartnerCreateOrConnectWithoutOutsourceRateSettingsInput
     connect?: PartnerWhereUniqueInput
   }
 
-  export type PartnerUpdateOneRequiredWithoutOutsourceRateSettingNestedInput = {
-    create?: XOR<PartnerCreateWithoutOutsourceRateSettingInput, PartnerUncheckedCreateWithoutOutsourceRateSettingInput>
-    connectOrCreate?: PartnerCreateOrConnectWithoutOutsourceRateSettingInput
-    upsert?: PartnerUpsertWithoutOutsourceRateSettingInput
+  export type PartnerUpdateOneRequiredWithoutOutsourceRateSettingsNestedInput = {
+    create?: XOR<PartnerCreateWithoutOutsourceRateSettingsInput, PartnerUncheckedCreateWithoutOutsourceRateSettingsInput>
+    connectOrCreate?: PartnerCreateOrConnectWithoutOutsourceRateSettingsInput
+    upsert?: PartnerUpsertWithoutOutsourceRateSettingsInput
     connect?: PartnerWhereUniqueInput
-    update?: XOR<XOR<PartnerUpdateToOneWithWhereWithoutOutsourceRateSettingInput, PartnerUpdateWithoutOutsourceRateSettingInput>, PartnerUncheckedUpdateWithoutOutsourceRateSettingInput>
+    update?: XOR<XOR<PartnerUpdateToOneWithWhereWithoutOutsourceRateSettingsInput, PartnerUpdateWithoutOutsourceRateSettingsInput>, PartnerUncheckedUpdateWithoutOutsourceRateSettingsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -56179,6 +56458,8 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingCreateWithoutUserInput = {
+    id?: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -56187,6 +56468,8 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingUncheckedCreateWithoutUserInput = {
+    id?: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -56197,6 +56480,11 @@ export namespace Prisma {
   export type EmployeeSalesRateSettingCreateOrConnectWithoutUserInput = {
     where: EmployeeSalesRateSettingWhereUniqueInput
     create: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput>
+  }
+
+  export type EmployeeSalesRateSettingCreateManyUserInputEnvelope = {
+    data: EmployeeSalesRateSettingCreateManyUserInput | EmployeeSalesRateSettingCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type ApprovalLogCreateWithoutActorInput = {
@@ -56653,31 +56941,34 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"MonthlyCost"> | Date | string
   }
 
-  export type EmployeeSalesRateSettingUpsertWithoutUserInput = {
+  export type EmployeeSalesRateSettingUpsertWithWhereUniqueWithoutUserInput = {
+    where: EmployeeSalesRateSettingWhereUniqueInput
     update: XOR<EmployeeSalesRateSettingUpdateWithoutUserInput, EmployeeSalesRateSettingUncheckedUpdateWithoutUserInput>
     create: XOR<EmployeeSalesRateSettingCreateWithoutUserInput, EmployeeSalesRateSettingUncheckedCreateWithoutUserInput>
-    where?: EmployeeSalesRateSettingWhereInput
   }
 
-  export type EmployeeSalesRateSettingUpdateToOneWithWhereWithoutUserInput = {
-    where?: EmployeeSalesRateSettingWhereInput
+  export type EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput = {
+    where: EmployeeSalesRateSettingWhereUniqueInput
     data: XOR<EmployeeSalesRateSettingUpdateWithoutUserInput, EmployeeSalesRateSettingUncheckedUpdateWithoutUserInput>
   }
 
-  export type EmployeeSalesRateSettingUpdateWithoutUserInput = {
-    unitPrice?: IntFieldUpdateOperationsInput | number
-    defaultWorkRate?: IntFieldUpdateOperationsInput | number
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput = {
+    where: EmployeeSalesRateSettingScalarWhereInput
+    data: XOR<EmployeeSalesRateSettingUpdateManyMutationInput, EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type EmployeeSalesRateSettingUncheckedUpdateWithoutUserInput = {
-    unitPrice?: IntFieldUpdateOperationsInput | number
-    defaultWorkRate?: IntFieldUpdateOperationsInput | number
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type EmployeeSalesRateSettingScalarWhereInput = {
+    AND?: EmployeeSalesRateSettingScalarWhereInput | EmployeeSalesRateSettingScalarWhereInput[]
+    OR?: EmployeeSalesRateSettingScalarWhereInput[]
+    NOT?: EmployeeSalesRateSettingScalarWhereInput | EmployeeSalesRateSettingScalarWhereInput[]
+    id?: StringFilter<"EmployeeSalesRateSetting"> | string
+    userId?: StringFilter<"EmployeeSalesRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
+    unitPrice?: IntFilter<"EmployeeSalesRateSetting"> | number
+    defaultWorkRate?: IntFilter<"EmployeeSalesRateSetting"> | number
+    remarks?: StringNullableFilter<"EmployeeSalesRateSetting"> | string | null
+    createdAt?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
+    updatedAt?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
   }
 
   export type ApprovalLogUpsertWithWhereUniqueWithoutActorInput = {
@@ -56761,7 +57052,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -56788,7 +57079,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -57107,7 +57398,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57134,7 +57425,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -57478,7 +57769,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57505,7 +57796,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -57664,7 +57955,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57691,7 +57982,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -58067,7 +58358,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -58094,7 +58385,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -58353,7 +58644,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -58380,7 +58671,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -58468,7 +58759,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -58495,7 +58786,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -59132,7 +59423,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -59159,7 +59450,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -59335,7 +59626,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -59362,7 +59653,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -59477,7 +59768,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -59504,7 +59795,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -59710,7 +60001,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -59737,7 +60028,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60109,7 +60400,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -60136,7 +60427,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -60179,7 +60470,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60206,7 +60497,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60301,7 +60592,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -60328,7 +60619,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -60440,7 +60731,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -60467,7 +60758,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -60510,7 +60801,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60537,7 +60828,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60667,7 +60958,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60694,7 +60985,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60814,6 +61105,8 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingCreateWithoutPartnerInput = {
+    id?: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -60822,6 +61115,8 @@ export namespace Prisma {
   }
 
   export type PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput = {
+    id?: string
+    effectiveFrom: Date | string
     unitPrice: number
     defaultWorkRate?: number
     remarks?: string | null
@@ -60834,7 +61129,14 @@ export namespace Prisma {
     create: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput>
   }
 
+  export type PartnerSalesRateSettingCreateManyPartnerInputEnvelope = {
+    data: PartnerSalesRateSettingCreateManyPartnerInput | PartnerSalesRateSettingCreateManyPartnerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PartnerOutsourceRateSettingCreateWithoutPartnerInput = {
+    id?: string
+    effectiveFrom: Date | string
     amount: number
     remarks?: string | null
     createdAt?: Date | string
@@ -60842,6 +61144,8 @@ export namespace Prisma {
   }
 
   export type PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput = {
+    id?: string
+    effectiveFrom: Date | string
     amount: number
     remarks?: string | null
     createdAt?: Date | string
@@ -60851,6 +61155,11 @@ export namespace Prisma {
   export type PartnerOutsourceRateSettingCreateOrConnectWithoutPartnerInput = {
     where: PartnerOutsourceRateSettingWhereUniqueInput
     create: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput>
+  }
+
+  export type PartnerOutsourceRateSettingCreateManyPartnerInputEnvelope = {
+    data: PartnerOutsourceRateSettingCreateManyPartnerInput | PartnerOutsourceRateSettingCreateManyPartnerInput[]
+    skipDuplicates?: boolean
   }
 
   export type MonthlyAssignmentUpsertWithWhereUniqueWithoutPartnerInput = {
@@ -60901,56 +61210,63 @@ export namespace Prisma {
     data: XOR<MonthlyCostUpdateManyMutationInput, MonthlyCostUncheckedUpdateManyWithoutPartnerInput>
   }
 
-  export type PartnerSalesRateSettingUpsertWithoutPartnerInput = {
+  export type PartnerSalesRateSettingUpsertWithWhereUniqueWithoutPartnerInput = {
+    where: PartnerSalesRateSettingWhereUniqueInput
     update: XOR<PartnerSalesRateSettingUpdateWithoutPartnerInput, PartnerSalesRateSettingUncheckedUpdateWithoutPartnerInput>
     create: XOR<PartnerSalesRateSettingCreateWithoutPartnerInput, PartnerSalesRateSettingUncheckedCreateWithoutPartnerInput>
-    where?: PartnerSalesRateSettingWhereInput
   }
 
-  export type PartnerSalesRateSettingUpdateToOneWithWhereWithoutPartnerInput = {
-    where?: PartnerSalesRateSettingWhereInput
+  export type PartnerSalesRateSettingUpdateWithWhereUniqueWithoutPartnerInput = {
+    where: PartnerSalesRateSettingWhereUniqueInput
     data: XOR<PartnerSalesRateSettingUpdateWithoutPartnerInput, PartnerSalesRateSettingUncheckedUpdateWithoutPartnerInput>
   }
 
-  export type PartnerSalesRateSettingUpdateWithoutPartnerInput = {
-    unitPrice?: IntFieldUpdateOperationsInput | number
-    defaultWorkRate?: IntFieldUpdateOperationsInput | number
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type PartnerSalesRateSettingUpdateManyWithWhereWithoutPartnerInput = {
+    where: PartnerSalesRateSettingScalarWhereInput
+    data: XOR<PartnerSalesRateSettingUpdateManyMutationInput, PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerInput>
   }
 
-  export type PartnerSalesRateSettingUncheckedUpdateWithoutPartnerInput = {
-    unitPrice?: IntFieldUpdateOperationsInput | number
-    defaultWorkRate?: IntFieldUpdateOperationsInput | number
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type PartnerSalesRateSettingScalarWhereInput = {
+    AND?: PartnerSalesRateSettingScalarWhereInput | PartnerSalesRateSettingScalarWhereInput[]
+    OR?: PartnerSalesRateSettingScalarWhereInput[]
+    NOT?: PartnerSalesRateSettingScalarWhereInput | PartnerSalesRateSettingScalarWhereInput[]
+    id?: StringFilter<"PartnerSalesRateSetting"> | string
+    partnerId?: StringFilter<"PartnerSalesRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
+    unitPrice?: IntFilter<"PartnerSalesRateSetting"> | number
+    defaultWorkRate?: IntFilter<"PartnerSalesRateSetting"> | number
+    remarks?: StringNullableFilter<"PartnerSalesRateSetting"> | string | null
+    createdAt?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerSalesRateSetting"> | Date | string
   }
 
-  export type PartnerOutsourceRateSettingUpsertWithoutPartnerInput = {
+  export type PartnerOutsourceRateSettingUpsertWithWhereUniqueWithoutPartnerInput = {
+    where: PartnerOutsourceRateSettingWhereUniqueInput
     update: XOR<PartnerOutsourceRateSettingUpdateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedUpdateWithoutPartnerInput>
     create: XOR<PartnerOutsourceRateSettingCreateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedCreateWithoutPartnerInput>
-    where?: PartnerOutsourceRateSettingWhereInput
   }
 
-  export type PartnerOutsourceRateSettingUpdateToOneWithWhereWithoutPartnerInput = {
-    where?: PartnerOutsourceRateSettingWhereInput
+  export type PartnerOutsourceRateSettingUpdateWithWhereUniqueWithoutPartnerInput = {
+    where: PartnerOutsourceRateSettingWhereUniqueInput
     data: XOR<PartnerOutsourceRateSettingUpdateWithoutPartnerInput, PartnerOutsourceRateSettingUncheckedUpdateWithoutPartnerInput>
   }
 
-  export type PartnerOutsourceRateSettingUpdateWithoutPartnerInput = {
-    amount?: IntFieldUpdateOperationsInput | number
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type PartnerOutsourceRateSettingUpdateManyWithWhereWithoutPartnerInput = {
+    where: PartnerOutsourceRateSettingScalarWhereInput
+    data: XOR<PartnerOutsourceRateSettingUpdateManyMutationInput, PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerInput>
   }
 
-  export type PartnerOutsourceRateSettingUncheckedUpdateWithoutPartnerInput = {
-    amount?: IntFieldUpdateOperationsInput | number
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type PartnerOutsourceRateSettingScalarWhereInput = {
+    AND?: PartnerOutsourceRateSettingScalarWhereInput | PartnerOutsourceRateSettingScalarWhereInput[]
+    OR?: PartnerOutsourceRateSettingScalarWhereInput[]
+    NOT?: PartnerOutsourceRateSettingScalarWhereInput | PartnerOutsourceRateSettingScalarWhereInput[]
+    id?: StringFilter<"PartnerOutsourceRateSetting"> | string
+    partnerId?: StringFilter<"PartnerOutsourceRateSetting"> | string
+    effectiveFrom?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
+    amount?: IntFilter<"PartnerOutsourceRateSetting"> | number
+    remarks?: StringNullableFilter<"PartnerOutsourceRateSetting"> | string | null
+    createdAt?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerOutsourceRateSetting"> | Date | string
   }
 
   export type UserCreateWithoutMonthlyAssignmentsInput = {
@@ -60975,7 +61291,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -61002,7 +61318,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -61021,8 +61337,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerUncheckedCreateWithoutMonthlyAssignmentsInput = {
@@ -61034,8 +61350,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerCreateOrConnectWithoutMonthlyAssignmentsInput = {
@@ -61115,7 +61431,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -61142,7 +61458,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -61167,8 +61483,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUpdateManyWithoutPartnerNestedInput
   }
 
   export type PartnerUncheckedUpdateWithoutMonthlyAssignmentsInput = {
@@ -61180,8 +61496,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
   }
 
   export type TeamUpsertWithoutAssignmentsInput = {
@@ -61251,7 +61567,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -61278,7 +61594,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -61297,8 +61613,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerUncheckedCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
@@ -61310,8 +61626,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerCreateOrConnectWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
@@ -61383,7 +61699,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -61410,7 +61726,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -61435,8 +61751,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUpdateManyWithoutPartnerNestedInput
   }
 
   export type PartnerUncheckedUpdateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
@@ -61448,8 +61764,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
   }
 
   export type DepartmentUpsertWithoutUnassignedMonthlyAssignmentsInput = {
@@ -61511,7 +61827,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -61538,7 +61854,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -61557,8 +61873,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerUncheckedCreateWithoutMonthlyCostsInput = {
@@ -61570,8 +61886,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedCreateNestedManyWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedCreateNestedManyWithoutPartnerInput
   }
 
   export type PartnerCreateOrConnectWithoutMonthlyCostsInput = {
@@ -61651,7 +61967,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -61678,7 +61994,7 @@ export namespace Prisma {
     approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -61703,8 +62019,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUpdateManyWithoutPartnerNestedInput
   }
 
   export type PartnerUncheckedUpdateWithoutMonthlyCostsInput = {
@@ -61716,8 +62032,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
   }
 
   export type TeamUpsertWithoutCostsInput = {
@@ -62474,7 +62790,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
 
@@ -62501,7 +62817,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
 
@@ -62544,7 +62860,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
 
@@ -62571,7 +62887,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
@@ -62598,7 +62914,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
   }
 
@@ -62625,7 +62941,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedCreateNestedOneWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
   }
 
@@ -62668,7 +62984,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
   }
 
@@ -62695,11 +63011,11 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
-  export type UserCreateWithoutEmployeeSalesRateSettingInput = {
+  export type UserCreateWithoutEmployeeSalesRateSettingsInput = {
     id?: string
     email: string
     passwordHash: string
@@ -62726,7 +63042,7 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
 
-  export type UserUncheckedCreateWithoutEmployeeSalesRateSettingInput = {
+  export type UserUncheckedCreateWithoutEmployeeSalesRateSettingsInput = {
     id?: string
     email: string
     passwordHash: string
@@ -62753,23 +63069,23 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
 
-  export type UserCreateOrConnectWithoutEmployeeSalesRateSettingInput = {
+  export type UserCreateOrConnectWithoutEmployeeSalesRateSettingsInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutEmployeeSalesRateSettingInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingInput>
+    create: XOR<UserCreateWithoutEmployeeSalesRateSettingsInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingsInput>
   }
 
-  export type UserUpsertWithoutEmployeeSalesRateSettingInput = {
-    update: XOR<UserUpdateWithoutEmployeeSalesRateSettingInput, UserUncheckedUpdateWithoutEmployeeSalesRateSettingInput>
-    create: XOR<UserCreateWithoutEmployeeSalesRateSettingInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingInput>
+  export type UserUpsertWithoutEmployeeSalesRateSettingsInput = {
+    update: XOR<UserUpdateWithoutEmployeeSalesRateSettingsInput, UserUncheckedUpdateWithoutEmployeeSalesRateSettingsInput>
+    create: XOR<UserCreateWithoutEmployeeSalesRateSettingsInput, UserUncheckedCreateWithoutEmployeeSalesRateSettingsInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutEmployeeSalesRateSettingInput = {
+  export type UserUpdateToOneWithWhereWithoutEmployeeSalesRateSettingsInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutEmployeeSalesRateSettingInput, UserUncheckedUpdateWithoutEmployeeSalesRateSettingInput>
+    data: XOR<UserUpdateWithoutEmployeeSalesRateSettingsInput, UserUncheckedUpdateWithoutEmployeeSalesRateSettingsInput>
   }
 
-  export type UserUpdateWithoutEmployeeSalesRateSettingInput = {
+  export type UserUpdateWithoutEmployeeSalesRateSettingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
@@ -62796,7 +63112,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutEmployeeSalesRateSettingInput = {
+  export type UserUncheckedUpdateWithoutEmployeeSalesRateSettingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
@@ -62823,7 +63139,7 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
-  export type PartnerCreateWithoutSalesRateSettingInput = {
+  export type PartnerCreateWithoutSalesRateSettingsInput = {
     id?: string
     name: string
     companyName?: string | null
@@ -62833,10 +63149,10 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingCreateNestedOneWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingCreateNestedManyWithoutPartnerInput
   }
 
-  export type PartnerUncheckedCreateWithoutSalesRateSettingInput = {
+  export type PartnerUncheckedCreateWithoutSalesRateSettingsInput = {
     id?: string
     name: string
     companyName?: string | null
@@ -62846,26 +63162,26 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedCreateNestedManyWithoutPartnerInput
   }
 
-  export type PartnerCreateOrConnectWithoutSalesRateSettingInput = {
+  export type PartnerCreateOrConnectWithoutSalesRateSettingsInput = {
     where: PartnerWhereUniqueInput
-    create: XOR<PartnerCreateWithoutSalesRateSettingInput, PartnerUncheckedCreateWithoutSalesRateSettingInput>
+    create: XOR<PartnerCreateWithoutSalesRateSettingsInput, PartnerUncheckedCreateWithoutSalesRateSettingsInput>
   }
 
-  export type PartnerUpsertWithoutSalesRateSettingInput = {
-    update: XOR<PartnerUpdateWithoutSalesRateSettingInput, PartnerUncheckedUpdateWithoutSalesRateSettingInput>
-    create: XOR<PartnerCreateWithoutSalesRateSettingInput, PartnerUncheckedCreateWithoutSalesRateSettingInput>
+  export type PartnerUpsertWithoutSalesRateSettingsInput = {
+    update: XOR<PartnerUpdateWithoutSalesRateSettingsInput, PartnerUncheckedUpdateWithoutSalesRateSettingsInput>
+    create: XOR<PartnerCreateWithoutSalesRateSettingsInput, PartnerUncheckedCreateWithoutSalesRateSettingsInput>
     where?: PartnerWhereInput
   }
 
-  export type PartnerUpdateToOneWithWhereWithoutSalesRateSettingInput = {
+  export type PartnerUpdateToOneWithWhereWithoutSalesRateSettingsInput = {
     where?: PartnerWhereInput
-    data: XOR<PartnerUpdateWithoutSalesRateSettingInput, PartnerUncheckedUpdateWithoutSalesRateSettingInput>
+    data: XOR<PartnerUpdateWithoutSalesRateSettingsInput, PartnerUncheckedUpdateWithoutSalesRateSettingsInput>
   }
 
-  export type PartnerUpdateWithoutSalesRateSettingInput = {
+  export type PartnerUpdateWithoutSalesRateSettingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62875,10 +63191,10 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUpdateOneWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUpdateManyWithoutPartnerNestedInput
   }
 
-  export type PartnerUncheckedUpdateWithoutSalesRateSettingInput = {
+  export type PartnerUncheckedUpdateWithoutSalesRateSettingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62888,10 +63204,10 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
-    outsourceRateSetting?: PartnerOutsourceRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    outsourceRateSettings?: PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
   }
 
-  export type PartnerCreateWithoutOutsourceRateSettingInput = {
+  export type PartnerCreateWithoutOutsourceRateSettingsInput = {
     id?: string
     name: string
     companyName?: string | null
@@ -62901,10 +63217,10 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingCreateNestedManyWithoutPartnerInput
   }
 
-  export type PartnerUncheckedCreateWithoutOutsourceRateSettingInput = {
+  export type PartnerUncheckedCreateWithoutOutsourceRateSettingsInput = {
     id?: string
     name: string
     companyName?: string | null
@@ -62914,26 +63230,26 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutPartnerInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutPartnerInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedCreateNestedOneWithoutPartnerInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedCreateNestedManyWithoutPartnerInput
   }
 
-  export type PartnerCreateOrConnectWithoutOutsourceRateSettingInput = {
+  export type PartnerCreateOrConnectWithoutOutsourceRateSettingsInput = {
     where: PartnerWhereUniqueInput
-    create: XOR<PartnerCreateWithoutOutsourceRateSettingInput, PartnerUncheckedCreateWithoutOutsourceRateSettingInput>
+    create: XOR<PartnerCreateWithoutOutsourceRateSettingsInput, PartnerUncheckedCreateWithoutOutsourceRateSettingsInput>
   }
 
-  export type PartnerUpsertWithoutOutsourceRateSettingInput = {
-    update: XOR<PartnerUpdateWithoutOutsourceRateSettingInput, PartnerUncheckedUpdateWithoutOutsourceRateSettingInput>
-    create: XOR<PartnerCreateWithoutOutsourceRateSettingInput, PartnerUncheckedCreateWithoutOutsourceRateSettingInput>
+  export type PartnerUpsertWithoutOutsourceRateSettingsInput = {
+    update: XOR<PartnerUpdateWithoutOutsourceRateSettingsInput, PartnerUncheckedUpdateWithoutOutsourceRateSettingsInput>
+    create: XOR<PartnerCreateWithoutOutsourceRateSettingsInput, PartnerUncheckedCreateWithoutOutsourceRateSettingsInput>
     where?: PartnerWhereInput
   }
 
-  export type PartnerUpdateToOneWithWhereWithoutOutsourceRateSettingInput = {
+  export type PartnerUpdateToOneWithWhereWithoutOutsourceRateSettingsInput = {
     where?: PartnerWhereInput
-    data: XOR<PartnerUpdateWithoutOutsourceRateSettingInput, PartnerUncheckedUpdateWithoutOutsourceRateSettingInput>
+    data: XOR<PartnerUpdateWithoutOutsourceRateSettingsInput, PartnerUncheckedUpdateWithoutOutsourceRateSettingsInput>
   }
 
-  export type PartnerUpdateWithoutOutsourceRateSettingInput = {
+  export type PartnerUpdateWithoutOutsourceRateSettingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62943,10 +63259,10 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUpdateManyWithoutPartnerNestedInput
   }
 
-  export type PartnerUncheckedUpdateWithoutOutsourceRateSettingInput = {
+  export type PartnerUncheckedUpdateWithoutOutsourceRateSettingsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     companyName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -62956,7 +63272,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
-    salesRateSetting?: PartnerSalesRateSettingUncheckedUpdateOneWithoutPartnerNestedInput
+    salesRateSettings?: PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
   }
 
   export type TeamCreateManyLeaderInput = {
@@ -63096,6 +63412,16 @@ export namespace Prisma {
     yearMonth: string
     costCategory: $Enums.CostCategory
     amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSalesRateSettingCreateManyUserInput = {
+    id?: string
+    effectiveFrom: Date | string
+    unitPrice: number
+    defaultWorkRate?: number
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -63570,6 +63896,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type EmployeeSalesRateSettingUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    defaultWorkRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSalesRateSettingUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    defaultWorkRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    defaultWorkRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ApprovalLogUpdateWithoutActorInput = {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: StringFieldUpdateOperationsInput | string
@@ -63668,7 +64024,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -63695,7 +64051,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -63866,7 +64222,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -63893,7 +64249,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -64100,7 +64456,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -64127,7 +64483,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
-    employeeSalesRateSetting?: EmployeeSalesRateSettingUncheckedUpdateOneWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -65267,6 +65623,25 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type PartnerSalesRateSettingCreateManyPartnerInput = {
+    id?: string
+    effectiveFrom: Date | string
+    unitPrice: number
+    defaultWorkRate?: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PartnerOutsourceRateSettingCreateManyPartnerInput = {
+    id?: string
+    effectiveFrom: Date | string
+    amount: number
+    remarks?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type MonthlyAssignmentUpdateWithoutPartnerInput = {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: EnumAssignmentTargetTypeFieldUpdateOperationsInput | $Enums.AssignmentTargetType
@@ -65387,6 +65762,63 @@ export namespace Prisma {
     teamId?: NullableStringFieldUpdateOperationsInput | string | null
     yearMonth?: StringFieldUpdateOperationsInput | string
     costCategory?: EnumCostCategoryFieldUpdateOperationsInput | $Enums.CostCategory
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerSalesRateSettingUpdateWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    defaultWorkRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerSalesRateSettingUncheckedUpdateWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    defaultWorkRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    unitPrice?: IntFieldUpdateOperationsInput | number
+    defaultWorkRate?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerOutsourceRateSettingUpdateWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerOutsourceRateSettingUncheckedUpdateWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    amount?: IntFieldUpdateOperationsInput | number
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerOutsourceRateSettingUncheckedUpdateManyWithoutPartnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    effectiveFrom?: DateTimeFieldUpdateOperationsInput | Date | string
     amount?: IntFieldUpdateOperationsInput | number
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

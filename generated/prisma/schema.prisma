@@ -112,7 +112,7 @@ model User {
   monthlyAssignments                     MonthlyAssignment[]
   departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
   monthlyCosts                           MonthlyCost[]
-  employeeSalesRateSetting               EmployeeSalesRateSetting?
+  employeeSalesRateSettings              EmployeeSalesRateSetting[]
   approvalLogs                           ApprovalLog[]                           @relation("ApprovalActor")
   auditLogs                              AuditLog[]                              @relation("AuditActor")
 
@@ -407,8 +407,8 @@ model Partner {
   monthlyAssignments                     MonthlyAssignment[]
   departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
   monthlyCosts                           MonthlyCost[]
-  salesRateSetting                       PartnerSalesRateSetting?
-  outsourceRateSetting                   PartnerOutsourceRateSetting?
+  salesRateSettings                      PartnerSalesRateSetting[]
+  outsourceRateSettings                  PartnerOutsourceRateSetting[]
 
   @@map("partners")
 }
@@ -614,7 +614,9 @@ model AuditLog {
 }
 
 model EmployeeSalesRateSetting {
-  userId          String   @id @map("user_id")
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  effectiveFrom   DateTime @map("effective_from")
   unitPrice       Int      @map("unit_price")
   defaultWorkRate Int      @default(100) @map("default_work_rate")
   remarks         String?
@@ -622,11 +624,14 @@ model EmployeeSalesRateSetting {
   updatedAt       DateTime @updatedAt @map("updated_at")
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, effectiveFrom])
   @@map("employee_sales_rate_settings")
 }
 
 model PartnerSalesRateSetting {
-  partnerId       String   @id @map("partner_id")
+  id              String   @id @default(cuid())
+  partnerId       String   @map("partner_id")
+  effectiveFrom   DateTime @map("effective_from")
   unitPrice       Int      @map("unit_price")
   defaultWorkRate Int      @default(100) @map("default_work_rate")
   remarks         String?
@@ -634,16 +639,20 @@ model PartnerSalesRateSetting {
   updatedAt       DateTime @updatedAt @map("updated_at")
   partner         Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
 
+  @@unique([partnerId, effectiveFrom])
   @@map("partner_sales_rate_settings")
 }
 
 model PartnerOutsourceRateSetting {
-  partnerId String   @id @map("partner_id")
-  amount    Int
-  remarks   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  partner   Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  partnerId     String   @map("partner_id")
+  effectiveFrom DateTime @map("effective_from")
+  amount        Int
+  remarks       String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  partner       Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
 
+  @@unique([partnerId, effectiveFrom])
   @@map("partner_outsource_rate_settings")
 }

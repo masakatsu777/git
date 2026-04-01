@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AssignmentTargetType, CostCategory, CostTargetType } from "@/generated/prisma";
 
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
@@ -229,6 +230,10 @@ function num(value: unknown): number {
   return Number(value ?? 0);
 }
 
+function isUnassignedPartner(remarks: string | null | undefined) {
+  return !remarks;
+}
+
 export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, options?: { includeUnassignedEmployeeOptions?: boolean }): Promise<TeamMonthlyDetailBundle> {
   if (!hasDatabaseUrl()) {
     return {
@@ -241,7 +246,11 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
   }
 
   try {
-    const team = await prisma.team.findUniqueOrThrow({
+    const { year, month } = parseYearMonth(yearMonth);
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
+
+    const team: any = await prisma.team.findUniqueOrThrow({
       where: { id: teamId },
       select: {
         id: true,
@@ -295,7 +304,10 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
               select: {
                 id: true,
                 name: true,
-                employeeSalesRateSetting: {
+                employeeSalesRateSettings: {
+                  where: { effectiveFrom: { lte: monthEnd } },
+                  orderBy: { effectiveFrom: "desc" },
+                  take: 1,
                   select: {
                     unitPrice: true,
                     defaultWorkRate: true,
@@ -306,40 +318,39 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
           },
         },
       },
-    });
+    } as any);
 
     const includeUnassignedEmployeeOptions = options?.includeUnassignedEmployeeOptions ?? false;
-    const { year, month } = parseYearMonth(yearMonth);
-    const monthStart = new Date(year, month - 1, 1);
-    const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
 
     const [partnersResult, unassignedEmployeesResult, unassignedPartnersResult, fixedCostSummaryResult, laborCostSummaryResult] = await Promise.allSettled([
       prisma.partner.findMany({
         where: {
           status: "ACTIVE",
-          salesRateSetting: {
-            is: {
-              remarks: teamId,
-            },
-          },
         },
         orderBy: { name: "asc" },
         select: {
           id: true,
           name: true,
-          salesRateSetting: {
+          salesRateSettings: {
+            where: { effectiveFrom: { lte: monthEnd } },
+            orderBy: { effectiveFrom: "desc" },
+            take: 1,
             select: {
               unitPrice: true,
               defaultWorkRate: true,
+              remarks: true,
             },
           },
-          outsourceRateSetting: {
+          outsourceRateSettings: {
+            where: { effectiveFrom: { lte: monthEnd } },
+            orderBy: { effectiveFrom: "desc" },
+            take: 1,
             select: {
               amount: true,
             },
           },
         },
-      }),
+      } as any),
       team.departmentId
         ? prisma.user.findMany({
             where: {
@@ -357,36 +368,46 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
             select: {
               id: true,
               name: true,
-              employeeSalesRateSetting: {
+              employeeSalesRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
                 select: {
                   unitPrice: true,
                   defaultWorkRate: true,
                 },
               },
             },
-          })
+          } as any)
         : Promise.resolve([]),
       prisma.partner.findMany({
             where: {
               status: "ACTIVE",
-              OR: [
-                { salesRateSetting: null },
-                { salesRateSetting: { is: { remarks: null } } },
-                { salesRateSetting: { is: { remarks: "" } } },
-              ],
             },
             orderBy: { name: "asc" },
             select: {
               id: true,
               name: true,
-              salesRateSetting: {
+              salesRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
                 select: {
                   unitPrice: true,
                   defaultWorkRate: true,
+                  remarks: true,
+                },
+              },
+              outsourceRateSettings: {
+                where: { effectiveFrom: { lte: monthEnd } },
+                orderBy: { effectiveFrom: "desc" },
+                take: 1,
+                select: {
+                  amount: true,
                 },
               },
             },
-          }),
+          } as any),
       getTeamFixedCostAllocationSummary(teamId, yearMonth),
       getTeamLaborCostSummary(teamId, yearMonth),
     ]);
@@ -406,9 +427,9 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
       console.error("Failed to load labor cost summary for monthly PL details", { teamId, yearMonth, error: laborCostSummaryResult.reason });
     }
 
-    const partners = partnersResult.status === "fulfilled" ? partnersResult.value : [];
-    const unassignedEmployees = unassignedEmployeesResult.status === "fulfilled" ? unassignedEmployeesResult.value : [];
-    const unassignedPartners = unassignedPartnersResult.status === "fulfilled" ? unassignedPartnersResult.value : [];
+    const partners: any[] = (partnersResult.status === "fulfilled" ? (partnersResult.value as any[]) : []).filter((row: any) => row.salesRateSettings[0]?.remarks === teamId);
+    const unassignedEmployees: any[] = unassignedEmployeesResult.status === "fulfilled" ? (unassignedEmployeesResult.value as any[]) : [];
+    const unassignedPartners: any[] = (unassignedPartnersResult.status === "fulfilled" ? (unassignedPartnersResult.value as any[]) : []).filter((row: any) => isUnassignedPartner(row.salesRateSettings[0]?.remarks));
     const fixedCostSummary = fixedCostSummaryResult.status === "fulfilled"
       ? fixedCostSummaryResult.value
       : { totalCompanyFixedCost: 0, totalHeadcount: 0, teamHeadcount: 0, allocations: [] };
@@ -423,7 +444,7 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
       teamName: team.name,
       departmentId: team.departmentId ?? "",
       yearMonth,
-      assignments: team.assignments.map((row) => ({
+      assignments: team.assignments.map((row: any) => ({
         id: row.id,
         targetType: row.targetType,
         userId: row.userId,
@@ -434,14 +455,14 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
         workRate: num(row.workRate),
         remarks: row.remarks ?? "",
       })),
-      outsourcingCosts: team.costs.map((row) => ({
+      outsourcingCosts: team.costs.map((row: any) => ({
         id: row.id,
         partnerId: row.partnerId,
         label: row.partner?.name ?? "未設定",
         amount: num(row.amount),
         remarks: row.remarks ?? "",
       })),
-      teamExpenses: team.indirectCosts.map((row) => ({
+      teamExpenses: team.indirectCosts.map((row: any) => ({
         id: row.id,
         category: row.category,
         amount: num(row.amount),
@@ -452,19 +473,19 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
       salesTarget: num(target?.salesTarget),
       grossProfitTarget: num(target?.grossProfitTarget),
       grossProfitRateTarget: num(target?.grossProfitRateTarget),
-      employeeOptions: team.memberships.map((row) => ({
+      employeeOptions: team.memberships.map((row: any) => ({
         id: row.user.id,
         label: row.user.name,
-        defaultUnitPrice: num(row.user.employeeSalesRateSetting?.unitPrice),
-        defaultWorkRate: num(row.user.employeeSalesRateSetting?.defaultWorkRate ?? 100),
+        defaultUnitPrice: num(row.user.employeeSalesRateSettings[0]?.unitPrice),
+        defaultWorkRate: num(row.user.employeeSalesRateSettings[0]?.defaultWorkRate ?? 100),
       })),
       unassignedEmployeeIds: unassignedEmployees.map((row) => row.id),
       unassignedEmployeeOptions: includeUnassignedEmployeeOptions
         ? unassignedEmployees.map((row) => ({
             id: row.id,
             label: row.name,
-            defaultUnitPrice: num(row.employeeSalesRateSetting?.unitPrice),
-            defaultWorkRate: num(row.employeeSalesRateSetting?.defaultWorkRate ?? 100),
+            defaultUnitPrice: num(row.employeeSalesRateSettings[0]?.unitPrice),
+            defaultWorkRate: num(row.employeeSalesRateSettings[0]?.defaultWorkRate ?? 100),
           }))
         : [],
       unassignedPartnerIds: unassignedPartners.map((row) => row.id),
@@ -472,16 +493,16 @@ export async function getTeamMonthlyDetails(teamId: string, yearMonth: string, o
         ? unassignedPartners.map((row) => ({
             id: row.id,
             label: row.name,
-            defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
-            defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
+            defaultUnitPrice: num(row.salesRateSettings[0]?.unitPrice),
+            defaultWorkRate: num(row.salesRateSettings[0]?.defaultWorkRate ?? 100),
           }))
         : [],
       partnerOptions: partners.map((row) => ({
         id: row.id,
         label: row.name,
-        defaultUnitPrice: num(row.salesRateSetting?.unitPrice),
-        defaultWorkRate: num(row.salesRateSetting?.defaultWorkRate ?? 100),
-        defaultOutsourceAmount: num(row.outsourceRateSetting?.amount),
+        defaultUnitPrice: num(row.salesRateSettings[0]?.unitPrice),
+        defaultWorkRate: num(row.salesRateSettings[0]?.defaultWorkRate ?? 100),
+        defaultOutsourceAmount: num(row.outsourceRateSettings[0]?.amount),
       })),
       source: "database",
     };
@@ -567,6 +588,10 @@ export async function copyPreviousTeamMonthlyDetails(teamId: string, yearMonth: 
 
 export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput): Promise<SaveTeamMonthlyDetailsResult> {
   try {
+    const { year, month } = parseYearMonth(input.yearMonth);
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
+
     const team = await prisma.team.findUniqueOrThrow({
       where: { id: input.teamId },
       select: { id: true, name: true },
@@ -622,24 +647,30 @@ export async function saveTeamMonthlyDetails(input: SaveTeamMonthlyDetailsInput)
           return;
         }
 
-        const existing = await tx.partnerSalesRateSetting.findUnique({
-          where: { partnerId },
-          select: { partnerId: true, remarks: true },
+        const effectiveFrom = monthStart;
+        const existing = await (tx.partnerSalesRateSetting as any).findFirst({
+          where: {
+            partnerId,
+            effectiveFrom: { lte: monthEnd },
+          },
+          orderBy: { effectiveFrom: "desc" },
+          select: { id: true, remarks: true },
         });
 
         if (existing) {
           if (!existing.remarks) {
-            await tx.partnerSalesRateSetting.update({
-              where: { partnerId },
+            await (tx.partnerSalesRateSetting as any).update({
+              where: { id: existing.id },
               data: { remarks: input.teamId },
             });
           }
           return;
         }
 
-        await tx.partnerSalesRateSetting.create({
+        await (tx.partnerSalesRateSetting as any).create({
           data: {
             partnerId,
+            effectiveFrom,
             unitPrice,
             defaultWorkRate: workRate,
             remarks: input.teamId,
@@ -782,15 +813,18 @@ export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySal
           where: {
             id: { in: requestedPartnerIds },
             status: "ACTIVE",
-            OR: [
-              { salesRateSetting: null },
-              { salesRateSetting: { is: { remarks: null } } },
-              { salesRateSetting: { is: { remarks: "" } } },
-            ],
           },
-          select: { id: true },
-        });
-    const eligiblePartnerIds = new Set(eligiblePartners.map((partner) => partner.id));
+          select: {
+            id: true,
+            salesRateSettings: {
+              where: { effectiveFrom: { lte: monthEnd } },
+              orderBy: { effectiveFrom: "desc" },
+              take: 1,
+              select: { remarks: true },
+            },
+          },
+        } as any);
+    const eligiblePartnerIds = new Set((eligiblePartners as any[]).filter((partner: any) => isUnassignedPartner(partner.salesRateSettings[0]?.remarks)).map((partner: any) => partner.id));
 
     await prisma.$transaction(async (tx) => {
       if (team.departmentId) {
@@ -819,17 +853,20 @@ export async function saveUnassignedMonthlySales(input: SaveUnassignedMonthlySal
         });
       }
 
-      const existingEligiblePartners = await tx.partner.findMany({
+      const existingEligiblePartners = (await tx.partner.findMany({
         where: {
           status: "ACTIVE",
-          OR: [
-            { salesRateSetting: null },
-            { salesRateSetting: { is: { remarks: null } } },
-            { salesRateSetting: { is: { remarks: "" } } },
-          ],
         },
-        select: { id: true },
-      });
+        select: {
+          id: true,
+          salesRateSettings: {
+            where: { effectiveFrom: { lte: monthEnd } },
+            orderBy: { effectiveFrom: "desc" },
+            take: 1,
+            select: { remarks: true },
+          },
+        },
+      } as any)).filter((partner: any) => isUnassignedPartner(partner.salesRateSettings[0]?.remarks));
 
       await tx.monthlyAssignment.deleteMany({
         where: {

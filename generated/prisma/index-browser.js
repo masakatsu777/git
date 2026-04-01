@@ -480,7 +480,9 @@ exports.Prisma.AuditLogScalarFieldEnum = {
 };
 
 exports.Prisma.EmployeeSalesRateSettingScalarFieldEnum = {
+  id: 'id',
   userId: 'userId',
+  effectiveFrom: 'effectiveFrom',
   unitPrice: 'unitPrice',
   defaultWorkRate: 'defaultWorkRate',
   remarks: 'remarks',
@@ -489,7 +491,9 @@ exports.Prisma.EmployeeSalesRateSettingScalarFieldEnum = {
 };
 
 exports.Prisma.PartnerSalesRateSettingScalarFieldEnum = {
+  id: 'id',
   partnerId: 'partnerId',
+  effectiveFrom: 'effectiveFrom',
   unitPrice: 'unitPrice',
   defaultWorkRate: 'defaultWorkRate',
   remarks: 'remarks',
@@ -498,7 +502,9 @@ exports.Prisma.PartnerSalesRateSettingScalarFieldEnum = {
 };
 
 exports.Prisma.PartnerOutsourceRateSettingScalarFieldEnum = {
+  id: 'id',
   partnerId: 'partnerId',
+  effectiveFrom: 'effectiveFrom',
   amount: 'amount',
   remarks: 'remarks',
   createdAt: 'createdAt',

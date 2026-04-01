@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as {
       yearMonth?: string;
       rows?: Array<Record<string, unknown>>;
+      historyRows?: Array<Record<string, unknown>>;
+      deletedIds?: unknown[];
     };
 
     const result = await saveSalaryRecordBundle({
@@ -48,6 +50,16 @@ export async function POST(request: NextRequest) {
         socialInsurance: toNumber(row.socialInsurance),
         otherFixedCost: toNumber(row.otherFixedCost),
       })),
+      historyRows: (body.historyRows ?? []).map((row) => ({
+        id: String(row.id ?? ""),
+        userId: String(row.userId ?? ""),
+        effectiveFrom: String(row.effectiveFrom ?? "2026-03-01"),
+        baseSalary: toNumber(row.baseSalary),
+        allowance: toNumber(row.allowance),
+        socialInsurance: toNumber(row.socialInsurance),
+        otherFixedCost: toNumber(row.otherFixedCost),
+      })),
+      deletedIds: (body.deletedIds ?? []).map((value) => String(value ?? "")).filter(Boolean),
     });
 
     return NextResponse.json({
