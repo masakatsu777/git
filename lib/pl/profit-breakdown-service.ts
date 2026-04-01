@@ -111,6 +111,11 @@ function round2(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+function isMembershipActiveInYearMonth(startDate: Date, endDate: Date | null, yearMonth: string) {
+  const { start, end } = getMonthRange(yearMonth);
+  return startDate.getTime() <= end.getTime() && (!endDate || endDate.getTime() >= start.getTime());
+}
+
 export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): Promise<ProfitBreakdownBundle> {
   const yearMonthOptions = await getVisibleYearMonthOptions();
   const { startYearMonth: resolvedRangeStartYearMonth, endYearMonth: resolvedRangeEndYearMonth } = normalizeRange(
@@ -178,7 +183,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
             OR: [{ endDate: null }, { endDate: { gte: rangeStart } }],
             user: { is: { status: UserStatus.ACTIVE } },
           },
-          select: { userId: true },
+          select: { userId: true, startDate: true, endDate: true },
         },
         indirectCosts: {
           where: { yearMonth: { in: rangeYearMonths } },
@@ -352,7 +357,7 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
             startDate: { lte: rangeEnd },
             OR: [{ endDate: null }, { endDate: { gte: rangeStart } }],
           },
-          select: { teamId: true },
+          select: { teamId: true, startDate: true, endDate: true },
         },
       },
     }),
@@ -382,32 +387,47 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
     ]),
   );
   const teamContextMap = new Map(
-    teams.map((team) => [
-      team.id,
-      {
-        teamId: team.id,
-        teamName: team.name,
-        departmentId: team.departmentId ?? "",
-        departmentName: team.department?.name ?? "未設定",
-        teamHeadcount: team.memberships.length,
-        indirectCostTotalByMonth: team.indirectCosts.reduce((map, row) => {
-          map.set(row.yearMonth, (map.get(row.yearMonth) ?? 0) + toNumber(row.amount));
-          return map;
-        }, new Map<string, number>()),
-      },
-    ]),
+    teams.map((team) => {
+      const teamHeadcountByMonth = new Map<string, number>();
+      for (const yearMonth of rangeYearMonths) {
+        teamHeadcountByMonth.set(
+          yearMonth,
+          team.memberships.filter((membership) => isMembershipActiveInYearMonth(membership.startDate, membership.endDate, yearMonth)).length,
+        );
+      }
+      return [
+        team.id,
+        {
+          teamId: team.id,
+          teamName: team.name,
+          departmentId: team.departmentId ?? "",
+          departmentName: team.department?.name ?? "未設定",
+          teamHeadcountByMonth,
+          indirectCostTotalByMonth: team.indirectCosts.reduce((map, row) => {
+            map.set(row.yearMonth, (map.get(row.yearMonth) ?? 0) + toNumber(row.amount));
+            return map;
+          }, new Map<string, number>()),
+        },
+      ];
+    }),
   );
 
-  const departmentHeadcountMap = new Map<string, number>();
-  for (const team of teams) {
-    const departmentId = team.departmentId ?? "";
-    departmentHeadcountMap.set(departmentId, (departmentHeadcountMap.get(departmentId) ?? 0) + team.memberships.length);
-  }
-  for (const user of users) {
-    if (user.teamMemberships.length === 0) {
-      const departmentId = user.departmentId ?? "";
-      departmentHeadcountMap.set(departmentId, (departmentHeadcountMap.get(departmentId) ?? 0) + 1);
+  const departmentHeadcountByMonth = new Map<string, Map<string, number>>();
+  for (const yearMonth of rangeYearMonths) {
+    const monthMap = new Map<string, number>();
+    for (const team of teams) {
+      const departmentId = team.departmentId ?? "";
+      const teamHeadcount = team.memberships.filter((membership) => isMembershipActiveInYearMonth(membership.startDate, membership.endDate, yearMonth)).length;
+      monthMap.set(departmentId, (monthMap.get(departmentId) ?? 0) + teamHeadcount);
     }
+    for (const user of users) {
+      const hasPrimaryMembership = user.teamMemberships.some((membership) => isMembershipActiveInYearMonth(membership.startDate, membership.endDate, yearMonth));
+      if (!hasPrimaryMembership) {
+        const departmentId = user.departmentId ?? "";
+        monthMap.set(departmentId, (monthMap.get(departmentId) ?? 0) + 1);
+      }
+    }
+    departmentHeadcountByMonth.set(yearMonth, monthMap);
   }
 
   const partnerCostMap = new Map<string, number>();
@@ -442,22 +462,24 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       const otherAmount = monthlyCostMap.get(`${currentYearMonth}:${CostCategory.OTHER}`) ?? 0;
       return sum + fixedLaborCost + overtimeAmount + otherAmount;
     }, 0);
-    const indirectCostAllocation = membershipStatus === "ASSIGNED" && teamContext.teamHeadcount > 0
+    const indirectCostAllocation = membershipStatus === "ASSIGNED"
       ? rangeYearMonths.reduce((sum, currentYearMonth) => {
           const monthlyIndirectCostTotal = teamContext.indirectCostTotalByMonth.get(currentYearMonth) ?? 0;
-          return sum + Math.round(monthlyIndirectCostTotal / teamContext.teamHeadcount);
+          const teamHeadcount = teamContext.teamHeadcountByMonth.get(currentYearMonth) ?? 0;
+          return sum + (teamHeadcount > 0 ? Math.round(monthlyIndirectCostTotal / teamHeadcount) : 0);
         }, 0)
       : 0;
-    const departmentHeadcount = departmentHeadcountMap.get(teamContext.departmentId) ?? 0;
-    const fixedCostAllocation = departmentHeadcount > 0
-      ? rangeYearMonths.reduce((sum, currentYearMonth) => {
-          const fixedCostContext = fixedCostContextByMonth.get(currentYearMonth);
-          const departmentAmount = teamContext.departmentId
-            ? (fixedCostContext?.departmentAmounts.get(teamContext.departmentId) ?? 0)
-            : (fixedCostContext?.totalAmount ?? 0);
-          return sum + Math.round(departmentAmount / departmentHeadcount);
-        }, 0)
-      : 0;
+    const fixedCostAllocation = rangeYearMonths.reduce((sum, currentYearMonth) => {
+      const departmentHeadcount = departmentHeadcountByMonth.get(currentYearMonth)?.get(teamContext.departmentId) ?? 0;
+      if (departmentHeadcount <= 0) {
+        return sum;
+      }
+      const fixedCostContext = fixedCostContextByMonth.get(currentYearMonth);
+      const departmentAmount = teamContext.departmentId
+        ? (fixedCostContext?.departmentAmounts.get(teamContext.departmentId) ?? 0)
+        : (fixedCostContext?.totalAmount ?? 0);
+      return sum + Math.round(departmentAmount / departmentHeadcount);
+    }, 0);
 
     const existing = employeeRows.get(key);
     if (existing) {
@@ -505,16 +527,17 @@ export async function getProfitBreakdownBundle(input?: ProfitBreakdownFilters): 
       const otherAmount = monthlyCostMap.get(`${currentYearMonth}:${CostCategory.OTHER}`) ?? 0;
       return sum + fixedLaborCost + overtimeAmount + otherAmount;
     }, 0);
-    const departmentHeadcount = departmentHeadcountMap.get(departmentId) ?? 0;
-    const fixedCostAllocation = departmentHeadcount > 0
-      ? rangeYearMonths.reduce((sum, currentYearMonth) => {
-          const fixedCostContext = fixedCostContextByMonth.get(currentYearMonth);
-          const departmentAmount = departmentId
-            ? (fixedCostContext?.departmentAmounts.get(departmentId) ?? 0)
-            : (fixedCostContext?.totalAmount ?? 0);
-          return sum + Math.round(departmentAmount / departmentHeadcount);
-        }, 0)
-      : 0;
+    const fixedCostAllocation = rangeYearMonths.reduce((sum, currentYearMonth) => {
+      const departmentHeadcount = departmentHeadcountByMonth.get(currentYearMonth)?.get(departmentId) ?? 0;
+      if (departmentHeadcount <= 0) {
+        return sum;
+      }
+      const fixedCostContext = fixedCostContextByMonth.get(currentYearMonth);
+      const departmentAmount = departmentId
+        ? (fixedCostContext?.departmentAmounts.get(departmentId) ?? 0)
+        : (fixedCostContext?.totalAmount ?? 0);
+      return sum + Math.round(departmentAmount / departmentHeadcount);
+    }, 0);
 
     const existing = employeeRows.get(key);
     if (existing) {
