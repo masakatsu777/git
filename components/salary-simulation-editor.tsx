@@ -34,20 +34,27 @@ function requiresAdjustmentReason(newSalary: number, finalSalaryReference: numbe
   return Math.abs(newSalary - finalSalaryReference) >= threshold;
 }
 
+function hasAdjustment(row: SalarySimulationRow) {
+  return row.newSalary !== row.finalSalaryReference || row.adjustmentReason.trim().length > 0;
+}
+
 function getManagerState(row: SalarySimulationRow) {
-  if (row.status === "APPLIED" || row.status === "APPROVED") return "調整完了";
-  if (row.newSalary !== row.finalSalaryReference || row.adjustmentReason.trim()) return "調整済";
+  if (row.status === "APPLIED") return "反映済";
+  if (row.status === "APPROVED") return "調整完了";
+  if (hasAdjustment(row)) return "調整済";
   return "未調整";
 }
 
-function getExecutiveState(status: string) {
-  return status === "APPLIED" || status === "APPROVED" ? "承認済" : "未承認";
+function getExecutiveState(row: SalarySimulationRow) {
+  if (row.status === "APPLIED" || row.status === "APPROVED") return "承認済";
+  if (hasAdjustment(row)) return "再承認待ち";
+  return "未承認";
 }
 
 function getRowActionLabel(row: SalarySimulationRow, canEdit: boolean, canApprove: boolean, canApply: boolean) {
   if (row.status === "APPLIED") return "完了";
   if (row.status === "APPROVED") return canApply ? "反映待ち" : "承認済";
-  if (canApprove) return "承認待ち";
+  if (canApprove) return hasAdjustment(row) ? "再承認待ち" : "承認待ち";
   if (canEdit) return "調整入力";
   return "確認";
 }
@@ -149,7 +156,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           adjustmentAmount,
           row.adjustmentReason,
           getManagerState(row),
-          getExecutiveState(row.status),
+          getExecutiveState(row),
           getRowActionLabel(row, canEdit, canApprove, canApply),
           row.finalRating,
         ].map(escapeCsv).join(",");
@@ -179,18 +186,29 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
           proposedRaiseAmount,
           proposedRaiseRate,
           isWithinRecommendedRange: proposedRaiseRate >= item.recommendedMinRaiseRate && proposedRaiseRate <= item.recommendedMaxRaiseRate,
+          status: item.status === "APPROVED" ? "DRAFT" : item.status,
         };
       }),
     );
   }
 
   function updateAdjustmentReason(userId: string, adjustmentReason: string) {
-    setRows((current) => current.map((item) => (item.userId === userId ? { ...item, adjustmentReason } : item)));
+    setRows((current) =>
+      current.map((item) =>
+        item.userId === userId
+          ? {
+              ...item,
+              adjustmentReason,
+              status: item.status === "APPROVED" ? "DRAFT" : item.status,
+            }
+          : item,
+      ),
+    );
   }
 
   const totalAutoAmount = useMemo(() => rows.reduce((sum, row) => sum + row.finalSalaryReference, 0), [rows]);
   const totalDecisionAmount = useMemo(() => rows.reduce((sum, row) => sum + row.newSalary, 0), [rows]);
-  const unapprovedCount = useMemo(() => rows.filter((row) => row.status === "DRAFT").length, [rows]);
+  const unapprovedCount = useMemo(() => rows.filter((row) => row.status !== "APPROVED" && row.status !== "APPLIED").length, [rows]);
   const missingReasonCount = useMemo(
     () => rows.filter((row) => requiresAdjustmentReason(row.newSalary, row.finalSalaryReference, largeDiffThreshold) && !row.adjustmentReason.trim()).length,
     [largeDiffThreshold, rows],
@@ -208,7 +226,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
       <div className="flex items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold text-slate-950">昇給決定</h2>
-          <p className="mt-1 text-sm text-slate-500">管理者は決定額と調整理由を入力し、役員は承認、承認後に社員コストへ反映します。</p>
+          <p className="mt-1 text-sm text-slate-500">管理者は決定額と調整理由を入力し、役員は承認します。承認後に修正した場合は再承認待ちへ戻り、社員コスト反映後はロックされます。</p>
         </div>
       </div>
 
@@ -291,7 +309,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
             <tbody>
               {visibleRows.map((row) => {
                 const adjustmentAmount = row.newSalary - row.finalSalaryReference;
-                const rowLocked = row.status !== "DRAFT";
+                const rowLocked = row.status === "APPLIED";
                 return (
                   <tr key={row.userId} className="border-t border-slate-200 align-top">
                     <td className="w-32 px-3 py-3 font-medium text-slate-950">{row.employeeName}</td>
@@ -321,7 +339,7 @@ export function SalarySimulationEditor({ canEdit, canApprove, canApply, defaults
                       />
                     </td>
                     <td className="px-3 py-3 text-slate-700">{getManagerState(row)}</td>
-                    <td className="px-3 py-3 text-slate-700">{getExecutiveState(row.status)}</td>
+                    <td className="px-3 py-3 text-slate-700">{getExecutiveState(row)}</td>
                     <td className="px-3 py-3 text-slate-700">{getRowActionLabel(row, canEdit, canApprove, canApply)}</td>
                     <td className="px-3 py-3 text-slate-700">{row.finalRating}</td>
                   </tr>

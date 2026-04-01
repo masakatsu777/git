@@ -149,8 +149,8 @@ async function upsertSalarySimulationRows(
       select: { status: true },
     });
 
-    if (existingSimulation && existingSimulation.status !== SalarySimulationStatus.DRAFT) {
-      throw new Error(`承認済または反映済のため編集できません: ${evaluation.user.name}`);
+    if (existingSimulation && existingSimulation.status === SalarySimulationStatus.APPLIED) {
+      throw new Error(`社員コストへ反映済のため編集できません: ${evaluation.user.name}`);
     }
 
     const latestSalary = await tx.salaryRecord.findFirst({
