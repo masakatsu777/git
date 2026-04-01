@@ -48,7 +48,7 @@ export default async function MyEvaluationPage({
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">自己評価</h1>
-              <p className="mt-2 text-sm text-slate-300">随時入力可能なので、実践指針として活用しましょう。</p>
+              <p className="mt-2 text-sm text-slate-300">随時入力可能なので、普段からの実践指針として活用しましょう。</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                 <label className="text-sm text-slate-200">
                   評価期間
