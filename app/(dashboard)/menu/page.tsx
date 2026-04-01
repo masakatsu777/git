@@ -15,7 +15,7 @@ type MenuCard = {
 };
 
 function buildCards(role: string, visibility: UserMenuVisibility, canManageUsers: boolean): MenuCard[] {
-  const evaluationTarget = role === "employee" ? "/evaluations/result" : "/dashboard";
+  const evaluationTarget = role === "employee" ? "/evaluations/my" : "/dashboard";
   const cards: MenuCard[] = [];
 
   if (visibility.philosophyPractice) {
