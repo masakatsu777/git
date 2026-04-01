@@ -18,10 +18,6 @@ function toNumber(value: string) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function totalOf(row: Pick<SalaryRecordEditorRow, "baseSalary" | "allowance" | "socialInsurance" | "otherFixedCost">) {
-  return row.baseSalary + row.allowance + row.socialInsurance + row.otherFixedCost;
-}
-
 function historyTotalOf(row: Pick<SalaryRecordHistoryRow, "baseSalary" | "allowance" | "socialInsurance" | "otherFixedCost">) {
   return row.baseSalary + row.allowance + row.socialInsurance + row.otherFixedCost;
 }
@@ -33,34 +29,6 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
   const [message, setMessage] = useState<string | null>(null);
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
-
-  function updateRow(id: string, key: keyof SalaryRecordEditorRow, value: string) {
-    setRows((current) => current.map((row) => {
-      if (row.id !== id) return row;
-
-      const next = {
-        ...row,
-        [key]: key === "effectiveFrom" ? value : toNumber(value),
-      } as SalaryRecordEditorRow;
-
-      const nextHistory = row.history.map((historyRow) => historyRow.id === row.id
-        ? {
-            ...historyRow,
-            [key]: key === "effectiveFrom" ? value : toNumber(value),
-            total: historyTotalOf({
-              ...historyRow,
-              [key]: key === "effectiveFrom" ? value : toNumber(value),
-            } as SalaryRecordHistoryRow),
-          }
-        : historyRow);
-
-      return {
-        ...next,
-        total: totalOf(next),
-        history: nextHistory,
-      };
-    }));
-  }
 
   function updateHistoryRow(userId: string, historyId: string, key: keyof SalaryRecordHistoryRow, value: string) {
     setRows((current) => current.map((row) => {
@@ -192,27 +160,11 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
                       <td className="px-4 py-3 font-medium text-slate-950">{row.employeeCode}</td>
                       <td className="px-4 py-3 text-slate-700">{row.employeeName}</td>
                       <td className="px-4 py-3 text-slate-700">{row.teamName}</td>
-                      <td className="px-4 py-3">
-                        <input
-                          type="date"
-                          value={row.effectiveFrom}
-                          disabled={!canEdit || isPending}
-                          onChange={(event) => updateRow(row.id, "effectiveFrom", event.target.value)}
-                          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input type="number" value={row.baseSalary} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "baseSalary", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input type="number" value={row.allowance} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "allowance", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input type="number" value={row.socialInsurance} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "socialInsurance", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                      </td>
-                      <td className="px-4 py-3">
-                        <input type="number" value={row.otherFixedCost} disabled={!canEdit || isPending} onChange={(event) => updateRow(row.id, "otherFixedCost", event.target.value)} className="w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm" />
-                      </td>
+                      <td className="px-4 py-3 text-slate-700">{row.effectiveFrom}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.baseSalary)}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.allowance)}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.socialInsurance)}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatCurrencyWithUnit(row.otherFixedCost)}</td>
                       <td className="px-4 py-3 font-semibold text-slate-950">{formatCurrencyWithUnit(row.total)}</td>
                       <td className="px-4 py-3">
                         <button
@@ -313,6 +265,7 @@ export function SalaryRecordEditor({ yearMonth, canEdit, defaults }: SalaryRecor
           {isPending ? "処理中..." : "社員コストを保存"}
         </button>
         <p className="text-sm text-slate-500">対象月の人件費合計: {formatCurrencyWithUnit(total)}</p>
+        {canEdit ? <p className="text-sm text-slate-500">変更や削除は履歴一覧で行います。上段は対象月時点の現在値表示です。</p> : null}
       </div>
 
       {message ? <p className="mt-3 text-sm text-slate-600">{message}</p> : null}
