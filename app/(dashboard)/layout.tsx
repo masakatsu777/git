@@ -27,8 +27,11 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       { href: "/evaluations/result", label: "マイ評価結果" },
       { href: "/evaluations/team", label: "上長評価" },
       { href: "/evaluations/finalize", label: "最終評価" },
-      { href: "/salary/simulations", label: "昇給決定" },
     );
+
+    if (hasPermission(user, PERMISSIONS.salaryRead)) {
+      items.push({ href: "/salary/simulations", label: "昇給決定" });
+    }
 
     if (hasPrimaryTeam || hasPermission(user, PERMISSIONS.plAllRead)) {
       items.splice(2, 0, { href: "/pl/annual", label: "年度" });

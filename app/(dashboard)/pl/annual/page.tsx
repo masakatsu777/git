@@ -26,6 +26,7 @@ export default async function AnnualPlPage({
   const user = await getSessionUser();
   const params = await searchParams;
   const canViewAll = hasPermission(user, PERMISSIONS.plAllRead);
+  const canManageSalary = hasPermission(user, PERMISSIONS.salaryRead);
 
   if (!canViewAll && user.teamIds.length === 0) {
     redirect("/pl/annual-personal");
@@ -432,9 +433,11 @@ export default async function AnnualPlPage({
                 <h2 className="text-xl font-semibold text-slate-950">評価期間別の進捗と昇給状況</h2>
                 <p className="mt-1 text-sm text-slate-500">年度に含まれる半期評価ごとの状況です。</p>
               </div>
-              <Link href="/salary/simulations" className="text-sm font-medium text-emerald-700">
-                昇給決定へ
-              </Link>
+              {canManageSalary ? (
+                <Link href="/salary/simulations" className="text-sm font-medium text-emerald-700">
+                  昇給決定へ
+                </Link>
+              ) : null}
             </div>
             <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200">
               <table className="min-w-full text-left text-sm">
@@ -452,9 +455,13 @@ export default async function AnnualPlPage({
                   {evaluationSummary.periods.map((period) => (
                     <tr key={period.evaluationPeriodId} className="border-t border-slate-200">
                       <td className="px-4 py-3 font-medium text-slate-950">
-                        <Link href={`/salary/simulations?evaluationPeriodId=${period.evaluationPeriodId}`} className="text-emerald-700 underline-offset-4 hover:underline">
-                          {period.periodName}
-                        </Link>
+                        {canManageSalary ? (
+                          <Link href={`/salary/simulations?evaluationPeriodId=${period.evaluationPeriodId}`} className="text-emerald-700 underline-offset-4 hover:underline">
+                            {period.periodName}
+                          </Link>
+                        ) : (
+                          <span>{period.periodName}</span>
+                        )}
                         <p className="mt-1 text-xs text-slate-500">{period.startDate} - {period.endDate}</p>
                       </td>
                       <td className="px-4 py-3 text-slate-700">{period.finalizedCount} / {period.totalCount}</td>
