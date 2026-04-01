@@ -75,7 +75,8 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
           </button>
         </div>
 
-        <nav className="hidden flex-wrap gap-2 lg:flex">
+        <div className="hidden lg:flex lg:items-center lg:gap-3">
+          <nav className="flex flex-wrap gap-2">
           {items.map((item) => {
             const active = isActivePath(pathname, item.href);
             return (
@@ -88,7 +89,15 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
               </Link>
             );
           })}
-        </nav>
+          </nav>
+          <SessionActionButton
+            mode="logout"
+            redirectTo="/login"
+            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300"
+          >
+            ログアウト
+          </SessionActionButton>
+        </div>
 
         {isOpen ? (
           <div id="dashboard-global-nav" className="lg:hidden">

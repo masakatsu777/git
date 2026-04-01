@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 
-import { SessionActionButton } from "@/components/auth/session-action-button";
 import { DashboardGlobalNav } from "@/components/layout/dashboard-global-nav";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { getUserMenuVisibility } from "@/lib/menu-visibility/menu-visibility-service";
@@ -76,15 +75,6 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   return (
     <>
       <DashboardGlobalNav userName={user.name} role={user.role} items={items} />
-      <div className="fixed right-6 top-4 z-50 hidden md:block">
-        <SessionActionButton
-          mode="logout"
-          redirectTo="/login"
-          className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
-        >
-          ログアウト
-        </SessionActionButton>
-      </div>
       {children}
     </>
   );
