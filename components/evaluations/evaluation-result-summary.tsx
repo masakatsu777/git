@@ -58,7 +58,8 @@ export function EvaluationResultSummary({ summary }: EvaluationResultSummaryProp
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-                <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(summary.currentSalary)}</p></article>
+        <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">参考評価額</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(summary.gradeSalaryAmount)}</p></article>
+        <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">現本給</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(summary.currentSalary)}</p></article>
         <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">自律成長評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(selfGrowthSalaryAmount)}</p></article>
         <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">協調相乗評価</p><p className="mt-3 text-2xl font-semibold text-slate-950">{formatCurrencyWithUnit(synergySalaryAmount)}</p></article>
         <article className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]"><p className="text-sm text-slate-500">粗利差異率</p><p className={`mt-3 text-2xl font-semibold ${summary.grossProfitVarianceRate < 0 ? "text-rose-700" : summary.grossProfitVarianceRate > 0 ? "text-emerald-700" : "text-slate-950"}`}>{formatPercent(summary.grossProfitVarianceRate)}</p></article>
