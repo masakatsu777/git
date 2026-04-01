@@ -19,7 +19,7 @@ function buildCards(role: string, visibility: UserMenuVisibility, canManageUsers
 
   if (visibility.philosophyPractice) {
     cards.push({
-      title: "理念実践管理",
+      title: "理念実践ナビ",
       description: "理念に基づく活動が実践されているかを自他で確認し、それが成果として実現されているかを検証します",
       href: evaluationTarget,
     });

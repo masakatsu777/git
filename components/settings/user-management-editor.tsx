@@ -568,7 +568,7 @@ export function UserManagementEditor({ rows, roleOptions, departmentOptions, tea
                 <th className="px-4 py-3 font-medium">ロール</th>
                 <th className="px-4 py-3 font-medium">部署</th>
                 <th className="px-4 py-3 font-medium">所属</th>
-                <th className="px-4 py-3 font-medium">理念実践管理</th>
+                <th className="px-4 py-3 font-medium">理念実践ナビ</th>
                 <th className="px-4 py-3 font-medium">月報作成</th>
                 <th className="px-4 py-3 font-medium">給与明細</th>
                 <th className="px-4 py-3 font-medium">経費精算</th>

@@ -23,7 +23,7 @@ export default async function TeamEvaluationPage({
     return (
       <main className="min-h-screen bg-[linear-gradient(180deg,#f8fbff_0%,#eef4ff_100%)] px-6 py-10 text-slate-900">
         <div className="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-10 shadow-sm">
-          <h1 className="text-2xl font-semibold text-slate-950">理念実践管理の対象外です</h1>
+          <h1 className="text-2xl font-semibold text-slate-950">理念実践ナビの対象外です</h1>
           <p className="mt-3 text-sm text-slate-600">この機能は現在のメニュー設定では利用対象外です。必要に応じて管理者へご相談ください。</p>
         </div>
       </main>
@@ -146,7 +146,7 @@ export default async function TeamEvaluationPage({
                 ダッシュボードへ
               </Link>
               <Link href={`/evaluations/my?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                半期自己評価
+                自己評価
               </Link>
             </div>
           </div>
