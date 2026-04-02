@@ -21,7 +21,8 @@ function buildCards(role: string, visibility: UserMenuVisibility, canManageUsers
   if (visibility.philosophyPractice) {
     cards.push({
       title: "理念実践ナビ",
-      description: "理念に基づく活動が実践されているかを自他で確認し、それが成果として実現されているかを検証します",
+      description: `自律的成長によって必要とされる存在となり、協調相乗をもって他者貢献に尽くす。
+この理念の実践を自他で確認します。`,
       href: evaluationTarget,
     });
   }
@@ -80,7 +81,7 @@ export default async function MenuPage() {
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Main Menu</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">メニュー</h1>
+              <h1 className="text-3xl font-semibold">GIT Members メニュー</h1>
               <p className="mt-2 text-sm text-slate-300">
                 ログイン後の入口です。ここから各業務メニューへ進めます。
               </p>
