@@ -9,6 +9,7 @@ import { PERMISSIONS } from "@/lib/permissions/definitions";
 
 type MenuCard = {
   title: string;
+  subtitle?: string;
   description: string;
   href?: string;
   status?: string;
@@ -21,6 +22,7 @@ function buildCards(role: string, visibility: UserMenuVisibility, canManageUsers
   if (visibility.philosophyPractice) {
     cards.push({
       title: "理念実践ナビ",
+      subtitle: "～上級ITビジネスパーソンへの道～",
       description: `自律的成長によって必要とされる存在となり、協調相乗をもって他者貢献に尽くす。
 この理念の実践を自他で確認します。`,
       href: evaluationTarget,
@@ -107,8 +109,11 @@ export default async function MenuPage() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl font-semibold text-slate-950">{card.title}</h2>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <h2 className="text-2xl font-semibold text-slate-950">{card.title}</h2>
+                    {card.subtitle ? <span className="text-sm font-medium text-slate-600">{card.subtitle}</span> : null}
+                  </div>
+                  <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">{card.description}</p>
                 </div>
                 {card.status ? (
                   <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">

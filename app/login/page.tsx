@@ -19,7 +19,7 @@ export default async function LoginPage({
           <p className="text-sm uppercase tracking-[0.28em] text-brand-200">Session Login</p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-4xl font-semibold tracking-tight">ログイン</h1>
+              <h1 className="text-4xl font-semibold tracking-tight">GIT Members ログイン</h1>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
                 {showQuickLogin
                   ? "メールアドレスとパスワードでログインできます。開発確認用に、一覧からそのままユーザー選択ログインも残しています。"
