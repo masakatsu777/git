@@ -52,6 +52,11 @@ export default async function FinalizeEvaluationPage({
   }
 
   const bundle = await getFinalReviewBundle(effectiveMemberId, selectedEvaluationPeriodId);
+
+  if (user.role !== "employee" && !params.memberId && bundle.selectedUserId) {
+    redirect(`/evaluations/finalize?evaluationPeriodId=${selectedEvaluationPeriodId}&memberId=${bundle.selectedUserId}`);
+  }
+
   const canEdit = hasPermission(user, PERMISSIONS.evaluationFinalize) && bundle.periodStatus === "CLOSED";
   const periodStatusLabel = getEvaluationPeriodStatusLabel(bundle.periodStatus);
 
@@ -67,11 +72,10 @@ export default async function FinalizeEvaluationPage({
                 {user.role === "employee"
                   ? "自分に対する最終評価内容を確認できます。"
                   : canEdit
-                    ? "管理者・役員が最終評価を確定する画面です。"
-                    : "最終評価内容を参照できます。"}
+                    ? "管理者・役員は全員分を閲覧でき、この期間では最終評価を入力できます。"
+                    : "管理者・役員は全員分を閲覧できます。最終評価の入力は最終評価中の期間だけ可能です。"}
               </p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
-                {effectiveMemberId ? <input type="hidden" name="memberId" value={effectiveMemberId} /> : null}
                 <label className="text-sm text-slate-200">
                   評価期間
                   <select
@@ -86,12 +90,28 @@ export default async function FinalizeEvaluationPage({
                     ))}
                   </select>
                 </label>
+                {user.role !== "employee" ? (
+                  <label className="text-sm text-slate-200">
+                    評価対象
+                    <select
+                      name="memberId"
+                      defaultValue={bundle.selectedUserId}
+                      className="mt-2 min-w-56 rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                    >
+                      {bundle.members.map((member) => (
+                        <option key={member.userId} value={member.userId}>
+                          {member.name} / {member.teamName} / {member.status}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
                 <button type="submit" className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950">
                   表示更新
                 </button>
               </form>
               <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
-              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の最終評価は閲覧専用です。</p> : null}
+              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の最終評価は閲覧専用です。自己評価や上長評価の途中内容は確認できます。</p> : null}
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
