@@ -212,6 +212,11 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
 
 
       <section className="rounded-3xl border border-slate-200 p-4">
+        <h3 className="font-semibold text-slate-950">本人総括コメント</h3>
+        <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{defaults.selfComment || "本人コメントはありません。"}</p>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">上長総括コメント</h3>
         <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{defaults.managerComment || "上長コメントはありません。"}</p>
       </section>
