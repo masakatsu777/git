@@ -541,6 +541,23 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       },
     });
 
+    const selectedUser = selectedUserId
+      ? await prisma.user.findUnique({
+          where: { id: selectedUserId },
+          select: {
+            id: true,
+            name: true,
+            positionId: true,
+            position: { select: { name: true } },
+            salaryRecords: {
+              orderBy: { effectiveFrom: "desc" },
+              take: 1,
+              select: { baseSalary: true, allowance: true },
+            },
+          },
+        })
+      : null;
+
     const referencedItemIds = Array.from(new Set(evaluations.flatMap((evaluation) => evaluation.scores.map((score) => score.evaluationItemId))));
     const itemRows = await prisma.evaluationItem.findMany({
       where: {
@@ -599,10 +616,10 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         periodName: period.name,
         periodStatus: period.status,
         members: [],
-        selectedUserId: "",
-        selectedUserName: "",
-        teamName: "",
-        positionName: "",
+        selectedUserId: selectedUser?.id ?? "",
+        selectedUserName: selectedUser?.name ?? "",
+        teamName: "未所属",
+        positionName: selectedUser?.position?.name ?? "未設定",
         status: EvaluationStatus.SELF_REVIEW,
         displayStage: "SELF",
         selfComment: "",
@@ -624,7 +641,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         gradeBaseAmount: 0,
         pointUnitAmount: 0,
         gradeSalaryAmount: 0,
-        currentSalary: 0,
+        currentSalary: toNumber(selectedUser?.salaryRecords?.[0]?.baseSalary) + toNumber(selectedUser?.salaryRecords?.[0]?.allowance),
         grossProfitVarianceRate: 0,
         grossProfitDeductionAmount: 0,
         itSkillScore: 0,
