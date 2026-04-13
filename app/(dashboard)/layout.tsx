@@ -62,6 +62,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       { href: "/settings/organization", label: "組織" },
       { href: "/settings/evaluation-periods", label: "評価期間" },
       { href: "/settings/skill-careers", label: "スキル" },
+      { href: "/settings/career-statuses", label: "キャリア状況設定" },
       { href: "/settings/grade-salary-settings", label: "等級給与設定" },
       { href: "/settings/rates", label: "単価" },
       { href: "/settings/salary-records", label: "社員コスト" },
