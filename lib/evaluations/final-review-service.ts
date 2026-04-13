@@ -609,7 +609,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       };
     });
 
-    const target = members.find((member) => member.userId === selectedUserId) ?? members[0];
+    const target = members.find((member) => member.userId === selectedUserId) ?? (selectedUserId ? undefined : members[0]);
     if (!target) {
       return {
         evaluationPeriodId: period.id,
