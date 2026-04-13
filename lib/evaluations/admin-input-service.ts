@@ -1,4 +1,4 @@
-import { EvaluationPeriodStatus, EvaluationStatus, ReviewType } from "@/generated/prisma";
+import { EvaluationPeriodStatus, EvaluationStatus, ReviewType, UserStatus } from "@/generated/prisma";
 
 import { resolveEvaluationPeriod } from "@/lib/evaluations/period-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
@@ -48,6 +48,8 @@ export type CopyAdminInputResult = {
   copiedCount: number;
   failedMembers: string[];
 };
+
+export const UNASSIGNED_ADMIN_INPUT_TEAM_ID = "__unassigned__";
 
 function toNumber(value: unknown) {
   return Number(value ?? 0);
@@ -181,19 +183,42 @@ export async function getAdminInputBundle(teamId: string, selectedUserId?: strin
 
   try {
     const period = await resolveEvaluationPeriod(evaluationPeriodId);
+    const isUnassignedTeam = teamId === UNASSIGNED_ADMIN_INPUT_TEAM_ID;
     const [team, memberships, itemRows] = await Promise.all([
-      prisma.team.findUniqueOrThrow({
-        where: { id: teamId },
-        select: { id: true, name: true },
-      }),
-      prisma.teamMembership.findMany({
-        where: { teamId, endDate: null },
-        orderBy: [{ isPrimary: "desc" }, { startDate: "desc" }],
-        select: {
-          userId: true,
-          user: { select: { name: true } },
-        },
-      }),
+      isUnassignedTeam
+        ? Promise.resolve({ id: UNASSIGNED_ADMIN_INPUT_TEAM_ID, name: "未所属" })
+        : prisma.team.findUniqueOrThrow({
+            where: { id: teamId },
+            select: { id: true, name: true },
+          }),
+      isUnassignedTeam
+        ? prisma.user.findMany({
+            where: {
+              status: UserStatus.ACTIVE,
+              teamMemberships: {
+                none: {
+                  isPrimary: true,
+                  endDate: null,
+                },
+              },
+            },
+            orderBy: [{ employeeCode: "asc" }, { name: "asc" }],
+            select: {
+              id: true,
+              name: true,
+            },
+          }).then((rows) => rows.map((row) => ({
+            userId: row.id,
+            user: { name: row.name },
+          })))
+        : prisma.teamMembership.findMany({
+            where: { teamId, endDate: null },
+            orderBy: [{ isPrimary: "desc" }, { startDate: "desc" }],
+            select: {
+              userId: true,
+              user: { select: { name: true } },
+            },
+          }),
       getAdminItems(),
     ]);
 
@@ -203,9 +228,9 @@ export async function getAdminInputBundle(teamId: string, selectedUserId?: strin
     const evaluations = memberIds.length > 0
       ? await prisma.employeeEvaluation.findMany({
           where: {
-            teamId,
             evaluationPeriodId: period.id,
             userId: { in: memberIds },
+            ...(isUnassignedTeam ? { teamId: null } : { teamId }),
           },
           select: {
             id: true,
@@ -311,6 +336,8 @@ export async function saveAdminInputBundle(input: SaveAdminInput): Promise<Admin
     throw new Error("この評価期間は閲覧専用です");
   }
 
+  const storedTeamId = input.teamId === UNASSIGNED_ADMIN_INPUT_TEAM_ID ? null : input.teamId;
+
   await prisma.$transaction(async (tx) => {
     await tx.employeeEvaluation.upsert({
       where: {
@@ -320,13 +347,13 @@ export async function saveAdminInputBundle(input: SaveAdminInput): Promise<Admin
         },
       },
       update: {
-        teamId: input.teamId,
+        teamId: storedTeamId,
         selfComment: input.selfComment,
       },
       create: {
         userId: input.userId,
         evaluationPeriodId: input.evaluationPeriodId,
-        teamId: input.teamId,
+        teamId: storedTeamId,
         status: EvaluationStatus.SELF_REVIEW,
         selfComment: input.selfComment,
       },
@@ -395,6 +422,9 @@ export async function copyAdminInputsFromPreviousPeriod(teamId: string, evaluati
     throw new Error("DB未接続のため前期間コピーを実行できません。");
   }
 
+  const isUnassignedTeam = teamId === UNASSIGNED_ADMIN_INPUT_TEAM_ID;
+  const storedTeamId = isUnassignedTeam ? null : teamId;
+
   const currentPeriod = await prisma.evaluationPeriod.findUniqueOrThrow({
     where: { id: evaluationPeriodId },
     select: { id: true, name: true, status: true, startDate: true },
@@ -415,14 +445,34 @@ export async function copyAdminInputsFromPreviousPeriod(teamId: string, evaluati
   }
 
   const [memberships, adminItems] = await Promise.all([
-    prisma.teamMembership.findMany({
-      where: { teamId, endDate: null },
-      orderBy: [{ isPrimary: "desc" }, { startDate: "desc" }],
-      select: {
-        userId: true,
-        user: { select: { name: true } },
-      },
-    }),
+    isUnassignedTeam
+      ? prisma.user.findMany({
+          where: {
+            status: UserStatus.ACTIVE,
+            teamMemberships: {
+              none: {
+                isPrimary: true,
+                endDate: null,
+              },
+            },
+          },
+          orderBy: [{ employeeCode: "asc" }, { name: "asc" }],
+          select: {
+            id: true,
+            name: true,
+          },
+        }).then((rows) => rows.map((row) => ({
+          userId: row.id,
+          user: { name: row.name },
+        })))
+      : prisma.teamMembership.findMany({
+          where: { teamId, endDate: null },
+          orderBy: [{ isPrimary: "desc" }, { startDate: "desc" }],
+          select: {
+            userId: true,
+            user: { select: { name: true } },
+          },
+        }),
     getAdminItems(),
   ]);
 
@@ -480,11 +530,11 @@ export async function copyAdminInputsFromPreviousPeriod(teamId: string, evaluati
             evaluationPeriodId,
           },
         },
-        update: { teamId },
+        update: { teamId: storedTeamId },
         create: {
           userId: member.userId,
           evaluationPeriodId,
-          teamId,
+          teamId: storedTeamId,
           status: EvaluationStatus.SELF_REVIEW,
         },
       });

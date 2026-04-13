@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { AdminInputEditor } from "@/components/evaluations/admin-input-editor";
 import { getSessionUser } from "@/lib/auth/demo-session";
-import { getAdminInputBundle } from "@/lib/evaluations/admin-input-service";
+import { UNASSIGNED_ADMIN_INPUT_TEAM_ID, getAdminInputBundle } from "@/lib/evaluations/admin-input-service";
 import { getEvaluationPeriodOptions, getEvaluationPeriodStatusLabel } from "@/lib/evaluations/period-service";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasPermission } from "@/lib/permissions/check";
@@ -43,7 +43,10 @@ export default async function AdminEvaluationPage({
 
   const periods = await getEvaluationPeriodOptions();
   const defaultEvaluationPeriodId = periods.find((period) => period.status === "OPEN")?.id ?? periods[0]?.id;
-  const teamOptions = await getVisibleTeamOptions();
+  const teamOptions = [
+    ...(await getVisibleTeamOptions()),
+    { teamId: UNASSIGNED_ADMIN_INPUT_TEAM_ID, teamName: "未所属" },
+  ];
   const defaultTeamId = params.teamId ?? teamOptions[0]?.teamId;
 
   if (!params.evaluationPeriodId && defaultEvaluationPeriodId && defaultTeamId) {
