@@ -16,6 +16,8 @@ type AxisReviewState = {
   comment: string;
 };
 
+type DetailViewMode = "SUMMARY" | "SELF" | "MANAGER" | "BOTH";
+
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return Math.round(items.reduce((sum, item) => sum + item.score * item.weight, 0) * 100) / 100;
 }
@@ -36,7 +38,10 @@ function buildAxisPayload(items: FinalReviewItem[], state: AxisReviewState) {
   }));
 }
 
-function renderReferenceItems(items: FinalReviewItem[], showEvidence: boolean) {
+function renderReferenceItems(items: FinalReviewItem[], showEvidence: boolean, detailViewMode: DetailViewMode) {
+  const showSelf = detailViewMode === "SELF" || detailViewMode === "BOTH";
+  const showManager = detailViewMode === "MANAGER" || detailViewMode === "BOTH";
+
   return (
     <div className="mt-4 space-y-3">
       {items.map((item) => (
@@ -44,17 +49,21 @@ function renderReferenceItems(items: FinalReviewItem[], showEvidence: boolean) {
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.majorCategory} / {item.minorCategory}</p>
           <h4 className="mt-2 text-sm font-semibold text-slate-950">{item.title}</h4>
           <p className="mt-2 text-sm text-slate-500">自己評価 {item.selfScore} / 重み {item.weight}</p>
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div className="rounded-2xl bg-slate-50 p-3">
-              <p className="text-xs font-semibold text-slate-500">本人コメント</p>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.selfComment || "コメントはありません。"}</p>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-3">
-              <p className="text-xs font-semibold text-slate-500">上長コメント</p>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.managerComment || "コメントはありません。"}</p>
-            </div>
+          <div className={`mt-3 grid gap-3 ${showSelf && showManager ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
+            {showSelf ? (
+              <div className="rounded-2xl bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-500">本人コメント</p>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.selfComment || "コメントはありません。"}</p>
+              </div>
+            ) : null}
+            {showManager ? (
+              <div className="rounded-2xl bg-slate-50 p-3">
+                <p className="text-xs font-semibold text-slate-500">上長コメント</p>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">{item.managerComment || "コメントはありません。"}</p>
+              </div>
+            ) : null}
           </div>
-          {showEvidence && item.evidences.length > 0 ? (
+          {showEvidence && showSelf && item.evidences.length > 0 ? (
             <div className="mt-3 rounded-2xl bg-slate-50 p-3">
               <p className="text-xs font-semibold text-slate-500">本人入力の根拠</p>
               <div className="mt-2 space-y-2">
@@ -82,6 +91,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
   const [synergyReview, setSynergyReview] = useState<AxisReviewState>(() => buildAxisState(defaults.items.filter((item) => item.axis === "SYNERGY")));
   const [showSelfGrowthDetails, setShowSelfGrowthDetails] = useState(false);
   const [showSynergyDetails, setShowSynergyDetails] = useState(false);
+  const [detailViewMode, setDetailViewMode] = useState<DetailViewMode>("BOTH");
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startSaving] = useTransition();
 
@@ -156,6 +166,32 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
       <EvaluationResultSummary summary={defaults} />
 
       <section className="rounded-3xl border border-slate-200 p-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="font-semibold text-slate-950">表示粒度</h3>
+            <p className="mt-1 text-sm text-slate-500">本人レベルまで確認したい場合は、本人または両方を選択してください。</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { value: "SUMMARY", label: "要約" },
+              { value: "SELF", label: "本人" },
+              { value: "MANAGER", label: "上長" },
+              { value: "BOTH", label: "両方" },
+            ].map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setDetailViewMode(option.value as DetailViewMode)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${detailViewMode === option.value ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-700"}`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">評価対象一覧</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {defaults.members.map((member) => (
@@ -187,7 +223,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
             <p className="mt-1 text-sm text-slate-600">自律成長力全体に対する最終コメントを入力します。</p>
           </div>
           <button type="button" onClick={() => setShowSelfGrowthDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
-            {showSelfGrowthDetails ? "本人・上長の詳細を閉じる" : "本人・上長の詳細を表示"}
+            {showSelfGrowthDetails ? "詳細を閉じる" : "詳細を表示"}
           </button>
         </div>
         <textarea
@@ -198,7 +234,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
           placeholder="自律成長力全体に対する最終コメントを入力"
         />
-        {showSelfGrowthDetails ? renderReferenceItems(selfGrowthItems, false) : null}
+        {showSelfGrowthDetails && detailViewMode !== "SUMMARY" ? renderReferenceItems(selfGrowthItems, false, detailViewMode) : null}
       </section>
 
       <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-5">
@@ -208,7 +244,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
             <p className="mt-1 text-sm text-slate-600">協調相乗力全体に対する最終コメントを入力します。</p>
           </div>
           <button type="button" onClick={() => setShowSynergyDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
-            {showSynergyDetails ? "本人・上長の詳細を閉じる" : "本人・上長の詳細を表示"}
+            {showSynergyDetails ? "詳細を閉じる" : "詳細を表示"}
           </button>
         </div>
         <textarea
@@ -219,7 +255,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
           placeholder="協調相乗力全体に対する最終コメントを入力"
         />
-        {showSynergyDetails ? renderReferenceItems(synergyItems, true) : null}
+        {showSynergyDetails && detailViewMode !== "SUMMARY" ? renderReferenceItems(synergyItems, true, detailViewMode) : null}
       </section>
 
       <section className="rounded-3xl border border-slate-200 p-4">
