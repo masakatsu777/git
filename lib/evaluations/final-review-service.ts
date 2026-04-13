@@ -183,6 +183,7 @@ function getDisplayScore(item: Pick<FinalReviewItem, "selfScore" | "managerScore
     case "FINAL":
       return item.finalScore;
     case "MANAGER":
+      return item.managerScore;
     case "SELF":
     default:
       return item.selfScore;
