@@ -18,6 +18,27 @@ type AxisReviewState = {
 
 type DetailViewMode = "SUMMARY" | "SELF" | "MANAGER" | "BOTH";
 
+function getSelfScoreLabel(score: number, scoreType: FinalReviewItem["scoreType"]) {
+  if (scoreType === "CONTINUOUS_DONE") {
+    return score >= 1 ? "継続実践できている" : "継続実践には至っていない";
+  }
+  if (score >= 2) return "問題なくできる";
+  if (score >= 1) return "完全ではないができる";
+  return "これから習得する段階";
+}
+
+function getDisplayScore(item: Pick<FinalReviewItem, "selfScore" | "managerScore">, mode: "SELF" | "MANAGER") {
+  return mode === "MANAGER" ? item.managerScore : item.selfScore;
+}
+
+function getWeightedPoint(score: number, weight: number) {
+  return Math.round(score * weight * 100) / 100;
+}
+
+function calculateAxisWeightedPoint(items: FinalReviewItem[], mode: "SELF" | "MANAGER") {
+  return Math.round(items.reduce((sum, item) => sum + getWeightedPoint(getDisplayScore(item, mode), item.weight), 0));
+}
+
 function calculateTotal(items: Array<{ score: number; weight: number }>) {
   return Math.round(items.reduce((sum, item) => sum + item.score * item.weight, 0) * 100) / 100;
 }
@@ -41,14 +62,31 @@ function buildAxisPayload(items: FinalReviewItem[], state: AxisReviewState) {
 function renderReferenceItems(items: FinalReviewItem[], showEvidence: boolean, detailViewMode: DetailViewMode) {
   const showSelf = detailViewMode === "SELF" || detailViewMode === "BOTH";
   const showManager = detailViewMode === "MANAGER" || detailViewMode === "BOTH";
+  const selfPointTotal = calculateAxisWeightedPoint(items, "SELF");
+  const managerPointTotal = calculateAxisWeightedPoint(items, "MANAGER");
 
   return (
     <div className="mt-4 space-y-3">
+      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+        {showSelf ? <p>本人換算ポイント合計: {selfPointTotal}</p> : null}
+        {showManager ? <p>上長換算ポイント合計: {managerPointTotal}</p> : null}
+      </div>
       {items.map((item) => (
         <article key={item.evaluationItemId} className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">{item.majorCategory} / {item.minorCategory}</p>
           <h4 className="mt-2 text-sm font-semibold text-slate-950">{item.title}</h4>
-          <p className="mt-2 text-sm text-slate-500">自己評価 {item.selfScore} / 重み {item.weight}</p>
+          <div className="mt-2 space-y-1 text-sm text-slate-500">
+            {showSelf ? (
+              <p>
+                本人 {item.selfScore}（{getSelfScoreLabel(item.selfScore, item.scoreType)}） / 重み {item.weight} / 換算 {getWeightedPoint(item.selfScore, item.weight)}
+              </p>
+            ) : null}
+            {showManager ? (
+              <p>
+                上長 {item.managerScore} / 重み {item.weight} / 換算 {getWeightedPoint(item.managerScore, item.weight)}
+              </p>
+            ) : null}
+          </div>
           <div className={`mt-3 grid gap-3 ${showSelf && showManager ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
             {showSelf ? (
               <div className="rounded-2xl bg-slate-50 p-3">
