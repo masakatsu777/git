@@ -452,17 +452,23 @@ export async function getManagerReviewBundle(teamId: string, selectedUserId?: st
       });
     }
 
-    const target = members.find((member) => member.userId === selectedUserId) ?? members[0];
+    const target = members.find((member) => member.userId === selectedUserId) ?? (selectedUserId ? undefined : members[0]);
     if (!target) {
       return {
         evaluationPeriodId: period.id,
         periodName: period.name,
         periodStatus: period.status,
-        teamId: team.id,
-        teamName: team.name,
-        members: [],
-        selectedUserId: "",
-        selectedUserName: "",
+        teamId: teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID ? UNASSIGNED_MANAGER_REVIEW_TEAM_ID : team.id,
+        teamName: teamId === UNASSIGNED_MANAGER_REVIEW_TEAM_ID ? "未所属" : team.name,
+        members: members.map((member) => ({
+          userId: member.userId,
+          name: member.name,
+          status: member.status,
+          selfScoreTotal: member.selfScoreTotal,
+          managerScoreTotal: member.managerScoreTotal,
+        })),
+        selectedUserId: standaloneUser?.id ?? selectedUserId ?? "",
+        selectedUserName: standaloneUser?.name ?? "",
         status: EvaluationStatus.SELF_REVIEW,
         selfComment: "",
         managerComment: "",
