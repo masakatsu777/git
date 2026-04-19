@@ -684,7 +684,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         managerComment: managerRow?.comment ?? "",
         finalComment: finalRow?.comment ?? "",
         evidenceRequired: Boolean(item.evidenceRequired),
-        evidences: normalizeEvidences(finalRow?.evidences),
+        evidences: normalizeEvidences(finalRow?.evidences ?? selfRow?.evidences),
         inputScope: meta.inputScope,
       };
     });
