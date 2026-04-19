@@ -15,6 +15,7 @@ import { judgeGradeByScore } from "@/lib/skill-careers/grade-judgement-service";
 import { judgeOverallGrade } from "@/lib/skill-careers/overall-grade-service";
 import { getGradeSalarySettingBundle } from "@/lib/grade-salary/grade-salary-setting-service";
 import { decodeManagerOverallComment } from "@/lib/evaluations/manager-review-service";
+import { getPersonalMonthlyProfitByUser } from "@/lib/pl/personal-profit-service";
 import { getTeamMonthlySnapshot } from "@/lib/pl/service";
 import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
 
@@ -256,7 +257,13 @@ function buildPeriodYearMonths(periodStartDate: Date, periodEndDate: Date) {
   return months;
 }
 
-async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, userId: string, evaluationPeriodId: string, gradeSalaryAmount: number) {
+async function calculatePeriodGrossProfitMetrics(
+  teamId: string | undefined,
+  userId: string,
+  evaluationPeriodId: string,
+  gradeSalaryAmount: number,
+  currentSalary: number,
+) {
   if (!hasDatabaseUrl()) {
     return {
       grossProfitVarianceRate: 0,
@@ -271,7 +278,7 @@ async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, use
     });
 
     const yearMonths = buildPeriodYearMonths(period.startDate, period.endDate);
-    const snapshots = teamId
+    const targetMonths = teamId
       ? await (async () => {
           const existingMonths = await prisma.teamMonthlyPl.findMany({
             where: {
@@ -281,13 +288,18 @@ async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, use
             select: { yearMonth: true },
             orderBy: { yearMonth: "asc" },
           });
-          const targetMonths = existingMonths.map((row) => row.yearMonth);
-          return Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(teamId, yearMonth)));
+          return existingMonths.map((row) => row.yearMonth);
         })()
+      : yearMonths;
+    const snapshots = teamId
+      ? await Promise.all(targetMonths.map((yearMonth) => getTeamMonthlySnapshot(teamId, yearMonth)))
       : [];
     const unassignedRows = !teamId
-      ? (await Promise.all(yearMonths.map((yearMonth) => getUnassignedPersonalProfitByUser(userId, yearMonth)))).filter((row): row is NonNullable<typeof row> => row !== null)
+      ? (await Promise.all(targetMonths.map((yearMonth) => getUnassignedPersonalProfitByUser(userId, yearMonth)))).filter((row): row is NonNullable<typeof row> => row !== null)
       : [];
+    const personalRows = teamId
+      ? (await Promise.all(targetMonths.map((yearMonth) => getPersonalMonthlyProfitByUser(userId, yearMonth)))).filter((row): row is NonNullable<typeof row> => row !== null)
+      : unassignedRows;
     const salesTotal = teamId
       ? snapshots.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0)
       : unassignedRows.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
@@ -303,7 +315,14 @@ async function calculatePeriodGrossProfitMetrics(teamId: string | undefined, use
         : 0;
     const actualGrossProfitRate = salesTotal === 0 ? 0 : round2((finalGrossProfit / salesTotal) * 100);
     const grossProfitVarianceRate = round2(actualGrossProfitRate - targetGrossProfitRate);
-    const grossProfitDeductionAmount = Math.round(gradeSalaryAmount * (grossProfitVarianceRate / 100));
+    const grossProfitDeductionAmount = grossProfitVarianceRate < 0
+      ? Math.round(
+          (personalRows.length > 0
+            ? personalRows.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0) / personalRows.length
+            : 0)
+          + (currentSalary - gradeSalaryAmount),
+        )
+      : Math.round(gradeSalaryAmount * (grossProfitVarianceRate / 100));
 
     return {
       grossProfitVarianceRate,
@@ -699,7 +718,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
     const gradeSalaryAmount = gradeSalarySetting.baseAmount + salaryPoints.salaryTotalGradePoint * gradeSalarySetting.pointUnitAmount;
     const finalTotal = calculateTotal(items.map((item) => ({ score: getDisplayScore(item, displayStage), weight: item.weight })));
     const currentSalary = toNumber(target.evaluation.user.salaryRecords[0]?.baseSalary) + toNumber(target.evaluation.user.salaryRecords[0]?.allowance);
-    const grossProfitMetrics = await calculatePeriodGrossProfitMetrics(target.teamId, target.userId, period.id, gradeSalaryAmount);
+    const grossProfitMetrics = await calculatePeriodGrossProfitMetrics(target.teamId, target.userId, period.id, gradeSalaryAmount, currentSalary);
 
     return {
       evaluationPeriodId: period.id,
