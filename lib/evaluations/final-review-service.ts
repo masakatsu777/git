@@ -315,16 +315,15 @@ async function calculatePeriodGrossProfitMetrics(
         : 0;
     const actualGrossProfitRate = salesTotal === 0 ? 0 : round2((finalGrossProfit / salesTotal) * 100);
     const grossProfitVarianceRate = round2(actualGrossProfitRate - targetGrossProfitRate);
+    const averagePersonalGrossProfitShortfall = personalRows.length > 0
+      ? personalRows.reduce((sum, row) => {
+          const targetGrossProfitAmount = Number(row.salesTotal ?? 0) * (Number(row.targetGrossProfitRate ?? 0) / 100);
+          const shortfallAmount = Number(row.finalGrossProfit ?? 0) - targetGrossProfitAmount;
+          return sum + Math.min(0, shortfallAmount);
+        }, 0) / personalRows.length
+      : 0;
     const grossProfitDeductionAmount = grossProfitVarianceRate < 0
-      ? Math.min(
-          0,
-          Math.round(
-            (personalRows.length > 0
-              ? personalRows.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0) / personalRows.length
-              : 0)
-            + (currentSalary - gradeSalaryAmount),
-          ),
-        )
+      ? Math.round(averagePersonalGrossProfitShortfall + (currentSalary - gradeSalaryAmount))
       : Math.round(gradeSalaryAmount * (grossProfitVarianceRate / 100));
 
     return {
