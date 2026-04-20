@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { Prisma } from "@/generated/prisma";
+import { getAnnualGoalReferenceByYearMonth, type AnnualGoalReference } from "@/lib/annual-goals/service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import type { AppRole } from "@/lib/permissions/definitions";
 import type { SessionUser } from "@/lib/permissions/check";
@@ -47,6 +48,7 @@ export type MonthlyReportEditorBundle = {
   currentYearMonth: string;
   previousYearMonth: string;
   viewer: MonthlyReportViewer;
+  annualGoalReference: AnnualGoalReference;
   projectOptions: ProjectOption[];
   selectedProjectId: string;
   selectedProjectName: string;
@@ -521,6 +523,7 @@ export async function getMonthlyReportEditorBundle(
   const yearMonth = isValidYearMonth(String(input?.yearMonth ?? "")) ? String(input?.yearMonth) : currentYearMonth;
   const previousYearMonth = getPreviousYearMonth(yearMonth);
   const projectId = sanitizeText(String(input?.projectId ?? ""));
+  const annualGoalReference = await getAnnualGoalReferenceByYearMonth(sessionUser, yearMonth);
 
   if (hasDatabaseUrl()) {
     try {
@@ -591,6 +594,7 @@ export async function getMonthlyReportEditorBundle(
         currentYearMonth,
         previousYearMonth,
         viewer,
+        annualGoalReference,
         projectOptions,
         selectedProjectId: selectedProject?.projectId ?? "",
         selectedProjectName: selectedProject?.projectName ?? "",
@@ -631,6 +635,7 @@ export async function getMonthlyReportEditorBundle(
     currentYearMonth,
     previousYearMonth,
     viewer,
+    annualGoalReference,
     projectOptions,
     selectedProjectId: selectedProject?.projectId ?? "",
     selectedProjectName: selectedProject?.projectName ?? "",

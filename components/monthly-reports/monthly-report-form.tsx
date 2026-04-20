@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import type {
@@ -38,6 +38,14 @@ function readValue(value?: string | null) {
   return value ?? "";
 }
 
+function showAnnualGoalOnTeamSection(bundle: MonthlyReportEditorBundle) {
+  return Boolean(bundle.annualGoalReference && bundle.annualGoalReference.goalType === "team");
+}
+
+function showAnnualGoalOnPersonalSection(bundle: MonthlyReportEditorBundle) {
+  return Boolean(bundle.annualGoalReference && bundle.annualGoalReference.goalType === "personal");
+}
+
 export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
   const router = useRouter();
   const [bundle, setBundle] = useState(initialBundle);
@@ -54,15 +62,6 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
     [bundle.projectOptions, selectedProjectId],
   );
   const showTeamSection = Boolean(currentProject?.teamId ?? bundle.viewer.teamId);
-
-  useEffect(() => {
-    setBundle(initialBundle);
-    setYearMonth(initialBundle.currentYearMonth);
-    setSelectedProjectId(initialBundle.selectedProjectId);
-    setTeamReport(initialBundle.teamReport ?? createEmptyTeamReport());
-    setPersonalReport(initialBundle.personalReport);
-    setNewProjectName("");
-  }, [initialBundle]);
 
   async function reloadEditor(nextYearMonth: string, nextProjectId: string) {
     const params = new URLSearchParams();
@@ -237,6 +236,9 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
             <Link href="/monthly-report/list" className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300">
               月報一覧を見る
             </Link>
+            <Link href="/monthly-report" className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300">
+              月報メニューへ
+            </Link>
             <button
               type="button"
               onClick={handleSave}
@@ -333,6 +335,30 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
               )}
             </div>
           </div>
+          {showAnnualGoalOnTeamSection(bundle) ? (
+            <div className="mt-6 rounded-[1.5rem] border border-amber-200 bg-amber-50/80 p-5">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">Annual Direction</p>
+                  <h3 className="mt-1 text-lg font-semibold text-slate-950">{bundle.annualGoalReference?.fiscalYear}年度のチーム年度方針</h3>
+                  <p className="mt-1 text-sm text-amber-900">月報の記載にあたって、年度で定めた重点方針を確認できます。</p>
+                </div>
+                <Link href={`/annual-goals/${bundle.annualGoalReference?.id}`} className="w-fit rounded-full border border-amber-300 bg-white px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-100">
+                  年度方針を確認
+                </Link>
+              </div>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                <section className="rounded-2xl bg-white/80 px-4 py-4">
+                  <p className="text-sm font-semibold text-slate-500">年度の優先テーマ</p>
+                  <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-900">{bundle.annualGoalReference?.priorityTheme || "未設定"}</p>
+                </section>
+                <section className="rounded-2xl bg-white/80 px-4 py-4">
+                  <p className="text-sm font-semibold text-slate-500">年度目標</p>
+                  <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-900">{bundle.annualGoalReference?.annualGoal || "未設定"}</p>
+                </section>
+              </div>
+            </div>
+          ) : null}
           <div className="mt-6 grid gap-4">
             <label className="text-sm text-slate-700">
               プロジェクト概要
@@ -405,6 +431,30 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
             {bundle.previousYearMonth} をコピー
           </button>
         </div>
+        {showAnnualGoalOnPersonalSection(bundle) ? (
+          <div className="mt-6 rounded-[1.5rem] border border-sky-200 bg-sky-50/80 p-5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700">Annual Direction</p>
+                <h3 className="mt-1 text-lg font-semibold text-slate-950">{bundle.annualGoalReference?.fiscalYear}年度の個人年度方針</h3>
+                <p className="mt-1 text-sm text-sky-900">未所属のため、個人で定めた年度方針を確認しながら月報を記載できます。</p>
+              </div>
+              <Link href={`/annual-goals/${bundle.annualGoalReference?.id}`} className="w-fit rounded-full border border-sky-300 bg-white px-4 py-2 text-sm font-semibold text-sky-800 transition hover:bg-sky-100">
+                年度方針を確認
+              </Link>
+            </div>
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              <section className="rounded-2xl bg-white/80 px-4 py-4">
+                <p className="text-sm font-semibold text-slate-500">年度の優先テーマ</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-900">{bundle.annualGoalReference?.priorityTheme || "未設定"}</p>
+              </section>
+              <section className="rounded-2xl bg-white/80 px-4 py-4">
+                <p className="text-sm font-semibold text-slate-500">年度目標</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-7 text-slate-900">{bundle.annualGoalReference?.annualGoal || "未設定"}</p>
+              </section>
+            </div>
+          </div>
+        ) : null}
         <div className="mt-6 grid gap-4">
           <label className="text-sm text-slate-700">
             プロジェクト内役割

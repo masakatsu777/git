@@ -131,7 +131,7 @@ export function MonthlyReportList({ groups }: MonthlyReportListProps) {
                       </div>
                       {selectedMember.canEdit ? (
                         <Link
-                          href={`/monthly-report?yearMonth=${group.yearMonth}&projectId=${group.projectId}`}
+                          href={`/monthly-report/create?yearMonth=${group.yearMonth}&projectId=${group.projectId}`}
                           className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
                         >
                           この内容を編集

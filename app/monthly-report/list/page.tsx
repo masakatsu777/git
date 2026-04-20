@@ -29,7 +29,7 @@ export default async function MonthlyReportListPage({ searchParams }: MonthlyRep
               <p className="mt-2 text-sm text-slate-300">年月、プロジェクト、チーム単位で開いて、チーム内容と個人内容を順に確認できます。</p>
             </div>
             <div className="flex gap-3">
-              <Link href="/monthly-report" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
+              <Link href="/monthly-report/create" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                 月報作成へ
               </Link>
               <Link href="/menu" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
