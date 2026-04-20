@@ -178,6 +178,21 @@ export type PartnerSalesRateSetting = $Result.DefaultSelection<Prisma.$PartnerSa
  * 
  */
 export type PartnerOutsourceRateSetting = $Result.DefaultSelection<Prisma.$PartnerOutsourceRateSettingPayload>
+/**
+ * Model MonthlyReportProject
+ * 
+ */
+export type MonthlyReportProject = $Result.DefaultSelection<Prisma.$MonthlyReportProjectPayload>
+/**
+ * Model TeamMonthlyReport
+ * 
+ */
+export type TeamMonthlyReport = $Result.DefaultSelection<Prisma.$TeamMonthlyReportPayload>
+/**
+ * Model PersonalMonthlyReport
+ * 
+ */
+export type PersonalMonthlyReport = $Result.DefaultSelection<Prisma.$PersonalMonthlyReportPayload>
 
 /**
  * Enums
@@ -799,6 +814,36 @@ export class PrismaClient<
     * ```
     */
   get partnerOutsourceRateSetting(): Prisma.PartnerOutsourceRateSettingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.monthlyReportProject`: Exposes CRUD operations for the **MonthlyReportProject** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MonthlyReportProjects
+    * const monthlyReportProjects = await prisma.monthlyReportProject.findMany()
+    * ```
+    */
+  get monthlyReportProject(): Prisma.MonthlyReportProjectDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teamMonthlyReport`: Exposes CRUD operations for the **TeamMonthlyReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeamMonthlyReports
+    * const teamMonthlyReports = await prisma.teamMonthlyReport.findMany()
+    * ```
+    */
+  get teamMonthlyReport(): Prisma.TeamMonthlyReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.personalMonthlyReport`: Exposes CRUD operations for the **PersonalMonthlyReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PersonalMonthlyReports
+    * const personalMonthlyReports = await prisma.personalMonthlyReport.findMany()
+    * ```
+    */
+  get personalMonthlyReport(): Prisma.PersonalMonthlyReportDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1272,7 +1317,10 @@ export namespace Prisma {
     AuditLog: 'AuditLog',
     EmployeeSalesRateSetting: 'EmployeeSalesRateSetting',
     PartnerSalesRateSetting: 'PartnerSalesRateSetting',
-    PartnerOutsourceRateSetting: 'PartnerOutsourceRateSetting'
+    PartnerOutsourceRateSetting: 'PartnerOutsourceRateSetting',
+    MonthlyReportProject: 'MonthlyReportProject',
+    TeamMonthlyReport: 'TeamMonthlyReport',
+    PersonalMonthlyReport: 'PersonalMonthlyReport'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1291,7 +1339,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "role" | "permission" | "rolePermission" | "department" | "position" | "team" | "teamMembership" | "skillGradeDefinition" | "evaluationPeriod" | "evaluationItem" | "employeeEvaluation" | "evaluationScore" | "evaluationScoreEvidence" | "salaryRecord" | "salaryRevisionRule" | "salaryRevisionSimulation" | "partner" | "monthlyAssignment" | "departmentUnassignedMonthlyAssignment" | "monthlyCost" | "teamMonthlyPl" | "teamIndirectCost" | "fixedCostSetting" | "departmentFixedCostAllocation" | "departmentMonthlyOtherCost" | "fixedCostAllocation" | "teamTarget" | "approvalLog" | "auditLog" | "employeeSalesRateSetting" | "partnerSalesRateSetting" | "partnerOutsourceRateSetting"
+      modelProps: "user" | "role" | "permission" | "rolePermission" | "department" | "position" | "team" | "teamMembership" | "skillGradeDefinition" | "evaluationPeriod" | "evaluationItem" | "employeeEvaluation" | "evaluationScore" | "evaluationScoreEvidence" | "salaryRecord" | "salaryRevisionRule" | "salaryRevisionSimulation" | "partner" | "monthlyAssignment" | "departmentUnassignedMonthlyAssignment" | "monthlyCost" | "teamMonthlyPl" | "teamIndirectCost" | "fixedCostSetting" | "departmentFixedCostAllocation" | "departmentMonthlyOtherCost" | "fixedCostAllocation" | "teamTarget" | "approvalLog" | "auditLog" | "employeeSalesRateSetting" | "partnerSalesRateSetting" | "partnerOutsourceRateSetting" | "monthlyReportProject" | "teamMonthlyReport" | "personalMonthlyReport"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3737,6 +3785,228 @@ export namespace Prisma {
           }
         }
       }
+      MonthlyReportProject: {
+        payload: Prisma.$MonthlyReportProjectPayload<ExtArgs>
+        fields: Prisma.MonthlyReportProjectFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MonthlyReportProjectFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MonthlyReportProjectFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>
+          }
+          findFirst: {
+            args: Prisma.MonthlyReportProjectFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MonthlyReportProjectFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>
+          }
+          findMany: {
+            args: Prisma.MonthlyReportProjectFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>[]
+          }
+          create: {
+            args: Prisma.MonthlyReportProjectCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>
+          }
+          createMany: {
+            args: Prisma.MonthlyReportProjectCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MonthlyReportProjectCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>[]
+          }
+          delete: {
+            args: Prisma.MonthlyReportProjectDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>
+          }
+          update: {
+            args: Prisma.MonthlyReportProjectUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>
+          }
+          deleteMany: {
+            args: Prisma.MonthlyReportProjectDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MonthlyReportProjectUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MonthlyReportProjectUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>[]
+          }
+          upsert: {
+            args: Prisma.MonthlyReportProjectUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonthlyReportProjectPayload>
+          }
+          aggregate: {
+            args: Prisma.MonthlyReportProjectAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMonthlyReportProject>
+          }
+          groupBy: {
+            args: Prisma.MonthlyReportProjectGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MonthlyReportProjectGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MonthlyReportProjectCountArgs<ExtArgs>
+            result: $Utils.Optional<MonthlyReportProjectCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeamMonthlyReport: {
+        payload: Prisma.$TeamMonthlyReportPayload<ExtArgs>
+        fields: Prisma.TeamMonthlyReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeamMonthlyReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeamMonthlyReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>
+          }
+          findFirst: {
+            args: Prisma.TeamMonthlyReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeamMonthlyReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>
+          }
+          findMany: {
+            args: Prisma.TeamMonthlyReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>[]
+          }
+          create: {
+            args: Prisma.TeamMonthlyReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>
+          }
+          createMany: {
+            args: Prisma.TeamMonthlyReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeamMonthlyReportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>[]
+          }
+          delete: {
+            args: Prisma.TeamMonthlyReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>
+          }
+          update: {
+            args: Prisma.TeamMonthlyReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeamMonthlyReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeamMonthlyReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeamMonthlyReportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeamMonthlyReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamMonthlyReportPayload>
+          }
+          aggregate: {
+            args: Prisma.TeamMonthlyReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeamMonthlyReport>
+          }
+          groupBy: {
+            args: Prisma.TeamMonthlyReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeamMonthlyReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeamMonthlyReportCountArgs<ExtArgs>
+            result: $Utils.Optional<TeamMonthlyReportCountAggregateOutputType> | number
+          }
+        }
+      }
+      PersonalMonthlyReport: {
+        payload: Prisma.$PersonalMonthlyReportPayload<ExtArgs>
+        fields: Prisma.PersonalMonthlyReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PersonalMonthlyReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PersonalMonthlyReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>
+          }
+          findFirst: {
+            args: Prisma.PersonalMonthlyReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PersonalMonthlyReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>
+          }
+          findMany: {
+            args: Prisma.PersonalMonthlyReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>[]
+          }
+          create: {
+            args: Prisma.PersonalMonthlyReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>
+          }
+          createMany: {
+            args: Prisma.PersonalMonthlyReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PersonalMonthlyReportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>[]
+          }
+          delete: {
+            args: Prisma.PersonalMonthlyReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>
+          }
+          update: {
+            args: Prisma.PersonalMonthlyReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.PersonalMonthlyReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PersonalMonthlyReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PersonalMonthlyReportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>[]
+          }
+          upsert: {
+            args: Prisma.PersonalMonthlyReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PersonalMonthlyReportPayload>
+          }
+          aggregate: {
+            args: Prisma.PersonalMonthlyReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePersonalMonthlyReport>
+          }
+          groupBy: {
+            args: Prisma.PersonalMonthlyReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PersonalMonthlyReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PersonalMonthlyReportCountArgs<ExtArgs>
+            result: $Utils.Optional<PersonalMonthlyReportCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3866,6 +4136,9 @@ export namespace Prisma {
     employeeSalesRateSetting?: EmployeeSalesRateSettingOmit
     partnerSalesRateSetting?: PartnerSalesRateSettingOmit
     partnerOutsourceRateSetting?: PartnerOutsourceRateSettingOmit
+    monthlyReportProject?: MonthlyReportProjectOmit
+    teamMonthlyReport?: TeamMonthlyReportOmit
+    personalMonthlyReport?: PersonalMonthlyReportOmit
   }
 
   /* Types for Logging */
@@ -3957,6 +4230,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments: number
     monthlyCosts: number
     employeeSalesRateSettings: number
+    personalMonthlyReports: number
     approvalLogs: number
     auditLogs: number
   }
@@ -3973,6 +4247,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: boolean | UserCountOutputTypeCountDepartmentUnassignedMonthlyAssignmentsArgs
     monthlyCosts?: boolean | UserCountOutputTypeCountMonthlyCostsArgs
     employeeSalesRateSettings?: boolean | UserCountOutputTypeCountEmployeeSalesRateSettingsArgs
+    personalMonthlyReports?: boolean | UserCountOutputTypeCountPersonalMonthlyReportsArgs
     approvalLogs?: boolean | UserCountOutputTypeCountApprovalLogsArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   }
@@ -4063,6 +4338,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountEmployeeSalesRateSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: EmployeeSalesRateSettingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPersonalMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PersonalMonthlyReportWhereInput
   }
 
   /**
@@ -4280,6 +4562,9 @@ export namespace Prisma {
     indirectCosts: number
     fixedAllocations: number
     targets: number
+    monthlyReportProjects: number
+    teamMonthlyReports: number
+    personalMonthlyReports: number
   }
 
   export type TeamCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4291,6 +4576,9 @@ export namespace Prisma {
     indirectCosts?: boolean | TeamCountOutputTypeCountIndirectCostsArgs
     fixedAllocations?: boolean | TeamCountOutputTypeCountFixedAllocationsArgs
     targets?: boolean | TeamCountOutputTypeCountTargetsArgs
+    monthlyReportProjects?: boolean | TeamCountOutputTypeCountMonthlyReportProjectsArgs
+    teamMonthlyReports?: boolean | TeamCountOutputTypeCountTeamMonthlyReportsArgs
+    personalMonthlyReports?: boolean | TeamCountOutputTypeCountPersonalMonthlyReportsArgs
   }
 
   // Custom InputTypes
@@ -4358,6 +4646,27 @@ export namespace Prisma {
    */
   export type TeamCountOutputTypeCountTargetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TeamTargetWhereInput
+  }
+
+  /**
+   * TeamCountOutputType without action
+   */
+  export type TeamCountOutputTypeCountMonthlyReportProjectsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MonthlyReportProjectWhereInput
+  }
+
+  /**
+   * TeamCountOutputType without action
+   */
+  export type TeamCountOutputTypeCountTeamMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamMonthlyReportWhereInput
+  }
+
+  /**
+   * TeamCountOutputType without action
+   */
+  export type TeamCountOutputTypeCountPersonalMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PersonalMonthlyReportWhereInput
   }
 
 
@@ -4669,6 +4978,46 @@ export namespace Prisma {
 
 
   /**
+   * Count Type MonthlyReportProjectCountOutputType
+   */
+
+  export type MonthlyReportProjectCountOutputType = {
+    teamReports: number
+    personalReports: number
+  }
+
+  export type MonthlyReportProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    teamReports?: boolean | MonthlyReportProjectCountOutputTypeCountTeamReportsArgs
+    personalReports?: boolean | MonthlyReportProjectCountOutputTypeCountPersonalReportsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MonthlyReportProjectCountOutputType without action
+   */
+  export type MonthlyReportProjectCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProjectCountOutputType
+     */
+    select?: MonthlyReportProjectCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MonthlyReportProjectCountOutputType without action
+   */
+  export type MonthlyReportProjectCountOutputTypeCountTeamReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamMonthlyReportWhereInput
+  }
+
+  /**
+   * MonthlyReportProjectCountOutputType without action
+   */
+  export type MonthlyReportProjectCountOutputTypeCountPersonalReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PersonalMonthlyReportWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -4906,6 +5255,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: boolean | User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | User$monthlyCostsArgs<ExtArgs>
     employeeSalesRateSettings?: boolean | User$employeeSalesRateSettingsArgs<ExtArgs>
+    personalMonthlyReports?: boolean | User$personalMonthlyReportsArgs<ExtArgs>
     approvalLogs?: boolean | User$approvalLogsArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -4978,6 +5328,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: boolean | User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>
     monthlyCosts?: boolean | User$monthlyCostsArgs<ExtArgs>
     employeeSalesRateSettings?: boolean | User$employeeSalesRateSettingsArgs<ExtArgs>
+    personalMonthlyReports?: boolean | User$personalMonthlyReportsArgs<ExtArgs>
     approvalLogs?: boolean | User$approvalLogsArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -5010,6 +5361,7 @@ export namespace Prisma {
       departmentUnassignedMonthlyAssignments: Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>[]
       monthlyCosts: Prisma.$MonthlyCostPayload<ExtArgs>[]
       employeeSalesRateSettings: Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>[]
+      personalMonthlyReports: Prisma.$PersonalMonthlyReportPayload<ExtArgs>[]
       approvalLogs: Prisma.$ApprovalLogPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     }
@@ -5434,6 +5786,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments<T extends User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$departmentUnassignedMonthlyAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DepartmentUnassignedMonthlyAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     monthlyCosts<T extends User$monthlyCostsArgs<ExtArgs> = {}>(args?: Subset<T, User$monthlyCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     employeeSalesRateSettings<T extends User$employeeSalesRateSettingsArgs<ExtArgs> = {}>(args?: Subset<T, User$employeeSalesRateSettingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSalesRateSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    personalMonthlyReports<T extends User$personalMonthlyReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$personalMonthlyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     approvalLogs<T extends User$approvalLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$approvalLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApprovalLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -6172,6 +6525,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: EmployeeSalesRateSettingScalarFieldEnum | EmployeeSalesRateSettingScalarFieldEnum[]
+  }
+
+  /**
+   * User.personalMonthlyReports
+   */
+  export type User$personalMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    where?: PersonalMonthlyReportWhereInput
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PersonalMonthlyReportScalarFieldEnum | PersonalMonthlyReportScalarFieldEnum[]
   }
 
   /**
@@ -12031,6 +12408,9 @@ export namespace Prisma {
     indirectCosts?: boolean | Team$indirectCostsArgs<ExtArgs>
     fixedAllocations?: boolean | Team$fixedAllocationsArgs<ExtArgs>
     targets?: boolean | Team$targetsArgs<ExtArgs>
+    monthlyReportProjects?: boolean | Team$monthlyReportProjectsArgs<ExtArgs>
+    teamMonthlyReports?: boolean | Team$teamMonthlyReportsArgs<ExtArgs>
+    personalMonthlyReports?: boolean | Team$personalMonthlyReportsArgs<ExtArgs>
     _count?: boolean | TeamCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["team"]>
 
@@ -12080,6 +12460,9 @@ export namespace Prisma {
     indirectCosts?: boolean | Team$indirectCostsArgs<ExtArgs>
     fixedAllocations?: boolean | Team$fixedAllocationsArgs<ExtArgs>
     targets?: boolean | Team$targetsArgs<ExtArgs>
+    monthlyReportProjects?: boolean | Team$monthlyReportProjectsArgs<ExtArgs>
+    teamMonthlyReports?: boolean | Team$teamMonthlyReportsArgs<ExtArgs>
+    personalMonthlyReports?: boolean | Team$personalMonthlyReportsArgs<ExtArgs>
     _count?: boolean | TeamCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TeamIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12104,6 +12487,9 @@ export namespace Prisma {
       indirectCosts: Prisma.$TeamIndirectCostPayload<ExtArgs>[]
       fixedAllocations: Prisma.$FixedCostAllocationPayload<ExtArgs>[]
       targets: Prisma.$TeamTargetPayload<ExtArgs>[]
+      monthlyReportProjects: Prisma.$MonthlyReportProjectPayload<ExtArgs>[]
+      teamMonthlyReports: Prisma.$TeamMonthlyReportPayload<ExtArgs>[]
+      personalMonthlyReports: Prisma.$PersonalMonthlyReportPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12517,6 +12903,9 @@ export namespace Prisma {
     indirectCosts<T extends Team$indirectCostsArgs<ExtArgs> = {}>(args?: Subset<T, Team$indirectCostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamIndirectCostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     fixedAllocations<T extends Team$fixedAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, Team$fixedAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FixedCostAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     targets<T extends Team$targetsArgs<ExtArgs> = {}>(args?: Subset<T, Team$targetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    monthlyReportProjects<T extends Team$monthlyReportProjectsArgs<ExtArgs> = {}>(args?: Subset<T, Team$monthlyReportProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teamMonthlyReports<T extends Team$teamMonthlyReportsArgs<ExtArgs> = {}>(args?: Subset<T, Team$teamMonthlyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    personalMonthlyReports<T extends Team$personalMonthlyReportsArgs<ExtArgs> = {}>(args?: Subset<T, Team$personalMonthlyReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13176,6 +13565,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TeamTargetScalarFieldEnum | TeamTargetScalarFieldEnum[]
+  }
+
+  /**
+   * Team.monthlyReportProjects
+   */
+  export type Team$monthlyReportProjectsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    where?: MonthlyReportProjectWhereInput
+    orderBy?: MonthlyReportProjectOrderByWithRelationInput | MonthlyReportProjectOrderByWithRelationInput[]
+    cursor?: MonthlyReportProjectWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MonthlyReportProjectScalarFieldEnum | MonthlyReportProjectScalarFieldEnum[]
+  }
+
+  /**
+   * Team.teamMonthlyReports
+   */
+  export type Team$teamMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    where?: TeamMonthlyReportWhereInput
+    orderBy?: TeamMonthlyReportOrderByWithRelationInput | TeamMonthlyReportOrderByWithRelationInput[]
+    cursor?: TeamMonthlyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeamMonthlyReportScalarFieldEnum | TeamMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * Team.personalMonthlyReports
+   */
+  export type Team$personalMonthlyReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    where?: PersonalMonthlyReportWhereInput
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PersonalMonthlyReportScalarFieldEnum | PersonalMonthlyReportScalarFieldEnum[]
   }
 
   /**
@@ -43909,6 +44370,3573 @@ export namespace Prisma {
 
 
   /**
+   * Model MonthlyReportProject
+   */
+
+  export type AggregateMonthlyReportProject = {
+    _count: MonthlyReportProjectCountAggregateOutputType | null
+    _min: MonthlyReportProjectMinAggregateOutputType | null
+    _max: MonthlyReportProjectMaxAggregateOutputType | null
+  }
+
+  export type MonthlyReportProjectMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    normalizedName: string | null
+    teamId: string | null
+    teamNameSnapshot: string | null
+    createdBy: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MonthlyReportProjectMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    normalizedName: string | null
+    teamId: string | null
+    teamNameSnapshot: string | null
+    createdBy: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MonthlyReportProjectCountAggregateOutputType = {
+    id: number
+    name: number
+    normalizedName: number
+    teamId: number
+    teamNameSnapshot: number
+    createdBy: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MonthlyReportProjectMinAggregateInputType = {
+    id?: true
+    name?: true
+    normalizedName?: true
+    teamId?: true
+    teamNameSnapshot?: true
+    createdBy?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MonthlyReportProjectMaxAggregateInputType = {
+    id?: true
+    name?: true
+    normalizedName?: true
+    teamId?: true
+    teamNameSnapshot?: true
+    createdBy?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MonthlyReportProjectCountAggregateInputType = {
+    id?: true
+    name?: true
+    normalizedName?: true
+    teamId?: true
+    teamNameSnapshot?: true
+    createdBy?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MonthlyReportProjectAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonthlyReportProject to aggregate.
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlyReportProjects to fetch.
+     */
+    orderBy?: MonthlyReportProjectOrderByWithRelationInput | MonthlyReportProjectOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MonthlyReportProjectWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlyReportProjects from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlyReportProjects.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MonthlyReportProjects
+    **/
+    _count?: true | MonthlyReportProjectCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MonthlyReportProjectMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MonthlyReportProjectMaxAggregateInputType
+  }
+
+  export type GetMonthlyReportProjectAggregateType<T extends MonthlyReportProjectAggregateArgs> = {
+        [P in keyof T & keyof AggregateMonthlyReportProject]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMonthlyReportProject[P]>
+      : GetScalarType<T[P], AggregateMonthlyReportProject[P]>
+  }
+
+
+
+
+  export type MonthlyReportProjectGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MonthlyReportProjectWhereInput
+    orderBy?: MonthlyReportProjectOrderByWithAggregationInput | MonthlyReportProjectOrderByWithAggregationInput[]
+    by: MonthlyReportProjectScalarFieldEnum[] | MonthlyReportProjectScalarFieldEnum
+    having?: MonthlyReportProjectScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MonthlyReportProjectCountAggregateInputType | true
+    _min?: MonthlyReportProjectMinAggregateInputType
+    _max?: MonthlyReportProjectMaxAggregateInputType
+  }
+
+  export type MonthlyReportProjectGroupByOutputType = {
+    id: string
+    name: string
+    normalizedName: string
+    teamId: string | null
+    teamNameSnapshot: string
+    createdBy: string
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: MonthlyReportProjectCountAggregateOutputType | null
+    _min: MonthlyReportProjectMinAggregateOutputType | null
+    _max: MonthlyReportProjectMaxAggregateOutputType | null
+  }
+
+  type GetMonthlyReportProjectGroupByPayload<T extends MonthlyReportProjectGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MonthlyReportProjectGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MonthlyReportProjectGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MonthlyReportProjectGroupByOutputType[P]>
+            : GetScalarType<T[P], MonthlyReportProjectGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MonthlyReportProjectSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    normalizedName?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    createdBy?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    team?: boolean | MonthlyReportProject$teamArgs<ExtArgs>
+    teamReports?: boolean | MonthlyReportProject$teamReportsArgs<ExtArgs>
+    personalReports?: boolean | MonthlyReportProject$personalReportsArgs<ExtArgs>
+    _count?: boolean | MonthlyReportProjectCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["monthlyReportProject"]>
+
+  export type MonthlyReportProjectSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    normalizedName?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    createdBy?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    team?: boolean | MonthlyReportProject$teamArgs<ExtArgs>
+  }, ExtArgs["result"]["monthlyReportProject"]>
+
+  export type MonthlyReportProjectSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    normalizedName?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    createdBy?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    team?: boolean | MonthlyReportProject$teamArgs<ExtArgs>
+  }, ExtArgs["result"]["monthlyReportProject"]>
+
+  export type MonthlyReportProjectSelectScalar = {
+    id?: boolean
+    name?: boolean
+    normalizedName?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    createdBy?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MonthlyReportProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "normalizedName" | "teamId" | "teamNameSnapshot" | "createdBy" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["monthlyReportProject"]>
+  export type MonthlyReportProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    team?: boolean | MonthlyReportProject$teamArgs<ExtArgs>
+    teamReports?: boolean | MonthlyReportProject$teamReportsArgs<ExtArgs>
+    personalReports?: boolean | MonthlyReportProject$personalReportsArgs<ExtArgs>
+    _count?: boolean | MonthlyReportProjectCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type MonthlyReportProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    team?: boolean | MonthlyReportProject$teamArgs<ExtArgs>
+  }
+  export type MonthlyReportProjectIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    team?: boolean | MonthlyReportProject$teamArgs<ExtArgs>
+  }
+
+  export type $MonthlyReportProjectPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MonthlyReportProject"
+    objects: {
+      team: Prisma.$TeamPayload<ExtArgs> | null
+      teamReports: Prisma.$TeamMonthlyReportPayload<ExtArgs>[]
+      personalReports: Prisma.$PersonalMonthlyReportPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      normalizedName: string
+      teamId: string | null
+      teamNameSnapshot: string
+      createdBy: string
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["monthlyReportProject"]>
+    composites: {}
+  }
+
+  type MonthlyReportProjectGetPayload<S extends boolean | null | undefined | MonthlyReportProjectDefaultArgs> = $Result.GetResult<Prisma.$MonthlyReportProjectPayload, S>
+
+  type MonthlyReportProjectCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MonthlyReportProjectFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MonthlyReportProjectCountAggregateInputType | true
+    }
+
+  export interface MonthlyReportProjectDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MonthlyReportProject'], meta: { name: 'MonthlyReportProject' } }
+    /**
+     * Find zero or one MonthlyReportProject that matches the filter.
+     * @param {MonthlyReportProjectFindUniqueArgs} args - Arguments to find a MonthlyReportProject
+     * @example
+     * // Get one MonthlyReportProject
+     * const monthlyReportProject = await prisma.monthlyReportProject.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MonthlyReportProjectFindUniqueArgs>(args: SelectSubset<T, MonthlyReportProjectFindUniqueArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MonthlyReportProject that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MonthlyReportProjectFindUniqueOrThrowArgs} args - Arguments to find a MonthlyReportProject
+     * @example
+     * // Get one MonthlyReportProject
+     * const monthlyReportProject = await prisma.monthlyReportProject.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MonthlyReportProjectFindUniqueOrThrowArgs>(args: SelectSubset<T, MonthlyReportProjectFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MonthlyReportProject that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectFindFirstArgs} args - Arguments to find a MonthlyReportProject
+     * @example
+     * // Get one MonthlyReportProject
+     * const monthlyReportProject = await prisma.monthlyReportProject.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MonthlyReportProjectFindFirstArgs>(args?: SelectSubset<T, MonthlyReportProjectFindFirstArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MonthlyReportProject that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectFindFirstOrThrowArgs} args - Arguments to find a MonthlyReportProject
+     * @example
+     * // Get one MonthlyReportProject
+     * const monthlyReportProject = await prisma.monthlyReportProject.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MonthlyReportProjectFindFirstOrThrowArgs>(args?: SelectSubset<T, MonthlyReportProjectFindFirstOrThrowArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MonthlyReportProjects that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MonthlyReportProjects
+     * const monthlyReportProjects = await prisma.monthlyReportProject.findMany()
+     * 
+     * // Get first 10 MonthlyReportProjects
+     * const monthlyReportProjects = await prisma.monthlyReportProject.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const monthlyReportProjectWithIdOnly = await prisma.monthlyReportProject.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MonthlyReportProjectFindManyArgs>(args?: SelectSubset<T, MonthlyReportProjectFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MonthlyReportProject.
+     * @param {MonthlyReportProjectCreateArgs} args - Arguments to create a MonthlyReportProject.
+     * @example
+     * // Create one MonthlyReportProject
+     * const MonthlyReportProject = await prisma.monthlyReportProject.create({
+     *   data: {
+     *     // ... data to create a MonthlyReportProject
+     *   }
+     * })
+     * 
+     */
+    create<T extends MonthlyReportProjectCreateArgs>(args: SelectSubset<T, MonthlyReportProjectCreateArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MonthlyReportProjects.
+     * @param {MonthlyReportProjectCreateManyArgs} args - Arguments to create many MonthlyReportProjects.
+     * @example
+     * // Create many MonthlyReportProjects
+     * const monthlyReportProject = await prisma.monthlyReportProject.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MonthlyReportProjectCreateManyArgs>(args?: SelectSubset<T, MonthlyReportProjectCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MonthlyReportProjects and returns the data saved in the database.
+     * @param {MonthlyReportProjectCreateManyAndReturnArgs} args - Arguments to create many MonthlyReportProjects.
+     * @example
+     * // Create many MonthlyReportProjects
+     * const monthlyReportProject = await prisma.monthlyReportProject.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MonthlyReportProjects and only return the `id`
+     * const monthlyReportProjectWithIdOnly = await prisma.monthlyReportProject.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MonthlyReportProjectCreateManyAndReturnArgs>(args?: SelectSubset<T, MonthlyReportProjectCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MonthlyReportProject.
+     * @param {MonthlyReportProjectDeleteArgs} args - Arguments to delete one MonthlyReportProject.
+     * @example
+     * // Delete one MonthlyReportProject
+     * const MonthlyReportProject = await prisma.monthlyReportProject.delete({
+     *   where: {
+     *     // ... filter to delete one MonthlyReportProject
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MonthlyReportProjectDeleteArgs>(args: SelectSubset<T, MonthlyReportProjectDeleteArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MonthlyReportProject.
+     * @param {MonthlyReportProjectUpdateArgs} args - Arguments to update one MonthlyReportProject.
+     * @example
+     * // Update one MonthlyReportProject
+     * const monthlyReportProject = await prisma.monthlyReportProject.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MonthlyReportProjectUpdateArgs>(args: SelectSubset<T, MonthlyReportProjectUpdateArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MonthlyReportProjects.
+     * @param {MonthlyReportProjectDeleteManyArgs} args - Arguments to filter MonthlyReportProjects to delete.
+     * @example
+     * // Delete a few MonthlyReportProjects
+     * const { count } = await prisma.monthlyReportProject.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MonthlyReportProjectDeleteManyArgs>(args?: SelectSubset<T, MonthlyReportProjectDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonthlyReportProjects.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MonthlyReportProjects
+     * const monthlyReportProject = await prisma.monthlyReportProject.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MonthlyReportProjectUpdateManyArgs>(args: SelectSubset<T, MonthlyReportProjectUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonthlyReportProjects and returns the data updated in the database.
+     * @param {MonthlyReportProjectUpdateManyAndReturnArgs} args - Arguments to update many MonthlyReportProjects.
+     * @example
+     * // Update many MonthlyReportProjects
+     * const monthlyReportProject = await prisma.monthlyReportProject.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MonthlyReportProjects and only return the `id`
+     * const monthlyReportProjectWithIdOnly = await prisma.monthlyReportProject.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MonthlyReportProjectUpdateManyAndReturnArgs>(args: SelectSubset<T, MonthlyReportProjectUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MonthlyReportProject.
+     * @param {MonthlyReportProjectUpsertArgs} args - Arguments to update or create a MonthlyReportProject.
+     * @example
+     * // Update or create a MonthlyReportProject
+     * const monthlyReportProject = await prisma.monthlyReportProject.upsert({
+     *   create: {
+     *     // ... data to create a MonthlyReportProject
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MonthlyReportProject we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MonthlyReportProjectUpsertArgs>(args: SelectSubset<T, MonthlyReportProjectUpsertArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MonthlyReportProjects.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectCountArgs} args - Arguments to filter MonthlyReportProjects to count.
+     * @example
+     * // Count the number of MonthlyReportProjects
+     * const count = await prisma.monthlyReportProject.count({
+     *   where: {
+     *     // ... the filter for the MonthlyReportProjects we want to count
+     *   }
+     * })
+    **/
+    count<T extends MonthlyReportProjectCountArgs>(
+      args?: Subset<T, MonthlyReportProjectCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MonthlyReportProjectCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MonthlyReportProject.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MonthlyReportProjectAggregateArgs>(args: Subset<T, MonthlyReportProjectAggregateArgs>): Prisma.PrismaPromise<GetMonthlyReportProjectAggregateType<T>>
+
+    /**
+     * Group by MonthlyReportProject.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonthlyReportProjectGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MonthlyReportProjectGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MonthlyReportProjectGroupByArgs['orderBy'] }
+        : { orderBy?: MonthlyReportProjectGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MonthlyReportProjectGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMonthlyReportProjectGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MonthlyReportProject model
+   */
+  readonly fields: MonthlyReportProjectFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MonthlyReportProject.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MonthlyReportProjectClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    team<T extends MonthlyReportProject$teamArgs<ExtArgs> = {}>(args?: Subset<T, MonthlyReportProject$teamArgs<ExtArgs>>): Prisma__TeamClient<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    teamReports<T extends MonthlyReportProject$teamReportsArgs<ExtArgs> = {}>(args?: Subset<T, MonthlyReportProject$teamReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    personalReports<T extends MonthlyReportProject$personalReportsArgs<ExtArgs> = {}>(args?: Subset<T, MonthlyReportProject$personalReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MonthlyReportProject model
+   */
+  interface MonthlyReportProjectFieldRefs {
+    readonly id: FieldRef<"MonthlyReportProject", 'String'>
+    readonly name: FieldRef<"MonthlyReportProject", 'String'>
+    readonly normalizedName: FieldRef<"MonthlyReportProject", 'String'>
+    readonly teamId: FieldRef<"MonthlyReportProject", 'String'>
+    readonly teamNameSnapshot: FieldRef<"MonthlyReportProject", 'String'>
+    readonly createdBy: FieldRef<"MonthlyReportProject", 'String'>
+    readonly isActive: FieldRef<"MonthlyReportProject", 'Boolean'>
+    readonly createdAt: FieldRef<"MonthlyReportProject", 'DateTime'>
+    readonly updatedAt: FieldRef<"MonthlyReportProject", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MonthlyReportProject findUnique
+   */
+  export type MonthlyReportProjectFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlyReportProject to fetch.
+     */
+    where: MonthlyReportProjectWhereUniqueInput
+  }
+
+  /**
+   * MonthlyReportProject findUniqueOrThrow
+   */
+  export type MonthlyReportProjectFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlyReportProject to fetch.
+     */
+    where: MonthlyReportProjectWhereUniqueInput
+  }
+
+  /**
+   * MonthlyReportProject findFirst
+   */
+  export type MonthlyReportProjectFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlyReportProject to fetch.
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlyReportProjects to fetch.
+     */
+    orderBy?: MonthlyReportProjectOrderByWithRelationInput | MonthlyReportProjectOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonthlyReportProjects.
+     */
+    cursor?: MonthlyReportProjectWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlyReportProjects from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlyReportProjects.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonthlyReportProjects.
+     */
+    distinct?: MonthlyReportProjectScalarFieldEnum | MonthlyReportProjectScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlyReportProject findFirstOrThrow
+   */
+  export type MonthlyReportProjectFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlyReportProject to fetch.
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlyReportProjects to fetch.
+     */
+    orderBy?: MonthlyReportProjectOrderByWithRelationInput | MonthlyReportProjectOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonthlyReportProjects.
+     */
+    cursor?: MonthlyReportProjectWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlyReportProjects from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlyReportProjects.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonthlyReportProjects.
+     */
+    distinct?: MonthlyReportProjectScalarFieldEnum | MonthlyReportProjectScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlyReportProject findMany
+   */
+  export type MonthlyReportProjectFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * Filter, which MonthlyReportProjects to fetch.
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonthlyReportProjects to fetch.
+     */
+    orderBy?: MonthlyReportProjectOrderByWithRelationInput | MonthlyReportProjectOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MonthlyReportProjects.
+     */
+    cursor?: MonthlyReportProjectWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonthlyReportProjects from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonthlyReportProjects.
+     */
+    skip?: number
+    distinct?: MonthlyReportProjectScalarFieldEnum | MonthlyReportProjectScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlyReportProject create
+   */
+  export type MonthlyReportProjectCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MonthlyReportProject.
+     */
+    data: XOR<MonthlyReportProjectCreateInput, MonthlyReportProjectUncheckedCreateInput>
+  }
+
+  /**
+   * MonthlyReportProject createMany
+   */
+  export type MonthlyReportProjectCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MonthlyReportProjects.
+     */
+    data: MonthlyReportProjectCreateManyInput | MonthlyReportProjectCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MonthlyReportProject createManyAndReturn
+   */
+  export type MonthlyReportProjectCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * The data used to create many MonthlyReportProjects.
+     */
+    data: MonthlyReportProjectCreateManyInput | MonthlyReportProjectCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MonthlyReportProject update
+   */
+  export type MonthlyReportProjectUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MonthlyReportProject.
+     */
+    data: XOR<MonthlyReportProjectUpdateInput, MonthlyReportProjectUncheckedUpdateInput>
+    /**
+     * Choose, which MonthlyReportProject to update.
+     */
+    where: MonthlyReportProjectWhereUniqueInput
+  }
+
+  /**
+   * MonthlyReportProject updateMany
+   */
+  export type MonthlyReportProjectUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MonthlyReportProjects.
+     */
+    data: XOR<MonthlyReportProjectUpdateManyMutationInput, MonthlyReportProjectUncheckedUpdateManyInput>
+    /**
+     * Filter which MonthlyReportProjects to update
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * Limit how many MonthlyReportProjects to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonthlyReportProject updateManyAndReturn
+   */
+  export type MonthlyReportProjectUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * The data used to update MonthlyReportProjects.
+     */
+    data: XOR<MonthlyReportProjectUpdateManyMutationInput, MonthlyReportProjectUncheckedUpdateManyInput>
+    /**
+     * Filter which MonthlyReportProjects to update
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * Limit how many MonthlyReportProjects to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MonthlyReportProject upsert
+   */
+  export type MonthlyReportProjectUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MonthlyReportProject to update in case it exists.
+     */
+    where: MonthlyReportProjectWhereUniqueInput
+    /**
+     * In case the MonthlyReportProject found by the `where` argument doesn't exist, create a new MonthlyReportProject with this data.
+     */
+    create: XOR<MonthlyReportProjectCreateInput, MonthlyReportProjectUncheckedCreateInput>
+    /**
+     * In case the MonthlyReportProject was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MonthlyReportProjectUpdateInput, MonthlyReportProjectUncheckedUpdateInput>
+  }
+
+  /**
+   * MonthlyReportProject delete
+   */
+  export type MonthlyReportProjectDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+    /**
+     * Filter which MonthlyReportProject to delete.
+     */
+    where: MonthlyReportProjectWhereUniqueInput
+  }
+
+  /**
+   * MonthlyReportProject deleteMany
+   */
+  export type MonthlyReportProjectDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonthlyReportProjects to delete
+     */
+    where?: MonthlyReportProjectWhereInput
+    /**
+     * Limit how many MonthlyReportProjects to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonthlyReportProject.team
+   */
+  export type MonthlyReportProject$teamArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Team
+     */
+    select?: TeamSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Team
+     */
+    omit?: TeamOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInclude<ExtArgs> | null
+    where?: TeamWhereInput
+  }
+
+  /**
+   * MonthlyReportProject.teamReports
+   */
+  export type MonthlyReportProject$teamReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    where?: TeamMonthlyReportWhereInput
+    orderBy?: TeamMonthlyReportOrderByWithRelationInput | TeamMonthlyReportOrderByWithRelationInput[]
+    cursor?: TeamMonthlyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeamMonthlyReportScalarFieldEnum | TeamMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlyReportProject.personalReports
+   */
+  export type MonthlyReportProject$personalReportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    where?: PersonalMonthlyReportWhereInput
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PersonalMonthlyReportScalarFieldEnum | PersonalMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * MonthlyReportProject without action
+   */
+  export type MonthlyReportProjectDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonthlyReportProject
+     */
+    select?: MonthlyReportProjectSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonthlyReportProject
+     */
+    omit?: MonthlyReportProjectOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MonthlyReportProjectInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeamMonthlyReport
+   */
+
+  export type AggregateTeamMonthlyReport = {
+    _count: TeamMonthlyReportCountAggregateOutputType | null
+    _min: TeamMonthlyReportMinAggregateOutputType | null
+    _max: TeamMonthlyReportMaxAggregateOutputType | null
+  }
+
+  export type TeamMonthlyReportMinAggregateOutputType = {
+    id: string | null
+    yearMonth: string | null
+    projectId: string | null
+    teamId: string | null
+    projectSummary: string | null
+    teamSelfGrowthIssue: string | null
+    teamSelfGrowthResult: string | null
+    teamSynergyIssue: string | null
+    teamSynergyResult: string | null
+    updatedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TeamMonthlyReportMaxAggregateOutputType = {
+    id: string | null
+    yearMonth: string | null
+    projectId: string | null
+    teamId: string | null
+    projectSummary: string | null
+    teamSelfGrowthIssue: string | null
+    teamSelfGrowthResult: string | null
+    teamSynergyIssue: string | null
+    teamSynergyResult: string | null
+    updatedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TeamMonthlyReportCountAggregateOutputType = {
+    id: number
+    yearMonth: number
+    projectId: number
+    teamId: number
+    projectSummary: number
+    teamSelfGrowthIssue: number
+    teamSelfGrowthResult: number
+    teamSynergyIssue: number
+    teamSynergyResult: number
+    updatedBy: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TeamMonthlyReportMinAggregateInputType = {
+    id?: true
+    yearMonth?: true
+    projectId?: true
+    teamId?: true
+    projectSummary?: true
+    teamSelfGrowthIssue?: true
+    teamSelfGrowthResult?: true
+    teamSynergyIssue?: true
+    teamSynergyResult?: true
+    updatedBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TeamMonthlyReportMaxAggregateInputType = {
+    id?: true
+    yearMonth?: true
+    projectId?: true
+    teamId?: true
+    projectSummary?: true
+    teamSelfGrowthIssue?: true
+    teamSelfGrowthResult?: true
+    teamSynergyIssue?: true
+    teamSynergyResult?: true
+    updatedBy?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TeamMonthlyReportCountAggregateInputType = {
+    id?: true
+    yearMonth?: true
+    projectId?: true
+    teamId?: true
+    projectSummary?: true
+    teamSelfGrowthIssue?: true
+    teamSelfGrowthResult?: true
+    teamSynergyIssue?: true
+    teamSynergyResult?: true
+    updatedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TeamMonthlyReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeamMonthlyReport to aggregate.
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamMonthlyReports to fetch.
+     */
+    orderBy?: TeamMonthlyReportOrderByWithRelationInput | TeamMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeamMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamMonthlyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeamMonthlyReports
+    **/
+    _count?: true | TeamMonthlyReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeamMonthlyReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeamMonthlyReportMaxAggregateInputType
+  }
+
+  export type GetTeamMonthlyReportAggregateType<T extends TeamMonthlyReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeamMonthlyReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeamMonthlyReport[P]>
+      : GetScalarType<T[P], AggregateTeamMonthlyReport[P]>
+  }
+
+
+
+
+  export type TeamMonthlyReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamMonthlyReportWhereInput
+    orderBy?: TeamMonthlyReportOrderByWithAggregationInput | TeamMonthlyReportOrderByWithAggregationInput[]
+    by: TeamMonthlyReportScalarFieldEnum[] | TeamMonthlyReportScalarFieldEnum
+    having?: TeamMonthlyReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeamMonthlyReportCountAggregateInputType | true
+    _min?: TeamMonthlyReportMinAggregateInputType
+    _max?: TeamMonthlyReportMaxAggregateInputType
+  }
+
+  export type TeamMonthlyReportGroupByOutputType = {
+    id: string
+    yearMonth: string
+    projectId: string
+    teamId: string
+    projectSummary: string
+    teamSelfGrowthIssue: string
+    teamSelfGrowthResult: string
+    teamSynergyIssue: string
+    teamSynergyResult: string
+    updatedBy: string
+    createdAt: Date
+    updatedAt: Date
+    _count: TeamMonthlyReportCountAggregateOutputType | null
+    _min: TeamMonthlyReportMinAggregateOutputType | null
+    _max: TeamMonthlyReportMaxAggregateOutputType | null
+  }
+
+  type GetTeamMonthlyReportGroupByPayload<T extends TeamMonthlyReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeamMonthlyReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeamMonthlyReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeamMonthlyReportGroupByOutputType[P]>
+            : GetScalarType<T[P], TeamMonthlyReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeamMonthlyReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    teamId?: boolean
+    projectSummary?: boolean
+    teamSelfGrowthIssue?: boolean
+    teamSelfGrowthResult?: boolean
+    teamSynergyIssue?: boolean
+    teamSynergyResult?: boolean
+    updatedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    team?: boolean | TeamDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teamMonthlyReport"]>
+
+  export type TeamMonthlyReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    teamId?: boolean
+    projectSummary?: boolean
+    teamSelfGrowthIssue?: boolean
+    teamSelfGrowthResult?: boolean
+    teamSynergyIssue?: boolean
+    teamSynergyResult?: boolean
+    updatedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    team?: boolean | TeamDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teamMonthlyReport"]>
+
+  export type TeamMonthlyReportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    teamId?: boolean
+    projectSummary?: boolean
+    teamSelfGrowthIssue?: boolean
+    teamSelfGrowthResult?: boolean
+    teamSynergyIssue?: boolean
+    teamSynergyResult?: boolean
+    updatedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    team?: boolean | TeamDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teamMonthlyReport"]>
+
+  export type TeamMonthlyReportSelectScalar = {
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    teamId?: boolean
+    projectSummary?: boolean
+    teamSelfGrowthIssue?: boolean
+    teamSelfGrowthResult?: boolean
+    teamSynergyIssue?: boolean
+    teamSynergyResult?: boolean
+    updatedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TeamMonthlyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "yearMonth" | "projectId" | "teamId" | "projectSummary" | "teamSelfGrowthIssue" | "teamSelfGrowthResult" | "teamSynergyIssue" | "teamSynergyResult" | "updatedBy" | "createdAt" | "updatedAt", ExtArgs["result"]["teamMonthlyReport"]>
+  export type TeamMonthlyReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    team?: boolean | TeamDefaultArgs<ExtArgs>
+  }
+  export type TeamMonthlyReportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    team?: boolean | TeamDefaultArgs<ExtArgs>
+  }
+  export type TeamMonthlyReportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    team?: boolean | TeamDefaultArgs<ExtArgs>
+  }
+
+  export type $TeamMonthlyReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeamMonthlyReport"
+    objects: {
+      project: Prisma.$MonthlyReportProjectPayload<ExtArgs>
+      team: Prisma.$TeamPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      yearMonth: string
+      projectId: string
+      teamId: string
+      projectSummary: string
+      teamSelfGrowthIssue: string
+      teamSelfGrowthResult: string
+      teamSynergyIssue: string
+      teamSynergyResult: string
+      updatedBy: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["teamMonthlyReport"]>
+    composites: {}
+  }
+
+  type TeamMonthlyReportGetPayload<S extends boolean | null | undefined | TeamMonthlyReportDefaultArgs> = $Result.GetResult<Prisma.$TeamMonthlyReportPayload, S>
+
+  type TeamMonthlyReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeamMonthlyReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeamMonthlyReportCountAggregateInputType | true
+    }
+
+  export interface TeamMonthlyReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeamMonthlyReport'], meta: { name: 'TeamMonthlyReport' } }
+    /**
+     * Find zero or one TeamMonthlyReport that matches the filter.
+     * @param {TeamMonthlyReportFindUniqueArgs} args - Arguments to find a TeamMonthlyReport
+     * @example
+     * // Get one TeamMonthlyReport
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeamMonthlyReportFindUniqueArgs>(args: SelectSubset<T, TeamMonthlyReportFindUniqueArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeamMonthlyReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeamMonthlyReportFindUniqueOrThrowArgs} args - Arguments to find a TeamMonthlyReport
+     * @example
+     * // Get one TeamMonthlyReport
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeamMonthlyReportFindUniqueOrThrowArgs>(args: SelectSubset<T, TeamMonthlyReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeamMonthlyReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportFindFirstArgs} args - Arguments to find a TeamMonthlyReport
+     * @example
+     * // Get one TeamMonthlyReport
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeamMonthlyReportFindFirstArgs>(args?: SelectSubset<T, TeamMonthlyReportFindFirstArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeamMonthlyReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportFindFirstOrThrowArgs} args - Arguments to find a TeamMonthlyReport
+     * @example
+     * // Get one TeamMonthlyReport
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeamMonthlyReportFindFirstOrThrowArgs>(args?: SelectSubset<T, TeamMonthlyReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeamMonthlyReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeamMonthlyReports
+     * const teamMonthlyReports = await prisma.teamMonthlyReport.findMany()
+     * 
+     * // Get first 10 TeamMonthlyReports
+     * const teamMonthlyReports = await prisma.teamMonthlyReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teamMonthlyReportWithIdOnly = await prisma.teamMonthlyReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeamMonthlyReportFindManyArgs>(args?: SelectSubset<T, TeamMonthlyReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeamMonthlyReport.
+     * @param {TeamMonthlyReportCreateArgs} args - Arguments to create a TeamMonthlyReport.
+     * @example
+     * // Create one TeamMonthlyReport
+     * const TeamMonthlyReport = await prisma.teamMonthlyReport.create({
+     *   data: {
+     *     // ... data to create a TeamMonthlyReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeamMonthlyReportCreateArgs>(args: SelectSubset<T, TeamMonthlyReportCreateArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeamMonthlyReports.
+     * @param {TeamMonthlyReportCreateManyArgs} args - Arguments to create many TeamMonthlyReports.
+     * @example
+     * // Create many TeamMonthlyReports
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeamMonthlyReportCreateManyArgs>(args?: SelectSubset<T, TeamMonthlyReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeamMonthlyReports and returns the data saved in the database.
+     * @param {TeamMonthlyReportCreateManyAndReturnArgs} args - Arguments to create many TeamMonthlyReports.
+     * @example
+     * // Create many TeamMonthlyReports
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeamMonthlyReports and only return the `id`
+     * const teamMonthlyReportWithIdOnly = await prisma.teamMonthlyReport.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeamMonthlyReportCreateManyAndReturnArgs>(args?: SelectSubset<T, TeamMonthlyReportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeamMonthlyReport.
+     * @param {TeamMonthlyReportDeleteArgs} args - Arguments to delete one TeamMonthlyReport.
+     * @example
+     * // Delete one TeamMonthlyReport
+     * const TeamMonthlyReport = await prisma.teamMonthlyReport.delete({
+     *   where: {
+     *     // ... filter to delete one TeamMonthlyReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeamMonthlyReportDeleteArgs>(args: SelectSubset<T, TeamMonthlyReportDeleteArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeamMonthlyReport.
+     * @param {TeamMonthlyReportUpdateArgs} args - Arguments to update one TeamMonthlyReport.
+     * @example
+     * // Update one TeamMonthlyReport
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeamMonthlyReportUpdateArgs>(args: SelectSubset<T, TeamMonthlyReportUpdateArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeamMonthlyReports.
+     * @param {TeamMonthlyReportDeleteManyArgs} args - Arguments to filter TeamMonthlyReports to delete.
+     * @example
+     * // Delete a few TeamMonthlyReports
+     * const { count } = await prisma.teamMonthlyReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeamMonthlyReportDeleteManyArgs>(args?: SelectSubset<T, TeamMonthlyReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeamMonthlyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeamMonthlyReports
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeamMonthlyReportUpdateManyArgs>(args: SelectSubset<T, TeamMonthlyReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeamMonthlyReports and returns the data updated in the database.
+     * @param {TeamMonthlyReportUpdateManyAndReturnArgs} args - Arguments to update many TeamMonthlyReports.
+     * @example
+     * // Update many TeamMonthlyReports
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeamMonthlyReports and only return the `id`
+     * const teamMonthlyReportWithIdOnly = await prisma.teamMonthlyReport.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeamMonthlyReportUpdateManyAndReturnArgs>(args: SelectSubset<T, TeamMonthlyReportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeamMonthlyReport.
+     * @param {TeamMonthlyReportUpsertArgs} args - Arguments to update or create a TeamMonthlyReport.
+     * @example
+     * // Update or create a TeamMonthlyReport
+     * const teamMonthlyReport = await prisma.teamMonthlyReport.upsert({
+     *   create: {
+     *     // ... data to create a TeamMonthlyReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeamMonthlyReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeamMonthlyReportUpsertArgs>(args: SelectSubset<T, TeamMonthlyReportUpsertArgs<ExtArgs>>): Prisma__TeamMonthlyReportClient<$Result.GetResult<Prisma.$TeamMonthlyReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeamMonthlyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportCountArgs} args - Arguments to filter TeamMonthlyReports to count.
+     * @example
+     * // Count the number of TeamMonthlyReports
+     * const count = await prisma.teamMonthlyReport.count({
+     *   where: {
+     *     // ... the filter for the TeamMonthlyReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeamMonthlyReportCountArgs>(
+      args?: Subset<T, TeamMonthlyReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeamMonthlyReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeamMonthlyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeamMonthlyReportAggregateArgs>(args: Subset<T, TeamMonthlyReportAggregateArgs>): Prisma.PrismaPromise<GetTeamMonthlyReportAggregateType<T>>
+
+    /**
+     * Group by TeamMonthlyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamMonthlyReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeamMonthlyReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeamMonthlyReportGroupByArgs['orderBy'] }
+        : { orderBy?: TeamMonthlyReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeamMonthlyReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeamMonthlyReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeamMonthlyReport model
+   */
+  readonly fields: TeamMonthlyReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeamMonthlyReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeamMonthlyReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends MonthlyReportProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MonthlyReportProjectDefaultArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    team<T extends TeamDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeamDefaultArgs<ExtArgs>>): Prisma__TeamClient<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeamMonthlyReport model
+   */
+  interface TeamMonthlyReportFieldRefs {
+    readonly id: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly yearMonth: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly projectId: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly teamId: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly projectSummary: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly teamSelfGrowthIssue: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly teamSelfGrowthResult: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly teamSynergyIssue: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly teamSynergyResult: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly updatedBy: FieldRef<"TeamMonthlyReport", 'String'>
+    readonly createdAt: FieldRef<"TeamMonthlyReport", 'DateTime'>
+    readonly updatedAt: FieldRef<"TeamMonthlyReport", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeamMonthlyReport findUnique
+   */
+  export type TeamMonthlyReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamMonthlyReport to fetch.
+     */
+    where: TeamMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * TeamMonthlyReport findUniqueOrThrow
+   */
+  export type TeamMonthlyReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamMonthlyReport to fetch.
+     */
+    where: TeamMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * TeamMonthlyReport findFirst
+   */
+  export type TeamMonthlyReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamMonthlyReport to fetch.
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamMonthlyReports to fetch.
+     */
+    orderBy?: TeamMonthlyReportOrderByWithRelationInput | TeamMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeamMonthlyReports.
+     */
+    cursor?: TeamMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamMonthlyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeamMonthlyReports.
+     */
+    distinct?: TeamMonthlyReportScalarFieldEnum | TeamMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * TeamMonthlyReport findFirstOrThrow
+   */
+  export type TeamMonthlyReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamMonthlyReport to fetch.
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamMonthlyReports to fetch.
+     */
+    orderBy?: TeamMonthlyReportOrderByWithRelationInput | TeamMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeamMonthlyReports.
+     */
+    cursor?: TeamMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamMonthlyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeamMonthlyReports.
+     */
+    distinct?: TeamMonthlyReportScalarFieldEnum | TeamMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * TeamMonthlyReport findMany
+   */
+  export type TeamMonthlyReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamMonthlyReports to fetch.
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamMonthlyReports to fetch.
+     */
+    orderBy?: TeamMonthlyReportOrderByWithRelationInput | TeamMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeamMonthlyReports.
+     */
+    cursor?: TeamMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamMonthlyReports.
+     */
+    skip?: number
+    distinct?: TeamMonthlyReportScalarFieldEnum | TeamMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * TeamMonthlyReport create
+   */
+  export type TeamMonthlyReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeamMonthlyReport.
+     */
+    data: XOR<TeamMonthlyReportCreateInput, TeamMonthlyReportUncheckedCreateInput>
+  }
+
+  /**
+   * TeamMonthlyReport createMany
+   */
+  export type TeamMonthlyReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeamMonthlyReports.
+     */
+    data: TeamMonthlyReportCreateManyInput | TeamMonthlyReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeamMonthlyReport createManyAndReturn
+   */
+  export type TeamMonthlyReportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeamMonthlyReports.
+     */
+    data: TeamMonthlyReportCreateManyInput | TeamMonthlyReportCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeamMonthlyReport update
+   */
+  export type TeamMonthlyReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeamMonthlyReport.
+     */
+    data: XOR<TeamMonthlyReportUpdateInput, TeamMonthlyReportUncheckedUpdateInput>
+    /**
+     * Choose, which TeamMonthlyReport to update.
+     */
+    where: TeamMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * TeamMonthlyReport updateMany
+   */
+  export type TeamMonthlyReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeamMonthlyReports.
+     */
+    data: XOR<TeamMonthlyReportUpdateManyMutationInput, TeamMonthlyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which TeamMonthlyReports to update
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * Limit how many TeamMonthlyReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeamMonthlyReport updateManyAndReturn
+   */
+  export type TeamMonthlyReportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * The data used to update TeamMonthlyReports.
+     */
+    data: XOR<TeamMonthlyReportUpdateManyMutationInput, TeamMonthlyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which TeamMonthlyReports to update
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * Limit how many TeamMonthlyReports to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeamMonthlyReport upsert
+   */
+  export type TeamMonthlyReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeamMonthlyReport to update in case it exists.
+     */
+    where: TeamMonthlyReportWhereUniqueInput
+    /**
+     * In case the TeamMonthlyReport found by the `where` argument doesn't exist, create a new TeamMonthlyReport with this data.
+     */
+    create: XOR<TeamMonthlyReportCreateInput, TeamMonthlyReportUncheckedCreateInput>
+    /**
+     * In case the TeamMonthlyReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeamMonthlyReportUpdateInput, TeamMonthlyReportUncheckedUpdateInput>
+  }
+
+  /**
+   * TeamMonthlyReport delete
+   */
+  export type TeamMonthlyReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter which TeamMonthlyReport to delete.
+     */
+    where: TeamMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * TeamMonthlyReport deleteMany
+   */
+  export type TeamMonthlyReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeamMonthlyReports to delete
+     */
+    where?: TeamMonthlyReportWhereInput
+    /**
+     * Limit how many TeamMonthlyReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeamMonthlyReport without action
+   */
+  export type TeamMonthlyReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamMonthlyReport
+     */
+    select?: TeamMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamMonthlyReport
+     */
+    omit?: TeamMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamMonthlyReportInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PersonalMonthlyReport
+   */
+
+  export type AggregatePersonalMonthlyReport = {
+    _count: PersonalMonthlyReportCountAggregateOutputType | null
+    _min: PersonalMonthlyReportMinAggregateOutputType | null
+    _max: PersonalMonthlyReportMaxAggregateOutputType | null
+  }
+
+  export type PersonalMonthlyReportMinAggregateOutputType = {
+    id: string | null
+    yearMonth: string | null
+    projectId: string | null
+    userId: string | null
+    teamId: string | null
+    teamNameSnapshot: string | null
+    userRoleCode: string | null
+    memberType: string | null
+    projectRole: string | null
+    personalSelfGrowthIssue: string | null
+    personalSelfGrowthResult: string | null
+    personalSynergyIssue: string | null
+    personalSynergyResult: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PersonalMonthlyReportMaxAggregateOutputType = {
+    id: string | null
+    yearMonth: string | null
+    projectId: string | null
+    userId: string | null
+    teamId: string | null
+    teamNameSnapshot: string | null
+    userRoleCode: string | null
+    memberType: string | null
+    projectRole: string | null
+    personalSelfGrowthIssue: string | null
+    personalSelfGrowthResult: string | null
+    personalSynergyIssue: string | null
+    personalSynergyResult: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PersonalMonthlyReportCountAggregateOutputType = {
+    id: number
+    yearMonth: number
+    projectId: number
+    userId: number
+    teamId: number
+    teamNameSnapshot: number
+    userRoleCode: number
+    memberType: number
+    projectRole: number
+    personalSelfGrowthIssue: number
+    personalSelfGrowthResult: number
+    personalSynergyIssue: number
+    personalSynergyResult: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PersonalMonthlyReportMinAggregateInputType = {
+    id?: true
+    yearMonth?: true
+    projectId?: true
+    userId?: true
+    teamId?: true
+    teamNameSnapshot?: true
+    userRoleCode?: true
+    memberType?: true
+    projectRole?: true
+    personalSelfGrowthIssue?: true
+    personalSelfGrowthResult?: true
+    personalSynergyIssue?: true
+    personalSynergyResult?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PersonalMonthlyReportMaxAggregateInputType = {
+    id?: true
+    yearMonth?: true
+    projectId?: true
+    userId?: true
+    teamId?: true
+    teamNameSnapshot?: true
+    userRoleCode?: true
+    memberType?: true
+    projectRole?: true
+    personalSelfGrowthIssue?: true
+    personalSelfGrowthResult?: true
+    personalSynergyIssue?: true
+    personalSynergyResult?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PersonalMonthlyReportCountAggregateInputType = {
+    id?: true
+    yearMonth?: true
+    projectId?: true
+    userId?: true
+    teamId?: true
+    teamNameSnapshot?: true
+    userRoleCode?: true
+    memberType?: true
+    projectRole?: true
+    personalSelfGrowthIssue?: true
+    personalSelfGrowthResult?: true
+    personalSynergyIssue?: true
+    personalSynergyResult?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PersonalMonthlyReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PersonalMonthlyReport to aggregate.
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PersonalMonthlyReports to fetch.
+     */
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PersonalMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PersonalMonthlyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PersonalMonthlyReports
+    **/
+    _count?: true | PersonalMonthlyReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PersonalMonthlyReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PersonalMonthlyReportMaxAggregateInputType
+  }
+
+  export type GetPersonalMonthlyReportAggregateType<T extends PersonalMonthlyReportAggregateArgs> = {
+        [P in keyof T & keyof AggregatePersonalMonthlyReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePersonalMonthlyReport[P]>
+      : GetScalarType<T[P], AggregatePersonalMonthlyReport[P]>
+  }
+
+
+
+
+  export type PersonalMonthlyReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PersonalMonthlyReportWhereInput
+    orderBy?: PersonalMonthlyReportOrderByWithAggregationInput | PersonalMonthlyReportOrderByWithAggregationInput[]
+    by: PersonalMonthlyReportScalarFieldEnum[] | PersonalMonthlyReportScalarFieldEnum
+    having?: PersonalMonthlyReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PersonalMonthlyReportCountAggregateInputType | true
+    _min?: PersonalMonthlyReportMinAggregateInputType
+    _max?: PersonalMonthlyReportMaxAggregateInputType
+  }
+
+  export type PersonalMonthlyReportGroupByOutputType = {
+    id: string
+    yearMonth: string
+    projectId: string
+    userId: string
+    teamId: string | null
+    teamNameSnapshot: string
+    userRoleCode: string
+    memberType: string
+    projectRole: string
+    personalSelfGrowthIssue: string
+    personalSelfGrowthResult: string
+    personalSynergyIssue: string
+    personalSynergyResult: string
+    createdAt: Date
+    updatedAt: Date
+    _count: PersonalMonthlyReportCountAggregateOutputType | null
+    _min: PersonalMonthlyReportMinAggregateOutputType | null
+    _max: PersonalMonthlyReportMaxAggregateOutputType | null
+  }
+
+  type GetPersonalMonthlyReportGroupByPayload<T extends PersonalMonthlyReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PersonalMonthlyReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PersonalMonthlyReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PersonalMonthlyReportGroupByOutputType[P]>
+            : GetScalarType<T[P], PersonalMonthlyReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PersonalMonthlyReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    userId?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    userRoleCode?: boolean
+    memberType?: boolean
+    projectRole?: boolean
+    personalSelfGrowthIssue?: boolean
+    personalSelfGrowthResult?: boolean
+    personalSynergyIssue?: boolean
+    personalSynergyResult?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    team?: boolean | PersonalMonthlyReport$teamArgs<ExtArgs>
+  }, ExtArgs["result"]["personalMonthlyReport"]>
+
+  export type PersonalMonthlyReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    userId?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    userRoleCode?: boolean
+    memberType?: boolean
+    projectRole?: boolean
+    personalSelfGrowthIssue?: boolean
+    personalSelfGrowthResult?: boolean
+    personalSynergyIssue?: boolean
+    personalSynergyResult?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    team?: boolean | PersonalMonthlyReport$teamArgs<ExtArgs>
+  }, ExtArgs["result"]["personalMonthlyReport"]>
+
+  export type PersonalMonthlyReportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    userId?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    userRoleCode?: boolean
+    memberType?: boolean
+    projectRole?: boolean
+    personalSelfGrowthIssue?: boolean
+    personalSelfGrowthResult?: boolean
+    personalSynergyIssue?: boolean
+    personalSynergyResult?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    team?: boolean | PersonalMonthlyReport$teamArgs<ExtArgs>
+  }, ExtArgs["result"]["personalMonthlyReport"]>
+
+  export type PersonalMonthlyReportSelectScalar = {
+    id?: boolean
+    yearMonth?: boolean
+    projectId?: boolean
+    userId?: boolean
+    teamId?: boolean
+    teamNameSnapshot?: boolean
+    userRoleCode?: boolean
+    memberType?: boolean
+    projectRole?: boolean
+    personalSelfGrowthIssue?: boolean
+    personalSelfGrowthResult?: boolean
+    personalSynergyIssue?: boolean
+    personalSynergyResult?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PersonalMonthlyReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "yearMonth" | "projectId" | "userId" | "teamId" | "teamNameSnapshot" | "userRoleCode" | "memberType" | "projectRole" | "personalSelfGrowthIssue" | "personalSelfGrowthResult" | "personalSynergyIssue" | "personalSynergyResult" | "createdAt" | "updatedAt", ExtArgs["result"]["personalMonthlyReport"]>
+  export type PersonalMonthlyReportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    team?: boolean | PersonalMonthlyReport$teamArgs<ExtArgs>
+  }
+  export type PersonalMonthlyReportIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    team?: boolean | PersonalMonthlyReport$teamArgs<ExtArgs>
+  }
+  export type PersonalMonthlyReportIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | MonthlyReportProjectDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    team?: boolean | PersonalMonthlyReport$teamArgs<ExtArgs>
+  }
+
+  export type $PersonalMonthlyReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PersonalMonthlyReport"
+    objects: {
+      project: Prisma.$MonthlyReportProjectPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      team: Prisma.$TeamPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      yearMonth: string
+      projectId: string
+      userId: string
+      teamId: string | null
+      teamNameSnapshot: string
+      userRoleCode: string
+      memberType: string
+      projectRole: string
+      personalSelfGrowthIssue: string
+      personalSelfGrowthResult: string
+      personalSynergyIssue: string
+      personalSynergyResult: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["personalMonthlyReport"]>
+    composites: {}
+  }
+
+  type PersonalMonthlyReportGetPayload<S extends boolean | null | undefined | PersonalMonthlyReportDefaultArgs> = $Result.GetResult<Prisma.$PersonalMonthlyReportPayload, S>
+
+  type PersonalMonthlyReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PersonalMonthlyReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PersonalMonthlyReportCountAggregateInputType | true
+    }
+
+  export interface PersonalMonthlyReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PersonalMonthlyReport'], meta: { name: 'PersonalMonthlyReport' } }
+    /**
+     * Find zero or one PersonalMonthlyReport that matches the filter.
+     * @param {PersonalMonthlyReportFindUniqueArgs} args - Arguments to find a PersonalMonthlyReport
+     * @example
+     * // Get one PersonalMonthlyReport
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PersonalMonthlyReportFindUniqueArgs>(args: SelectSubset<T, PersonalMonthlyReportFindUniqueArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PersonalMonthlyReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PersonalMonthlyReportFindUniqueOrThrowArgs} args - Arguments to find a PersonalMonthlyReport
+     * @example
+     * // Get one PersonalMonthlyReport
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PersonalMonthlyReportFindUniqueOrThrowArgs>(args: SelectSubset<T, PersonalMonthlyReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PersonalMonthlyReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportFindFirstArgs} args - Arguments to find a PersonalMonthlyReport
+     * @example
+     * // Get one PersonalMonthlyReport
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PersonalMonthlyReportFindFirstArgs>(args?: SelectSubset<T, PersonalMonthlyReportFindFirstArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PersonalMonthlyReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportFindFirstOrThrowArgs} args - Arguments to find a PersonalMonthlyReport
+     * @example
+     * // Get one PersonalMonthlyReport
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PersonalMonthlyReportFindFirstOrThrowArgs>(args?: SelectSubset<T, PersonalMonthlyReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PersonalMonthlyReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PersonalMonthlyReports
+     * const personalMonthlyReports = await prisma.personalMonthlyReport.findMany()
+     * 
+     * // Get first 10 PersonalMonthlyReports
+     * const personalMonthlyReports = await prisma.personalMonthlyReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const personalMonthlyReportWithIdOnly = await prisma.personalMonthlyReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PersonalMonthlyReportFindManyArgs>(args?: SelectSubset<T, PersonalMonthlyReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PersonalMonthlyReport.
+     * @param {PersonalMonthlyReportCreateArgs} args - Arguments to create a PersonalMonthlyReport.
+     * @example
+     * // Create one PersonalMonthlyReport
+     * const PersonalMonthlyReport = await prisma.personalMonthlyReport.create({
+     *   data: {
+     *     // ... data to create a PersonalMonthlyReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends PersonalMonthlyReportCreateArgs>(args: SelectSubset<T, PersonalMonthlyReportCreateArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PersonalMonthlyReports.
+     * @param {PersonalMonthlyReportCreateManyArgs} args - Arguments to create many PersonalMonthlyReports.
+     * @example
+     * // Create many PersonalMonthlyReports
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PersonalMonthlyReportCreateManyArgs>(args?: SelectSubset<T, PersonalMonthlyReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PersonalMonthlyReports and returns the data saved in the database.
+     * @param {PersonalMonthlyReportCreateManyAndReturnArgs} args - Arguments to create many PersonalMonthlyReports.
+     * @example
+     * // Create many PersonalMonthlyReports
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PersonalMonthlyReports and only return the `id`
+     * const personalMonthlyReportWithIdOnly = await prisma.personalMonthlyReport.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PersonalMonthlyReportCreateManyAndReturnArgs>(args?: SelectSubset<T, PersonalMonthlyReportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PersonalMonthlyReport.
+     * @param {PersonalMonthlyReportDeleteArgs} args - Arguments to delete one PersonalMonthlyReport.
+     * @example
+     * // Delete one PersonalMonthlyReport
+     * const PersonalMonthlyReport = await prisma.personalMonthlyReport.delete({
+     *   where: {
+     *     // ... filter to delete one PersonalMonthlyReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PersonalMonthlyReportDeleteArgs>(args: SelectSubset<T, PersonalMonthlyReportDeleteArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PersonalMonthlyReport.
+     * @param {PersonalMonthlyReportUpdateArgs} args - Arguments to update one PersonalMonthlyReport.
+     * @example
+     * // Update one PersonalMonthlyReport
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PersonalMonthlyReportUpdateArgs>(args: SelectSubset<T, PersonalMonthlyReportUpdateArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PersonalMonthlyReports.
+     * @param {PersonalMonthlyReportDeleteManyArgs} args - Arguments to filter PersonalMonthlyReports to delete.
+     * @example
+     * // Delete a few PersonalMonthlyReports
+     * const { count } = await prisma.personalMonthlyReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PersonalMonthlyReportDeleteManyArgs>(args?: SelectSubset<T, PersonalMonthlyReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PersonalMonthlyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PersonalMonthlyReports
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PersonalMonthlyReportUpdateManyArgs>(args: SelectSubset<T, PersonalMonthlyReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PersonalMonthlyReports and returns the data updated in the database.
+     * @param {PersonalMonthlyReportUpdateManyAndReturnArgs} args - Arguments to update many PersonalMonthlyReports.
+     * @example
+     * // Update many PersonalMonthlyReports
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PersonalMonthlyReports and only return the `id`
+     * const personalMonthlyReportWithIdOnly = await prisma.personalMonthlyReport.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PersonalMonthlyReportUpdateManyAndReturnArgs>(args: SelectSubset<T, PersonalMonthlyReportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PersonalMonthlyReport.
+     * @param {PersonalMonthlyReportUpsertArgs} args - Arguments to update or create a PersonalMonthlyReport.
+     * @example
+     * // Update or create a PersonalMonthlyReport
+     * const personalMonthlyReport = await prisma.personalMonthlyReport.upsert({
+     *   create: {
+     *     // ... data to create a PersonalMonthlyReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PersonalMonthlyReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PersonalMonthlyReportUpsertArgs>(args: SelectSubset<T, PersonalMonthlyReportUpsertArgs<ExtArgs>>): Prisma__PersonalMonthlyReportClient<$Result.GetResult<Prisma.$PersonalMonthlyReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PersonalMonthlyReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportCountArgs} args - Arguments to filter PersonalMonthlyReports to count.
+     * @example
+     * // Count the number of PersonalMonthlyReports
+     * const count = await prisma.personalMonthlyReport.count({
+     *   where: {
+     *     // ... the filter for the PersonalMonthlyReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends PersonalMonthlyReportCountArgs>(
+      args?: Subset<T, PersonalMonthlyReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PersonalMonthlyReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PersonalMonthlyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PersonalMonthlyReportAggregateArgs>(args: Subset<T, PersonalMonthlyReportAggregateArgs>): Prisma.PrismaPromise<GetPersonalMonthlyReportAggregateType<T>>
+
+    /**
+     * Group by PersonalMonthlyReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PersonalMonthlyReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PersonalMonthlyReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PersonalMonthlyReportGroupByArgs['orderBy'] }
+        : { orderBy?: PersonalMonthlyReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PersonalMonthlyReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPersonalMonthlyReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PersonalMonthlyReport model
+   */
+  readonly fields: PersonalMonthlyReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PersonalMonthlyReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PersonalMonthlyReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends MonthlyReportProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MonthlyReportProjectDefaultArgs<ExtArgs>>): Prisma__MonthlyReportProjectClient<$Result.GetResult<Prisma.$MonthlyReportProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    team<T extends PersonalMonthlyReport$teamArgs<ExtArgs> = {}>(args?: Subset<T, PersonalMonthlyReport$teamArgs<ExtArgs>>): Prisma__TeamClient<$Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PersonalMonthlyReport model
+   */
+  interface PersonalMonthlyReportFieldRefs {
+    readonly id: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly yearMonth: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly projectId: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly userId: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly teamId: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly teamNameSnapshot: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly userRoleCode: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly memberType: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly projectRole: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly personalSelfGrowthIssue: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly personalSelfGrowthResult: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly personalSynergyIssue: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly personalSynergyResult: FieldRef<"PersonalMonthlyReport", 'String'>
+    readonly createdAt: FieldRef<"PersonalMonthlyReport", 'DateTime'>
+    readonly updatedAt: FieldRef<"PersonalMonthlyReport", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PersonalMonthlyReport findUnique
+   */
+  export type PersonalMonthlyReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which PersonalMonthlyReport to fetch.
+     */
+    where: PersonalMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * PersonalMonthlyReport findUniqueOrThrow
+   */
+  export type PersonalMonthlyReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which PersonalMonthlyReport to fetch.
+     */
+    where: PersonalMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * PersonalMonthlyReport findFirst
+   */
+  export type PersonalMonthlyReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which PersonalMonthlyReport to fetch.
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PersonalMonthlyReports to fetch.
+     */
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PersonalMonthlyReports.
+     */
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PersonalMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PersonalMonthlyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PersonalMonthlyReports.
+     */
+    distinct?: PersonalMonthlyReportScalarFieldEnum | PersonalMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * PersonalMonthlyReport findFirstOrThrow
+   */
+  export type PersonalMonthlyReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which PersonalMonthlyReport to fetch.
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PersonalMonthlyReports to fetch.
+     */
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PersonalMonthlyReports.
+     */
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PersonalMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PersonalMonthlyReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PersonalMonthlyReports.
+     */
+    distinct?: PersonalMonthlyReportScalarFieldEnum | PersonalMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * PersonalMonthlyReport findMany
+   */
+  export type PersonalMonthlyReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter, which PersonalMonthlyReports to fetch.
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PersonalMonthlyReports to fetch.
+     */
+    orderBy?: PersonalMonthlyReportOrderByWithRelationInput | PersonalMonthlyReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PersonalMonthlyReports.
+     */
+    cursor?: PersonalMonthlyReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PersonalMonthlyReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PersonalMonthlyReports.
+     */
+    skip?: number
+    distinct?: PersonalMonthlyReportScalarFieldEnum | PersonalMonthlyReportScalarFieldEnum[]
+  }
+
+  /**
+   * PersonalMonthlyReport create
+   */
+  export type PersonalMonthlyReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PersonalMonthlyReport.
+     */
+    data: XOR<PersonalMonthlyReportCreateInput, PersonalMonthlyReportUncheckedCreateInput>
+  }
+
+  /**
+   * PersonalMonthlyReport createMany
+   */
+  export type PersonalMonthlyReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PersonalMonthlyReports.
+     */
+    data: PersonalMonthlyReportCreateManyInput | PersonalMonthlyReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PersonalMonthlyReport createManyAndReturn
+   */
+  export type PersonalMonthlyReportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * The data used to create many PersonalMonthlyReports.
+     */
+    data: PersonalMonthlyReportCreateManyInput | PersonalMonthlyReportCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PersonalMonthlyReport update
+   */
+  export type PersonalMonthlyReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PersonalMonthlyReport.
+     */
+    data: XOR<PersonalMonthlyReportUpdateInput, PersonalMonthlyReportUncheckedUpdateInput>
+    /**
+     * Choose, which PersonalMonthlyReport to update.
+     */
+    where: PersonalMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * PersonalMonthlyReport updateMany
+   */
+  export type PersonalMonthlyReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PersonalMonthlyReports.
+     */
+    data: XOR<PersonalMonthlyReportUpdateManyMutationInput, PersonalMonthlyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which PersonalMonthlyReports to update
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * Limit how many PersonalMonthlyReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PersonalMonthlyReport updateManyAndReturn
+   */
+  export type PersonalMonthlyReportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * The data used to update PersonalMonthlyReports.
+     */
+    data: XOR<PersonalMonthlyReportUpdateManyMutationInput, PersonalMonthlyReportUncheckedUpdateManyInput>
+    /**
+     * Filter which PersonalMonthlyReports to update
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * Limit how many PersonalMonthlyReports to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PersonalMonthlyReport upsert
+   */
+  export type PersonalMonthlyReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PersonalMonthlyReport to update in case it exists.
+     */
+    where: PersonalMonthlyReportWhereUniqueInput
+    /**
+     * In case the PersonalMonthlyReport found by the `where` argument doesn't exist, create a new PersonalMonthlyReport with this data.
+     */
+    create: XOR<PersonalMonthlyReportCreateInput, PersonalMonthlyReportUncheckedCreateInput>
+    /**
+     * In case the PersonalMonthlyReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PersonalMonthlyReportUpdateInput, PersonalMonthlyReportUncheckedUpdateInput>
+  }
+
+  /**
+   * PersonalMonthlyReport delete
+   */
+  export type PersonalMonthlyReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+    /**
+     * Filter which PersonalMonthlyReport to delete.
+     */
+    where: PersonalMonthlyReportWhereUniqueInput
+  }
+
+  /**
+   * PersonalMonthlyReport deleteMany
+   */
+  export type PersonalMonthlyReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PersonalMonthlyReports to delete
+     */
+    where?: PersonalMonthlyReportWhereInput
+    /**
+     * Limit how many PersonalMonthlyReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PersonalMonthlyReport.team
+   */
+  export type PersonalMonthlyReport$teamArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Team
+     */
+    select?: TeamSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Team
+     */
+    omit?: TeamOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInclude<ExtArgs> | null
+    where?: TeamWhereInput
+  }
+
+  /**
+   * PersonalMonthlyReport without action
+   */
+  export type PersonalMonthlyReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PersonalMonthlyReport
+     */
+    select?: PersonalMonthlyReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PersonalMonthlyReport
+     */
+    omit?: PersonalMonthlyReportOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PersonalMonthlyReportInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -44411,6 +48439,60 @@ export namespace Prisma {
   export type PartnerOutsourceRateSettingScalarFieldEnum = (typeof PartnerOutsourceRateSettingScalarFieldEnum)[keyof typeof PartnerOutsourceRateSettingScalarFieldEnum]
 
 
+  export const MonthlyReportProjectScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    normalizedName: 'normalizedName',
+    teamId: 'teamId',
+    teamNameSnapshot: 'teamNameSnapshot',
+    createdBy: 'createdBy',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MonthlyReportProjectScalarFieldEnum = (typeof MonthlyReportProjectScalarFieldEnum)[keyof typeof MonthlyReportProjectScalarFieldEnum]
+
+
+  export const TeamMonthlyReportScalarFieldEnum: {
+    id: 'id',
+    yearMonth: 'yearMonth',
+    projectId: 'projectId',
+    teamId: 'teamId',
+    projectSummary: 'projectSummary',
+    teamSelfGrowthIssue: 'teamSelfGrowthIssue',
+    teamSelfGrowthResult: 'teamSelfGrowthResult',
+    teamSynergyIssue: 'teamSynergyIssue',
+    teamSynergyResult: 'teamSynergyResult',
+    updatedBy: 'updatedBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TeamMonthlyReportScalarFieldEnum = (typeof TeamMonthlyReportScalarFieldEnum)[keyof typeof TeamMonthlyReportScalarFieldEnum]
+
+
+  export const PersonalMonthlyReportScalarFieldEnum: {
+    id: 'id',
+    yearMonth: 'yearMonth',
+    projectId: 'projectId',
+    userId: 'userId',
+    teamId: 'teamId',
+    teamNameSnapshot: 'teamNameSnapshot',
+    userRoleCode: 'userRoleCode',
+    memberType: 'memberType',
+    projectRole: 'projectRole',
+    personalSelfGrowthIssue: 'personalSelfGrowthIssue',
+    personalSelfGrowthResult: 'personalSelfGrowthResult',
+    personalSynergyIssue: 'personalSynergyIssue',
+    personalSynergyResult: 'personalSynergyResult',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PersonalMonthlyReportScalarFieldEnum = (typeof PersonalMonthlyReportScalarFieldEnum)[keyof typeof PersonalMonthlyReportScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -44763,6 +48845,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
     employeeSalesRateSettings?: EmployeeSalesRateSettingListRelationFilter
+    personalMonthlyReports?: PersonalMonthlyReportListRelationFilter
     approvalLogs?: ApprovalLogListRelationFilter
     auditLogs?: AuditLogListRelationFilter
   }
@@ -44794,6 +48877,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentOrderByRelationAggregateInput
     monthlyCosts?: MonthlyCostOrderByRelationAggregateInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingOrderByRelationAggregateInput
+    personalMonthlyReports?: PersonalMonthlyReportOrderByRelationAggregateInput
     approvalLogs?: ApprovalLogOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
   }
@@ -44828,6 +48912,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentListRelationFilter
     monthlyCosts?: MonthlyCostListRelationFilter
     employeeSalesRateSettings?: EmployeeSalesRateSettingListRelationFilter
+    personalMonthlyReports?: PersonalMonthlyReportListRelationFilter
     approvalLogs?: ApprovalLogListRelationFilter
     auditLogs?: AuditLogListRelationFilter
   }, "id" | "email" | "employeeCode">
@@ -45189,6 +49274,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostListRelationFilter
     fixedAllocations?: FixedCostAllocationListRelationFilter
     targets?: TeamTargetListRelationFilter
+    monthlyReportProjects?: MonthlyReportProjectListRelationFilter
+    teamMonthlyReports?: TeamMonthlyReportListRelationFilter
+    personalMonthlyReports?: PersonalMonthlyReportListRelationFilter
   }
 
   export type TeamOrderByWithRelationInput = {
@@ -45209,6 +49297,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostOrderByRelationAggregateInput
     fixedAllocations?: FixedCostAllocationOrderByRelationAggregateInput
     targets?: TeamTargetOrderByRelationAggregateInput
+    monthlyReportProjects?: MonthlyReportProjectOrderByRelationAggregateInput
+    teamMonthlyReports?: TeamMonthlyReportOrderByRelationAggregateInput
+    personalMonthlyReports?: PersonalMonthlyReportOrderByRelationAggregateInput
   }
 
   export type TeamWhereUniqueInput = Prisma.AtLeast<{
@@ -45232,6 +49323,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostListRelationFilter
     fixedAllocations?: FixedCostAllocationListRelationFilter
     targets?: TeamTargetListRelationFilter
+    monthlyReportProjects?: MonthlyReportProjectListRelationFilter
+    teamMonthlyReports?: TeamMonthlyReportListRelationFilter
+    personalMonthlyReports?: PersonalMonthlyReportListRelationFilter
   }, "id">
 
   export type TeamOrderByWithAggregationInput = {
@@ -47428,6 +51522,294 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"PartnerOutsourceRateSetting"> | Date | string
   }
 
+  export type MonthlyReportProjectWhereInput = {
+    AND?: MonthlyReportProjectWhereInput | MonthlyReportProjectWhereInput[]
+    OR?: MonthlyReportProjectWhereInput[]
+    NOT?: MonthlyReportProjectWhereInput | MonthlyReportProjectWhereInput[]
+    id?: StringFilter<"MonthlyReportProject"> | string
+    name?: StringFilter<"MonthlyReportProject"> | string
+    normalizedName?: StringFilter<"MonthlyReportProject"> | string
+    teamId?: StringNullableFilter<"MonthlyReportProject"> | string | null
+    teamNameSnapshot?: StringFilter<"MonthlyReportProject"> | string
+    createdBy?: StringFilter<"MonthlyReportProject"> | string
+    isActive?: BoolFilter<"MonthlyReportProject"> | boolean
+    createdAt?: DateTimeFilter<"MonthlyReportProject"> | Date | string
+    updatedAt?: DateTimeFilter<"MonthlyReportProject"> | Date | string
+    team?: XOR<TeamNullableScalarRelationFilter, TeamWhereInput> | null
+    teamReports?: TeamMonthlyReportListRelationFilter
+    personalReports?: PersonalMonthlyReportListRelationFilter
+  }
+
+  export type MonthlyReportProjectOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    normalizedName?: SortOrder
+    teamId?: SortOrderInput | SortOrder
+    teamNameSnapshot?: SortOrder
+    createdBy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    team?: TeamOrderByWithRelationInput
+    teamReports?: TeamMonthlyReportOrderByRelationAggregateInput
+    personalReports?: PersonalMonthlyReportOrderByRelationAggregateInput
+  }
+
+  export type MonthlyReportProjectWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    normalizedName_teamId?: MonthlyReportProjectNormalizedNameTeamIdCompoundUniqueInput
+    AND?: MonthlyReportProjectWhereInput | MonthlyReportProjectWhereInput[]
+    OR?: MonthlyReportProjectWhereInput[]
+    NOT?: MonthlyReportProjectWhereInput | MonthlyReportProjectWhereInput[]
+    name?: StringFilter<"MonthlyReportProject"> | string
+    normalizedName?: StringFilter<"MonthlyReportProject"> | string
+    teamId?: StringNullableFilter<"MonthlyReportProject"> | string | null
+    teamNameSnapshot?: StringFilter<"MonthlyReportProject"> | string
+    createdBy?: StringFilter<"MonthlyReportProject"> | string
+    isActive?: BoolFilter<"MonthlyReportProject"> | boolean
+    createdAt?: DateTimeFilter<"MonthlyReportProject"> | Date | string
+    updatedAt?: DateTimeFilter<"MonthlyReportProject"> | Date | string
+    team?: XOR<TeamNullableScalarRelationFilter, TeamWhereInput> | null
+    teamReports?: TeamMonthlyReportListRelationFilter
+    personalReports?: PersonalMonthlyReportListRelationFilter
+  }, "id" | "normalizedName_teamId">
+
+  export type MonthlyReportProjectOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    normalizedName?: SortOrder
+    teamId?: SortOrderInput | SortOrder
+    teamNameSnapshot?: SortOrder
+    createdBy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MonthlyReportProjectCountOrderByAggregateInput
+    _max?: MonthlyReportProjectMaxOrderByAggregateInput
+    _min?: MonthlyReportProjectMinOrderByAggregateInput
+  }
+
+  export type MonthlyReportProjectScalarWhereWithAggregatesInput = {
+    AND?: MonthlyReportProjectScalarWhereWithAggregatesInput | MonthlyReportProjectScalarWhereWithAggregatesInput[]
+    OR?: MonthlyReportProjectScalarWhereWithAggregatesInput[]
+    NOT?: MonthlyReportProjectScalarWhereWithAggregatesInput | MonthlyReportProjectScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MonthlyReportProject"> | string
+    name?: StringWithAggregatesFilter<"MonthlyReportProject"> | string
+    normalizedName?: StringWithAggregatesFilter<"MonthlyReportProject"> | string
+    teamId?: StringNullableWithAggregatesFilter<"MonthlyReportProject"> | string | null
+    teamNameSnapshot?: StringWithAggregatesFilter<"MonthlyReportProject"> | string
+    createdBy?: StringWithAggregatesFilter<"MonthlyReportProject"> | string
+    isActive?: BoolWithAggregatesFilter<"MonthlyReportProject"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"MonthlyReportProject"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MonthlyReportProject"> | Date | string
+  }
+
+  export type TeamMonthlyReportWhereInput = {
+    AND?: TeamMonthlyReportWhereInput | TeamMonthlyReportWhereInput[]
+    OR?: TeamMonthlyReportWhereInput[]
+    NOT?: TeamMonthlyReportWhereInput | TeamMonthlyReportWhereInput[]
+    id?: StringFilter<"TeamMonthlyReport"> | string
+    yearMonth?: StringFilter<"TeamMonthlyReport"> | string
+    projectId?: StringFilter<"TeamMonthlyReport"> | string
+    teamId?: StringFilter<"TeamMonthlyReport"> | string
+    projectSummary?: StringFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthIssue?: StringFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthResult?: StringFilter<"TeamMonthlyReport"> | string
+    teamSynergyIssue?: StringFilter<"TeamMonthlyReport"> | string
+    teamSynergyResult?: StringFilter<"TeamMonthlyReport"> | string
+    updatedBy?: StringFilter<"TeamMonthlyReport"> | string
+    createdAt?: DateTimeFilter<"TeamMonthlyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"TeamMonthlyReport"> | Date | string
+    project?: XOR<MonthlyReportProjectScalarRelationFilter, MonthlyReportProjectWhereInput>
+    team?: XOR<TeamScalarRelationFilter, TeamWhereInput>
+  }
+
+  export type TeamMonthlyReportOrderByWithRelationInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    teamId?: SortOrder
+    projectSummary?: SortOrder
+    teamSelfGrowthIssue?: SortOrder
+    teamSelfGrowthResult?: SortOrder
+    teamSynergyIssue?: SortOrder
+    teamSynergyResult?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: MonthlyReportProjectOrderByWithRelationInput
+    team?: TeamOrderByWithRelationInput
+  }
+
+  export type TeamMonthlyReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    yearMonth_projectId_teamId?: TeamMonthlyReportYearMonthProjectIdTeamIdCompoundUniqueInput
+    AND?: TeamMonthlyReportWhereInput | TeamMonthlyReportWhereInput[]
+    OR?: TeamMonthlyReportWhereInput[]
+    NOT?: TeamMonthlyReportWhereInput | TeamMonthlyReportWhereInput[]
+    yearMonth?: StringFilter<"TeamMonthlyReport"> | string
+    projectId?: StringFilter<"TeamMonthlyReport"> | string
+    teamId?: StringFilter<"TeamMonthlyReport"> | string
+    projectSummary?: StringFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthIssue?: StringFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthResult?: StringFilter<"TeamMonthlyReport"> | string
+    teamSynergyIssue?: StringFilter<"TeamMonthlyReport"> | string
+    teamSynergyResult?: StringFilter<"TeamMonthlyReport"> | string
+    updatedBy?: StringFilter<"TeamMonthlyReport"> | string
+    createdAt?: DateTimeFilter<"TeamMonthlyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"TeamMonthlyReport"> | Date | string
+    project?: XOR<MonthlyReportProjectScalarRelationFilter, MonthlyReportProjectWhereInput>
+    team?: XOR<TeamScalarRelationFilter, TeamWhereInput>
+  }, "id" | "yearMonth_projectId_teamId">
+
+  export type TeamMonthlyReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    teamId?: SortOrder
+    projectSummary?: SortOrder
+    teamSelfGrowthIssue?: SortOrder
+    teamSelfGrowthResult?: SortOrder
+    teamSynergyIssue?: SortOrder
+    teamSynergyResult?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TeamMonthlyReportCountOrderByAggregateInput
+    _max?: TeamMonthlyReportMaxOrderByAggregateInput
+    _min?: TeamMonthlyReportMinOrderByAggregateInput
+  }
+
+  export type TeamMonthlyReportScalarWhereWithAggregatesInput = {
+    AND?: TeamMonthlyReportScalarWhereWithAggregatesInput | TeamMonthlyReportScalarWhereWithAggregatesInput[]
+    OR?: TeamMonthlyReportScalarWhereWithAggregatesInput[]
+    NOT?: TeamMonthlyReportScalarWhereWithAggregatesInput | TeamMonthlyReportScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    yearMonth?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    projectId?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    teamId?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    projectSummary?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthIssue?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthResult?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    teamSynergyIssue?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    teamSynergyResult?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    updatedBy?: StringWithAggregatesFilter<"TeamMonthlyReport"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"TeamMonthlyReport"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TeamMonthlyReport"> | Date | string
+  }
+
+  export type PersonalMonthlyReportWhereInput = {
+    AND?: PersonalMonthlyReportWhereInput | PersonalMonthlyReportWhereInput[]
+    OR?: PersonalMonthlyReportWhereInput[]
+    NOT?: PersonalMonthlyReportWhereInput | PersonalMonthlyReportWhereInput[]
+    id?: StringFilter<"PersonalMonthlyReport"> | string
+    yearMonth?: StringFilter<"PersonalMonthlyReport"> | string
+    projectId?: StringFilter<"PersonalMonthlyReport"> | string
+    userId?: StringFilter<"PersonalMonthlyReport"> | string
+    teamId?: StringNullableFilter<"PersonalMonthlyReport"> | string | null
+    teamNameSnapshot?: StringFilter<"PersonalMonthlyReport"> | string
+    userRoleCode?: StringFilter<"PersonalMonthlyReport"> | string
+    memberType?: StringFilter<"PersonalMonthlyReport"> | string
+    projectRole?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthIssue?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthResult?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSynergyIssue?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSynergyResult?: StringFilter<"PersonalMonthlyReport"> | string
+    createdAt?: DateTimeFilter<"PersonalMonthlyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"PersonalMonthlyReport"> | Date | string
+    project?: XOR<MonthlyReportProjectScalarRelationFilter, MonthlyReportProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    team?: XOR<TeamNullableScalarRelationFilter, TeamWhereInput> | null
+  }
+
+  export type PersonalMonthlyReportOrderByWithRelationInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    teamId?: SortOrderInput | SortOrder
+    teamNameSnapshot?: SortOrder
+    userRoleCode?: SortOrder
+    memberType?: SortOrder
+    projectRole?: SortOrder
+    personalSelfGrowthIssue?: SortOrder
+    personalSelfGrowthResult?: SortOrder
+    personalSynergyIssue?: SortOrder
+    personalSynergyResult?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: MonthlyReportProjectOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    team?: TeamOrderByWithRelationInput
+  }
+
+  export type PersonalMonthlyReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    yearMonth_projectId_userId?: PersonalMonthlyReportYearMonthProjectIdUserIdCompoundUniqueInput
+    AND?: PersonalMonthlyReportWhereInput | PersonalMonthlyReportWhereInput[]
+    OR?: PersonalMonthlyReportWhereInput[]
+    NOT?: PersonalMonthlyReportWhereInput | PersonalMonthlyReportWhereInput[]
+    yearMonth?: StringFilter<"PersonalMonthlyReport"> | string
+    projectId?: StringFilter<"PersonalMonthlyReport"> | string
+    userId?: StringFilter<"PersonalMonthlyReport"> | string
+    teamId?: StringNullableFilter<"PersonalMonthlyReport"> | string | null
+    teamNameSnapshot?: StringFilter<"PersonalMonthlyReport"> | string
+    userRoleCode?: StringFilter<"PersonalMonthlyReport"> | string
+    memberType?: StringFilter<"PersonalMonthlyReport"> | string
+    projectRole?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthIssue?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthResult?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSynergyIssue?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSynergyResult?: StringFilter<"PersonalMonthlyReport"> | string
+    createdAt?: DateTimeFilter<"PersonalMonthlyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"PersonalMonthlyReport"> | Date | string
+    project?: XOR<MonthlyReportProjectScalarRelationFilter, MonthlyReportProjectWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    team?: XOR<TeamNullableScalarRelationFilter, TeamWhereInput> | null
+  }, "id" | "yearMonth_projectId_userId">
+
+  export type PersonalMonthlyReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    teamId?: SortOrderInput | SortOrder
+    teamNameSnapshot?: SortOrder
+    userRoleCode?: SortOrder
+    memberType?: SortOrder
+    projectRole?: SortOrder
+    personalSelfGrowthIssue?: SortOrder
+    personalSelfGrowthResult?: SortOrder
+    personalSynergyIssue?: SortOrder
+    personalSynergyResult?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PersonalMonthlyReportCountOrderByAggregateInput
+    _max?: PersonalMonthlyReportMaxOrderByAggregateInput
+    _min?: PersonalMonthlyReportMinOrderByAggregateInput
+  }
+
+  export type PersonalMonthlyReportScalarWhereWithAggregatesInput = {
+    AND?: PersonalMonthlyReportScalarWhereWithAggregatesInput | PersonalMonthlyReportScalarWhereWithAggregatesInput[]
+    OR?: PersonalMonthlyReportScalarWhereWithAggregatesInput[]
+    NOT?: PersonalMonthlyReportScalarWhereWithAggregatesInput | PersonalMonthlyReportScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    yearMonth?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    projectId?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    userId?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    teamId?: StringNullableWithAggregatesFilter<"PersonalMonthlyReport"> | string | null
+    teamNameSnapshot?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    userRoleCode?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    memberType?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    projectRole?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthIssue?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthResult?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    personalSynergyIssue?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    personalSynergyResult?: StringWithAggregatesFilter<"PersonalMonthlyReport"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"PersonalMonthlyReport"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PersonalMonthlyReport"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -47452,6 +51834,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -47480,6 +51863,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -47508,6 +51892,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -47536,6 +51921,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -47912,6 +52298,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateInput = {
@@ -47930,6 +52319,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUpdateInput = {
@@ -47948,6 +52340,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateInput = {
@@ -47966,6 +52361,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamCreateManyInput = {
@@ -50305,6 +54703,323 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MonthlyReportProjectCreateInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    team?: TeamCreateNestedOneWithoutMonthlyReportProjectsInput
+    teamReports?: TeamMonthlyReportCreateNestedManyWithoutProjectInput
+    personalReports?: PersonalMonthlyReportCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectUncheckedCreateInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teamReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutProjectInput
+    personalReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    team?: TeamUpdateOneWithoutMonthlyReportProjectsNestedInput
+    teamReports?: TeamMonthlyReportUpdateManyWithoutProjectNestedInput
+    personalReports?: PersonalMonthlyReportUpdateManyWithoutProjectNestedInput
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamReports?: TeamMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput
+    personalReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type MonthlyReportProjectCreateManyInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MonthlyReportProjectUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportCreateInput = {
+    id?: string
+    yearMonth: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: MonthlyReportProjectCreateNestedOneWithoutTeamReportsInput
+    team: TeamCreateNestedOneWithoutTeamMonthlyReportsInput
+  }
+
+  export type TeamMonthlyReportUncheckedCreateInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    teamId: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeamMonthlyReportUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: MonthlyReportProjectUpdateOneRequiredWithoutTeamReportsNestedInput
+    team?: TeamUpdateOneRequiredWithoutTeamMonthlyReportsNestedInput
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    teamId?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportCreateManyInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    teamId: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeamMonthlyReportUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    teamId?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportCreateInput = {
+    id?: string
+    yearMonth: string
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: MonthlyReportProjectCreateNestedOneWithoutPersonalReportsInput
+    user: UserCreateNestedOneWithoutPersonalMonthlyReportsInput
+    team?: TeamCreateNestedOneWithoutPersonalMonthlyReportsInput
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    userId: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: MonthlyReportProjectUpdateOneRequiredWithoutPersonalReportsNestedInput
+    user?: UserUpdateOneRequiredWithoutPersonalMonthlyReportsNestedInput
+    team?: TeamUpdateOneWithoutPersonalMonthlyReportsNestedInput
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportCreateManyInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    userId: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -50422,6 +55137,12 @@ export namespace Prisma {
     none?: EmployeeSalesRateSettingWhereInput
   }
 
+  export type PersonalMonthlyReportListRelationFilter = {
+    every?: PersonalMonthlyReportWhereInput
+    some?: PersonalMonthlyReportWhereInput
+    none?: PersonalMonthlyReportWhereInput
+  }
+
   export type ApprovalLogListRelationFilter = {
     every?: ApprovalLogWhereInput
     some?: ApprovalLogWhereInput
@@ -50472,6 +55193,10 @@ export namespace Prisma {
   }
 
   export type EmployeeSalesRateSettingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PersonalMonthlyReportOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -50844,6 +55569,18 @@ export namespace Prisma {
     none?: TeamTargetWhereInput
   }
 
+  export type MonthlyReportProjectListRelationFilter = {
+    every?: MonthlyReportProjectWhereInput
+    some?: MonthlyReportProjectWhereInput
+    none?: MonthlyReportProjectWhereInput
+  }
+
+  export type TeamMonthlyReportListRelationFilter = {
+    every?: TeamMonthlyReportWhereInput
+    some?: TeamMonthlyReportWhereInput
+    none?: TeamMonthlyReportWhereInput
+  }
+
   export type TeamMonthlyPlOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -50857,6 +55594,14 @@ export namespace Prisma {
   }
 
   export type TeamTargetOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type MonthlyReportProjectOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeamMonthlyReportOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -52618,6 +57363,163 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type MonthlyReportProjectNormalizedNameTeamIdCompoundUniqueInput = {
+    normalizedName: string
+    teamId: string
+  }
+
+  export type MonthlyReportProjectCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    normalizedName?: SortOrder
+    teamId?: SortOrder
+    teamNameSnapshot?: SortOrder
+    createdBy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonthlyReportProjectMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    normalizedName?: SortOrder
+    teamId?: SortOrder
+    teamNameSnapshot?: SortOrder
+    createdBy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonthlyReportProjectMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    normalizedName?: SortOrder
+    teamId?: SortOrder
+    teamNameSnapshot?: SortOrder
+    createdBy?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonthlyReportProjectScalarRelationFilter = {
+    is?: MonthlyReportProjectWhereInput
+    isNot?: MonthlyReportProjectWhereInput
+  }
+
+  export type TeamMonthlyReportYearMonthProjectIdTeamIdCompoundUniqueInput = {
+    yearMonth: string
+    projectId: string
+    teamId: string
+  }
+
+  export type TeamMonthlyReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    teamId?: SortOrder
+    projectSummary?: SortOrder
+    teamSelfGrowthIssue?: SortOrder
+    teamSelfGrowthResult?: SortOrder
+    teamSynergyIssue?: SortOrder
+    teamSynergyResult?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TeamMonthlyReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    teamId?: SortOrder
+    projectSummary?: SortOrder
+    teamSelfGrowthIssue?: SortOrder
+    teamSelfGrowthResult?: SortOrder
+    teamSynergyIssue?: SortOrder
+    teamSynergyResult?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TeamMonthlyReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    teamId?: SortOrder
+    projectSummary?: SortOrder
+    teamSelfGrowthIssue?: SortOrder
+    teamSelfGrowthResult?: SortOrder
+    teamSynergyIssue?: SortOrder
+    teamSynergyResult?: SortOrder
+    updatedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PersonalMonthlyReportYearMonthProjectIdUserIdCompoundUniqueInput = {
+    yearMonth: string
+    projectId: string
+    userId: string
+  }
+
+  export type PersonalMonthlyReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    teamId?: SortOrder
+    teamNameSnapshot?: SortOrder
+    userRoleCode?: SortOrder
+    memberType?: SortOrder
+    projectRole?: SortOrder
+    personalSelfGrowthIssue?: SortOrder
+    personalSelfGrowthResult?: SortOrder
+    personalSynergyIssue?: SortOrder
+    personalSynergyResult?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PersonalMonthlyReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    teamId?: SortOrder
+    teamNameSnapshot?: SortOrder
+    userRoleCode?: SortOrder
+    memberType?: SortOrder
+    projectRole?: SortOrder
+    personalSelfGrowthIssue?: SortOrder
+    personalSelfGrowthResult?: SortOrder
+    personalSynergyIssue?: SortOrder
+    personalSynergyResult?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PersonalMonthlyReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    yearMonth?: SortOrder
+    projectId?: SortOrder
+    userId?: SortOrder
+    teamId?: SortOrder
+    teamNameSnapshot?: SortOrder
+    userRoleCode?: SortOrder
+    memberType?: SortOrder
+    projectRole?: SortOrder
+    personalSelfGrowthIssue?: SortOrder
+    personalSelfGrowthResult?: SortOrder
+    personalSynergyIssue?: SortOrder
+    personalSynergyResult?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type RoleCreateNestedOneWithoutUsersInput = {
     create?: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
     connectOrCreate?: RoleCreateOrConnectWithoutUsersInput
@@ -52713,6 +57615,13 @@ export namespace Prisma {
     connect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
   }
 
+  export type PersonalMonthlyReportCreateNestedManyWithoutUserInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutUserInput, PersonalMonthlyReportUncheckedCreateWithoutUserInput> | PersonalMonthlyReportCreateWithoutUserInput[] | PersonalMonthlyReportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutUserInput | PersonalMonthlyReportCreateOrConnectWithoutUserInput[]
+    createMany?: PersonalMonthlyReportCreateManyUserInputEnvelope
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+  }
+
   export type ApprovalLogCreateNestedManyWithoutActorInput = {
     create?: XOR<ApprovalLogCreateWithoutActorInput, ApprovalLogUncheckedCreateWithoutActorInput> | ApprovalLogCreateWithoutActorInput[] | ApprovalLogUncheckedCreateWithoutActorInput[]
     connectOrCreate?: ApprovalLogCreateOrConnectWithoutActorInput | ApprovalLogCreateOrConnectWithoutActorInput[]
@@ -52802,6 +57711,13 @@ export namespace Prisma {
     connectOrCreate?: EmployeeSalesRateSettingCreateOrConnectWithoutUserInput | EmployeeSalesRateSettingCreateOrConnectWithoutUserInput[]
     createMany?: EmployeeSalesRateSettingCreateManyUserInputEnvelope
     connect?: EmployeeSalesRateSettingWhereUniqueInput | EmployeeSalesRateSettingWhereUniqueInput[]
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutUserInput, PersonalMonthlyReportUncheckedCreateWithoutUserInput> | PersonalMonthlyReportCreateWithoutUserInput[] | PersonalMonthlyReportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutUserInput | PersonalMonthlyReportCreateOrConnectWithoutUserInput[]
+    createMany?: PersonalMonthlyReportCreateManyUserInputEnvelope
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
   }
 
   export type ApprovalLogUncheckedCreateNestedManyWithoutActorInput = {
@@ -53012,6 +57928,20 @@ export namespace Prisma {
     deleteMany?: EmployeeSalesRateSettingScalarWhereInput | EmployeeSalesRateSettingScalarWhereInput[]
   }
 
+  export type PersonalMonthlyReportUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutUserInput, PersonalMonthlyReportUncheckedCreateWithoutUserInput> | PersonalMonthlyReportCreateWithoutUserInput[] | PersonalMonthlyReportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutUserInput | PersonalMonthlyReportCreateOrConnectWithoutUserInput[]
+    upsert?: PersonalMonthlyReportUpsertWithWhereUniqueWithoutUserInput | PersonalMonthlyReportUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PersonalMonthlyReportCreateManyUserInputEnvelope
+    set?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    disconnect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    delete?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    update?: PersonalMonthlyReportUpdateWithWhereUniqueWithoutUserInput | PersonalMonthlyReportUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PersonalMonthlyReportUpdateManyWithWhereWithoutUserInput | PersonalMonthlyReportUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
+  }
+
   export type ApprovalLogUpdateManyWithoutActorNestedInput = {
     create?: XOR<ApprovalLogCreateWithoutActorInput, ApprovalLogUncheckedCreateWithoutActorInput> | ApprovalLogCreateWithoutActorInput[] | ApprovalLogUncheckedCreateWithoutActorInput[]
     connectOrCreate?: ApprovalLogCreateOrConnectWithoutActorInput | ApprovalLogCreateOrConnectWithoutActorInput[]
@@ -53196,6 +58126,20 @@ export namespace Prisma {
     update?: EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput | EmployeeSalesRateSettingUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput | EmployeeSalesRateSettingUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: EmployeeSalesRateSettingScalarWhereInput | EmployeeSalesRateSettingScalarWhereInput[]
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutUserInput, PersonalMonthlyReportUncheckedCreateWithoutUserInput> | PersonalMonthlyReportCreateWithoutUserInput[] | PersonalMonthlyReportUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutUserInput | PersonalMonthlyReportCreateOrConnectWithoutUserInput[]
+    upsert?: PersonalMonthlyReportUpsertWithWhereUniqueWithoutUserInput | PersonalMonthlyReportUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PersonalMonthlyReportCreateManyUserInputEnvelope
+    set?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    disconnect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    delete?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    update?: PersonalMonthlyReportUpdateWithWhereUniqueWithoutUserInput | PersonalMonthlyReportUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PersonalMonthlyReportUpdateManyWithWhereWithoutUserInput | PersonalMonthlyReportUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
   }
 
   export type ApprovalLogUncheckedUpdateManyWithoutActorNestedInput = {
@@ -53808,6 +58752,27 @@ export namespace Prisma {
     connect?: TeamTargetWhereUniqueInput | TeamTargetWhereUniqueInput[]
   }
 
+  export type MonthlyReportProjectCreateNestedManyWithoutTeamInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutTeamInput, MonthlyReportProjectUncheckedCreateWithoutTeamInput> | MonthlyReportProjectCreateWithoutTeamInput[] | MonthlyReportProjectUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutTeamInput | MonthlyReportProjectCreateOrConnectWithoutTeamInput[]
+    createMany?: MonthlyReportProjectCreateManyTeamInputEnvelope
+    connect?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+  }
+
+  export type TeamMonthlyReportCreateNestedManyWithoutTeamInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutTeamInput, TeamMonthlyReportUncheckedCreateWithoutTeamInput> | TeamMonthlyReportCreateWithoutTeamInput[] | TeamMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutTeamInput | TeamMonthlyReportCreateOrConnectWithoutTeamInput[]
+    createMany?: TeamMonthlyReportCreateManyTeamInputEnvelope
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+  }
+
+  export type PersonalMonthlyReportCreateNestedManyWithoutTeamInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutTeamInput, PersonalMonthlyReportUncheckedCreateWithoutTeamInput> | PersonalMonthlyReportCreateWithoutTeamInput[] | PersonalMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutTeamInput | PersonalMonthlyReportCreateOrConnectWithoutTeamInput[]
+    createMany?: PersonalMonthlyReportCreateManyTeamInputEnvelope
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+  }
+
   export type TeamMembershipUncheckedCreateNestedManyWithoutTeamInput = {
     create?: XOR<TeamMembershipCreateWithoutTeamInput, TeamMembershipUncheckedCreateWithoutTeamInput> | TeamMembershipCreateWithoutTeamInput[] | TeamMembershipUncheckedCreateWithoutTeamInput[]
     connectOrCreate?: TeamMembershipCreateOrConnectWithoutTeamInput | TeamMembershipCreateOrConnectWithoutTeamInput[]
@@ -53862,6 +58827,27 @@ export namespace Prisma {
     connectOrCreate?: TeamTargetCreateOrConnectWithoutTeamInput | TeamTargetCreateOrConnectWithoutTeamInput[]
     createMany?: TeamTargetCreateManyTeamInputEnvelope
     connect?: TeamTargetWhereUniqueInput | TeamTargetWhereUniqueInput[]
+  }
+
+  export type MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutTeamInput, MonthlyReportProjectUncheckedCreateWithoutTeamInput> | MonthlyReportProjectCreateWithoutTeamInput[] | MonthlyReportProjectUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutTeamInput | MonthlyReportProjectCreateOrConnectWithoutTeamInput[]
+    createMany?: MonthlyReportProjectCreateManyTeamInputEnvelope
+    connect?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+  }
+
+  export type TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutTeamInput, TeamMonthlyReportUncheckedCreateWithoutTeamInput> | TeamMonthlyReportCreateWithoutTeamInput[] | TeamMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutTeamInput | TeamMonthlyReportCreateOrConnectWithoutTeamInput[]
+    createMany?: TeamMonthlyReportCreateManyTeamInputEnvelope
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutTeamInput, PersonalMonthlyReportUncheckedCreateWithoutTeamInput> | PersonalMonthlyReportCreateWithoutTeamInput[] | PersonalMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutTeamInput | PersonalMonthlyReportCreateOrConnectWithoutTeamInput[]
+    createMany?: PersonalMonthlyReportCreateManyTeamInputEnvelope
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -54000,6 +58986,48 @@ export namespace Prisma {
     deleteMany?: TeamTargetScalarWhereInput | TeamTargetScalarWhereInput[]
   }
 
+  export type MonthlyReportProjectUpdateManyWithoutTeamNestedInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutTeamInput, MonthlyReportProjectUncheckedCreateWithoutTeamInput> | MonthlyReportProjectCreateWithoutTeamInput[] | MonthlyReportProjectUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutTeamInput | MonthlyReportProjectCreateOrConnectWithoutTeamInput[]
+    upsert?: MonthlyReportProjectUpsertWithWhereUniqueWithoutTeamInput | MonthlyReportProjectUpsertWithWhereUniqueWithoutTeamInput[]
+    createMany?: MonthlyReportProjectCreateManyTeamInputEnvelope
+    set?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    disconnect?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    delete?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    connect?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    update?: MonthlyReportProjectUpdateWithWhereUniqueWithoutTeamInput | MonthlyReportProjectUpdateWithWhereUniqueWithoutTeamInput[]
+    updateMany?: MonthlyReportProjectUpdateManyWithWhereWithoutTeamInput | MonthlyReportProjectUpdateManyWithWhereWithoutTeamInput[]
+    deleteMany?: MonthlyReportProjectScalarWhereInput | MonthlyReportProjectScalarWhereInput[]
+  }
+
+  export type TeamMonthlyReportUpdateManyWithoutTeamNestedInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutTeamInput, TeamMonthlyReportUncheckedCreateWithoutTeamInput> | TeamMonthlyReportCreateWithoutTeamInput[] | TeamMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutTeamInput | TeamMonthlyReportCreateOrConnectWithoutTeamInput[]
+    upsert?: TeamMonthlyReportUpsertWithWhereUniqueWithoutTeamInput | TeamMonthlyReportUpsertWithWhereUniqueWithoutTeamInput[]
+    createMany?: TeamMonthlyReportCreateManyTeamInputEnvelope
+    set?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    disconnect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    delete?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    update?: TeamMonthlyReportUpdateWithWhereUniqueWithoutTeamInput | TeamMonthlyReportUpdateWithWhereUniqueWithoutTeamInput[]
+    updateMany?: TeamMonthlyReportUpdateManyWithWhereWithoutTeamInput | TeamMonthlyReportUpdateManyWithWhereWithoutTeamInput[]
+    deleteMany?: TeamMonthlyReportScalarWhereInput | TeamMonthlyReportScalarWhereInput[]
+  }
+
+  export type PersonalMonthlyReportUpdateManyWithoutTeamNestedInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutTeamInput, PersonalMonthlyReportUncheckedCreateWithoutTeamInput> | PersonalMonthlyReportCreateWithoutTeamInput[] | PersonalMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutTeamInput | PersonalMonthlyReportCreateOrConnectWithoutTeamInput[]
+    upsert?: PersonalMonthlyReportUpsertWithWhereUniqueWithoutTeamInput | PersonalMonthlyReportUpsertWithWhereUniqueWithoutTeamInput[]
+    createMany?: PersonalMonthlyReportCreateManyTeamInputEnvelope
+    set?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    disconnect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    delete?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    update?: PersonalMonthlyReportUpdateWithWhereUniqueWithoutTeamInput | PersonalMonthlyReportUpdateWithWhereUniqueWithoutTeamInput[]
+    updateMany?: PersonalMonthlyReportUpdateManyWithWhereWithoutTeamInput | PersonalMonthlyReportUpdateManyWithWhereWithoutTeamInput[]
+    deleteMany?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
+  }
+
   export type TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput = {
     create?: XOR<TeamMembershipCreateWithoutTeamInput, TeamMembershipUncheckedCreateWithoutTeamInput> | TeamMembershipCreateWithoutTeamInput[] | TeamMembershipUncheckedCreateWithoutTeamInput[]
     connectOrCreate?: TeamMembershipCreateOrConnectWithoutTeamInput | TeamMembershipCreateOrConnectWithoutTeamInput[]
@@ -54110,6 +59138,48 @@ export namespace Prisma {
     update?: TeamTargetUpdateWithWhereUniqueWithoutTeamInput | TeamTargetUpdateWithWhereUniqueWithoutTeamInput[]
     updateMany?: TeamTargetUpdateManyWithWhereWithoutTeamInput | TeamTargetUpdateManyWithWhereWithoutTeamInput[]
     deleteMany?: TeamTargetScalarWhereInput | TeamTargetScalarWhereInput[]
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutTeamInput, MonthlyReportProjectUncheckedCreateWithoutTeamInput> | MonthlyReportProjectCreateWithoutTeamInput[] | MonthlyReportProjectUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutTeamInput | MonthlyReportProjectCreateOrConnectWithoutTeamInput[]
+    upsert?: MonthlyReportProjectUpsertWithWhereUniqueWithoutTeamInput | MonthlyReportProjectUpsertWithWhereUniqueWithoutTeamInput[]
+    createMany?: MonthlyReportProjectCreateManyTeamInputEnvelope
+    set?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    disconnect?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    delete?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    connect?: MonthlyReportProjectWhereUniqueInput | MonthlyReportProjectWhereUniqueInput[]
+    update?: MonthlyReportProjectUpdateWithWhereUniqueWithoutTeamInput | MonthlyReportProjectUpdateWithWhereUniqueWithoutTeamInput[]
+    updateMany?: MonthlyReportProjectUpdateManyWithWhereWithoutTeamInput | MonthlyReportProjectUpdateManyWithWhereWithoutTeamInput[]
+    deleteMany?: MonthlyReportProjectScalarWhereInput | MonthlyReportProjectScalarWhereInput[]
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutTeamInput, TeamMonthlyReportUncheckedCreateWithoutTeamInput> | TeamMonthlyReportCreateWithoutTeamInput[] | TeamMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutTeamInput | TeamMonthlyReportCreateOrConnectWithoutTeamInput[]
+    upsert?: TeamMonthlyReportUpsertWithWhereUniqueWithoutTeamInput | TeamMonthlyReportUpsertWithWhereUniqueWithoutTeamInput[]
+    createMany?: TeamMonthlyReportCreateManyTeamInputEnvelope
+    set?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    disconnect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    delete?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    update?: TeamMonthlyReportUpdateWithWhereUniqueWithoutTeamInput | TeamMonthlyReportUpdateWithWhereUniqueWithoutTeamInput[]
+    updateMany?: TeamMonthlyReportUpdateManyWithWhereWithoutTeamInput | TeamMonthlyReportUpdateManyWithWhereWithoutTeamInput[]
+    deleteMany?: TeamMonthlyReportScalarWhereInput | TeamMonthlyReportScalarWhereInput[]
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutTeamInput, PersonalMonthlyReportUncheckedCreateWithoutTeamInput> | PersonalMonthlyReportCreateWithoutTeamInput[] | PersonalMonthlyReportUncheckedCreateWithoutTeamInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutTeamInput | PersonalMonthlyReportCreateOrConnectWithoutTeamInput[]
+    upsert?: PersonalMonthlyReportUpsertWithWhereUniqueWithoutTeamInput | PersonalMonthlyReportUpsertWithWhereUniqueWithoutTeamInput[]
+    createMany?: PersonalMonthlyReportCreateManyTeamInputEnvelope
+    set?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    disconnect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    delete?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    update?: PersonalMonthlyReportUpdateWithWhereUniqueWithoutTeamInput | PersonalMonthlyReportUpdateWithWhereUniqueWithoutTeamInput[]
+    updateMany?: PersonalMonthlyReportUpdateManyWithWhereWithoutTeamInput | PersonalMonthlyReportUpdateManyWithWhereWithoutTeamInput[]
+    deleteMany?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
   }
 
   export type TeamCreateNestedOneWithoutMembershipsInput = {
@@ -55498,6 +60568,178 @@ export namespace Prisma {
     update?: XOR<XOR<PartnerUpdateToOneWithWhereWithoutOutsourceRateSettingsInput, PartnerUpdateWithoutOutsourceRateSettingsInput>, PartnerUncheckedUpdateWithoutOutsourceRateSettingsInput>
   }
 
+  export type TeamCreateNestedOneWithoutMonthlyReportProjectsInput = {
+    create?: XOR<TeamCreateWithoutMonthlyReportProjectsInput, TeamUncheckedCreateWithoutMonthlyReportProjectsInput>
+    connectOrCreate?: TeamCreateOrConnectWithoutMonthlyReportProjectsInput
+    connect?: TeamWhereUniqueInput
+  }
+
+  export type TeamMonthlyReportCreateNestedManyWithoutProjectInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutProjectInput, TeamMonthlyReportUncheckedCreateWithoutProjectInput> | TeamMonthlyReportCreateWithoutProjectInput[] | TeamMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutProjectInput | TeamMonthlyReportCreateOrConnectWithoutProjectInput[]
+    createMany?: TeamMonthlyReportCreateManyProjectInputEnvelope
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+  }
+
+  export type PersonalMonthlyReportCreateNestedManyWithoutProjectInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutProjectInput, PersonalMonthlyReportUncheckedCreateWithoutProjectInput> | PersonalMonthlyReportCreateWithoutProjectInput[] | PersonalMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutProjectInput | PersonalMonthlyReportCreateOrConnectWithoutProjectInput[]
+    createMany?: PersonalMonthlyReportCreateManyProjectInputEnvelope
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+  }
+
+  export type TeamMonthlyReportUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutProjectInput, TeamMonthlyReportUncheckedCreateWithoutProjectInput> | TeamMonthlyReportCreateWithoutProjectInput[] | TeamMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutProjectInput | TeamMonthlyReportCreateOrConnectWithoutProjectInput[]
+    createMany?: TeamMonthlyReportCreateManyProjectInputEnvelope
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutProjectInput, PersonalMonthlyReportUncheckedCreateWithoutProjectInput> | PersonalMonthlyReportCreateWithoutProjectInput[] | PersonalMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutProjectInput | PersonalMonthlyReportCreateOrConnectWithoutProjectInput[]
+    createMany?: PersonalMonthlyReportCreateManyProjectInputEnvelope
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+  }
+
+  export type TeamUpdateOneWithoutMonthlyReportProjectsNestedInput = {
+    create?: XOR<TeamCreateWithoutMonthlyReportProjectsInput, TeamUncheckedCreateWithoutMonthlyReportProjectsInput>
+    connectOrCreate?: TeamCreateOrConnectWithoutMonthlyReportProjectsInput
+    upsert?: TeamUpsertWithoutMonthlyReportProjectsInput
+    disconnect?: TeamWhereInput | boolean
+    delete?: TeamWhereInput | boolean
+    connect?: TeamWhereUniqueInput
+    update?: XOR<XOR<TeamUpdateToOneWithWhereWithoutMonthlyReportProjectsInput, TeamUpdateWithoutMonthlyReportProjectsInput>, TeamUncheckedUpdateWithoutMonthlyReportProjectsInput>
+  }
+
+  export type TeamMonthlyReportUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutProjectInput, TeamMonthlyReportUncheckedCreateWithoutProjectInput> | TeamMonthlyReportCreateWithoutProjectInput[] | TeamMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutProjectInput | TeamMonthlyReportCreateOrConnectWithoutProjectInput[]
+    upsert?: TeamMonthlyReportUpsertWithWhereUniqueWithoutProjectInput | TeamMonthlyReportUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: TeamMonthlyReportCreateManyProjectInputEnvelope
+    set?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    disconnect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    delete?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    update?: TeamMonthlyReportUpdateWithWhereUniqueWithoutProjectInput | TeamMonthlyReportUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: TeamMonthlyReportUpdateManyWithWhereWithoutProjectInput | TeamMonthlyReportUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: TeamMonthlyReportScalarWhereInput | TeamMonthlyReportScalarWhereInput[]
+  }
+
+  export type PersonalMonthlyReportUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutProjectInput, PersonalMonthlyReportUncheckedCreateWithoutProjectInput> | PersonalMonthlyReportCreateWithoutProjectInput[] | PersonalMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutProjectInput | PersonalMonthlyReportCreateOrConnectWithoutProjectInput[]
+    upsert?: PersonalMonthlyReportUpsertWithWhereUniqueWithoutProjectInput | PersonalMonthlyReportUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: PersonalMonthlyReportCreateManyProjectInputEnvelope
+    set?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    disconnect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    delete?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    update?: PersonalMonthlyReportUpdateWithWhereUniqueWithoutProjectInput | PersonalMonthlyReportUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: PersonalMonthlyReportUpdateManyWithWhereWithoutProjectInput | PersonalMonthlyReportUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<TeamMonthlyReportCreateWithoutProjectInput, TeamMonthlyReportUncheckedCreateWithoutProjectInput> | TeamMonthlyReportCreateWithoutProjectInput[] | TeamMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamMonthlyReportCreateOrConnectWithoutProjectInput | TeamMonthlyReportCreateOrConnectWithoutProjectInput[]
+    upsert?: TeamMonthlyReportUpsertWithWhereUniqueWithoutProjectInput | TeamMonthlyReportUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: TeamMonthlyReportCreateManyProjectInputEnvelope
+    set?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    disconnect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    delete?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    connect?: TeamMonthlyReportWhereUniqueInput | TeamMonthlyReportWhereUniqueInput[]
+    update?: TeamMonthlyReportUpdateWithWhereUniqueWithoutProjectInput | TeamMonthlyReportUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: TeamMonthlyReportUpdateManyWithWhereWithoutProjectInput | TeamMonthlyReportUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: TeamMonthlyReportScalarWhereInput | TeamMonthlyReportScalarWhereInput[]
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<PersonalMonthlyReportCreateWithoutProjectInput, PersonalMonthlyReportUncheckedCreateWithoutProjectInput> | PersonalMonthlyReportCreateWithoutProjectInput[] | PersonalMonthlyReportUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: PersonalMonthlyReportCreateOrConnectWithoutProjectInput | PersonalMonthlyReportCreateOrConnectWithoutProjectInput[]
+    upsert?: PersonalMonthlyReportUpsertWithWhereUniqueWithoutProjectInput | PersonalMonthlyReportUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: PersonalMonthlyReportCreateManyProjectInputEnvelope
+    set?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    disconnect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    delete?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    connect?: PersonalMonthlyReportWhereUniqueInput | PersonalMonthlyReportWhereUniqueInput[]
+    update?: PersonalMonthlyReportUpdateWithWhereUniqueWithoutProjectInput | PersonalMonthlyReportUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: PersonalMonthlyReportUpdateManyWithWhereWithoutProjectInput | PersonalMonthlyReportUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
+  }
+
+  export type MonthlyReportProjectCreateNestedOneWithoutTeamReportsInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutTeamReportsInput, MonthlyReportProjectUncheckedCreateWithoutTeamReportsInput>
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutTeamReportsInput
+    connect?: MonthlyReportProjectWhereUniqueInput
+  }
+
+  export type TeamCreateNestedOneWithoutTeamMonthlyReportsInput = {
+    create?: XOR<TeamCreateWithoutTeamMonthlyReportsInput, TeamUncheckedCreateWithoutTeamMonthlyReportsInput>
+    connectOrCreate?: TeamCreateOrConnectWithoutTeamMonthlyReportsInput
+    connect?: TeamWhereUniqueInput
+  }
+
+  export type MonthlyReportProjectUpdateOneRequiredWithoutTeamReportsNestedInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutTeamReportsInput, MonthlyReportProjectUncheckedCreateWithoutTeamReportsInput>
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutTeamReportsInput
+    upsert?: MonthlyReportProjectUpsertWithoutTeamReportsInput
+    connect?: MonthlyReportProjectWhereUniqueInput
+    update?: XOR<XOR<MonthlyReportProjectUpdateToOneWithWhereWithoutTeamReportsInput, MonthlyReportProjectUpdateWithoutTeamReportsInput>, MonthlyReportProjectUncheckedUpdateWithoutTeamReportsInput>
+  }
+
+  export type TeamUpdateOneRequiredWithoutTeamMonthlyReportsNestedInput = {
+    create?: XOR<TeamCreateWithoutTeamMonthlyReportsInput, TeamUncheckedCreateWithoutTeamMonthlyReportsInput>
+    connectOrCreate?: TeamCreateOrConnectWithoutTeamMonthlyReportsInput
+    upsert?: TeamUpsertWithoutTeamMonthlyReportsInput
+    connect?: TeamWhereUniqueInput
+    update?: XOR<XOR<TeamUpdateToOneWithWhereWithoutTeamMonthlyReportsInput, TeamUpdateWithoutTeamMonthlyReportsInput>, TeamUncheckedUpdateWithoutTeamMonthlyReportsInput>
+  }
+
+  export type MonthlyReportProjectCreateNestedOneWithoutPersonalReportsInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutPersonalReportsInput, MonthlyReportProjectUncheckedCreateWithoutPersonalReportsInput>
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutPersonalReportsInput
+    connect?: MonthlyReportProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutPersonalMonthlyReportsInput = {
+    create?: XOR<UserCreateWithoutPersonalMonthlyReportsInput, UserUncheckedCreateWithoutPersonalMonthlyReportsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPersonalMonthlyReportsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TeamCreateNestedOneWithoutPersonalMonthlyReportsInput = {
+    create?: XOR<TeamCreateWithoutPersonalMonthlyReportsInput, TeamUncheckedCreateWithoutPersonalMonthlyReportsInput>
+    connectOrCreate?: TeamCreateOrConnectWithoutPersonalMonthlyReportsInput
+    connect?: TeamWhereUniqueInput
+  }
+
+  export type MonthlyReportProjectUpdateOneRequiredWithoutPersonalReportsNestedInput = {
+    create?: XOR<MonthlyReportProjectCreateWithoutPersonalReportsInput, MonthlyReportProjectUncheckedCreateWithoutPersonalReportsInput>
+    connectOrCreate?: MonthlyReportProjectCreateOrConnectWithoutPersonalReportsInput
+    upsert?: MonthlyReportProjectUpsertWithoutPersonalReportsInput
+    connect?: MonthlyReportProjectWhereUniqueInput
+    update?: XOR<XOR<MonthlyReportProjectUpdateToOneWithWhereWithoutPersonalReportsInput, MonthlyReportProjectUpdateWithoutPersonalReportsInput>, MonthlyReportProjectUncheckedUpdateWithoutPersonalReportsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutPersonalMonthlyReportsNestedInput = {
+    create?: XOR<UserCreateWithoutPersonalMonthlyReportsInput, UserUncheckedCreateWithoutPersonalMonthlyReportsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPersonalMonthlyReportsInput
+    upsert?: UserUpsertWithoutPersonalMonthlyReportsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPersonalMonthlyReportsInput, UserUpdateWithoutPersonalMonthlyReportsInput>, UserUncheckedUpdateWithoutPersonalMonthlyReportsInput>
+  }
+
+  export type TeamUpdateOneWithoutPersonalMonthlyReportsNestedInput = {
+    create?: XOR<TeamCreateWithoutPersonalMonthlyReportsInput, TeamUncheckedCreateWithoutPersonalMonthlyReportsInput>
+    connectOrCreate?: TeamCreateOrConnectWithoutPersonalMonthlyReportsInput
+    upsert?: TeamUpsertWithoutPersonalMonthlyReportsInput
+    disconnect?: TeamWhereInput | boolean
+    delete?: TeamWhereInput | boolean
+    connect?: TeamWhereUniqueInput
+    update?: XOR<XOR<TeamUpdateToOneWithWhereWithoutPersonalMonthlyReportsInput, TeamUpdateWithoutPersonalMonthlyReportsInput>, TeamUncheckedUpdateWithoutPersonalMonthlyReportsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -56064,6 +61306,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutLeaderInput = {
@@ -56081,6 +61326,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutLeaderInput = {
@@ -56484,6 +61732,50 @@ export namespace Prisma {
 
   export type EmployeeSalesRateSettingCreateManyUserInputEnvelope = {
     data: EmployeeSalesRateSettingCreateManyUserInput | EmployeeSalesRateSettingCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PersonalMonthlyReportCreateWithoutUserInput = {
+    id?: string
+    yearMonth: string
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: MonthlyReportProjectCreateNestedOneWithoutPersonalReportsInput
+    team?: TeamCreateNestedOneWithoutPersonalMonthlyReportsInput
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateWithoutUserInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportCreateOrConnectWithoutUserInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    create: XOR<PersonalMonthlyReportCreateWithoutUserInput, PersonalMonthlyReportUncheckedCreateWithoutUserInput>
+  }
+
+  export type PersonalMonthlyReportCreateManyUserInputEnvelope = {
+    data: PersonalMonthlyReportCreateManyUserInput | PersonalMonthlyReportCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -56971,6 +62263,43 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"EmployeeSalesRateSetting"> | Date | string
   }
 
+  export type PersonalMonthlyReportUpsertWithWhereUniqueWithoutUserInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    update: XOR<PersonalMonthlyReportUpdateWithoutUserInput, PersonalMonthlyReportUncheckedUpdateWithoutUserInput>
+    create: XOR<PersonalMonthlyReportCreateWithoutUserInput, PersonalMonthlyReportUncheckedCreateWithoutUserInput>
+  }
+
+  export type PersonalMonthlyReportUpdateWithWhereUniqueWithoutUserInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    data: XOR<PersonalMonthlyReportUpdateWithoutUserInput, PersonalMonthlyReportUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PersonalMonthlyReportUpdateManyWithWhereWithoutUserInput = {
+    where: PersonalMonthlyReportScalarWhereInput
+    data: XOR<PersonalMonthlyReportUpdateManyMutationInput, PersonalMonthlyReportUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PersonalMonthlyReportScalarWhereInput = {
+    AND?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
+    OR?: PersonalMonthlyReportScalarWhereInput[]
+    NOT?: PersonalMonthlyReportScalarWhereInput | PersonalMonthlyReportScalarWhereInput[]
+    id?: StringFilter<"PersonalMonthlyReport"> | string
+    yearMonth?: StringFilter<"PersonalMonthlyReport"> | string
+    projectId?: StringFilter<"PersonalMonthlyReport"> | string
+    userId?: StringFilter<"PersonalMonthlyReport"> | string
+    teamId?: StringNullableFilter<"PersonalMonthlyReport"> | string | null
+    teamNameSnapshot?: StringFilter<"PersonalMonthlyReport"> | string
+    userRoleCode?: StringFilter<"PersonalMonthlyReport"> | string
+    memberType?: StringFilter<"PersonalMonthlyReport"> | string
+    projectRole?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthIssue?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSelfGrowthResult?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSynergyIssue?: StringFilter<"PersonalMonthlyReport"> | string
+    personalSynergyResult?: StringFilter<"PersonalMonthlyReport"> | string
+    createdAt?: DateTimeFilter<"PersonalMonthlyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"PersonalMonthlyReport"> | Date | string
+  }
+
   export type ApprovalLogUpsertWithWhereUniqueWithoutActorInput = {
     where: ApprovalLogWhereUniqueInput
     update: XOR<ApprovalLogUpdateWithoutActorInput, ApprovalLogUncheckedUpdateWithoutActorInput>
@@ -57053,6 +62382,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57080,6 +62410,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -57399,6 +62730,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57426,6 +62758,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -57455,6 +62788,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutDepartmentInput = {
@@ -57472,6 +62808,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutDepartmentInput = {
@@ -57770,6 +63109,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57797,6 +63137,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -57956,6 +63297,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -57983,6 +63325,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -58288,6 +63631,124 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MonthlyReportProjectCreateWithoutTeamInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teamReports?: TeamMonthlyReportCreateNestedManyWithoutProjectInput
+    personalReports?: PersonalMonthlyReportCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectUncheckedCreateWithoutTeamInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teamReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutProjectInput
+    personalReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectCreateOrConnectWithoutTeamInput = {
+    where: MonthlyReportProjectWhereUniqueInput
+    create: XOR<MonthlyReportProjectCreateWithoutTeamInput, MonthlyReportProjectUncheckedCreateWithoutTeamInput>
+  }
+
+  export type MonthlyReportProjectCreateManyTeamInputEnvelope = {
+    data: MonthlyReportProjectCreateManyTeamInput | MonthlyReportProjectCreateManyTeamInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeamMonthlyReportCreateWithoutTeamInput = {
+    id?: string
+    yearMonth: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: MonthlyReportProjectCreateNestedOneWithoutTeamReportsInput
+  }
+
+  export type TeamMonthlyReportUncheckedCreateWithoutTeamInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeamMonthlyReportCreateOrConnectWithoutTeamInput = {
+    where: TeamMonthlyReportWhereUniqueInput
+    create: XOR<TeamMonthlyReportCreateWithoutTeamInput, TeamMonthlyReportUncheckedCreateWithoutTeamInput>
+  }
+
+  export type TeamMonthlyReportCreateManyTeamInputEnvelope = {
+    data: TeamMonthlyReportCreateManyTeamInput | TeamMonthlyReportCreateManyTeamInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PersonalMonthlyReportCreateWithoutTeamInput = {
+    id?: string
+    yearMonth: string
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: MonthlyReportProjectCreateNestedOneWithoutPersonalReportsInput
+    user: UserCreateNestedOneWithoutPersonalMonthlyReportsInput
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateWithoutTeamInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    userId: string
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportCreateOrConnectWithoutTeamInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    create: XOR<PersonalMonthlyReportCreateWithoutTeamInput, PersonalMonthlyReportUncheckedCreateWithoutTeamInput>
+  }
+
+  export type PersonalMonthlyReportCreateManyTeamInputEnvelope = {
+    data: PersonalMonthlyReportCreateManyTeamInput | PersonalMonthlyReportCreateManyTeamInput[]
+    skipDuplicates?: boolean
+  }
+
   export type DepartmentUpsertWithoutTeamsInput = {
     update: XOR<DepartmentUpdateWithoutTeamsInput, DepartmentUncheckedUpdateWithoutTeamsInput>
     create: XOR<DepartmentCreateWithoutTeamsInput, DepartmentUncheckedCreateWithoutTeamsInput>
@@ -58359,6 +63820,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -58386,6 +63848,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -58583,6 +64046,87 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"TeamTarget"> | Date | string
   }
 
+  export type MonthlyReportProjectUpsertWithWhereUniqueWithoutTeamInput = {
+    where: MonthlyReportProjectWhereUniqueInput
+    update: XOR<MonthlyReportProjectUpdateWithoutTeamInput, MonthlyReportProjectUncheckedUpdateWithoutTeamInput>
+    create: XOR<MonthlyReportProjectCreateWithoutTeamInput, MonthlyReportProjectUncheckedCreateWithoutTeamInput>
+  }
+
+  export type MonthlyReportProjectUpdateWithWhereUniqueWithoutTeamInput = {
+    where: MonthlyReportProjectWhereUniqueInput
+    data: XOR<MonthlyReportProjectUpdateWithoutTeamInput, MonthlyReportProjectUncheckedUpdateWithoutTeamInput>
+  }
+
+  export type MonthlyReportProjectUpdateManyWithWhereWithoutTeamInput = {
+    where: MonthlyReportProjectScalarWhereInput
+    data: XOR<MonthlyReportProjectUpdateManyMutationInput, MonthlyReportProjectUncheckedUpdateManyWithoutTeamInput>
+  }
+
+  export type MonthlyReportProjectScalarWhereInput = {
+    AND?: MonthlyReportProjectScalarWhereInput | MonthlyReportProjectScalarWhereInput[]
+    OR?: MonthlyReportProjectScalarWhereInput[]
+    NOT?: MonthlyReportProjectScalarWhereInput | MonthlyReportProjectScalarWhereInput[]
+    id?: StringFilter<"MonthlyReportProject"> | string
+    name?: StringFilter<"MonthlyReportProject"> | string
+    normalizedName?: StringFilter<"MonthlyReportProject"> | string
+    teamId?: StringNullableFilter<"MonthlyReportProject"> | string | null
+    teamNameSnapshot?: StringFilter<"MonthlyReportProject"> | string
+    createdBy?: StringFilter<"MonthlyReportProject"> | string
+    isActive?: BoolFilter<"MonthlyReportProject"> | boolean
+    createdAt?: DateTimeFilter<"MonthlyReportProject"> | Date | string
+    updatedAt?: DateTimeFilter<"MonthlyReportProject"> | Date | string
+  }
+
+  export type TeamMonthlyReportUpsertWithWhereUniqueWithoutTeamInput = {
+    where: TeamMonthlyReportWhereUniqueInput
+    update: XOR<TeamMonthlyReportUpdateWithoutTeamInput, TeamMonthlyReportUncheckedUpdateWithoutTeamInput>
+    create: XOR<TeamMonthlyReportCreateWithoutTeamInput, TeamMonthlyReportUncheckedCreateWithoutTeamInput>
+  }
+
+  export type TeamMonthlyReportUpdateWithWhereUniqueWithoutTeamInput = {
+    where: TeamMonthlyReportWhereUniqueInput
+    data: XOR<TeamMonthlyReportUpdateWithoutTeamInput, TeamMonthlyReportUncheckedUpdateWithoutTeamInput>
+  }
+
+  export type TeamMonthlyReportUpdateManyWithWhereWithoutTeamInput = {
+    where: TeamMonthlyReportScalarWhereInput
+    data: XOR<TeamMonthlyReportUpdateManyMutationInput, TeamMonthlyReportUncheckedUpdateManyWithoutTeamInput>
+  }
+
+  export type TeamMonthlyReportScalarWhereInput = {
+    AND?: TeamMonthlyReportScalarWhereInput | TeamMonthlyReportScalarWhereInput[]
+    OR?: TeamMonthlyReportScalarWhereInput[]
+    NOT?: TeamMonthlyReportScalarWhereInput | TeamMonthlyReportScalarWhereInput[]
+    id?: StringFilter<"TeamMonthlyReport"> | string
+    yearMonth?: StringFilter<"TeamMonthlyReport"> | string
+    projectId?: StringFilter<"TeamMonthlyReport"> | string
+    teamId?: StringFilter<"TeamMonthlyReport"> | string
+    projectSummary?: StringFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthIssue?: StringFilter<"TeamMonthlyReport"> | string
+    teamSelfGrowthResult?: StringFilter<"TeamMonthlyReport"> | string
+    teamSynergyIssue?: StringFilter<"TeamMonthlyReport"> | string
+    teamSynergyResult?: StringFilter<"TeamMonthlyReport"> | string
+    updatedBy?: StringFilter<"TeamMonthlyReport"> | string
+    createdAt?: DateTimeFilter<"TeamMonthlyReport"> | Date | string
+    updatedAt?: DateTimeFilter<"TeamMonthlyReport"> | Date | string
+  }
+
+  export type PersonalMonthlyReportUpsertWithWhereUniqueWithoutTeamInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    update: XOR<PersonalMonthlyReportUpdateWithoutTeamInput, PersonalMonthlyReportUncheckedUpdateWithoutTeamInput>
+    create: XOR<PersonalMonthlyReportCreateWithoutTeamInput, PersonalMonthlyReportUncheckedCreateWithoutTeamInput>
+  }
+
+  export type PersonalMonthlyReportUpdateWithWhereUniqueWithoutTeamInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    data: XOR<PersonalMonthlyReportUpdateWithoutTeamInput, PersonalMonthlyReportUncheckedUpdateWithoutTeamInput>
+  }
+
+  export type PersonalMonthlyReportUpdateManyWithWhereWithoutTeamInput = {
+    where: PersonalMonthlyReportScalarWhereInput
+    data: XOR<PersonalMonthlyReportUpdateManyMutationInput, PersonalMonthlyReportUncheckedUpdateManyWithoutTeamInput>
+  }
+
   export type TeamCreateWithoutMembershipsInput = {
     id?: string
     name: string
@@ -58598,6 +64142,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutMembershipsInput = {
@@ -58615,6 +64162,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutMembershipsInput = {
@@ -58645,6 +64195,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -58672,6 +64223,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -58707,6 +64259,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutMembershipsInput = {
@@ -58724,6 +64279,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type UserUpsertWithoutTeamMembershipsInput = {
@@ -58760,6 +64318,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -58787,6 +64346,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -59424,6 +64984,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -59451,6 +65012,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -59506,6 +65068,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutEvaluationsInput = {
@@ -59523,6 +65088,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutEvaluationsInput = {
@@ -59627,6 +65195,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -59654,6 +65223,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -59769,6 +65339,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -59796,6 +65367,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -59863,6 +65435,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutEvaluationsInput = {
@@ -59880,6 +65455,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type SkillGradeDefinitionUpsertWithoutItSkillEvaluationsInput = {
@@ -60002,6 +65580,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60029,6 +65608,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60401,6 +65981,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -60428,6 +66009,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -60471,6 +66053,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60498,6 +66081,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60593,6 +66177,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -60620,6 +66205,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -60732,6 +66318,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -60759,6 +66346,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -60802,6 +66390,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60829,6 +66418,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -60959,6 +66549,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -60986,6 +66577,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -61292,6 +66884,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -61319,6 +66912,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -61374,6 +66968,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutAssignmentsInput = {
@@ -61391,6 +66988,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutAssignmentsInput = {
@@ -61432,6 +67032,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -61459,6 +67060,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -61526,6 +67128,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutAssignmentsInput = {
@@ -61543,6 +67148,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type UserCreateWithoutDepartmentUnassignedMonthlyAssignmentsInput = {
@@ -61568,6 +67176,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -61595,6 +67204,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -61700,6 +67310,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -61727,6 +67338,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -61828,6 +67440,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -61855,6 +67468,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -61910,6 +67524,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutCostsInput = {
@@ -61927,6 +67544,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutCostsInput = {
@@ -61968,6 +67588,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -61995,6 +67616,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -62062,6 +67684,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutCostsInput = {
@@ -62079,6 +67704,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamCreateWithoutTeamMonthlyPlsInput = {
@@ -62096,6 +67724,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutTeamMonthlyPlsInput = {
@@ -62113,6 +67744,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutTeamMonthlyPlsInput = {
@@ -62146,6 +67780,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutTeamMonthlyPlsInput = {
@@ -62163,6 +67800,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamCreateWithoutIndirectCostsInput = {
@@ -62180,6 +67820,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutIndirectCostsInput = {
@@ -62197,6 +67840,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutIndirectCostsInput = {
@@ -62230,6 +67876,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutIndirectCostsInput = {
@@ -62247,6 +67896,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type FixedCostAllocationCreateWithoutFixedCostSettingInput = {
@@ -62550,6 +68202,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlCreateNestedManyWithoutTeamInput
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutFixedAllocationsInput = {
@@ -62567,6 +68222,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUncheckedCreateNestedManyWithoutTeamInput
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutFixedAllocationsInput = {
@@ -62629,6 +68287,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUpdateManyWithoutTeamNestedInput
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutFixedAllocationsInput = {
@@ -62646,6 +68307,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUncheckedUpdateManyWithoutTeamNestedInput
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type FixedCostSettingUpsertWithoutAllocationsInput = {
@@ -62698,6 +68362,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlCreateNestedManyWithoutTeamInput
     indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
   }
 
   export type TeamUncheckedCreateWithoutTargetsInput = {
@@ -62715,6 +68382,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUncheckedCreateNestedManyWithoutTeamInput
     indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
     fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
   }
 
   export type TeamCreateOrConnectWithoutTargetsInput = {
@@ -62748,6 +68418,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUpdateManyWithoutTeamNestedInput
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutTargetsInput = {
@@ -62765,6 +68438,9 @@ export namespace Prisma {
     teamMonthlyPls?: TeamMonthlyPlUncheckedUpdateManyWithoutTeamNestedInput
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type UserCreateWithoutApprovalLogsInput = {
@@ -62791,6 +68467,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
 
@@ -62818,6 +68495,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
 
@@ -62861,6 +68539,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
 
@@ -62888,6 +68567,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
@@ -62915,6 +68595,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
   }
 
@@ -62942,6 +68623,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
   }
 
@@ -62985,6 +68667,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
   }
 
@@ -63012,6 +68695,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
@@ -63038,6 +68722,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
   }
@@ -63065,6 +68750,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
     monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutUserInput
     approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
   }
@@ -63108,6 +68794,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -63135,6 +68822,7 @@ export namespace Prisma {
     monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -63273,6 +68961,672 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutPartnerNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutPartnerNestedInput
     salesRateSettings?: PartnerSalesRateSettingUncheckedUpdateManyWithoutPartnerNestedInput
+  }
+
+  export type TeamCreateWithoutMonthlyReportProjectsInput = {
+    id?: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    department?: DepartmentCreateNestedOneWithoutTeamsInput
+    leader?: UserCreateNestedOneWithoutLedTeamsInput
+    memberships?: TeamMembershipCreateNestedManyWithoutTeamInput
+    evaluations?: EmployeeEvaluationCreateNestedManyWithoutTeamInput
+    assignments?: MonthlyAssignmentCreateNestedManyWithoutTeamInput
+    costs?: MonthlyCostCreateNestedManyWithoutTeamInput
+    teamMonthlyPls?: TeamMonthlyPlCreateNestedManyWithoutTeamInput
+    indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
+    fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
+    targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamUncheckedCreateWithoutMonthlyReportProjectsInput = {
+    id?: string
+    departmentId?: string | null
+    name: string
+    leaderUserId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
+    evaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutTeamInput
+    assignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutTeamInput
+    costs?: MonthlyCostUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyPls?: TeamMonthlyPlUncheckedCreateNestedManyWithoutTeamInput
+    indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
+    fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
+    targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamCreateOrConnectWithoutMonthlyReportProjectsInput = {
+    where: TeamWhereUniqueInput
+    create: XOR<TeamCreateWithoutMonthlyReportProjectsInput, TeamUncheckedCreateWithoutMonthlyReportProjectsInput>
+  }
+
+  export type TeamMonthlyReportCreateWithoutProjectInput = {
+    id?: string
+    yearMonth: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    team: TeamCreateNestedOneWithoutTeamMonthlyReportsInput
+  }
+
+  export type TeamMonthlyReportUncheckedCreateWithoutProjectInput = {
+    id?: string
+    yearMonth: string
+    teamId: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeamMonthlyReportCreateOrConnectWithoutProjectInput = {
+    where: TeamMonthlyReportWhereUniqueInput
+    create: XOR<TeamMonthlyReportCreateWithoutProjectInput, TeamMonthlyReportUncheckedCreateWithoutProjectInput>
+  }
+
+  export type TeamMonthlyReportCreateManyProjectInputEnvelope = {
+    data: TeamMonthlyReportCreateManyProjectInput | TeamMonthlyReportCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PersonalMonthlyReportCreateWithoutProjectInput = {
+    id?: string
+    yearMonth: string
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutPersonalMonthlyReportsInput
+    team?: TeamCreateNestedOneWithoutPersonalMonthlyReportsInput
+  }
+
+  export type PersonalMonthlyReportUncheckedCreateWithoutProjectInput = {
+    id?: string
+    yearMonth: string
+    userId: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportCreateOrConnectWithoutProjectInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    create: XOR<PersonalMonthlyReportCreateWithoutProjectInput, PersonalMonthlyReportUncheckedCreateWithoutProjectInput>
+  }
+
+  export type PersonalMonthlyReportCreateManyProjectInputEnvelope = {
+    data: PersonalMonthlyReportCreateManyProjectInput | PersonalMonthlyReportCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeamUpsertWithoutMonthlyReportProjectsInput = {
+    update: XOR<TeamUpdateWithoutMonthlyReportProjectsInput, TeamUncheckedUpdateWithoutMonthlyReportProjectsInput>
+    create: XOR<TeamCreateWithoutMonthlyReportProjectsInput, TeamUncheckedCreateWithoutMonthlyReportProjectsInput>
+    where?: TeamWhereInput
+  }
+
+  export type TeamUpdateToOneWithWhereWithoutMonthlyReportProjectsInput = {
+    where?: TeamWhereInput
+    data: XOR<TeamUpdateWithoutMonthlyReportProjectsInput, TeamUncheckedUpdateWithoutMonthlyReportProjectsInput>
+  }
+
+  export type TeamUpdateWithoutMonthlyReportProjectsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    department?: DepartmentUpdateOneWithoutTeamsNestedInput
+    leader?: UserUpdateOneWithoutLedTeamsNestedInput
+    memberships?: TeamMembershipUpdateManyWithoutTeamNestedInput
+    evaluations?: EmployeeEvaluationUpdateManyWithoutTeamNestedInput
+    assignments?: MonthlyAssignmentUpdateManyWithoutTeamNestedInput
+    costs?: MonthlyCostUpdateManyWithoutTeamNestedInput
+    teamMonthlyPls?: TeamMonthlyPlUpdateManyWithoutTeamNestedInput
+    indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
+    fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
+    targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
+  }
+
+  export type TeamUncheckedUpdateWithoutMonthlyReportProjectsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    leaderUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
+    evaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutTeamNestedInput
+    assignments?: MonthlyAssignmentUncheckedUpdateManyWithoutTeamNestedInput
+    costs?: MonthlyCostUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyPls?: TeamMonthlyPlUncheckedUpdateManyWithoutTeamNestedInput
+    indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
+    fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
+    targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+  }
+
+  export type TeamMonthlyReportUpsertWithWhereUniqueWithoutProjectInput = {
+    where: TeamMonthlyReportWhereUniqueInput
+    update: XOR<TeamMonthlyReportUpdateWithoutProjectInput, TeamMonthlyReportUncheckedUpdateWithoutProjectInput>
+    create: XOR<TeamMonthlyReportCreateWithoutProjectInput, TeamMonthlyReportUncheckedCreateWithoutProjectInput>
+  }
+
+  export type TeamMonthlyReportUpdateWithWhereUniqueWithoutProjectInput = {
+    where: TeamMonthlyReportWhereUniqueInput
+    data: XOR<TeamMonthlyReportUpdateWithoutProjectInput, TeamMonthlyReportUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type TeamMonthlyReportUpdateManyWithWhereWithoutProjectInput = {
+    where: TeamMonthlyReportScalarWhereInput
+    data: XOR<TeamMonthlyReportUpdateManyMutationInput, TeamMonthlyReportUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type PersonalMonthlyReportUpsertWithWhereUniqueWithoutProjectInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    update: XOR<PersonalMonthlyReportUpdateWithoutProjectInput, PersonalMonthlyReportUncheckedUpdateWithoutProjectInput>
+    create: XOR<PersonalMonthlyReportCreateWithoutProjectInput, PersonalMonthlyReportUncheckedCreateWithoutProjectInput>
+  }
+
+  export type PersonalMonthlyReportUpdateWithWhereUniqueWithoutProjectInput = {
+    where: PersonalMonthlyReportWhereUniqueInput
+    data: XOR<PersonalMonthlyReportUpdateWithoutProjectInput, PersonalMonthlyReportUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type PersonalMonthlyReportUpdateManyWithWhereWithoutProjectInput = {
+    where: PersonalMonthlyReportScalarWhereInput
+    data: XOR<PersonalMonthlyReportUpdateManyMutationInput, PersonalMonthlyReportUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type MonthlyReportProjectCreateWithoutTeamReportsInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    team?: TeamCreateNestedOneWithoutMonthlyReportProjectsInput
+    personalReports?: PersonalMonthlyReportCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectUncheckedCreateWithoutTeamReportsInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    personalReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectCreateOrConnectWithoutTeamReportsInput = {
+    where: MonthlyReportProjectWhereUniqueInput
+    create: XOR<MonthlyReportProjectCreateWithoutTeamReportsInput, MonthlyReportProjectUncheckedCreateWithoutTeamReportsInput>
+  }
+
+  export type TeamCreateWithoutTeamMonthlyReportsInput = {
+    id?: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    department?: DepartmentCreateNestedOneWithoutTeamsInput
+    leader?: UserCreateNestedOneWithoutLedTeamsInput
+    memberships?: TeamMembershipCreateNestedManyWithoutTeamInput
+    evaluations?: EmployeeEvaluationCreateNestedManyWithoutTeamInput
+    assignments?: MonthlyAssignmentCreateNestedManyWithoutTeamInput
+    costs?: MonthlyCostCreateNestedManyWithoutTeamInput
+    teamMonthlyPls?: TeamMonthlyPlCreateNestedManyWithoutTeamInput
+    indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
+    fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
+    targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamUncheckedCreateWithoutTeamMonthlyReportsInput = {
+    id?: string
+    departmentId?: string | null
+    name: string
+    leaderUserId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
+    evaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutTeamInput
+    assignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutTeamInput
+    costs?: MonthlyCostUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyPls?: TeamMonthlyPlUncheckedCreateNestedManyWithoutTeamInput
+    indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
+    fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
+    targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamCreateOrConnectWithoutTeamMonthlyReportsInput = {
+    where: TeamWhereUniqueInput
+    create: XOR<TeamCreateWithoutTeamMonthlyReportsInput, TeamUncheckedCreateWithoutTeamMonthlyReportsInput>
+  }
+
+  export type MonthlyReportProjectUpsertWithoutTeamReportsInput = {
+    update: XOR<MonthlyReportProjectUpdateWithoutTeamReportsInput, MonthlyReportProjectUncheckedUpdateWithoutTeamReportsInput>
+    create: XOR<MonthlyReportProjectCreateWithoutTeamReportsInput, MonthlyReportProjectUncheckedCreateWithoutTeamReportsInput>
+    where?: MonthlyReportProjectWhereInput
+  }
+
+  export type MonthlyReportProjectUpdateToOneWithWhereWithoutTeamReportsInput = {
+    where?: MonthlyReportProjectWhereInput
+    data: XOR<MonthlyReportProjectUpdateWithoutTeamReportsInput, MonthlyReportProjectUncheckedUpdateWithoutTeamReportsInput>
+  }
+
+  export type MonthlyReportProjectUpdateWithoutTeamReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    team?: TeamUpdateOneWithoutMonthlyReportProjectsNestedInput
+    personalReports?: PersonalMonthlyReportUpdateManyWithoutProjectNestedInput
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateWithoutTeamReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    personalReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type TeamUpsertWithoutTeamMonthlyReportsInput = {
+    update: XOR<TeamUpdateWithoutTeamMonthlyReportsInput, TeamUncheckedUpdateWithoutTeamMonthlyReportsInput>
+    create: XOR<TeamCreateWithoutTeamMonthlyReportsInput, TeamUncheckedCreateWithoutTeamMonthlyReportsInput>
+    where?: TeamWhereInput
+  }
+
+  export type TeamUpdateToOneWithWhereWithoutTeamMonthlyReportsInput = {
+    where?: TeamWhereInput
+    data: XOR<TeamUpdateWithoutTeamMonthlyReportsInput, TeamUncheckedUpdateWithoutTeamMonthlyReportsInput>
+  }
+
+  export type TeamUpdateWithoutTeamMonthlyReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    department?: DepartmentUpdateOneWithoutTeamsNestedInput
+    leader?: UserUpdateOneWithoutLedTeamsNestedInput
+    memberships?: TeamMembershipUpdateManyWithoutTeamNestedInput
+    evaluations?: EmployeeEvaluationUpdateManyWithoutTeamNestedInput
+    assignments?: MonthlyAssignmentUpdateManyWithoutTeamNestedInput
+    costs?: MonthlyCostUpdateManyWithoutTeamNestedInput
+    teamMonthlyPls?: TeamMonthlyPlUpdateManyWithoutTeamNestedInput
+    indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
+    fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
+    targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
+  }
+
+  export type TeamUncheckedUpdateWithoutTeamMonthlyReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    leaderUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
+    evaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutTeamNestedInput
+    assignments?: MonthlyAssignmentUncheckedUpdateManyWithoutTeamNestedInput
+    costs?: MonthlyCostUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyPls?: TeamMonthlyPlUncheckedUpdateManyWithoutTeamNestedInput
+    indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
+    fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
+    targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+  }
+
+  export type MonthlyReportProjectCreateWithoutPersonalReportsInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    team?: TeamCreateNestedOneWithoutMonthlyReportProjectsInput
+    teamReports?: TeamMonthlyReportCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectUncheckedCreateWithoutPersonalReportsInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    teamReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type MonthlyReportProjectCreateOrConnectWithoutPersonalReportsInput = {
+    where: MonthlyReportProjectWhereUniqueInput
+    create: XOR<MonthlyReportProjectCreateWithoutPersonalReportsInput, MonthlyReportProjectUncheckedCreateWithoutPersonalReportsInput>
+  }
+
+  export type UserCreateWithoutPersonalMonthlyReportsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    employeeCode: string
+    name: string
+    status?: $Enums.UserStatus
+    joinedAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role: RoleCreateNestedOneWithoutUsersInput
+    department?: DepartmentCreateNestedOneWithoutUsersInput
+    position?: PositionCreateNestedOneWithoutUsersInput
+    ledTeams?: TeamCreateNestedManyWithoutLeaderInput
+    teamMemberships?: TeamMembershipCreateNestedManyWithoutUserInput
+    employeeEvaluations?: EmployeeEvaluationCreateNestedManyWithoutUserInput
+    finalizedEvaluations?: EmployeeEvaluationCreateNestedManyWithoutFinalizerInput
+    salaryRecords?: SalaryRecordCreateNestedManyWithoutUserInput
+    salarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutUserInput
+    approvedSalarySimulations?: SalaryRevisionSimulationCreateNestedManyWithoutApproverInput
+    monthlyAssignments?: MonthlyAssignmentCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentCreateNestedManyWithoutUserInput
+    monthlyCosts?: MonthlyCostCreateNestedManyWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingCreateNestedManyWithoutUserInput
+    approvalLogs?: ApprovalLogCreateNestedManyWithoutActorInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+  }
+
+  export type UserUncheckedCreateWithoutPersonalMonthlyReportsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    employeeCode: string
+    name: string
+    roleId: string
+    departmentId?: string | null
+    positionId?: string | null
+    status?: $Enums.UserStatus
+    joinedAt: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    ledTeams?: TeamUncheckedCreateNestedManyWithoutLeaderInput
+    teamMemberships?: TeamMembershipUncheckedCreateNestedManyWithoutUserInput
+    employeeEvaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutUserInput
+    finalizedEvaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutFinalizerInput
+    salaryRecords?: SalaryRecordUncheckedCreateNestedManyWithoutUserInput
+    salarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutUserInput
+    approvedSalarySimulations?: SalaryRevisionSimulationUncheckedCreateNestedManyWithoutApproverInput
+    monthlyAssignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedCreateNestedManyWithoutUserInput
+    monthlyCosts?: MonthlyCostUncheckedCreateNestedManyWithoutUserInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedCreateNestedManyWithoutUserInput
+    approvalLogs?: ApprovalLogUncheckedCreateNestedManyWithoutActorInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+  }
+
+  export type UserCreateOrConnectWithoutPersonalMonthlyReportsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPersonalMonthlyReportsInput, UserUncheckedCreateWithoutPersonalMonthlyReportsInput>
+  }
+
+  export type TeamCreateWithoutPersonalMonthlyReportsInput = {
+    id?: string
+    name: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    department?: DepartmentCreateNestedOneWithoutTeamsInput
+    leader?: UserCreateNestedOneWithoutLedTeamsInput
+    memberships?: TeamMembershipCreateNestedManyWithoutTeamInput
+    evaluations?: EmployeeEvaluationCreateNestedManyWithoutTeamInput
+    assignments?: MonthlyAssignmentCreateNestedManyWithoutTeamInput
+    costs?: MonthlyCostCreateNestedManyWithoutTeamInput
+    teamMonthlyPls?: TeamMonthlyPlCreateNestedManyWithoutTeamInput
+    indirectCosts?: TeamIndirectCostCreateNestedManyWithoutTeamInput
+    fixedAllocations?: FixedCostAllocationCreateNestedManyWithoutTeamInput
+    targets?: TeamTargetCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamUncheckedCreateWithoutPersonalMonthlyReportsInput = {
+    id?: string
+    departmentId?: string | null
+    name: string
+    leaderUserId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    memberships?: TeamMembershipUncheckedCreateNestedManyWithoutTeamInput
+    evaluations?: EmployeeEvaluationUncheckedCreateNestedManyWithoutTeamInput
+    assignments?: MonthlyAssignmentUncheckedCreateNestedManyWithoutTeamInput
+    costs?: MonthlyCostUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyPls?: TeamMonthlyPlUncheckedCreateNestedManyWithoutTeamInput
+    indirectCosts?: TeamIndirectCostUncheckedCreateNestedManyWithoutTeamInput
+    fixedAllocations?: FixedCostAllocationUncheckedCreateNestedManyWithoutTeamInput
+    targets?: TeamTargetUncheckedCreateNestedManyWithoutTeamInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedCreateNestedManyWithoutTeamInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedCreateNestedManyWithoutTeamInput
+  }
+
+  export type TeamCreateOrConnectWithoutPersonalMonthlyReportsInput = {
+    where: TeamWhereUniqueInput
+    create: XOR<TeamCreateWithoutPersonalMonthlyReportsInput, TeamUncheckedCreateWithoutPersonalMonthlyReportsInput>
+  }
+
+  export type MonthlyReportProjectUpsertWithoutPersonalReportsInput = {
+    update: XOR<MonthlyReportProjectUpdateWithoutPersonalReportsInput, MonthlyReportProjectUncheckedUpdateWithoutPersonalReportsInput>
+    create: XOR<MonthlyReportProjectCreateWithoutPersonalReportsInput, MonthlyReportProjectUncheckedCreateWithoutPersonalReportsInput>
+    where?: MonthlyReportProjectWhereInput
+  }
+
+  export type MonthlyReportProjectUpdateToOneWithWhereWithoutPersonalReportsInput = {
+    where?: MonthlyReportProjectWhereInput
+    data: XOR<MonthlyReportProjectUpdateWithoutPersonalReportsInput, MonthlyReportProjectUncheckedUpdateWithoutPersonalReportsInput>
+  }
+
+  export type MonthlyReportProjectUpdateWithoutPersonalReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    team?: TeamUpdateOneWithoutMonthlyReportProjectsNestedInput
+    teamReports?: TeamMonthlyReportUpdateManyWithoutProjectNestedInput
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateWithoutPersonalReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamReports?: TeamMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutPersonalMonthlyReportsInput = {
+    update: XOR<UserUpdateWithoutPersonalMonthlyReportsInput, UserUncheckedUpdateWithoutPersonalMonthlyReportsInput>
+    create: XOR<UserCreateWithoutPersonalMonthlyReportsInput, UserUncheckedCreateWithoutPersonalMonthlyReportsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPersonalMonthlyReportsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPersonalMonthlyReportsInput, UserUncheckedUpdateWithoutPersonalMonthlyReportsInput>
+  }
+
+  export type UserUpdateWithoutPersonalMonthlyReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    employeeCode?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: RoleUpdateOneRequiredWithoutUsersNestedInput
+    department?: DepartmentUpdateOneWithoutUsersNestedInput
+    position?: PositionUpdateOneWithoutUsersNestedInput
+    ledTeams?: TeamUpdateManyWithoutLeaderNestedInput
+    teamMemberships?: TeamMembershipUpdateManyWithoutUserNestedInput
+    employeeEvaluations?: EmployeeEvaluationUpdateManyWithoutUserNestedInput
+    finalizedEvaluations?: EmployeeEvaluationUpdateManyWithoutFinalizerNestedInput
+    salaryRecords?: SalaryRecordUpdateManyWithoutUserNestedInput
+    salarySimulations?: SalaryRevisionSimulationUpdateManyWithoutUserNestedInput
+    approvedSalarySimulations?: SalaryRevisionSimulationUpdateManyWithoutApproverNestedInput
+    monthlyAssignments?: MonthlyAssignmentUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
+    monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPersonalMonthlyReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    employeeCode?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    roleId?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    positionId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ledTeams?: TeamUncheckedUpdateManyWithoutLeaderNestedInput
+    teamMemberships?: TeamMembershipUncheckedUpdateManyWithoutUserNestedInput
+    employeeEvaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutUserNestedInput
+    finalizedEvaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutFinalizerNestedInput
+    salaryRecords?: SalaryRecordUncheckedUpdateManyWithoutUserNestedInput
+    salarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutUserNestedInput
+    approvedSalarySimulations?: SalaryRevisionSimulationUncheckedUpdateManyWithoutApproverNestedInput
+    monthlyAssignments?: MonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
+    monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
+    employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+  }
+
+  export type TeamUpsertWithoutPersonalMonthlyReportsInput = {
+    update: XOR<TeamUpdateWithoutPersonalMonthlyReportsInput, TeamUncheckedUpdateWithoutPersonalMonthlyReportsInput>
+    create: XOR<TeamCreateWithoutPersonalMonthlyReportsInput, TeamUncheckedCreateWithoutPersonalMonthlyReportsInput>
+    where?: TeamWhereInput
+  }
+
+  export type TeamUpdateToOneWithWhereWithoutPersonalMonthlyReportsInput = {
+    where?: TeamWhereInput
+    data: XOR<TeamUpdateWithoutPersonalMonthlyReportsInput, TeamUncheckedUpdateWithoutPersonalMonthlyReportsInput>
+  }
+
+  export type TeamUpdateWithoutPersonalMonthlyReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    department?: DepartmentUpdateOneWithoutTeamsNestedInput
+    leader?: UserUpdateOneWithoutLedTeamsNestedInput
+    memberships?: TeamMembershipUpdateManyWithoutTeamNestedInput
+    evaluations?: EmployeeEvaluationUpdateManyWithoutTeamNestedInput
+    assignments?: MonthlyAssignmentUpdateManyWithoutTeamNestedInput
+    costs?: MonthlyCostUpdateManyWithoutTeamNestedInput
+    teamMonthlyPls?: TeamMonthlyPlUpdateManyWithoutTeamNestedInput
+    indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
+    fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
+    targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+  }
+
+  export type TeamUncheckedUpdateWithoutPersonalMonthlyReportsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    departmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    leaderUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    memberships?: TeamMembershipUncheckedUpdateManyWithoutTeamNestedInput
+    evaluations?: EmployeeEvaluationUncheckedUpdateManyWithoutTeamNestedInput
+    assignments?: MonthlyAssignmentUncheckedUpdateManyWithoutTeamNestedInput
+    costs?: MonthlyCostUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyPls?: TeamMonthlyPlUncheckedUpdateManyWithoutTeamNestedInput
+    indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
+    fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
+    targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamCreateManyLeaderInput = {
@@ -63427,6 +69781,23 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type PersonalMonthlyReportCreateManyUserInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ApprovalLogCreateManyActorInput = {
     id?: string
     targetType: string
@@ -63461,6 +69832,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutLeaderInput = {
@@ -63478,6 +69852,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateManyWithoutLeaderInput = {
@@ -63926,6 +70303,57 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PersonalMonthlyReportUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: MonthlyReportProjectUpdateOneRequiredWithoutPersonalReportsNestedInput
+    team?: TeamUpdateOneWithoutPersonalMonthlyReportsNestedInput
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ApprovalLogUpdateWithoutActorInput = {
     id?: StringFieldUpdateOperationsInput | string
     targetType?: StringFieldUpdateOperationsInput | string
@@ -64025,6 +70453,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -64052,6 +70481,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -64223,6 +70653,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -64250,6 +70681,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -64283,6 +70715,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateWithoutDepartmentInput = {
@@ -64300,6 +70735,9 @@ export namespace Prisma {
     indirectCosts?: TeamIndirectCostUncheckedUpdateManyWithoutTeamNestedInput
     fixedAllocations?: FixedCostAllocationUncheckedUpdateManyWithoutTeamNestedInput
     targets?: TeamTargetUncheckedUpdateManyWithoutTeamNestedInput
+    monthlyReportProjects?: MonthlyReportProjectUncheckedUpdateManyWithoutTeamNestedInput
+    teamMonthlyReports?: TeamMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutTeamNestedInput
   }
 
   export type TeamUncheckedUpdateManyWithoutDepartmentInput = {
@@ -64457,6 +70895,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
   }
@@ -64484,6 +70923,7 @@ export namespace Prisma {
     departmentUnassignedMonthlyAssignments?: DepartmentUnassignedMonthlyAssignmentUncheckedUpdateManyWithoutUserNestedInput
     monthlyCosts?: MonthlyCostUncheckedUpdateManyWithoutUserNestedInput
     employeeSalesRateSettings?: EmployeeSalesRateSettingUncheckedUpdateManyWithoutUserNestedInput
+    personalMonthlyReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutUserNestedInput
     approvalLogs?: ApprovalLogUncheckedUpdateManyWithoutActorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
   }
@@ -64649,6 +71089,48 @@ export namespace Prisma {
     salesTarget: number
     grossProfitTarget: number
     grossProfitRateTarget: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MonthlyReportProjectCreateManyTeamInput = {
+    id?: string
+    name: string
+    normalizedName: string
+    teamNameSnapshot?: string
+    createdBy: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeamMonthlyReportCreateManyTeamInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportCreateManyTeamInput = {
+    id?: string
+    yearMonth: string
+    projectId: string
+    userId: string
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -64971,6 +71453,136 @@ export namespace Prisma {
     salesTarget?: IntFieldUpdateOperationsInput | number
     grossProfitTarget?: IntFieldUpdateOperationsInput | number
     grossProfitRateTarget?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonthlyReportProjectUpdateWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamReports?: TeamMonthlyReportUpdateManyWithoutProjectNestedInput
+    personalReports?: PersonalMonthlyReportUpdateManyWithoutProjectNestedInput
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teamReports?: TeamMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput
+    personalReports?: PersonalMonthlyReportUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type MonthlyReportProjectUncheckedUpdateManyWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    normalizedName?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    createdBy?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportUpdateWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: MonthlyReportProjectUpdateOneRequiredWithoutTeamReportsNestedInput
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateManyWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportUpdateWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: MonthlyReportProjectUpdateOneRequiredWithoutPersonalReportsNestedInput
+    user?: UserUpdateOneRequiredWithoutPersonalMonthlyReportsNestedInput
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyWithoutTeamInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -65889,6 +72501,130 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     departmentId?: StringFieldUpdateOperationsInput | string
     amount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportCreateManyProjectInput = {
+    id?: string
+    yearMonth: string
+    teamId: string
+    projectSummary?: string
+    teamSelfGrowthIssue?: string
+    teamSelfGrowthResult?: string
+    teamSynergyIssue?: string
+    teamSynergyResult?: string
+    updatedBy: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PersonalMonthlyReportCreateManyProjectInput = {
+    id?: string
+    yearMonth: string
+    userId: string
+    teamId?: string | null
+    teamNameSnapshot?: string
+    userRoleCode?: string
+    memberType?: string
+    projectRole?: string
+    personalSelfGrowthIssue?: string
+    personalSelfGrowthResult?: string
+    personalSynergyIssue?: string
+    personalSynergyResult?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TeamMonthlyReportUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    team?: TeamUpdateOneRequiredWithoutTeamMonthlyReportsNestedInput
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamId?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamMonthlyReportUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamId?: StringFieldUpdateOperationsInput | string
+    projectSummary?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    teamSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    teamSynergyIssue?: StringFieldUpdateOperationsInput | string
+    teamSynergyResult?: StringFieldUpdateOperationsInput | string
+    updatedBy?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutPersonalMonthlyReportsNestedInput
+    team?: TeamUpdateOneWithoutPersonalMonthlyReportsNestedInput
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PersonalMonthlyReportUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    yearMonth?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teamId?: NullableStringFieldUpdateOperationsInput | string | null
+    teamNameSnapshot?: StringFieldUpdateOperationsInput | string
+    userRoleCode?: StringFieldUpdateOperationsInput | string
+    memberType?: StringFieldUpdateOperationsInput | string
+    projectRole?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthIssue?: StringFieldUpdateOperationsInput | string
+    personalSelfGrowthResult?: StringFieldUpdateOperationsInput | string
+    personalSynergyIssue?: StringFieldUpdateOperationsInput | string
+    personalSynergyResult?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

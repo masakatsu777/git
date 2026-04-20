@@ -511,6 +511,51 @@ exports.Prisma.PartnerOutsourceRateSettingScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MonthlyReportProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  normalizedName: 'normalizedName',
+  teamId: 'teamId',
+  teamNameSnapshot: 'teamNameSnapshot',
+  createdBy: 'createdBy',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TeamMonthlyReportScalarFieldEnum = {
+  id: 'id',
+  yearMonth: 'yearMonth',
+  projectId: 'projectId',
+  teamId: 'teamId',
+  projectSummary: 'projectSummary',
+  teamSelfGrowthIssue: 'teamSelfGrowthIssue',
+  teamSelfGrowthResult: 'teamSelfGrowthResult',
+  teamSynergyIssue: 'teamSynergyIssue',
+  teamSynergyResult: 'teamSynergyResult',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PersonalMonthlyReportScalarFieldEnum = {
+  id: 'id',
+  yearMonth: 'yearMonth',
+  projectId: 'projectId',
+  userId: 'userId',
+  teamId: 'teamId',
+  teamNameSnapshot: 'teamNameSnapshot',
+  userRoleCode: 'userRoleCode',
+  memberType: 'memberType',
+  projectRole: 'projectRole',
+  personalSelfGrowthIssue: 'personalSelfGrowthIssue',
+  personalSelfGrowthResult: 'personalSelfGrowthResult',
+  personalSynergyIssue: 'personalSynergyIssue',
+  personalSynergyResult: 'personalSynergyResult',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -646,7 +691,10 @@ exports.Prisma.ModelName = {
   AuditLog: 'AuditLog',
   EmployeeSalesRateSetting: 'EmployeeSalesRateSetting',
   PartnerSalesRateSetting: 'PartnerSalesRateSetting',
-  PartnerOutsourceRateSetting: 'PartnerOutsourceRateSetting'
+  PartnerOutsourceRateSetting: 'PartnerOutsourceRateSetting',
+  MonthlyReportProject: 'MonthlyReportProject',
+  TeamMonthlyReport: 'TeamMonthlyReport',
+  PersonalMonthlyReport: 'PersonalMonthlyReport'
 };
 
 /**

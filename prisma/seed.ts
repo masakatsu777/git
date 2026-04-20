@@ -164,6 +164,7 @@ async function main() {
   const leader = await prisma.user.findUniqueOrThrow({ where: { email: "leader@example.com" } });
   const member1 = await prisma.user.findUniqueOrThrow({ where: { email: "member1@example.com" } });
   const member2 = await prisma.user.findUniqueOrThrow({ where: { email: "member2@example.com" } });
+  const admin = await prisma.user.findUniqueOrThrow({ where: { email: "admin@example.com" } });
 
   const team = await prisma.team.upsert({
     where: { id: "team-platform" },
@@ -173,6 +174,48 @@ async function main() {
       name: "プラットフォームチーム",
       departmentId: development.id,
       leaderUserId: leader.id,
+    },
+  });
+
+  const internalProject = await prisma.monthlyReportProject.upsert({
+    where: { id: "mr-project-platform-core" },
+    update: {
+      name: "基幹保守PJ",
+      normalizedName: "基幹保守pj",
+      teamId: team.id,
+      teamNameSnapshot: team.name,
+      createdBy: leader.id,
+      isActive: true,
+    },
+    create: {
+      id: "mr-project-platform-core",
+      name: "基幹保守PJ",
+      normalizedName: "基幹保守pj",
+      teamId: team.id,
+      teamNameSnapshot: team.name,
+      createdBy: leader.id,
+      isActive: true,
+    },
+  });
+
+  const personalProject = await prisma.monthlyReportProject.upsert({
+    where: { id: "mr-project-personal-improve" },
+    update: {
+      name: "社内改善PJ",
+      normalizedName: "社内改善pj",
+      teamId: null,
+      teamNameSnapshot: "個人",
+      createdBy: admin.id,
+      isActive: true,
+    },
+    create: {
+      id: "mr-project-personal-improve",
+      name: "社内改善PJ",
+      normalizedName: "社内改善pj",
+      teamId: null,
+      teamNameSnapshot: "個人",
+      createdBy: leader.id,
+      isActive: true,
     },
   });
 
@@ -205,11 +248,25 @@ async function main() {
   ] as const;
 
   for (const [category, gradeCode, gradeName, rankOrder, description, minScore, maxScore] of gradeDefinitions) {
-    await prisma.skillGradeDefinition.upsert({
-      where: { category_gradeCode_positionId: { category, gradeCode, positionId: null } },
-      update: { gradeName, rankOrder, description, minScore, maxScore, positionId: null },
-      create: { category, gradeCode, gradeName, rankOrder, description, minScore, maxScore, positionId: null },
+    const existing = await prisma.skillGradeDefinition.findFirst({
+      where: {
+        category,
+        gradeCode,
+        positionId: null,
+      },
+      select: { id: true },
     });
+
+    if (existing) {
+      await prisma.skillGradeDefinition.update({
+        where: { id: existing.id },
+        data: { gradeName, rankOrder, description, minScore, maxScore, positionId: null },
+      });
+    } else {
+      await prisma.skillGradeDefinition.create({
+        data: { category, gradeCode, gradeName, rankOrder, description, minScore, maxScore, positionId: null },
+      });
+    }
   }
 
   const period = await prisma.evaluationPeriod.upsert({
@@ -358,10 +415,16 @@ async function main() {
   ] as const;
 
   for (const [userId, unitPrice, defaultWorkRate, remarks] of employeeRateSeeds) {
+    const effectiveFrom = new Date("2025-04-01");
     await prisma.employeeSalesRateSetting.upsert({
-      where: { userId },
+      where: {
+        userId_effectiveFrom: {
+          userId,
+          effectiveFrom,
+        },
+      },
       update: { unitPrice, defaultWorkRate, remarks },
-      create: { userId, unitPrice, defaultWorkRate, remarks },
+      create: { userId, effectiveFrom, unitPrice, defaultWorkRate, remarks },
     });
   }
 
@@ -371,16 +434,39 @@ async function main() {
     create: { id: "partner-001", name: "協力会社A", companyName: "協力会社A株式会社" },
   });
 
+  const partnerEffectiveFrom = new Date("2025-04-01");
+
   await prisma.partnerSalesRateSetting.upsert({
-    where: { partnerId: partner.id },
+    where: {
+      partnerId_effectiveFrom: {
+        partnerId: partner.id,
+        effectiveFrom: partnerEffectiveFrom,
+      },
+    },
     update: { unitPrice: 700000, defaultWorkRate: 100, remarks: "標準売上単価" },
-    create: { partnerId: partner.id, unitPrice: 700000, defaultWorkRate: 100, remarks: "標準売上単価" },
+    create: {
+      partnerId: partner.id,
+      effectiveFrom: partnerEffectiveFrom,
+      unitPrice: 700000,
+      defaultWorkRate: 100,
+      remarks: "標準売上単価",
+    },
   });
 
   await prisma.partnerOutsourceRateSetting.upsert({
-    where: { partnerId: partner.id },
+    where: {
+      partnerId_effectiveFrom: {
+        partnerId: partner.id,
+        effectiveFrom: partnerEffectiveFrom,
+      },
+    },
     update: { amount: 620000, remarks: "標準外注費" },
-    create: { partnerId: partner.id, amount: 620000, remarks: "標準外注費" },
+    create: {
+      partnerId: partner.id,
+      effectiveFrom: partnerEffectiveFrom,
+      amount: 620000,
+      remarks: "標準外注費",
+    },
   });
 
   await prisma.monthlyAssignment.deleteMany({ where: { teamId: team.id, yearMonth: sampleYearMonth } });
@@ -543,6 +629,107 @@ async function main() {
         managerComment: evaluation.managerComment,
         finalComment: evaluation.finalComment,
         finalScoreTotal: evaluation.finalScoreTotal,
+      },
+    });
+  }
+
+  await prisma.teamMonthlyReport.upsert({
+    where: {
+      yearMonth_projectId_teamId: {
+        yearMonth: sampleYearMonth,
+        projectId: internalProject.id,
+        teamId: team.id,
+      },
+    },
+    update: {
+      projectSummary: "基幹システムの保守運用と追加改善を担当する案件",
+      teamSelfGrowthIssue: "レビュー品質を平準化する",
+      teamSelfGrowthResult: "観点表を整え、レビュー前共有を定着させた",
+      teamSynergyIssue: "相談の先出しを徹底する",
+      teamSynergyResult: "朝会で課題を先に出す流れを定着させた",
+      updatedBy: leader.id,
+    },
+    create: {
+      yearMonth: sampleYearMonth,
+      projectId: internalProject.id,
+      teamId: team.id,
+      projectSummary: "基幹システムの保守運用と追加改善を担当する案件",
+      teamSelfGrowthIssue: "レビュー品質を平準化する",
+      teamSelfGrowthResult: "観点表を整え、レビュー前共有を定着させた",
+      teamSynergyIssue: "相談の先出しを徹底する",
+      teamSynergyResult: "朝会で課題を先に出す流れを定着させた",
+      updatedBy: leader.id,
+    },
+  });
+
+  const personalMonthlySeeds = [
+    {
+      userId: leader.id,
+      projectId: internalProject.id,
+      teamId: team.id,
+      teamNameSnapshot: team.name,
+      userRoleCode: "leader",
+      memberType: "leader",
+      projectRole: "進行管理・レビュー",
+      personalSelfGrowthIssue: "メンバー支援の言語化",
+      personalSelfGrowthResult: "レビュー観点を整理して渡せるようになった",
+      personalSynergyIssue: "相談しやすい空気づくり",
+      personalSynergyResult: "課題共有が早まり、相談件数が増えた",
+    },
+    {
+      userId: member1.id,
+      projectId: internalProject.id,
+      teamId: team.id,
+      teamNameSnapshot: team.name,
+      userRoleCode: "employee",
+      memberType: "member",
+      projectRole: "詳細設計・実装",
+      personalSelfGrowthIssue: "設計意図を整理して説明する",
+      personalSelfGrowthResult: "レビュー前に論点を共有できるようになった",
+      personalSynergyIssue: "相談を早めに出す",
+      personalSynergyResult: "詰まる前に周囲へ相談する回数が増えた",
+    },
+    {
+      userId: member2.id,
+      projectId: internalProject.id,
+      teamId: team.id,
+      teamNameSnapshot: team.name,
+      userRoleCode: "employee",
+      memberType: "member",
+      projectRole: "実装・テスト",
+      personalSelfGrowthIssue: "顧客視点を設計へ反映する",
+      personalSelfGrowthResult: "顧客会話から改善案を出せるようになった",
+      personalSynergyIssue: "関連メンバーとの共有密度を上げる",
+      personalSynergyResult: "朝会以外にもメモ共有を増やした",
+    },
+    {
+      userId: admin.id,
+      projectId: personalProject.id,
+      teamId: null,
+      teamNameSnapshot: "個人",
+      userRoleCode: "admin",
+      memberType: "member",
+      projectRole: "制度改善",
+      personalSelfGrowthIssue: "現場運用と制度文言のずれを減らす",
+      personalSelfGrowthResult: "テンプレートの言い回しを見直した",
+      personalSynergyIssue: "現場の声を拾いやすくする",
+      personalSynergyResult: "管理者ヒアリングの整理メモを定着させた",
+    },
+  ] as const;
+
+  for (const seed of personalMonthlySeeds) {
+    await prisma.personalMonthlyReport.upsert({
+      where: {
+        yearMonth_projectId_userId: {
+          yearMonth: sampleYearMonth,
+          projectId: seed.projectId,
+          userId: seed.userId,
+        },
+      },
+      update: seed,
+      create: {
+        yearMonth: sampleYearMonth,
+        ...seed,
       },
     });
   }

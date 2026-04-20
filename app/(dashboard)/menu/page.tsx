@@ -32,8 +32,8 @@ function buildCards(role: string, visibility: UserMenuVisibility, canManageUsers
   if (visibility.monthlyReport) {
     cards.push({
       title: "月報作成",
-      description: "将来的に月報入力や提出フローを追加するためのメニューです。",
-      status: "準備中",
+      description: "毎月の成果、課題、来月の重点アクションを記録し、下書き保存や提出ができます。",
+      href: "/monthly-report",
     });
   }
 

@@ -113,6 +113,7 @@ model User {
   departmentUnassignedMonthlyAssignments DepartmentUnassignedMonthlyAssignment[]
   monthlyCosts                           MonthlyCost[]
   employeeSalesRateSettings              EmployeeSalesRateSetting[]
+  personalMonthlyReports                 PersonalMonthlyReport[]
   approvalLogs                           ApprovalLog[]                           @relation("ApprovalActor")
   auditLogs                              AuditLog[]                              @relation("AuditActor")
 
@@ -184,23 +185,26 @@ model Position {
 }
 
 model Team {
-  id               String                @id @default(cuid())
-  departmentId     String?               @map("department_id")
-  name             String
-  leaderUserId     String?               @map("leader_user_id")
-  isActive         Boolean               @default(true) @map("is_active")
-  createdAt        DateTime              @default(now()) @map("created_at")
-  updatedAt        DateTime              @updatedAt @map("updated_at")
-  department       Department?           @relation(fields: [departmentId], references: [id])
-  leader           User?                 @relation("TeamLeader", fields: [leaderUserId], references: [id])
-  memberships      TeamMembership[]
-  evaluations      EmployeeEvaluation[]
-  assignments      MonthlyAssignment[]
-  costs            MonthlyCost[]
-  teamMonthlyPls   TeamMonthlyPl[]
-  indirectCosts    TeamIndirectCost[]
-  fixedAllocations FixedCostAllocation[]
-  targets          TeamTarget[]
+  id                     String                  @id @default(cuid())
+  departmentId           String?                 @map("department_id")
+  name                   String
+  leaderUserId           String?                 @map("leader_user_id")
+  isActive               Boolean                 @default(true) @map("is_active")
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @updatedAt @map("updated_at")
+  department             Department?             @relation(fields: [departmentId], references: [id])
+  leader                 User?                   @relation("TeamLeader", fields: [leaderUserId], references: [id])
+  memberships            TeamMembership[]
+  evaluations            EmployeeEvaluation[]
+  assignments            MonthlyAssignment[]
+  costs                  MonthlyCost[]
+  teamMonthlyPls         TeamMonthlyPl[]
+  indirectCosts          TeamIndirectCost[]
+  fixedAllocations       FixedCostAllocation[]
+  targets                TeamTarget[]
+  monthlyReportProjects  MonthlyReportProject[]
+  teamMonthlyReports     TeamMonthlyReport[]
+  personalMonthlyReports PersonalMonthlyReport[]
 
   @@map("teams")
 }
@@ -655,4 +659,71 @@ model PartnerOutsourceRateSetting {
 
   @@unique([partnerId, effectiveFrom])
   @@map("partner_outsource_rate_settings")
+}
+
+model MonthlyReportProject {
+  id               String                  @id @default(cuid())
+  name             String
+  normalizedName   String                  @map("normalized_name")
+  teamId           String?                 @map("team_id")
+  teamNameSnapshot String                  @default("個人") @map("team_name_snapshot")
+  createdBy        String                  @map("created_by")
+  isActive         Boolean                 @default(true) @map("is_active")
+  createdAt        DateTime                @default(now()) @map("created_at")
+  updatedAt        DateTime                @updatedAt @map("updated_at")
+  team             Team?                   @relation(fields: [teamId], references: [id])
+  teamReports      TeamMonthlyReport[]
+  personalReports  PersonalMonthlyReport[]
+
+  @@unique([normalizedName, teamId])
+  @@index([teamId, isActive])
+  @@index([normalizedName])
+  @@map("monthly_report_projects")
+}
+
+model TeamMonthlyReport {
+  id                   String               @id @default(cuid())
+  yearMonth            String               @map("year_month")
+  projectId            String               @map("project_id")
+  teamId               String               @map("team_id")
+  projectSummary       String               @default("") @map("project_summary")
+  teamSelfGrowthIssue  String               @default("") @map("team_self_growth_issue")
+  teamSelfGrowthResult String               @default("") @map("team_self_growth_result")
+  teamSynergyIssue     String               @default("") @map("team_synergy_issue")
+  teamSynergyResult    String               @default("") @map("team_synergy_result")
+  updatedBy            String               @map("updated_by")
+  createdAt            DateTime             @default(now()) @map("created_at")
+  updatedAt            DateTime             @updatedAt @map("updated_at")
+  project              MonthlyReportProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  team                 Team                 @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([yearMonth, projectId, teamId])
+  @@index([teamId, yearMonth])
+  @@map("team_monthly_reports")
+}
+
+model PersonalMonthlyReport {
+  id                       String               @id @default(cuid())
+  yearMonth                String               @map("year_month")
+  projectId                String               @map("project_id")
+  userId                   String               @map("user_id")
+  teamId                   String?              @map("team_id")
+  teamNameSnapshot         String               @default("個人") @map("team_name_snapshot")
+  userRoleCode             String               @default("employee") @map("user_role_code")
+  memberType               String               @default("member") @map("member_type")
+  projectRole              String               @default("") @map("project_role")
+  personalSelfGrowthIssue  String               @default("") @map("personal_self_growth_issue")
+  personalSelfGrowthResult String               @default("") @map("personal_self_growth_result")
+  personalSynergyIssue     String               @default("") @map("personal_synergy_issue")
+  personalSynergyResult    String               @default("") @map("personal_synergy_result")
+  createdAt                DateTime             @default(now()) @map("created_at")
+  updatedAt                DateTime             @updatedAt @map("updated_at")
+  project                  MonthlyReportProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user                     User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team                     Team?                @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@unique([yearMonth, projectId, userId])
+  @@index([userId, yearMonth])
+  @@index([teamId, yearMonth])
+  @@map("personal_monthly_reports")
 }
