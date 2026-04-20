@@ -16,7 +16,7 @@ export type GradeSalarySettingBundle = GradeSalarySetting & {
 
 const defaultBundle: GradeSalarySettingBundle = {
   baseAmount: 180000,
-  pointUnitAmount: 3000,
+  pointUnitAmount: 1000,
   effectiveFrom: "2026-04-01",
   remarks: "ベース金額 + G点×1点金額 で本給を算出",
   source: "default",
