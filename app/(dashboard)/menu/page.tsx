@@ -1,6 +1,4 @@
 import Link from "next/link";
-
-import { MobileInstallBanner } from "@/components/mobile-install-banner";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import type { UserMenuVisibility } from "@/lib/menu-visibility/menu-visibility-service";
 import { getUserMenuVisibility } from "@/lib/menu-visibility/menu-visibility-service";
@@ -93,8 +91,6 @@ export default async function MenuPage() {
             </div>
           </div>
         </header>
-
-        <MobileInstallBanner />
 
         <section className="mt-8 grid gap-5 md:grid-cols-2">
           {cards.length === 0 ? (
