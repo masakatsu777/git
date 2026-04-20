@@ -1,16 +1,15 @@
-import { EmailLoginForm } from "@/components/auth/employee-code-login-form";
-import { SessionActionButton } from "@/components/auth/session-action-button";
 import { SAMPLE_LOGIN_PASSWORD } from "@/lib/auth/password-constants";
 import { getLoginUserOptions, getSessionUser } from "@/lib/auth/demo-session";
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirectTo?: string }>;
+  searchParams: Promise<{ redirectTo?: string; error?: string }>;
 }) {
   const showQuickLogin = process.env.NODE_ENV !== "production";
   const [users, currentUser, params] = await Promise.all([getLoginUserOptions(), getSessionUser(), searchParams]);
   const redirectTo = params.redirectTo?.trim() || undefined;
+  const error = params.error?.trim() || "";
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_color-mix(in_oklab,var(--color-brand-400)_18%,transparent),_transparent_36%),linear-gradient(180deg,#071321_0%,#020617_100%)] text-white">
@@ -27,18 +26,22 @@ export default async function LoginPage({
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <SessionActionButton
-                mode="logout"
-                redirectTo="/login"
-                className="rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white"
-              >
-                ログアウト
-              </SessionActionButton>
+              <form action="/auth/logout-web" method="post">
+                <input type="hidden" name="redirectTo" value="/login" />
+                <button type="submit" className="rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white">
+                  ログアウト
+                </button>
+              </form>
             </div>
           </div>
           {redirectTo ? (
             <div className="mt-5 rounded-[1.5rem] border border-amber-300/20 bg-amber-300/10 px-5 py-4 text-sm text-amber-100">
               ログイン後は <span className="font-semibold">{redirectTo}</span> へ戻ります。
+            </div>
+          ) : null}
+          {error ? (
+            <div className="mt-5 rounded-[1.5rem] border border-rose-300/20 bg-rose-300/10 px-5 py-4 text-sm text-rose-100">
+              メールアドレスまたはパスワードが正しくありません。
             </div>
           ) : null}
           <div className={`mt-6 grid gap-4 ${showQuickLogin ? "lg:grid-cols-[1.2fr_0.8fr]" : "lg:grid-cols-1"}`}>
@@ -54,7 +57,36 @@ export default async function LoginPage({
                 </p>
               </div>
             ) : null}
-            <EmailLoginForm redirectTo={redirectTo} />
+            <form action="/auth/login-web" method="post" className="rounded-[1.5rem] bg-white/8 p-5">
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-300">Email Login</p>
+              {redirectTo ? <input type="hidden" name="redirectTo" value={redirectTo} /> : null}
+              <label className="mt-4 block text-sm text-slate-200">
+                メールアドレス
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="例: user@example.co.jp"
+                  className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  autoComplete="email"
+                />
+              </label>
+              <label className="mt-4 block text-sm text-slate-200">
+                パスワード
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="パスワード"
+                  className="mt-2 w-full rounded-2xl border border-white/15 bg-white px-4 py-3 text-slate-950 outline-none"
+                  autoComplete="current-password"
+                />
+              </label>
+              <button
+                type="submit"
+                className="mt-4 w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              >
+                メールアドレスでログイン
+              </button>
+            </form>
           </div>
         </header>
 
@@ -77,14 +109,16 @@ export default async function LoginPage({
                     <dd className="text-right font-medium text-white">{user.teamName}</dd>
                   </div>
                 </dl>
-                <SessionActionButton
-                  mode="login"
-                  userId={user.id}
-                  redirectTo={redirectTo || "/menu"}
-                  className="mt-6 w-full rounded-full bg-brand-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-brand-300"
-                >
-                  このユーザーでログイン
-                </SessionActionButton>
+                <form action="/auth/login-web" method="post" className="mt-6">
+                  <input type="hidden" name="userId" value={user.id} />
+                  <input type="hidden" name="redirectTo" value={redirectTo || "/menu"} />
+                  <button
+                    type="submit"
+                    className="w-full rounded-full bg-brand-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-brand-300"
+                  >
+                    このユーザーでログイン
+                  </button>
+                </form>
               </article>
             ))}
           </section>
