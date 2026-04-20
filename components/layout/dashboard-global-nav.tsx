@@ -67,7 +67,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
           <button
             type="button"
             onClick={() => setIsOpen((current) => !current)}
-            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 lg:hidden"
+            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium !text-black shadow-sm transition hover:border-slate-300 hover:!text-black lg:hidden"
             aria-expanded={isOpen}
             aria-controls="dashboard-global-nav"
           >
@@ -83,7 +83,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white hover:border-slate-300"}`}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white !text-black hover:border-slate-300 hover:!text-black"}`}
               >
                 <span style={{ color: active ? "#ffffff" : "#000000" }}>{item.label}</span>
               </Link>
@@ -93,7 +93,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
           <SessionActionButton
             mode="logout"
             redirectTo="/login"
-            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300"
+            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium !text-black transition hover:border-slate-300 hover:!text-black"
           >
             ログアウト
           </SessionActionButton>
@@ -113,7 +113,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`rounded-2xl px-4 py-3 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-800 hover:border-slate-300"}`}
+                            className={`rounded-2xl px-4 py-3 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white !text-black hover:border-slate-300 hover:!text-black"}`}
                             onClick={() => setIsOpen(false)}
                           >
                             {item.label}
@@ -128,7 +128,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
                 <SessionActionButton
                   mode="logout"
                   redirectTo="/login"
-                  className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300"
+                  className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium !text-black transition hover:border-slate-300 hover:!text-black"
                 >
                   ログアウト
                 </SessionActionButton>
