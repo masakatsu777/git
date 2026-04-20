@@ -85,7 +85,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
               <input type="hidden" name="redirectTo" value="/login" />
               <button
                 type="submit"
-                className="inline-flex rounded-full border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                className="inline-flex rounded-full border border-white/20 bg-white px-4 py-2 text-sm font-semibold !text-black transition hover:bg-slate-100 hover:!text-black"
               >
                 ログアウト
               </button>
@@ -96,7 +96,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
               <Link
                 key={`${item.href}:${item.label}`}
                 href={item.href}
-                className="rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-brand-300 hover:text-slate-950"
+                className="rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-semibold !text-black transition hover:bg-brand-300 hover:!text-black"
               >
                 {item.label}
               </Link>
