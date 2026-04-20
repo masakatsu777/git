@@ -183,6 +183,26 @@ function normalizeSearch(value: string) {
   return normalizeText(value).toLowerCase();
 }
 
+function sanitizeNumber(value: unknown, fallback = 0) {
+  const next = Number(value);
+  return Number.isFinite(next) ? next : fallback;
+}
+
+function sanitizeGoalType(value: unknown): AnnualGoalType {
+  return value === "personal" ? "personal" : "team";
+}
+
+function sanitizeGrossProfitStatus(value: unknown): GrossProfitStatus {
+  return value === "under" ? "under" : "achieved";
+}
+
+function sanitizeAnnualGoalJudgement(value: unknown): AnnualGoalJudgement {
+  if (value === "gross-profit-first" || value === "growth-first" || value === "maintain-and-improve") {
+    return value;
+  }
+  return "growth-first";
+}
+
 function getCurrentFiscalYear() {
   const now = new Date();
   const year = now.getFullYear();
@@ -214,6 +234,68 @@ function buildFallbackAnalysis(): AnnualGoalAnalysis {
     overallJudgement: "gross-profit-first",
     insightComment: "粗利目標が未達のため、まずは収益性改善を最優先にし、自律的成長の底上げを進めるのが有効です。",
     priorityThemeCandidates: ["粗利達成を最優先", "自律的成長の底上げ", "案件推進の標準化"],
+  };
+}
+
+function sanitizeStringArray(value: unknown) {
+  return Array.isArray(value)
+    ? value.map((item) => normalizeText(String(item ?? ""))).filter(Boolean)
+    : [];
+}
+
+function sanitizeAnnualGoalAnalysis(input?: Partial<AnnualGoalAnalysis> | null): AnnualGoalAnalysis {
+  const fallback = buildFallbackAnalysis();
+  return {
+    grossProfitTargetRate: sanitizeNumber(input?.grossProfitTargetRate, fallback.grossProfitTargetRate),
+    grossProfitActualRate: sanitizeNumber(input?.grossProfitActualRate, fallback.grossProfitActualRate),
+    grossProfitDiff: sanitizeNumber(input?.grossProfitDiff, fallback.grossProfitDiff),
+    grossProfitStatus: sanitizeGrossProfitStatus(input?.grossProfitStatus),
+    selfGrowthAverage: sanitizeNumber(input?.selfGrowthAverage, fallback.selfGrowthAverage),
+    synergyAverage: sanitizeNumber(input?.synergyAverage, fallback.synergyAverage),
+    selfGrowthDelta: sanitizeNumber(input?.selfGrowthDelta, fallback.selfGrowthDelta),
+    synergyDelta: sanitizeNumber(input?.synergyDelta, fallback.synergyDelta),
+    weakItems: sanitizeStringArray(input?.weakItems),
+    overallJudgement: sanitizeAnnualGoalJudgement(input?.overallJudgement),
+    insightComment: normalizeText(String(input?.insightComment ?? "")) || fallback.insightComment,
+    priorityThemeCandidates: sanitizeStringArray(input?.priorityThemeCandidates),
+  };
+}
+
+function sanitizeAnnualGoalRecord(input: Partial<AnnualGoalRecord>): AnnualGoalRecord | null {
+  const id = normalizeText(String(input.id ?? ""));
+  const fiscalYear = sanitizeNumber(input.fiscalYear, getCurrentFiscalYear());
+  const goalType = sanitizeGoalType(input.goalType);
+  const targetName = normalizeText(String(input.targetName ?? ""));
+  const evaluationPeriodId = normalizeText(String(input.evaluationPeriodId ?? ""));
+  const evaluationPeriodName = normalizeText(String(input.evaluationPeriodName ?? ""));
+
+  if (!id || !targetName || !evaluationPeriodId || !evaluationPeriodName) {
+    return null;
+  }
+
+  return {
+    id,
+    fiscalYear,
+    goalType,
+    targetTeamId: input.targetTeamId ? normalizeText(String(input.targetTeamId)) : null,
+    targetUserId: input.targetUserId ? normalizeText(String(input.targetUserId)) : null,
+    targetName,
+    evaluationPeriodId,
+    evaluationPeriodName,
+    priorityTheme: normalizeText(String(input.priorityTheme ?? "")),
+    currentAnalysis: normalizeText(String(input.currentAnalysis ?? "")),
+    annualGoal: normalizeText(String(input.annualGoal ?? "")),
+    grossProfitActions: normalizeText(String(input.grossProfitActions ?? "")),
+    developmentActions: normalizeText(String(input.developmentActions ?? "")),
+    kpi: normalizeText(String(input.kpi ?? "")),
+    midtermMemo: normalizeText(String(input.midtermMemo ?? "")),
+    analysisSnapshot: sanitizeAnnualGoalAnalysis(input.analysisSnapshot),
+    createdBy: normalizeText(String(input.createdBy ?? "")),
+    createdByName: normalizeText(String(input.createdByName ?? "")),
+    updatedBy: normalizeText(String(input.updatedBy ?? "")),
+    updatedByName: normalizeText(String(input.updatedByName ?? "")),
+    createdAt: String(input.createdAt ?? new Date().toISOString()),
+    updatedAt: String(input.updatedAt ?? new Date().toISOString()),
   };
 }
 
@@ -279,7 +361,9 @@ async function readAnnualGoalFile(): Promise<AnnualGoalRecord[]> {
   try {
     const raw = await readFile(annualGoalFilePath, "utf8");
     const parsed = JSON.parse(raw) as AnnualGoalFile;
-    return (parsed.goals ?? []).filter((goal): goal is AnnualGoalRecord => Boolean(goal?.id));
+    return (parsed.goals ?? [])
+      .map((goal) => sanitizeAnnualGoalRecord(goal))
+      .filter((goal): goal is AnnualGoalRecord => Boolean(goal));
   } catch {
     return [];
   }
