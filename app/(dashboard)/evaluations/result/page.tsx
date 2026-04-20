@@ -8,6 +8,7 @@ import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getSalaryResultDetailBundle } from "@/lib/salary-simulations/salary-simulation-service";
 import { formatCurrencyWithUnit, formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
+import { EvaluationGapDiagnosisCard } from "@/components/evaluations/evaluation-gap-diagnosis-card";
 
 function formatCurrency(value: number) {
   return formatCurrencyWithUnit(value);
@@ -145,6 +146,16 @@ export default async function EvaluationResultPage({
 
         <section className="mt-8">
           <EvaluationResultSummary summary={{ ...finalReview, finalRating: displayedFinalRating }} />
+        </section>
+
+        <section className="mt-8">
+          <EvaluationGapDiagnosisCard
+            summary={{
+              gradeSalaryAmount: finalReview.gradeSalaryAmount,
+              currentSalary: finalReview.currentSalary,
+              grossProfitVarianceRate: finalReview.grossProfitVarianceRate,
+            }}
+          />
         </section>
 
         {hasFinalizedAnnualRaise && salaryRow ? (

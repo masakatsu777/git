@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
+import { EvaluationGapDiagnosisCard } from "@/components/evaluations/evaluation-gap-diagnosis-card";
 import type { FinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import type {
   ManagerCategoryReviewStatus,
@@ -426,6 +427,14 @@ export function ManagerReviewEditor({ canEdit, canBulkApprove, defaults, summary
       </div>
 
       <EvaluationResultSummary summary={summary} />
+
+      <EvaluationGapDiagnosisCard
+        summary={{
+          gradeSalaryAmount: summary.gradeSalaryAmount,
+          currentSalary: summary.currentSalary,
+          grossProfitVarianceRate: summary.grossProfitVarianceRate,
+        }}
+      />
 
       <section className="rounded-3xl border border-slate-200 p-4">
         <h3 className="font-semibold text-slate-950">対象メンバー</h3>

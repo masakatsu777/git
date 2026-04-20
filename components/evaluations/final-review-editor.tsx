@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { EvaluationResultSummary } from "@/components/evaluations/evaluation-result-summary";
+import { EvaluationGapDiagnosisCard } from "@/components/evaluations/evaluation-gap-diagnosis-card";
 import type { FinalReviewBundle, FinalReviewItem } from "@/lib/evaluations/final-review-service";
 
 type FinalReviewEditorProps = {
@@ -203,6 +204,14 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
 
       <EvaluationResultSummary summary={defaults} />
 
+      <EvaluationGapDiagnosisCard
+        summary={{
+          gradeSalaryAmount: defaults.gradeSalaryAmount,
+          currentSalary: defaults.currentSalary,
+          grossProfitVarianceRate: defaults.grossProfitVarianceRate,
+        }}
+      />
+
       <section className="rounded-3xl border border-slate-200 p-4">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
@@ -277,7 +286,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
           placeholder="自律成長力全体に対する最終コメントを入力"
         />
-        {showSelfGrowthDetails && detailViewMode !== "SUMMARY" ? renderReferenceItems(selfGrowthItems, false, detailViewMode) : null}
+        {showSelfGrowthDetails && detailViewMode !== "SUMMARY" ? renderReferenceItems(selfGrowthItems, true, detailViewMode) : null}
       </section>
 
       <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-5">
