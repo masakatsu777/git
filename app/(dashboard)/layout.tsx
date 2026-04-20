@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { ReactNode } from "react";
 
+import { DashboardGlobalNav } from "@/components/layout/dashboard-global-nav";
 import { getSessionUser } from "@/lib/auth/demo-session";
 import { getUserMenuVisibility } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasPermission } from "@/lib/permissions/check";
@@ -74,36 +74,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
 
   return (
     <>
-      <div className="sticky top-0 z-40 border-b border-slate-300 bg-slate-950 text-white shadow-[0_10px_30px_rgba(15,23,42,0.22)]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-300">Navigation</p>
-              <p className="mt-1 text-sm font-medium text-white">{user.name} / {user.role}</p>
-            </div>
-            <form action="/auth/logout-web" method="post">
-              <input type="hidden" name="redirectTo" value="/login" />
-              <button
-                type="submit"
-                className="inline-flex rounded-full border border-white/20 bg-white px-4 py-2 text-sm font-semibold !text-black transition hover:bg-slate-100 hover:!text-black"
-              >
-                ログアウト
-              </button>
-            </form>
-          </div>
-          <nav className="flex flex-wrap gap-2">
-            {items.map((item) => (
-              <Link
-                key={`${item.href}:${item.label}`}
-                href={item.href}
-                className="rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-semibold !text-black transition hover:bg-brand-300 hover:!text-black"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
+      <DashboardGlobalNav userName={user.name} role={user.role} items={items} />
       {children}
     </>
   );
