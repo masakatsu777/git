@@ -74,18 +74,18 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
 
   return (
     <>
-      <div className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6">
+      <div className="sticky top-0 z-40 border-b border-slate-300 bg-slate-950 text-white shadow-[0_10px_30px_rgba(15,23,42,0.22)]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Navigation</p>
-              <p className="mt-1 text-sm text-slate-600">{user.name} / {user.role}</p>
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-300">Navigation</p>
+              <p className="mt-1 text-sm font-medium text-white">{user.name} / {user.role}</p>
             </div>
             <form action="/auth/logout-web" method="post">
               <input type="hidden" name="redirectTo" value="/login" />
               <button
                 type="submit"
-                className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300"
+                className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
               >
                 ログアウト
               </button>
@@ -96,7 +96,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
               <Link
                 key={`${item.href}:${item.label}`}
                 href={item.href}
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-800 transition hover:border-slate-300"
+                className="rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-brand-300 hover:text-slate-950"
               >
                 {item.label}
               </Link>
