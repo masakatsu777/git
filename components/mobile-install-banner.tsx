@@ -11,18 +11,52 @@ const DISMISS_KEY = "git-members-install-banner-dismissed";
 
 function isStandaloneMode() {
   if (typeof window === "undefined") return false;
-  return window.matchMedia("(display-mode: standalone)").matches || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+  try {
+    const standaloneByMedia = typeof window.matchMedia === "function"
+      ? window.matchMedia("(display-mode: standalone)").matches
+      : false;
+    const standaloneByNavigator = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    return standaloneByMedia || standaloneByNavigator;
+  } catch {
+    return false;
+  }
 }
 
 function detectIos() {
   if (typeof window === "undefined") return false;
-  return /iPad|iPhone|iPod/.test(window.navigator.userAgent);
+  try {
+    return /iPad|iPhone|iPod/.test(window.navigator.userAgent);
+  } catch {
+    return false;
+  }
 }
 
 function detectSafari() {
   if (typeof window === "undefined") return false;
-  const userAgent = window.navigator.userAgent;
-  return /Safari/.test(userAgent) && !/CriOS|FxiOS|EdgiOS/.test(userAgent);
+  try {
+    const userAgent = window.navigator.userAgent;
+    return /Safari/.test(userAgent) && !/CriOS|FxiOS|EdgiOS/.test(userAgent);
+  } catch {
+    return false;
+  }
+}
+
+function readDismissedState() {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(DISMISS_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function persistDismissedState() {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(DISMISS_KEY, "1");
+  } catch {
+    // Ignore storage write failures and simply close the banner for this session.
+  }
 }
 
 export function MobileInstallBanner() {
@@ -34,7 +68,7 @@ export function MobileInstallBanner() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const standalone = isStandaloneMode();
-      const dismissed = window.localStorage.getItem(DISMISS_KEY) === "1";
+      const dismissed = readDismissedState();
       setIsStandalone(standalone);
       setIsIos(detectIos() && detectSafari());
       setIsOpen(!standalone && !dismissed);
@@ -74,7 +108,7 @@ export function MobileInstallBanner() {
   }
 
   function dismissBanner() {
-    window.localStorage.setItem(DISMISS_KEY, "1");
+    persistDismissedState();
     setIsOpen(false);
   }
 
