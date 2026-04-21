@@ -979,10 +979,38 @@ async function buildPersonalGrossProfitSummary(targetUserId: string | null, eval
   }
 
   try {
-    const review = await getFinalReviewBundle(targetUserId, evaluationPeriodId);
+    const period = await resolvePeriodWithRange(evaluationPeriodId);
+    const months = buildPeriodYearMonths(period.startDate, period.endDate);
+    const [review, rows] = await Promise.all([
+      getFinalReviewBundle(targetUserId, evaluationPeriodId),
+      Promise.all(months.map((yearMonth) => getPersonalMonthlyProfitByUser(targetUserId, yearMonth))),
+    ]);
+    const effectiveRows = rows.filter((row): row is NonNullable<typeof row> => Boolean(row));
+    const personalSalesTotal = effectiveRows.reduce((sum, row) => sum + row.salesTotal, 0);
+    const personalFinalGrossProfit = effectiveRows.reduce((sum, row) => sum + row.finalGrossProfit, 0);
+    const personalTargetGrossProfitAmount = effectiveRows.reduce(
+      (sum, row) => sum + row.salesTotal * (row.targetGrossProfitRate / 100),
+      0,
+    );
+    const personalGrossProfitVarianceRate = personalSalesTotal === 0
+      ? 0
+      : round2(((personalFinalGrossProfit - personalTargetGrossProfitAmount) / personalSalesTotal) * 100);
+    const averagePersonalGrossProfitShortfall = effectiveRows.length > 0
+      ? effectiveRows.reduce((sum, row) => {
+          const targetGrossProfitAmount = row.salesTotal * (row.targetGrossProfitRate / 100);
+          const shortfallAmount = row.finalGrossProfit - targetGrossProfitAmount;
+          return sum + Math.min(0, shortfallAmount);
+        }, 0) / effectiveRows.length
+      : 0;
+    const currentSalary = review.currentSalary;
+    const gradeSalaryAmount = review.gradeSalaryAmount || currentSalary;
+    const grossProfitDeductionAmount = personalGrossProfitVarianceRate < 0
+      ? Math.round(averagePersonalGrossProfitShortfall + (currentSalary - gradeSalaryAmount))
+      : Math.round(gradeSalaryAmount * (personalGrossProfitVarianceRate / 100));
+
     return {
-      personalGrossProfitVarianceRate: review.personalGrossProfitVarianceRate,
-      grossProfitDeductionAmount: review.grossProfitDeductionAmount,
+      personalGrossProfitVarianceRate,
+      grossProfitDeductionAmount,
     };
   } catch {
     return {
