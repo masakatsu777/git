@@ -111,12 +111,15 @@ export type AnnualGoalListBundle = {
   };
   rows: Array<{
     id: string;
+    goalId: string | null;
+    hasSavedGoal: boolean;
     fiscalYear: number;
     goalType: AnnualGoalType;
     targetName: string;
     grossProfitStatus: GrossProfitStatus;
     priorityTheme: string;
-    updatedAt: string;
+    updatedAt: string | null;
+    evaluationPeriodName: string;
     canEdit: boolean;
     analysisSummary: {
       grossProfitTargetRate: number;
@@ -155,6 +158,14 @@ export type AnnualGoalDetailBundle = {
     updatedAt: string;
     canEdit: boolean;
   };
+};
+
+type AnnualGoalAnalysisTarget = {
+  id: string;
+  goalType: AnnualGoalType;
+  targetTeamId: string | null;
+  targetUserId: string | null;
+  targetName: string;
 };
 
 export type AnnualGoalReference = {
@@ -590,6 +601,91 @@ async function resolveTargetUserIds(context: ViewerTargetContext) {
   return memberships.map((membership) => membership.userId);
 }
 
+async function resolveAnnualGoalAnalysisTargets(sessionUser: SessionUser, goalTypeFilter?: string): Promise<AnnualGoalAnalysisTarget[]> {
+  const includeTeam = !goalTypeFilter || goalTypeFilter === "team";
+  const includePersonal = !goalTypeFilter || goalTypeFilter === "personal";
+
+  if (!hasDatabaseUrl()) {
+    const fallback: AnnualGoalAnalysisTarget[] = [];
+    if (includeTeam) {
+      fallback.push({
+        id: "team:team-platform",
+        goalType: "team",
+        targetTeamId: "team-platform",
+        targetUserId: null,
+        targetName: "プラットフォームチーム",
+      });
+    }
+    if (includePersonal) {
+      fallback.push(
+        {
+          id: "user:demo-admin",
+          goalType: "personal",
+          targetTeamId: null,
+          targetUserId: "demo-admin",
+          targetName: "管理 花子",
+        },
+        {
+          id: "user:demo-leader",
+          goalType: "personal",
+          targetTeamId: null,
+          targetUserId: "demo-leader",
+          targetName: "主任 次郎",
+        },
+        {
+          id: "user:demo-employee",
+          goalType: "personal",
+          targetTeamId: null,
+          targetUserId: "demo-employee",
+          targetName: "開発 一郎",
+        },
+      );
+    }
+    return fallback;
+  }
+
+  const targets: AnnualGoalAnalysisTarget[] = [];
+
+  if (includeTeam) {
+    const teams = await prisma.team.findMany({
+      where: { isActive: true },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    });
+    targets.push(
+      ...teams.map((team) => ({
+        id: `team:${team.id}`,
+        goalType: "team" as const,
+        targetTeamId: team.id,
+        targetUserId: null,
+        targetName: team.name,
+      })),
+    );
+  }
+
+  if (includePersonal) {
+    const users = await prisma.user.findMany({
+      where: { status: "ACTIVE" },
+      orderBy: [{ employeeCode: "asc" }, { name: "asc" }],
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    targets.push(
+      ...users.map((user) => ({
+        id: `user:${user.id}`,
+        goalType: "personal" as const,
+        targetTeamId: null,
+        targetUserId: user.id,
+        targetName: user.name,
+      })),
+    );
+  }
+
+  return targets;
+}
+
 async function calculateGrossProfitAnalysis(context: ViewerTargetContext, evaluationPeriodId: string) {
   if (!hasDatabaseUrl()) {
     return {
@@ -907,7 +1003,6 @@ export async function getAnnualGoalListBundle(
     grossProfitStatus?: string;
   },
 ): Promise<AnnualGoalListBundle> {
-  const context = await resolveViewerTargetContext(sessionUser);
   const goals = await readAnnualGoalFile();
   const normalizedFilters = {
     fiscalYear: normalizeText(filters?.fiscalYear ?? ""),
@@ -916,45 +1011,123 @@ export async function getAnnualGoalListBundle(
     priorityKeyword: normalizeText(filters?.priorityKeyword ?? ""),
     grossProfitStatus: normalizeText(filters?.grossProfitStatus ?? ""),
   };
+  const canViewAnalysisSummary = sessionUser.role === "admin" || sessionUser.role === "president";
+  const effectiveFiscalYear = Number.isFinite(Number(normalizedFilters.fiscalYear))
+    ? Number(normalizedFilters.fiscalYear)
+    : getCurrentFiscalYear();
 
-  const rows = goals
-    .filter((goal) => {
-      const matchesFiscalYear = !normalizedFilters.fiscalYear || String(goal.fiscalYear) === normalizedFilters.fiscalYear;
-      const matchesGoalType = !normalizedFilters.goalType || goal.goalType === normalizedFilters.goalType;
-      const matchesTarget = !normalizedFilters.targetKeyword || normalizeSearch(goal.targetName).includes(normalizeSearch(normalizedFilters.targetKeyword));
-      const matchesPriority = !normalizedFilters.priorityKeyword || normalizeSearch(goal.priorityTheme).includes(normalizeSearch(normalizedFilters.priorityKeyword));
-      const matchesStatus = !normalizedFilters.grossProfitStatus || goal.analysisSnapshot.grossProfitStatus === normalizedFilters.grossProfitStatus;
-      return matchesFiscalYear && matchesGoalType && matchesTarget && matchesPriority && matchesStatus;
-    })
-    .sort((left, right) =>
-      right.fiscalYear - left.fiscalYear
-      || right.updatedAt.localeCompare(left.updatedAt)
-      || left.targetName.localeCompare(right.targetName, "ja"),
-    )
-    .map((goal) => ({
-      id: goal.id,
-      fiscalYear: goal.fiscalYear,
-      goalType: goal.goalType,
-      targetName: goal.targetName,
-      grossProfitStatus: goal.analysisSnapshot.grossProfitStatus,
-      priorityTheme: goal.priorityTheme,
-      updatedAt: goal.updatedAt,
-      canEdit: canEditRecord(goal, context),
-      analysisSummary: {
-        grossProfitTargetRate: goal.analysisSnapshot.grossProfitTargetRate,
-        grossProfitActualRate: goal.analysisSnapshot.grossProfitActualRate,
-        grossProfitDiff: goal.analysisSnapshot.grossProfitDiff,
-        selfGrowthAverage: goal.analysisSnapshot.selfGrowthAverage,
-        synergyAverage: goal.analysisSnapshot.synergyAverage,
-        overallJudgement: goal.analysisSnapshot.overallJudgement,
-        weakItems: goal.analysisSnapshot.weakItems,
-      },
-    }));
+  let rows: AnnualGoalListBundle["rows"] = [];
+
+  if (canViewAnalysisSummary) {
+    const targets = await resolveAnnualGoalAnalysisTargets(sessionUser, normalizedFilters.goalType);
+    const rowsWithAnalysis = await Promise.all(
+      targets.map(async (target) => {
+        const existingGoal = goals.find((goal) =>
+          goal.fiscalYear === effectiveFiscalYear
+          && goal.goalType === target.goalType
+          && (
+            (target.goalType === "team" && goal.targetTeamId === target.targetTeamId)
+            || (target.goalType === "personal" && goal.targetUserId === target.targetUserId)
+          ),
+        ) ?? null;
+
+        const context: ViewerTargetContext = {
+          viewerId: sessionUser.id,
+          viewerName: sessionUser.name,
+          viewerRole: sessionUser.role,
+          teamId: null,
+          teamName: null,
+          teamLeaderUserId: null,
+          goalType: target.goalType,
+          targetTeamId: target.targetTeamId,
+          targetUserId: target.targetUserId,
+          targetName: target.targetName,
+          canEdit: false,
+          notice: target.goalType === "team" ? "チーム年度目標を表示します。" : "個人年度目標を表示します。",
+        };
+        const period = await resolvePeriodWithRange(existingGoal?.evaluationPeriodId);
+        const analysis = existingGoal?.analysisSnapshot ?? await buildAnalysis(context, period.id);
+
+        return {
+          id: existingGoal?.id ?? target.id,
+          goalId: existingGoal?.id ?? null,
+          hasSavedGoal: Boolean(existingGoal),
+          fiscalYear: effectiveFiscalYear,
+          goalType: target.goalType,
+          targetName: target.targetName,
+          grossProfitStatus: analysis.grossProfitStatus,
+          priorityTheme: existingGoal?.priorityTheme ?? "",
+          updatedAt: existingGoal?.updatedAt ?? null,
+          evaluationPeriodName: existingGoal?.evaluationPeriodName ?? period.name,
+          canEdit: false,
+          analysisSummary: {
+            grossProfitTargetRate: analysis.grossProfitTargetRate,
+            grossProfitActualRate: analysis.grossProfitActualRate,
+            grossProfitDiff: analysis.grossProfitDiff,
+            selfGrowthAverage: analysis.selfGrowthAverage,
+            synergyAverage: analysis.synergyAverage,
+            overallJudgement: analysis.overallJudgement,
+            weakItems: analysis.weakItems,
+          },
+        };
+      }),
+    );
+
+    rows = rowsWithAnalysis
+      .filter((row) => {
+        const matchesTarget = !normalizedFilters.targetKeyword || normalizeSearch(row.targetName).includes(normalizeSearch(normalizedFilters.targetKeyword));
+        const matchesPriority = !normalizedFilters.priorityKeyword || normalizeSearch(row.priorityTheme).includes(normalizeSearch(normalizedFilters.priorityKeyword));
+        const matchesStatus = !normalizedFilters.grossProfitStatus || row.grossProfitStatus === normalizedFilters.grossProfitStatus;
+        return matchesTarget && matchesPriority && matchesStatus;
+      })
+      .sort((left, right) =>
+        left.goalType.localeCompare(right.goalType)
+        || left.targetName.localeCompare(right.targetName, "ja"),
+      );
+  } else {
+    const context = await resolveViewerTargetContext(sessionUser);
+    rows = goals
+      .filter((goal) => {
+        const matchesFiscalYear = !normalizedFilters.fiscalYear || String(goal.fiscalYear) === normalizedFilters.fiscalYear;
+        const matchesGoalType = !normalizedFilters.goalType || goal.goalType === normalizedFilters.goalType;
+        const matchesTarget = !normalizedFilters.targetKeyword || normalizeSearch(goal.targetName).includes(normalizeSearch(normalizedFilters.targetKeyword));
+        const matchesPriority = !normalizedFilters.priorityKeyword || normalizeSearch(goal.priorityTheme).includes(normalizeSearch(normalizedFilters.priorityKeyword));
+        const matchesStatus = !normalizedFilters.grossProfitStatus || goal.analysisSnapshot.grossProfitStatus === normalizedFilters.grossProfitStatus;
+        return matchesFiscalYear && matchesGoalType && matchesTarget && matchesPriority && matchesStatus;
+      })
+      .sort((left, right) =>
+        right.fiscalYear - left.fiscalYear
+        || right.updatedAt.localeCompare(left.updatedAt)
+        || left.targetName.localeCompare(right.targetName, "ja"),
+      )
+      .map((goal) => ({
+        id: goal.id,
+        goalId: goal.id,
+        hasSavedGoal: true,
+        fiscalYear: goal.fiscalYear,
+        goalType: goal.goalType,
+        targetName: goal.targetName,
+        grossProfitStatus: goal.analysisSnapshot.grossProfitStatus,
+        priorityTheme: goal.priorityTheme,
+        updatedAt: goal.updatedAt,
+        evaluationPeriodName: goal.evaluationPeriodName,
+        canEdit: canEditRecord(goal, context),
+        analysisSummary: {
+          grossProfitTargetRate: goal.analysisSnapshot.grossProfitTargetRate,
+          grossProfitActualRate: goal.analysisSnapshot.grossProfitActualRate,
+          grossProfitDiff: goal.analysisSnapshot.grossProfitDiff,
+          selfGrowthAverage: goal.analysisSnapshot.selfGrowthAverage,
+          synergyAverage: goal.analysisSnapshot.synergyAverage,
+          overallJudgement: goal.analysisSnapshot.overallJudgement,
+          weakItems: goal.analysisSnapshot.weakItems,
+        },
+      }));
+  }
 
   return {
     filters: normalizedFilters,
     permissions: {
-      canViewAnalysisSummary: sessionUser.role === "admin" || sessionUser.role === "president",
+      canViewAnalysisSummary,
     },
     rows,
   };

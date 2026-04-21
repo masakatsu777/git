@@ -28,9 +28,6 @@ export default async function AnnualGoalListPage({ searchParams }: AnnualGoalLis
             <div>
               <h1 className="text-3xl font-semibold">年度目標一覧</h1>
               <p className="mt-2 text-sm text-slate-300">粗利達成状況と重点テーマを起点に、チームまたは個人の年度目標を確認します。</p>
-              <p className="mt-3 text-xs text-amber-200">
-                debug: role={user.role} / canViewAnalysisSummary={String(bundle.permissions.canViewAnalysisSummary)}
-              </p>
             </div>
             <div className="flex gap-3">
               <Link href="/annual-goals/create" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">

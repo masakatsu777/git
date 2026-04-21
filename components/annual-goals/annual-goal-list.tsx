@@ -47,7 +47,10 @@ export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${row.grossProfitStatus === "under" ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"}`}>{formatStatus(row.grossProfitStatus)}</span>
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-slate-950">{row.targetName}</h2>
-              <p className="mt-2 text-sm text-slate-600">優先テーマ: {row.priorityTheme}</p>
+              <p className="mt-2 text-sm text-slate-600">
+                評価期間: {row.evaluationPeriodName}
+                {row.priorityTheme ? ` / 優先テーマ: ${row.priorityTheme}` : " / 年度目標未作成"}
+              </p>
               {bundle.permissions.canViewAnalysisSummary ? (
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
                   <div className="rounded-2xl bg-slate-50 px-4 py-3">
@@ -75,13 +78,19 @@ export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
                   </div>
                 </div>
               ) : null}
-              <p className="mt-1 text-sm text-slate-500">更新日: {formatDateTime(row.updatedAt)}</p>
+              <p className="mt-1 text-sm text-slate-500">更新日: {row.updatedAt ? formatDateTime(row.updatedAt) : "未作成"}</p>
             </div>
             <div className="flex gap-3">
-              <Link href={`/annual-goals/${row.id}`} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300">
-                詳細を見る
-              </Link>
-              {row.canEdit ? (
+              {row.goalId ? (
+                <Link href={`/annual-goals/${row.goalId}`} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300">
+                  詳細を見る
+                </Link>
+              ) : (
+                <span className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-400">
+                  分析のみ
+                </span>
+              )}
+              {row.canEdit && row.goalId ? (
                 <Link href={`/annual-goals/${row.id}/edit`} className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white">
                   編集する
                 </Link>
