@@ -55,19 +55,19 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
   const groups = useMemo(() => buildGroups(items), [items]);
 
   return (
-    <div className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/92 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+    <div className="relative z-40 border-b border-slate-200/80 bg-white/92 backdrop-blur lg:sticky lg:top-0">
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:py-4">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Navigation</p>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-xs text-slate-600 sm:text-sm">
               {userName} / {role}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setIsOpen((current) => !current)}
-            className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium !text-black shadow-sm transition hover:border-slate-300 hover:!text-black lg:hidden"
+            className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium !text-black shadow-sm transition hover:border-slate-300 hover:!text-black lg:hidden"
             aria-expanded={isOpen}
             aria-controls="dashboard-global-nav"
           >
@@ -101,7 +101,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
 
         {isOpen ? (
           <div id="dashboard-global-nav" className="lg:hidden">
-            <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+            <div className="rounded-[1.25rem] border border-slate-200 bg-white p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
               <div className="space-y-4">
                 {groups.map((group) => (
                   <section key={group.title}>
@@ -113,7 +113,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`rounded-2xl px-4 py-3 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white !text-black hover:border-slate-300 hover:!text-black"}`}
+                            className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition ${active ? "bg-slate-950 text-white" : "border border-slate-200 bg-white !text-black hover:border-slate-300 hover:!text-black"}`}
                             onClick={() => setIsOpen(false)}
                           >
                             {item.label}
@@ -128,7 +128,7 @@ export function DashboardGlobalNav({ userName, role, items }: DashboardGlobalNav
                 <SessionActionButton
                   mode="logout"
                   redirectTo="/login"
-                  className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium !text-black transition hover:border-slate-300 hover:!text-black"
+                  className="inline-flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium !text-black transition hover:border-slate-300 hover:!text-black"
                 >
                   ログアウト
                 </SessionActionButton>
