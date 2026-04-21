@@ -107,6 +107,19 @@ export default async function DashboardPage({
         { label: "粗利率差異", value: `${primarySnapshot?.varianceRate ?? 0}`, unit: "pt" },
       ];
 
+  const actionLinks = [
+    { href: "/login", label: "ログイン切替", show: true },
+    { href: `/pl/monthly?yearMonth=${yearMonth}`, label: "月次PL詳細", show: !showPersonalProfit },
+    { href: "/executive", label: "トップ経営ダッシュボード", show: true },
+    { href: "/pl/annual", label: "年度ダッシュボード", show: !showPersonalProfit || canViewAll },
+    { href: "/pl/annual-personal", label: "個人年度", show: true },
+    { href: "/settings/salary-records", label: "社員コスト設定", show: canManageSalary },
+    { href: "/settings/rates", label: "単価", show: canManageFixedCosts },
+    { href: "/settings/skill-careers", label: "評価制度設定", show: canManageFixedCosts },
+    { href: "/settings/fixed-costs", label: "全社固定費設定", show: canManageFixedCosts },
+    { href: "/operations/preflight", label: "本番前チェック", show: canManageFixedCosts },
+  ].filter((item) => item.show);
+
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f5f7fb_0%,#ecf2ff_100%)] text-slate-900">
       <div className="mx-auto max-w-6xl px-6 py-10">
@@ -139,57 +152,49 @@ export default async function DashboardPage({
               </label>
             </form>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/login" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-              ログイン切替
-            </Link>
-            <SessionActionButton
-              mode="logout"
-              redirectTo="/login"
-              className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white"
-            >
-              ログアウト
-            </SessionActionButton>
-            {!showPersonalProfit ? (
-              <Link href={`/pl/monthly?yearMonth=${yearMonth}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                月次PL詳細
-              </Link>
-            ) : null}
-            <Link href="/executive" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-              トップ経営ダッシュボード
-            </Link>
-            {(!showPersonalProfit || canViewAll) ? (
-              <Link href="/pl/annual" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                年度ダッシュボード
-              </Link>
-            ) : null}
-            <Link href="/pl/annual-personal" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-              個人年度
-            </Link>
-            {canManageSalary ? (
-              <Link href="/settings/salary-records" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                社員コスト設定
-              </Link>
-            ) : null}
-            {canManageFixedCosts ? (
-              <>
-                <Link href="/settings/rates" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                  単価
+          <div className="w-full sm:w-auto">
+            <div className="hidden flex-wrap gap-3 lg:flex">
+              {actionLinks.map((item) => (
+                <Link key={item.href} href={item.href} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
+                  {item.label}
                 </Link>
-                <Link href="/settings/skill-careers" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                  評価制度設定
-                </Link>
-                <Link href="/settings/fixed-costs" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                  全社固定費設定
-                </Link>
-                <Link href="/operations/preflight" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
-                  本番前チェック
-                </Link>
-              </>
-            ) : null}
-            {canEditTeam && !showPersonalProfit ? (
-              <span className="rounded-full bg-brand-300 px-4 py-2 text-sm font-semibold text-slate-950">PL入力可能</span>
-            ) : null}
+              ))}
+              <SessionActionButton
+                mode="logout"
+                redirectTo="/login"
+                className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white"
+              >
+                ログアウト
+              </SessionActionButton>
+              {canEditTeam && !showPersonalProfit ? (
+                <span className="rounded-full bg-brand-300 px-4 py-2 text-sm font-semibold text-slate-950">PL入力可能</span>
+              ) : null}
+            </div>
+
+            <details className="lg:hidden">
+              <summary className="list-none">
+                <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
+                  操作メニューを開く
+                </span>
+              </summary>
+              <div className="mt-3 grid gap-2 rounded-2xl border border-white/10 bg-white/10 p-3">
+                {actionLinks.map((item) => (
+                  <Link key={`${item.href}:mobile`} href={item.href} className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/15">
+                    {item.label}
+                  </Link>
+                ))}
+                <SessionActionButton
+                  mode="logout"
+                  redirectTo="/login"
+                  className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-white/15"
+                >
+                  ログアウト
+                </SessionActionButton>
+                {canEditTeam && !showPersonalProfit ? (
+                  <span className="rounded-2xl bg-brand-300 px-4 py-2.5 text-sm font-semibold text-slate-950">PL入力可能</span>
+                ) : null}
+              </div>
+            </details>
           </div>
         </header>
 
