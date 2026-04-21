@@ -14,6 +14,38 @@ type AnnualGoalListPageProps = Readonly<{
   }>;
 }>;
 
+function buildGoalTypeHref(
+  filters: {
+    fiscalYear: string;
+    goalType: string;
+    targetKeyword: string;
+    priorityKeyword: string;
+    grossProfitStatus: string;
+  },
+  goalType: string,
+) {
+  const params = new URLSearchParams();
+
+  if (filters.fiscalYear) {
+    params.set("fiscalYear", filters.fiscalYear);
+  }
+  if (filters.targetKeyword) {
+    params.set("targetKeyword", filters.targetKeyword);
+  }
+  if (filters.priorityKeyword) {
+    params.set("priorityKeyword", filters.priorityKeyword);
+  }
+  if (filters.grossProfitStatus) {
+    params.set("grossProfitStatus", filters.grossProfitStatus);
+  }
+  if (goalType) {
+    params.set("goalType", goalType);
+  }
+
+  const query = params.toString();
+  return query ? `/annual-goals?${query}` : "/annual-goals";
+}
+
 export default async function AnnualGoalListPage({ searchParams }: AnnualGoalListPageProps) {
   const params = await searchParams;
   const user = await getSessionUser();
@@ -41,18 +73,36 @@ export default async function AnnualGoalListPage({ searchParams }: AnnualGoalLis
         </header>
 
         <section className="mt-8 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-          <form className="grid gap-4 lg:grid-cols-[150px_150px_1fr_1fr_150px_auto] lg:items-end">
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: "", label: "すべて" },
+              { key: "team", label: "チーム" },
+              { key: "personal", label: "個人" },
+            ].map((tab) => {
+              const isActive = bundle.filters.goalType === tab.key || (!bundle.filters.goalType && tab.key === "");
+              return (
+                <Link
+                  key={tab.key || "all"}
+                  href={buildGoalTypeHref(bundle.filters, tab.key)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    isActive
+                      ? "bg-slate-950 text-white shadow-sm"
+                      : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
+          <p className="mt-4 text-sm text-slate-500">
+            個人タブでは、ユーザー設定で月報表示にチェックがあるユーザーのみ対象です。
+          </p>
+          <form className="mt-6 grid gap-4 lg:grid-cols-[150px_1fr_1fr_150px_auto] lg:items-end">
+            <input type="hidden" name="goalType" value={bundle.filters.goalType} />
             <label className="text-sm text-slate-700">
               年度
               <input name="fiscalYear" defaultValue={bundle.filters.fiscalYear} placeholder="2026" className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none" />
-            </label>
-            <label className="text-sm text-slate-700">
-              区分
-              <select name="goalType" defaultValue={bundle.filters.goalType} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none">
-                <option value="">すべて</option>
-                <option value="team">チーム</option>
-                <option value="personal">個人</option>
-              </select>
             </label>
             <label className="text-sm text-slate-700">
               対象名

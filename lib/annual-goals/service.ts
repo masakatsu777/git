@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { EvaluationPeriodStatus, ReviewType } from "@/generated/prisma";
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
+import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import type { SessionUser } from "@/lib/permissions/check";
 import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
@@ -672,14 +673,17 @@ async function resolveAnnualGoalAnalysisTargets(sessionUser: SessionUser, goalTy
         name: true,
       },
     });
+    const visibilityMap = await getUserMenuVisibilityMap(users.map((user) => user.id));
     targets.push(
-      ...users.map((user) => ({
+      ...users
+        .filter((user) => visibilityMap[user.id]?.monthlyReport)
+        .map((user) => ({
         id: `user:${user.id}`,
         goalType: "personal" as const,
         targetTeamId: null,
         targetUserId: user.id,
         targetName: user.name,
-      })),
+        })),
     );
   }
 
