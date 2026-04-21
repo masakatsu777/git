@@ -148,11 +148,11 @@ export default async function ProfitBreakdownPage({
             <table className="min-w-[1400px] text-left text-sm">
               <thead className="bg-stone-50 text-stone-500">
                 <tr>
-                  <th className="px-4 py-3 font-medium">区分</th>
-                  <th className="px-4 py-3 font-medium">名称</th>
+                  <th className="sticky left-0 z-20 w-24 border-r border-stone-200 bg-stone-50 px-4 py-3 font-medium">区分</th>
+                  <th className="sticky left-24 z-20 w-40 border-r border-stone-200 bg-stone-50 px-4 py-3 font-medium">名称</th>
+                  <th className="sticky left-64 z-20 w-36 border-r border-stone-200 bg-stone-50 px-4 py-3 font-medium">チーム</th>
                   <th className="px-4 py-3 font-medium">社員No./所属</th>
                   <th className="px-4 py-3 font-medium">部署</th>
-                  <th className="px-4 py-3 font-medium">チーム</th>
                   <th className="px-4 py-3 font-medium">所属状態</th>
                   <th className="px-4 py-3 font-medium">最終粗利</th>
                   <th className="px-4 py-3 font-medium">粗利率</th>
@@ -166,11 +166,11 @@ export default async function ProfitBreakdownPage({
               <tbody>
                 {bundle.rows.map((row) => (
                   <tr key={row.key} className="border-t border-stone-200">
-                    <td className="px-4 py-3 font-medium text-stone-950">{row.subjectType === "EMPLOYEE" ? "社員" : "パートナー"}</td>
-                    <td className="px-4 py-3 text-stone-900">{row.displayName}</td>
+                    <td className="sticky left-0 z-10 w-24 border-r border-stone-200 bg-white px-4 py-3 font-medium text-stone-950">{row.subjectType === "EMPLOYEE" ? "社員" : "パートナー"}</td>
+                    <td className="sticky left-24 z-10 w-40 border-r border-stone-200 bg-white px-4 py-3 text-stone-900">{row.displayName}</td>
+                    <td className="sticky left-64 z-10 w-36 border-r border-stone-200 bg-white px-4 py-3 text-stone-700">{row.teamName || "-"}</td>
                     <td className="px-4 py-3 text-stone-700">{row.secondaryLabel || "-"}</td>
                     <td className="px-4 py-3 text-stone-700">{row.departmentName || "-"}</td>
-                    <td className="px-4 py-3 text-stone-700">{row.teamName || "-"}</td>
                     <td className="px-4 py-3 text-stone-700">
                       {row.membershipStatus === "PARTNER" ? "-" : row.membershipStatus === "UNASSIGNED" ? "未所属" : "所属あり"}
                     </td>
