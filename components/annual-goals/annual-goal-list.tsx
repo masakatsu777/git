@@ -39,8 +39,8 @@ export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
     <div className="space-y-4">
       {bundle.rows.map((row) => (
         <article key={row.id} className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_148px] lg:items-start">
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{row.fiscalYear}年度</span>
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{formatGoalType(row.goalType)}</span>
@@ -80,18 +80,18 @@ export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
               ) : null}
               <p className="mt-1 text-sm text-slate-500">更新日: {row.updatedAt ? formatDateTime(row.updatedAt) : "未作成"}</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 lg:w-[148px]">
               {row.goalId ? (
-                <Link href={`/annual-goals/${row.goalId}`} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300">
+                <Link href={`/annual-goals/${row.goalId}`} className="flex min-h-12 items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300">
                   詳細を見る
                 </Link>
               ) : (
-                <span className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-400">
+                <span className="flex min-h-12 items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-400">
                   分析のみ
                 </span>
               )}
               {row.canEdit && row.goalId ? (
-                <Link href={`/annual-goals/${row.id}/edit`} className="rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white">
+                <Link href={`/annual-goals/${row.id}/edit`} className="flex min-h-12 items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white">
                   編集する
                 </Link>
               ) : null}
