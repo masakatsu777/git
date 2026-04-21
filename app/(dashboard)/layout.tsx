@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ReactNode } from "react";
 
 import { DashboardShellNav } from "@/components/layout/dashboard-shell-nav";
@@ -31,6 +30,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
 
     if (hasPermission(user, PERMISSIONS.salaryRead)) {
       items.push({ href: "/salary/simulations", label: "昇給決定" });
+      items.push({ href: "/salary/budget-simulations", label: "予算試算" });
     }
 
     if (hasPrimaryTeam || hasPermission(user, PERMISSIONS.plAllRead)) {
