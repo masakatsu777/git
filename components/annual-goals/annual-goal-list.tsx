@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { formatSignedCurrencyWithUnit } from "@/lib/format/currency";
 import { formatAnnualGoalJudgement, type AnnualGoalListBundle } from "@/lib/annual-goals/service";
 
 function formatGoalType(value: "team" | "personal") {
@@ -23,6 +24,10 @@ function formatDateTime(value: string) {
   } catch {
     return value;
   }
+}
+
+function formatPercent(value: number) {
+  return `${value}%`;
 }
 
 export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
@@ -61,6 +66,16 @@ export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
                     <p className={`mt-1 text-lg font-semibold ${row.analysisSummary.grossProfitDiff >= 0 ? "text-emerald-700" : "text-rose-700"}`}>
                       {row.analysisSummary.grossProfitDiff >= 0 ? "+" : ""}{row.analysisSummary.grossProfitDiff} pt
                     </p>
+                    {row.goalType === "personal" && row.analysisSummary.personalGrossProfitVarianceRate !== null ? (
+                      <p className="mt-2 text-xs text-slate-500">
+                        個人粗利差異率: {formatPercent(row.analysisSummary.personalGrossProfitVarianceRate)}
+                      </p>
+                    ) : null}
+                    {row.goalType === "personal" && row.analysisSummary.grossProfitDeductionAmount !== null ? (
+                      <p className="mt-1 text-xs text-slate-500">
+                        {row.analysisSummary.grossProfitDeductionAmount < 0 ? "個人粗利の未達額" : "粗利差額配分"}: {formatSignedCurrencyWithUnit(row.analysisSummary.grossProfitDeductionAmount)}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="rounded-2xl bg-slate-50 px-4 py-3">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">評価分析</p>

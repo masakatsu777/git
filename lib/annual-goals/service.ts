@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { EvaluationPeriodStatus, ReviewType } from "@/generated/prisma";
+import { getFinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
@@ -126,6 +127,8 @@ export type AnnualGoalListBundle = {
       grossProfitTargetRate: number;
       grossProfitActualRate: number;
       grossProfitDiff: number;
+      personalGrossProfitVarianceRate: number | null;
+      grossProfitDeductionAmount: number | null;
       selfGrowthAverage: number;
       synergyAverage: number;
       overallJudgement: AnnualGoalJudgement;
@@ -967,6 +970,28 @@ async function buildAnalysis(context: ViewerTargetContext, evaluationPeriodId: s
   }
 }
 
+async function buildPersonalGrossProfitSummary(targetUserId: string | null, evaluationPeriodId: string) {
+  if (!targetUserId || !hasDatabaseUrl()) {
+    return {
+      personalGrossProfitVarianceRate: null,
+      grossProfitDeductionAmount: null,
+    };
+  }
+
+  try {
+    const review = await getFinalReviewBundle(targetUserId, evaluationPeriodId);
+    return {
+      personalGrossProfitVarianceRate: review.personalGrossProfitVarianceRate,
+      grossProfitDeductionAmount: review.grossProfitDeductionAmount,
+    };
+  } catch {
+    return {
+      personalGrossProfitVarianceRate: null,
+      grossProfitDeductionAmount: null,
+    };
+  }
+}
+
 function canEditRecord(record: AnnualGoalRecord, context: ViewerTargetContext) {
   if (record.goalType === "team") {
     return Boolean(context.canEdit && context.targetTeamId && context.targetTeamId === record.targetTeamId);
@@ -1062,7 +1087,15 @@ export async function getAnnualGoalListBundle(
 
         const context = buildAnalysisTargetContext(sessionUser, target);
         const period = await resolvePeriodWithRange(existingGoal?.evaluationPeriodId);
-        const analysis = await buildAnalysis(context, period.id);
+        const [analysis, personalGrossProfit] = await Promise.all([
+          buildAnalysis(context, period.id),
+          target.goalType === "personal"
+            ? buildPersonalGrossProfitSummary(target.targetUserId, period.id)
+            : Promise.resolve({
+                personalGrossProfitVarianceRate: null,
+                grossProfitDeductionAmount: null,
+              }),
+        ]);
 
         return {
           id: existingGoal?.id ?? target.id,
@@ -1080,6 +1113,8 @@ export async function getAnnualGoalListBundle(
             grossProfitTargetRate: analysis.grossProfitTargetRate,
             grossProfitActualRate: analysis.grossProfitActualRate,
             grossProfitDiff: analysis.grossProfitDiff,
+            personalGrossProfitVarianceRate: personalGrossProfit.personalGrossProfitVarianceRate,
+            grossProfitDeductionAmount: personalGrossProfit.grossProfitDeductionAmount,
             selfGrowthAverage: analysis.selfGrowthAverage,
             synergyAverage: analysis.synergyAverage,
             overallJudgement: analysis.overallJudgement,
@@ -1132,6 +1167,8 @@ export async function getAnnualGoalListBundle(
           grossProfitTargetRate: goal.analysisSnapshot.grossProfitTargetRate,
           grossProfitActualRate: goal.analysisSnapshot.grossProfitActualRate,
           grossProfitDiff: goal.analysisSnapshot.grossProfitDiff,
+          personalGrossProfitVarianceRate: null,
+          grossProfitDeductionAmount: null,
           selfGrowthAverage: goal.analysisSnapshot.selfGrowthAverage,
           synergyAverage: goal.analysisSnapshot.synergyAverage,
           overallJudgement: goal.analysisSnapshot.overallJudgement,
