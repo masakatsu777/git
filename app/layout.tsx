@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+
+import { PwaRegistration } from "@/components/pwa-registration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,6 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ja">
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <PwaRegistration />
         {children}
       </body>
     </html>
