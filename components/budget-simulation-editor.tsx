@@ -323,11 +323,11 @@ export function BudgetSimulationEditor({ canEdit, defaults }: BudgetSimulationEd
           <table className="min-w-[1980px] text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-3 py-3 font-medium">区分</th>
-                <th className="px-3 py-3 font-medium">名称</th>
+                <th className="sticky left-0 z-20 w-24 border-r border-slate-200 bg-slate-50 px-3 py-3 font-medium">区分</th>
+                <th className="sticky left-24 z-20 w-40 border-r border-slate-200 bg-slate-50 px-3 py-3 font-medium">名称</th>
+                <th className="sticky left-64 z-20 w-36 border-r border-slate-200 bg-slate-50 px-3 py-3 font-medium">チーム</th>
                 <th className="px-3 py-3 font-medium">社員No./所属</th>
                 <th className="px-3 py-3 font-medium">部署</th>
-                <th className="px-3 py-3 font-medium">チーム</th>
                 <th className="px-3 py-3 font-medium">現在売上</th>
                 <th className="px-3 py-3 font-medium">仮売上</th>
                 <th className="px-3 py-3 font-medium">現有人件費</th>
@@ -347,11 +347,11 @@ export function BudgetSimulationEditor({ canEdit, defaults }: BudgetSimulationEd
                 const laborDiff = row.assumedDirectLaborCost - row.currentDirectLaborCost;
                 return (
                   <tr key={row.key} className="border-t border-slate-200 align-top">
-                    <td className="px-3 py-3 font-medium text-slate-950">{row.subjectType === "EMPLOYEE" ? "社員" : "パートナー"}</td>
-                    <td className="px-3 py-3 text-slate-900">{row.employeeName}</td>
+                    <td className="sticky left-0 z-10 w-24 border-r border-slate-200 bg-white px-3 py-3 font-medium text-slate-950">{row.subjectType === "EMPLOYEE" ? "社員" : "パートナー"}</td>
+                    <td className="sticky left-24 z-10 w-40 border-r border-slate-200 bg-white px-3 py-3 text-slate-900">{row.employeeName}</td>
+                    <td className="sticky left-64 z-10 w-36 border-r border-slate-200 bg-white px-3 py-3 text-slate-700">{row.teamName || "-"}</td>
                     <td className="px-3 py-3 text-slate-700">{row.secondaryLabel || "-"}</td>
                     <td className="px-3 py-3 text-slate-700">{row.departmentName || "-"}</td>
-                    <td className="px-3 py-3 text-slate-700">{row.teamName || "-"}</td>
                     <td className="px-3 py-3 text-slate-700">{formatCurrencyWithUnit(row.currentSalesAmount)}</td>
                     <td className="px-3 py-3">
                       <input
