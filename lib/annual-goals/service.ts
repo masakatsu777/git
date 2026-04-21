@@ -7,7 +7,7 @@ import { getEvaluationPeriodOptions } from "@/lib/evaluations/period-service";
 import { getUserMenuVisibilityMap } from "@/lib/menu-visibility/menu-visibility-service";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
 import type { SessionUser } from "@/lib/permissions/check";
-import { getUnassignedPersonalProfitByUser } from "@/lib/pl/unassigned-profit-service";
+import { getPersonalMonthlyProfitByUser } from "@/lib/pl/personal-profit-service";
 
 const annualGoalFilePath = path.join(process.cwd(), "data", "annual-goals.json");
 
@@ -690,6 +690,31 @@ async function resolveAnnualGoalAnalysisTargets(sessionUser: SessionUser, goalTy
   return targets;
 }
 
+function buildAnalysisTargetContext(
+  sessionUser: SessionUser,
+  target: {
+    goalType: AnnualGoalType;
+    targetTeamId: string | null;
+    targetUserId: string | null;
+    targetName: string;
+  },
+): ViewerTargetContext {
+  return {
+    viewerId: sessionUser.id,
+    viewerName: sessionUser.name,
+    viewerRole: sessionUser.role,
+    teamId: null,
+    teamName: null,
+    teamLeaderUserId: null,
+    goalType: target.goalType,
+    targetTeamId: target.targetTeamId,
+    targetUserId: target.targetUserId,
+    targetName: target.targetName,
+    canEdit: false,
+    notice: target.goalType === "team" ? "チーム年度目標を表示します。" : "個人年度目標を表示します。",
+  };
+}
+
 async function calculateGrossProfitAnalysis(context: ViewerTargetContext, evaluationPeriodId: string) {
   if (!hasDatabaseUrl()) {
     return {
@@ -741,7 +766,7 @@ async function calculateGrossProfitAnalysis(context: ViewerTargetContext, evalua
     };
   }
 
-  const rows = await Promise.all(months.map((yearMonth) => getUnassignedPersonalProfitByUser(context.targetUserId!, yearMonth)));
+  const rows = await Promise.all(months.map((yearMonth) => getPersonalMonthlyProfitByUser(context.targetUserId!, yearMonth)));
   const effectiveRows = rows.filter((row): row is NonNullable<typeof row> => Boolean(row));
   const salesTotal = effectiveRows.reduce((sum, row) => sum + row.salesTotal, 0);
   const finalGrossProfit = effectiveRows.reduce((sum, row) => sum + row.finalGrossProfit, 0);
@@ -1035,22 +1060,9 @@ export async function getAnnualGoalListBundle(
           ),
         ) ?? null;
 
-        const context: ViewerTargetContext = {
-          viewerId: sessionUser.id,
-          viewerName: sessionUser.name,
-          viewerRole: sessionUser.role,
-          teamId: null,
-          teamName: null,
-          teamLeaderUserId: null,
-          goalType: target.goalType,
-          targetTeamId: target.targetTeamId,
-          targetUserId: target.targetUserId,
-          targetName: target.targetName,
-          canEdit: false,
-          notice: target.goalType === "team" ? "チーム年度目標を表示します。" : "個人年度目標を表示します。",
-        };
+        const context = buildAnalysisTargetContext(sessionUser, target);
         const period = await resolvePeriodWithRange(existingGoal?.evaluationPeriodId);
-        const analysis = existingGoal?.analysisSnapshot ?? await buildAnalysis(context, period.id);
+        const analysis = await buildAnalysis(context, period.id);
 
         return {
           id: existingGoal?.id ?? target.id,
@@ -1138,13 +1150,21 @@ export async function getAnnualGoalListBundle(
 }
 
 export async function getAnnualGoalDetailBundle(sessionUser: SessionUser, id: string): Promise<AnnualGoalDetailBundle | null> {
-  const context = await resolveViewerTargetContext(sessionUser);
+  const viewerContext = await resolveViewerTargetContext(sessionUser);
   const goals = await readAnnualGoalFile();
   const goal = goals.find((row) => row.id === id);
 
   if (!goal) {
     return null;
   }
+
+  const analysisContext = buildAnalysisTargetContext(sessionUser, {
+    goalType: goal.goalType,
+    targetTeamId: goal.targetTeamId,
+    targetUserId: goal.targetUserId,
+    targetName: goal.targetName,
+  });
+  const analysis = await buildAnalysis(analysisContext, goal.evaluationPeriodId);
 
   return {
     id: goal.id,
@@ -1154,7 +1174,7 @@ export async function getAnnualGoalDetailBundle(sessionUser: SessionUser, id: st
     notice: goal.goalType === "team" ? "チーム年度目標" : "個人年度目標",
     evaluationPeriodId: goal.evaluationPeriodId,
     evaluationPeriodName: goal.evaluationPeriodName,
-    analysis: goal.analysisSnapshot,
+    analysis,
     content: {
       priorityTheme: goal.priorityTheme,
       currentAnalysis: goal.currentAnalysis,
@@ -1169,7 +1189,7 @@ export async function getAnnualGoalDetailBundle(sessionUser: SessionUser, id: st
       updatedByName: goal.updatedByName,
       createdAt: goal.createdAt,
       updatedAt: goal.updatedAt,
-      canEdit: canEditRecord(goal, context),
+      canEdit: canEditRecord(goal, viewerContext),
     },
   };
 }
