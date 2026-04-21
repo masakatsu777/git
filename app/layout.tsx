@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-
-import { PwaRegistration } from "@/components/pwa-registration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -27,7 +25,32 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="ja">
       <body className="min-h-screen bg-background text-foreground antialiased">
-        <PwaRegistration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  if ("serviceWorker" in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                      registrations.forEach(function (registration) {
+                        registration.unregister();
+                      });
+                    });
+                  }
+                  if ("caches" in window) {
+                    window.caches.keys().then(function (keys) {
+                      keys.forEach(function (key) {
+                        window.caches.delete(key);
+                      });
+                    });
+                  }
+                } catch (error) {
+                  console.warn("PWA cleanup skipped", error);
+                }
+              })();
+            `,
+          }}
+        />
         {children}
       </body>
     </html>
