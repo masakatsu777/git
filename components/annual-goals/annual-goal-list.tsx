@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { AnnualGoalListBundle } from "@/lib/annual-goals/service";
+import { formatAnnualGoalJudgement, type AnnualGoalListBundle } from "@/lib/annual-goals/service";
 
 function formatGoalType(value: "team" | "personal") {
   return value === "team" ? "チーム" : "個人";
@@ -48,6 +48,33 @@ export function AnnualGoalList({ bundle }: { bundle: AnnualGoalListBundle }) {
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-slate-950">{row.targetName}</h2>
               <p className="mt-2 text-sm text-slate-600">優先テーマ: {row.priorityTheme}</p>
+              {bundle.permissions.canViewAnalysisSummary ? (
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">粗利分析</p>
+                    <p className="mt-2 text-sm font-medium text-slate-700">
+                      目標 {row.analysisSummary.grossProfitTargetRate}% / 実績 {row.analysisSummary.grossProfitActualRate}%
+                    </p>
+                    <p className={`mt-1 text-lg font-semibold ${row.analysisSummary.grossProfitDiff >= 0 ? "text-emerald-700" : "text-rose-700"}`}>
+                      {row.analysisSummary.grossProfitDiff >= 0 ? "+" : ""}{row.analysisSummary.grossProfitDiff} pt
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">評価分析</p>
+                    <p className="mt-2 text-sm font-medium text-slate-700">自律的成長 {row.analysisSummary.selfGrowthAverage}</p>
+                    <p className="mt-1 text-sm font-medium text-slate-700">協調相乗 {row.analysisSummary.synergyAverage}</p>
+                    {row.analysisSummary.weakItems.length > 0 ? (
+                      <p className="mt-2 text-xs text-slate-500">弱点項目: {row.analysisSummary.weakItems.join(" / ")}</p>
+                    ) : null}
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">総合判定</p>
+                    <p className="mt-2 text-lg font-semibold text-slate-950">
+                      {formatAnnualGoalJudgement(row.analysisSummary.overallJudgement)}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
               <p className="mt-1 text-sm text-slate-500">更新日: {formatDateTime(row.updatedAt)}</p>
             </div>
             <div className="flex gap-3">

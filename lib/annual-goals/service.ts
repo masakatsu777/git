@@ -106,6 +106,9 @@ export type AnnualGoalListBundle = {
     priorityKeyword: string;
     grossProfitStatus: string;
   };
+  permissions: {
+    canViewAnalysisSummary: boolean;
+  };
   rows: Array<{
     id: string;
     fiscalYear: number;
@@ -115,6 +118,15 @@ export type AnnualGoalListBundle = {
     priorityTheme: string;
     updatedAt: string;
     canEdit: boolean;
+    analysisSummary: {
+      grossProfitTargetRate: number;
+      grossProfitActualRate: number;
+      grossProfitDiff: number;
+      selfGrowthAverage: number;
+      synergyAverage: number;
+      overallJudgement: AnnualGoalJudgement;
+      weakItems: string[];
+    };
   }>;
 };
 
@@ -928,10 +940,22 @@ export async function getAnnualGoalListBundle(
       priorityTheme: goal.priorityTheme,
       updatedAt: goal.updatedAt,
       canEdit: canEditRecord(goal, context),
+      analysisSummary: {
+        grossProfitTargetRate: goal.analysisSnapshot.grossProfitTargetRate,
+        grossProfitActualRate: goal.analysisSnapshot.grossProfitActualRate,
+        grossProfitDiff: goal.analysisSnapshot.grossProfitDiff,
+        selfGrowthAverage: goal.analysisSnapshot.selfGrowthAverage,
+        synergyAverage: goal.analysisSnapshot.synergyAverage,
+        overallJudgement: goal.analysisSnapshot.overallJudgement,
+        weakItems: goal.analysisSnapshot.weakItems,
+      },
     }));
 
   return {
     filters: normalizedFilters,
+    permissions: {
+      canViewAnalysisSummary: sessionUser.role === "admin" || sessionUser.role === "president",
+    },
     rows,
   };
 }
