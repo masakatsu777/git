@@ -87,6 +87,7 @@ export type FinalReviewBundle = {
   gradeSalaryAmount: number;
   currentSalary: number;
   grossProfitVarianceRate: number;
+  personalGrossProfitVarianceRate: number;
   grossProfitDeductionAmount: number;
   synergyProgress: number;
   itSkillScore: number;
@@ -267,6 +268,7 @@ async function calculatePeriodGrossProfitMetrics(
   if (!hasDatabaseUrl()) {
     return {
       grossProfitVarianceRate: 0,
+      personalGrossProfitVarianceRate: 0,
       grossProfitDeductionAmount: 0,
     };
   }
@@ -315,6 +317,15 @@ async function calculatePeriodGrossProfitMetrics(
         : 0;
     const actualGrossProfitRate = salesTotal === 0 ? 0 : round2((finalGrossProfit / salesTotal) * 100);
     const grossProfitVarianceRate = round2(actualGrossProfitRate - targetGrossProfitRate);
+    const personalSalesTotal = personalRows.reduce((sum, row) => sum + Number(row.salesTotal ?? 0), 0);
+    const personalFinalGrossProfit = personalRows.reduce((sum, row) => sum + Number(row.finalGrossProfit ?? 0), 0);
+    const personalTargetGrossProfitAmount = personalRows.reduce(
+      (sum, row) => sum + Number(row.salesTotal ?? 0) * (Number(row.targetGrossProfitRate ?? 0) / 100),
+      0,
+    );
+    const personalGrossProfitVarianceRate = personalSalesTotal === 0
+      ? 0
+      : round2(((personalFinalGrossProfit - personalTargetGrossProfitAmount) / personalSalesTotal) * 100);
     const averagePersonalGrossProfitShortfall = personalRows.length > 0
       ? personalRows.reduce((sum, row) => {
           const targetGrossProfitAmount = Number(row.salesTotal ?? 0) * (Number(row.targetGrossProfitRate ?? 0) / 100);
@@ -328,11 +339,13 @@ async function calculatePeriodGrossProfitMetrics(
 
     return {
       grossProfitVarianceRate,
+      personalGrossProfitVarianceRate,
       grossProfitDeductionAmount,
     };
   } catch {
     return {
       grossProfitVarianceRate: 0,
+      personalGrossProfitVarianceRate: 0,
       grossProfitDeductionAmount: 0,
     };
   }
@@ -494,6 +507,7 @@ async function buildFallbackBundle(selectedUserId?: string): Promise<FinalReview
     gradeSalaryAmount,
     currentSalary: 0,
     grossProfitVarianceRate: 0,
+    personalGrossProfitVarianceRate: 0,
     grossProfitDeductionAmount: 0,
     itSkillScore: judgement.itSkillScore,
     businessSkillScore: judgement.businessSkillScore,
@@ -664,6 +678,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
         gradeSalaryAmount: 0,
         currentSalary: toNumber(selectedUser?.salaryRecords?.[0]?.baseSalary) + toNumber(selectedUser?.salaryRecords?.[0]?.allowance),
         grossProfitVarianceRate: 0,
+        personalGrossProfitVarianceRate: 0,
         grossProfitDeductionAmount: 0,
         itSkillScore: 0,
         businessSkillScore: 0,
@@ -766,6 +781,7 @@ export async function getFinalReviewBundle(selectedUserId?: string, evaluationPe
       gradeSalaryAmount,
       currentSalary,
       grossProfitVarianceRate: grossProfitMetrics.grossProfitVarianceRate,
+      personalGrossProfitVarianceRate: grossProfitMetrics.personalGrossProfitVarianceRate,
       grossProfitDeductionAmount: grossProfitMetrics.grossProfitDeductionAmount,
       itSkillScore: judgement.itSkillScore,
       businessSkillScore: judgement.businessSkillScore,

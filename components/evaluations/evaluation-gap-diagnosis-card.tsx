@@ -4,7 +4,7 @@ import type { FinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationGapGuidance } from "@/lib/evaluations/evaluation-gap-guidance";
 
 type EvaluationGapDiagnosisCardProps = {
-  summary: Pick<FinalReviewBundle, "gradeSalaryAmount" | "currentSalary" | "grossProfitVarianceRate" | "grossProfitDeductionAmount">;
+  summary: Pick<FinalReviewBundle, "gradeSalaryAmount" | "currentSalary" | "grossProfitVarianceRate" | "personalGrossProfitVarianceRate">;
 };
 
 export function EvaluationGapDiagnosisCard({ summary }: EvaluationGapDiagnosisCardProps) {
@@ -23,7 +23,7 @@ export function EvaluationGapDiagnosisCard({ summary }: EvaluationGapDiagnosisCa
               {displayBadgeLabel}
             </span>
             <span className="inline-flex rounded-full border border-white/70 bg-white/80 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-slate-600">
-              4象限診断
+              8類型診断
             </span>
           </div>
           <h2 className="mt-4 text-xl font-semibold text-slate-950">{guidance.title}</h2>

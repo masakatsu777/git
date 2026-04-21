@@ -2,19 +2,11 @@ import Link from "next/link";
 
 import { getSessionUser } from "@/lib/auth/demo-session";
 import {
+  evaluationGapGuideGroups,
   getEvaluationGapGuidanceByQuadrant,
   isEvaluationGapQuadrant,
-  type EvaluationGapQuadrant,
 } from "@/lib/evaluations/evaluation-gap-guidance";
 import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service";
-
-const quadrantOrder: EvaluationGapQuadrant[] = [
-  "high-eval-high-gross-profit",
-  "high-eval-low-gross-profit",
-  "high-eval-low-gross-profit-team-propagation",
-  "low-eval-high-gross-profit",
-  "low-eval-low-gross-profit",
-];
 
 export default async function EvaluationGuidesPage({
   searchParams,
@@ -39,7 +31,7 @@ export default async function EvaluationGuidesPage({
   const requestedQuadrant = params.quadrant ?? "";
   const selectedQuadrant = isEvaluationGapQuadrant(requestedQuadrant)
     ? requestedQuadrant
-    : "high-eval-low-gross-profit";
+    : "high-eval-low-gross-profit-personal-low";
   const activeGuidance = getEvaluationGapGuidanceByQuadrant(selectedQuadrant);
 
   return (
@@ -47,9 +39,9 @@ export default async function EvaluationGuidesPage({
       <div className="mx-auto max-w-6xl px-6 py-10">
         <header className="rounded-[2rem] bg-slate-950 px-8 py-7 text-white shadow-[0_30px_80px_rgba(15,23,42,0.22)]">
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Evaluation Guides</p>
-          <h1 className="mt-3 text-3xl font-semibold">4象限ガイド</h1>
+          <h1 className="mt-3 text-3xl font-semibold">8類型ガイド</h1>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-            自己評価と粗利結果の組み合わせから、今の状態に合った見直しポイントと次アクションを確認できます。
+            評価額と現本給の比較、チーム粗利、個人ベース粗利の組み合わせから、今の状態に合った見直しポイントと次アクションを確認できます。
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/evaluations/result" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
@@ -63,26 +55,34 @@ export default async function EvaluationGuidesPage({
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[0.9fr,1.4fr]">
           <aside className="rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
-            <h2 className="text-lg font-semibold text-slate-950">象限を選ぶ</h2>
-            <div className="mt-4 flex flex-col gap-3">
-              {quadrantOrder.map((quadrant) => {
-                const guidance = getEvaluationGapGuidanceByQuadrant(quadrant);
-                const active = quadrant === activeGuidance.quadrant;
-                return (
-                  <Link
-                    key={quadrant}
-                    href={`/evaluations/guides?quadrant=${quadrant}`}
-                    className={`rounded-2xl border px-4 py-4 text-sm transition ${
-                      active
-                        ? "border-slate-950 bg-slate-950 text-white"
-                        : "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white"
-                    }`}
-                  >
-                    <p className={`font-semibold ${active ? "text-white" : "text-slate-950"}`}>{guidance.title}</p>
-                    <p className={`mt-2 leading-6 ${active ? "text-slate-200" : "text-slate-500"}`}>{guidance.badgeLabel}</p>
-                  </Link>
-                );
-              })}
+            <h2 className="text-lg font-semibold text-slate-950">類型を選ぶ</h2>
+            <div className="mt-4 flex flex-col gap-4">
+              {evaluationGapGuideGroups.map((group) => (
+                <section key={group.key} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <h3 className="text-sm font-semibold text-slate-950">{group.title}</h3>
+                  <p className="mt-2 text-xs leading-6 text-slate-500">{group.description}</p>
+                  <div className="mt-3 flex flex-col gap-2">
+                    {group.diagnoses.map((quadrant) => {
+                      const guidance = getEvaluationGapGuidanceByQuadrant(quadrant);
+                      const active = quadrant === activeGuidance.quadrant;
+                      return (
+                        <Link
+                          key={quadrant}
+                          href={`/evaluations/guides?quadrant=${quadrant}`}
+                          className={`rounded-2xl border px-4 py-4 text-sm transition ${
+                            active
+                              ? "border-slate-950 bg-slate-950 text-white"
+                              : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                          }`}
+                        >
+                          <p className={`font-semibold ${active ? "text-white" : "text-slate-950"}`}>{guidance.badgeLabel}</p>
+                          <p className={`mt-2 leading-6 ${active ? "text-slate-200" : "text-slate-500"}`}>{guidance.title}</p>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
             </div>
           </aside>
 

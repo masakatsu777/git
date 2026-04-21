@@ -209,7 +209,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           gradeSalaryAmount: defaults.gradeSalaryAmount,
           currentSalary: defaults.currentSalary,
           grossProfitVarianceRate: defaults.grossProfitVarianceRate,
-          grossProfitDeductionAmount: defaults.grossProfitDeductionAmount,
+          personalGrossProfitVarianceRate: defaults.personalGrossProfitVarianceRate,
         }}
       />
 
