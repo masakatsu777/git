@@ -28,7 +28,7 @@ export function DashboardShellNav({ userName, role, items }: DashboardShellNavPr
   }
 
   return (
-    <div className="relative z-40 border-b border-slate-200/80 bg-white/92 backdrop-blur 2xl:sticky 2xl:top-0">
+    <div className="relative z-40 border-b border-slate-200/80 bg-white/92 backdrop-blur xl:sticky xl:top-0">
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:py-4">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -36,7 +36,7 @@ export function DashboardShellNav({ userName, role, items }: DashboardShellNavPr
             <p className="mt-1 text-xs text-slate-600 sm:text-sm">{userName} / {role}</p>
           </div>
 
-          <form action="/auth/logout-web" method="post" className="hidden 2xl:block">
+          <form action="/auth/logout-web" method="post" className="hidden xl:block">
             <input type="hidden" name="redirectTo" value="/login" />
             <button
               type="submit"
@@ -47,7 +47,7 @@ export function DashboardShellNav({ userName, role, items }: DashboardShellNavPr
           </form>
         </div>
 
-        <div className="mt-3 hidden 2xl:flex 2xl:flex-wrap 2xl:gap-2">
+        <div className="mt-3 hidden xl:flex xl:flex-wrap xl:gap-2">
           {items.map((item) => (
             <Link
               key={`${item.href}:${item.label}`}
@@ -59,7 +59,7 @@ export function DashboardShellNav({ userName, role, items }: DashboardShellNavPr
           ))}
         </div>
 
-        <details className="mt-3 2xl:hidden">
+        <details className="mt-3 xl:hidden">
           <summary className="list-none">
             <span className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium !text-black shadow-sm transition hover:border-slate-300 hover:!text-black">
               メニューを開く

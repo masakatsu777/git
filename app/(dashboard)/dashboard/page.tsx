@@ -153,7 +153,7 @@ export default async function DashboardPage({
             </form>
           </div>
           <div className="w-full sm:w-auto">
-            <div className="hidden flex-wrap gap-3 2xl:flex">
+            <div className="hidden flex-wrap gap-3 xl:flex">
               {actionLinks.map((item) => (
                 <Link key={item.href} href={item.href} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-white">
                   {item.label}
@@ -171,7 +171,7 @@ export default async function DashboardPage({
               ) : null}
             </div>
 
-            <details className="2xl:hidden">
+            <details className="xl:hidden">
               <summary className="list-none">
                 <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                   操作メニューを開く
