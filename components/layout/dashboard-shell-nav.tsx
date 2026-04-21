@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type NavItem = {
   href: string;
@@ -16,8 +17,13 @@ type DashboardShellNavProps = {
 
 export function DashboardShellNav({ userName, role, items }: DashboardShellNavProps) {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
 
-  if (pathname === "/menu") {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || pathname === "/menu") {
     return null;
   }
 
