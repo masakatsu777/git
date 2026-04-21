@@ -4,7 +4,7 @@ import type { FinalReviewBundle } from "@/lib/evaluations/final-review-service";
 import { getEvaluationGapGuidance } from "@/lib/evaluations/evaluation-gap-guidance";
 
 type EvaluationGapDiagnosisCardProps = {
-  summary: Pick<FinalReviewBundle, "gradeSalaryAmount" | "currentSalary" | "grossProfitVarianceRate">;
+  summary: Pick<FinalReviewBundle, "gradeSalaryAmount" | "currentSalary" | "grossProfitVarianceRate" | "grossProfitDeductionAmount">;
 };
 
 export function EvaluationGapDiagnosisCard({ summary }: EvaluationGapDiagnosisCardProps) {

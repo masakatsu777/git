@@ -154,6 +154,7 @@ export default async function EvaluationResultPage({
               gradeSalaryAmount: finalReview.gradeSalaryAmount,
               currentSalary: finalReview.currentSalary,
               grossProfitVarianceRate: finalReview.grossProfitVarianceRate,
+              grossProfitDeductionAmount: finalReview.grossProfitDeductionAmount,
             }}
           />
         </section>

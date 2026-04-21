@@ -11,6 +11,7 @@ import { isUserMenuEnabled } from "@/lib/menu-visibility/menu-visibility-service
 const quadrantOrder: EvaluationGapQuadrant[] = [
   "high-eval-high-gross-profit",
   "high-eval-low-gross-profit",
+  "high-eval-low-gross-profit-team-propagation",
   "low-eval-high-gross-profit",
   "low-eval-low-gross-profit",
 ];

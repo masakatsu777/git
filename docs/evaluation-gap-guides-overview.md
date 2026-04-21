@@ -23,7 +23,7 @@
 
 結果画面では、
 自己評価の高低と粗利結果の高低を組み合わせて、
-4つの状態として捉えます。
+4つの状態を基本にしつつ、必要に応じて補足分岐も使います。
 
 ### 1. 高評価 × 高粗利
 
@@ -48,6 +48,18 @@
   - 根拠が実施報告で止まっていないか
 - 読むべきガイド:
   [guide-high-eval-low-gross-profit.md](./guide-high-eval-low-gross-profit.md)
+
+### 2-1. 高評価 × 低粗利 × 個人貢献あり
+
+- 診断名: 個人貢献あり・チーム波及課題
+- 状態の捉え方:
+  個人としては成果につながっているが、チーム全体への波及に課題がある状態
+- 主な論点:
+  - 個人の良いやり方をチームへ共有できているか
+  - チーム全体の停滞要因へ関われているか
+  - 個別支援が全体成果へつながっているか
+- 読むべきガイド:
+  [guide-high-eval-low-gross-profit-team-propagation.md](./guide-high-eval-low-gross-profit-team-propagation.md)
 
 ### 3. 低評価 × 高粗利
 
@@ -163,4 +175,5 @@
 - [guide-high-eval-low-gross-profit.md](./guide-high-eval-low-gross-profit.md)
 - [guide-low-eval-high-gross-profit.md](./guide-low-eval-high-gross-profit.md)
 - [guide-low-eval-low-gross-profit.md](./guide-low-eval-low-gross-profit.md)
+- [guide-high-eval-low-gross-profit-team-propagation.md](./guide-high-eval-low-gross-profit-team-propagation.md)
 - [evaluation-gap-guidance-copy.md](./evaluation-gap-guidance-copy.md)

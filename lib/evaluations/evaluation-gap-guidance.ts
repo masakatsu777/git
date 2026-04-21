@@ -1,6 +1,7 @@
 export type EvaluationGapQuadrant =
   | "high-eval-high-gross-profit"
   | "high-eval-low-gross-profit"
+  | "high-eval-low-gross-profit-team-propagation"
   | "low-eval-high-gross-profit"
   | "low-eval-low-gross-profit";
 
@@ -33,6 +34,7 @@ type EvaluationGapInput = {
   gradeSalaryAmount: number;
   currentSalary: number;
   grossProfitVarianceRate: number;
+  grossProfitDeductionAmount: number;
 };
 
 const guidanceMap: Record<EvaluationGapQuadrant, Omit<EvaluationGapGuidance, "quadrant">> = {
@@ -119,6 +121,50 @@ const guidanceMap: Record<EvaluationGapQuadrant, Omit<EvaluationGapGuidance, "qu
           "行動対象を絞る",
           "個別支援を仕組み化する",
           "成果確認までセットで行う",
+        ],
+      },
+    ],
+  },
+  "high-eval-low-gross-profit-team-propagation": {
+    badgeLabel: "波及課題",
+    badgeTone: "bg-violet-100 text-violet-800 border-violet-200",
+    panelTone: "border-violet-200 bg-[linear-gradient(135deg,rgba(245,243,255,0.95),rgba(255,255,255,0.98))]",
+    title: "個人としては成果につながっていますが、チーム全体への波及に課題があります",
+    body: "個人ベースでは粗利に貢献できていますが、チーム全体としては目標未達です。自分の実践がチーム成果へどう広がるか、全体課題へどう関わるかを見直してください。",
+    helper: "本人のやり方を否定するのではなく、良い実践を全体成果へどう接続するかを見ることがポイントです。",
+    nextAction: "次期は、自分の良いやり方をチーム全体の成果へ広げる行動を1つ具体化してください。",
+    issues: [
+      "個人の良いやり方がチームへ共有されていない",
+      "自分の担当範囲では良くても、全体最適への働きかけが弱い",
+      "支援や連携が個別対応で止まり、チーム全体の生産性向上につながっていない",
+    ],
+    links: [
+      { label: "個人貢献あり・チーム波及課題ガイド", href: "/evaluations/guides?quadrant=high-eval-low-gross-profit-team-propagation" },
+      { label: "自分の成功をチーム成果へ広げる方法", href: "/evaluations/guides?quadrant=high-eval-low-gross-profit-team-propagation" },
+      { label: "チーム全体の停滞要因へ関わる視点", href: "/evaluations/guides?quadrant=high-eval-low-gross-profit-team-propagation" },
+    ],
+    guideTitle: "個人貢献あり・チーム波及課題 ガイド",
+    guidePurpose: "この分岐では、個人としての実践が成果につながっていることを前提に、その価値をチーム全体の成果へどう広げるかを見直すことが目的です。",
+    guideKeyPoints: [
+      "個人ベースでは粗利に貢献できているため、本人の実践自体は肯定的に捉えます。",
+      "次に見るべきなのは、良いやり方がチームへ共有・展開されているかどうかです。",
+      "自分の担当範囲で終わらせず、全体課題への働きかけまで視野を広げます。",
+    ],
+    guideSections: [
+      {
+        title: "見直しポイント",
+        points: [
+          "自分の良いやり方をチームで再利用できる形にしているか",
+          "チーム全体の停滞要因に働きかけられているか",
+          "支援や連携が、全体の生産性向上や手戻り削減につながっているか",
+        ],
+      },
+      {
+        title: "次期の方向性",
+        points: [
+          "自分の成功をテンプレートや観点に落とす",
+          "チーム共通の停滞要因を1つ選んで改善に関わる",
+          "個別支援を仕組み化して全体へ広げる",
         ],
       },
     ],
@@ -211,11 +257,12 @@ const guidanceMap: Record<EvaluationGapQuadrant, Omit<EvaluationGapGuidance, "qu
   },
 };
 
-export function resolveEvaluationGapQuadrant({ gradeSalaryAmount, currentSalary, grossProfitVarianceRate }: EvaluationGapInput): EvaluationGapQuadrant {
+export function resolveEvaluationGapQuadrant({ gradeSalaryAmount, currentSalary, grossProfitVarianceRate, grossProfitDeductionAmount }: EvaluationGapInput): EvaluationGapQuadrant {
   const evaluationHigh = gradeSalaryAmount > currentSalary;
   const grossProfitHigh = grossProfitVarianceRate >= 0;
 
   if (evaluationHigh && grossProfitHigh) return "high-eval-high-gross-profit";
+  if (evaluationHigh && !grossProfitHigh && grossProfitDeductionAmount > 0) return "high-eval-low-gross-profit-team-propagation";
   if (evaluationHigh && !grossProfitHigh) return "high-eval-low-gross-profit";
   if (!evaluationHigh && grossProfitHigh) return "low-eval-high-gross-profit";
   return "low-eval-low-gross-profit";

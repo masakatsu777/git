@@ -433,6 +433,7 @@ export function ManagerReviewEditor({ canEdit, canBulkApprove, defaults, summary
           gradeSalaryAmount: summary.gradeSalaryAmount,
           currentSalary: summary.currentSalary,
           grossProfitVarianceRate: summary.grossProfitVarianceRate,
+          grossProfitDeductionAmount: summary.grossProfitDeductionAmount,
         }}
       />
 
