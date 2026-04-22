@@ -62,7 +62,7 @@ export function MonthlyReportList({ groups }: MonthlyReportListProps) {
                 {showTeamSection ? (
                   <section className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
                     <h3 className="text-lg font-semibold text-slate-950">チームとして</h3>
-                    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                    <div className="mt-4 grid gap-4 lg:grid-cols-3">
                       <div className="lg:col-span-2">
                         <p className="text-sm font-medium text-slate-700">プロジェクト概要</p>
                         <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
@@ -70,27 +70,39 @@ export function MonthlyReportList({ groups }: MonthlyReportListProps) {
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">チーム自律的成長課題</p>
+                        <p className="text-sm font-medium text-slate-700">チーム自律的成長 当月課題</p>
                         <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
                           {readText(group.teamReport?.teamSelfGrowthIssue ?? "")}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">チーム自律的成長実践結果</p>
+                        <p className="text-sm font-medium text-slate-700">チーム自律的成長 当月結果</p>
                         <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
                           {readText(group.teamReport?.teamSelfGrowthResult ?? "")}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">チーム協調相乗課題</p>
+                        <p className="text-sm font-medium text-slate-700">チーム自律的成長 次月課題</p>
+                        <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
+                          {readText(group.teamReport?.teamSelfGrowthNextIssue ?? "")}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-700">チーム協調相乗 当月課題</p>
                         <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
                           {readText(group.teamReport?.teamSynergyIssue ?? "")}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">チーム協調相乗実践結果</p>
+                        <p className="text-sm font-medium text-slate-700">チーム協調相乗 当月結果</p>
                         <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
                           {readText(group.teamReport?.teamSynergyResult ?? "")}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-700">チーム協調相乗 次月課題</p>
+                        <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm leading-7 text-slate-700">
+                          {readText(group.teamReport?.teamSynergyNextIssue ?? "")}
                         </p>
                       </div>
                     </div>
@@ -146,29 +158,41 @@ export function MonthlyReportList({ groups }: MonthlyReportListProps) {
                           {readText(selectedMember.projectRole)}
                         </p>
                       </div>
-                      <div className="grid gap-4 lg:grid-cols-2">
+                      <div className="grid gap-4 lg:grid-cols-3">
                         <div>
-                          <p className="text-sm font-medium text-slate-700">個人自律的成長課題</p>
+                          <p className="text-sm font-medium text-slate-700">個人自律的成長 当月課題</p>
                           <p className="mt-2 whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-7 text-slate-700">
                             {readText(selectedMember.personalReport.personalSelfGrowthIssue)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-700">個人自律的成長実践結果</p>
+                          <p className="text-sm font-medium text-slate-700">個人自律的成長 当月結果</p>
                           <p className="mt-2 whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-7 text-slate-700">
                             {readText(selectedMember.personalReport.personalSelfGrowthResult)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-700">個人協調相乗課題</p>
+                          <p className="text-sm font-medium text-slate-700">個人自律的成長 次月課題</p>
+                          <p className="mt-2 whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-7 text-slate-700">
+                            {readText(selectedMember.personalReport.personalSelfGrowthNextIssue)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-700">個人協調相乗 当月課題</p>
                           <p className="mt-2 whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-7 text-slate-700">
                             {readText(selectedMember.personalReport.personalSynergyIssue)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-700">個人協調相乗実践結果</p>
+                          <p className="text-sm font-medium text-slate-700">個人協調相乗 当月結果</p>
                           <p className="mt-2 whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-7 text-slate-700">
                             {readText(selectedMember.personalReport.personalSynergyResult)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-700">個人協調相乗 次月課題</p>
+                          <p className="mt-2 whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-7 text-slate-700">
+                            {readText(selectedMember.personalReport.personalSynergyNextIssue)}
                           </p>
                         </div>
                       </div>

@@ -16,16 +16,20 @@ export type TeamReportFields = {
   projectSummary: string;
   teamSelfGrowthIssue: string;
   teamSelfGrowthResult: string;
+  teamSelfGrowthNextIssue: string;
   teamSynergyIssue: string;
   teamSynergyResult: string;
+  teamSynergyNextIssue: string;
 };
 
 export type PersonalReportFields = {
   projectRole: string;
   personalSelfGrowthIssue: string;
   personalSelfGrowthResult: string;
+  personalSelfGrowthNextIssue: string;
   personalSynergyIssue: string;
   personalSynergyResult: string;
+  personalSynergyNextIssue: string;
 };
 
 export type ProjectOption = {
@@ -119,7 +123,7 @@ type StoredProject = {
   isActive: boolean;
 };
 
-type StoredTeamReport = TeamReportFields & {
+type StoredTeamReport = TeamReportRecord & {
   id: string;
   yearMonth: string;
   projectId: string;
@@ -130,7 +134,7 @@ type StoredTeamReport = TeamReportFields & {
   updatedAt: string;
 };
 
-type StoredPersonalReport = PersonalReportFields & {
+type StoredPersonalReport = PersonalReportRecord & {
   id: string;
   yearMonth: string;
   projectId: string;
@@ -250,12 +254,36 @@ function sanitizeTeamReport(input?: Partial<TeamReportFields> | null): TeamRepor
     projectSummary: sanitizeText(String(input?.projectSummary ?? "")),
     teamSelfGrowthIssue: sanitizeText(String(input?.teamSelfGrowthIssue ?? "")),
     teamSelfGrowthResult: sanitizeText(String(input?.teamSelfGrowthResult ?? "")),
+    teamSelfGrowthNextIssue: sanitizeText(String(input?.teamSelfGrowthNextIssue ?? "")),
+    teamSynergyIssue: sanitizeText(String(input?.teamSynergyIssue ?? "")),
+    teamSynergyResult: sanitizeText(String(input?.teamSynergyResult ?? "")),
+    teamSynergyNextIssue: sanitizeText(String(input?.teamSynergyNextIssue ?? "")),
+  };
+}
+
+function sanitizePersonalReport(input?: Partial<PersonalReportFields> | null): PersonalReportFields {
+  return {
+    projectRole: sanitizeText(String(input?.projectRole ?? "")),
+    personalSelfGrowthIssue: sanitizeText(String(input?.personalSelfGrowthIssue ?? "")),
+    personalSelfGrowthResult: sanitizeText(String(input?.personalSelfGrowthResult ?? "")),
+    personalSelfGrowthNextIssue: sanitizeText(String(input?.personalSelfGrowthNextIssue ?? "")),
+    personalSynergyIssue: sanitizeText(String(input?.personalSynergyIssue ?? "")),
+    personalSynergyResult: sanitizeText(String(input?.personalSynergyResult ?? "")),
+    personalSynergyNextIssue: sanitizeText(String(input?.personalSynergyNextIssue ?? "")),
+  };
+}
+
+function sanitizeTeamReportRecord(input?: Partial<TeamReportRecord> | null): TeamReportRecord {
+  return {
+    projectSummary: sanitizeText(String(input?.projectSummary ?? "")),
+    teamSelfGrowthIssue: sanitizeText(String(input?.teamSelfGrowthIssue ?? "")),
+    teamSelfGrowthResult: sanitizeText(String(input?.teamSelfGrowthResult ?? "")),
     teamSynergyIssue: sanitizeText(String(input?.teamSynergyIssue ?? "")),
     teamSynergyResult: sanitizeText(String(input?.teamSynergyResult ?? "")),
   };
 }
 
-function sanitizePersonalReport(input?: Partial<PersonalReportFields> | null): PersonalReportFields {
+function sanitizePersonalReportRecord(input?: Partial<PersonalReportRecord> | null): PersonalReportRecord {
   return {
     projectRole: sanitizeText(String(input?.projectRole ?? "")),
     personalSelfGrowthIssue: sanitizeText(String(input?.personalSelfGrowthIssue ?? "")),
@@ -304,7 +332,7 @@ function sanitizeTeamReportRow(input: Partial<StoredTeamReport>): StoredTeamRepo
     updatedBy: sanitizeText(String(input.updatedBy ?? "")),
     createdAt: String(input.createdAt ?? new Date().toISOString()),
     updatedAt: String(input.updatedAt ?? new Date().toISOString()),
-    ...sanitizeTeamReport(input),
+    ...sanitizeTeamReportRecord(input),
   };
 }
 
@@ -334,7 +362,7 @@ function sanitizePersonalReportRow(input: Partial<StoredPersonalReport>): Stored
     teamName: displayTeamName(input.teamName),
     createdAt: String(input.createdAt ?? new Date().toISOString()),
     updatedAt: String(input.updatedAt ?? new Date().toISOString()),
-    ...sanitizePersonalReport(input),
+    ...sanitizePersonalReportRecord(input),
   };
 }
 
@@ -514,6 +542,101 @@ type PersonalReportRecord = {
   personalSynergyResult: string;
 };
 
+const CURRENT_MONTH_ISSUE_LABEL = "[当月課題]";
+const NEXT_MONTH_ISSUE_LABEL = "[次月課題]";
+
+function parseIssueFields(value: string) {
+  const sanitized = sanitizeText(value);
+  if (!sanitized) {
+    return {
+      currentIssue: "",
+      nextIssue: "",
+    };
+  }
+
+  const nextIndex = sanitized.indexOf(NEXT_MONTH_ISSUE_LABEL);
+  if (nextIndex < 0) {
+    return {
+      currentIssue: sanitized.replace(CURRENT_MONTH_ISSUE_LABEL, "").trim(),
+      nextIssue: "",
+    };
+  }
+
+  return {
+    currentIssue: sanitized.slice(0, nextIndex).replace(CURRENT_MONTH_ISSUE_LABEL, "").trim(),
+    nextIssue: sanitized.slice(nextIndex + NEXT_MONTH_ISSUE_LABEL.length).trim(),
+  };
+}
+
+function composeIssueFields(currentIssue: string, nextIssue: string) {
+  const current = sanitizeText(currentIssue);
+  const next = sanitizeText(nextIssue);
+
+  if (!next) {
+    return current;
+  }
+
+  return [
+    CURRENT_MONTH_ISSUE_LABEL,
+    current,
+    "",
+    NEXT_MONTH_ISSUE_LABEL,
+    next,
+  ].join("\n").trim();
+}
+
+function hydrateTeamReport(input?: Partial<TeamReportRecord> | null): TeamReportFields {
+  const selfGrowth = parseIssueFields(String(input?.teamSelfGrowthIssue ?? ""));
+  const synergy = parseIssueFields(String(input?.teamSynergyIssue ?? ""));
+
+  return sanitizeTeamReport({
+    projectSummary: String(input?.projectSummary ?? ""),
+    teamSelfGrowthIssue: selfGrowth.currentIssue,
+    teamSelfGrowthResult: String(input?.teamSelfGrowthResult ?? ""),
+    teamSelfGrowthNextIssue: selfGrowth.nextIssue,
+    teamSynergyIssue: synergy.currentIssue,
+    teamSynergyResult: String(input?.teamSynergyResult ?? ""),
+    teamSynergyNextIssue: synergy.nextIssue,
+  });
+}
+
+function hydratePersonalReport(input?: Partial<PersonalReportRecord> | null): PersonalReportFields {
+  const selfGrowth = parseIssueFields(String(input?.personalSelfGrowthIssue ?? ""));
+  const synergy = parseIssueFields(String(input?.personalSynergyIssue ?? ""));
+
+  return sanitizePersonalReport({
+    projectRole: String(input?.projectRole ?? ""),
+    personalSelfGrowthIssue: selfGrowth.currentIssue,
+    personalSelfGrowthResult: String(input?.personalSelfGrowthResult ?? ""),
+    personalSelfGrowthNextIssue: selfGrowth.nextIssue,
+    personalSynergyIssue: synergy.currentIssue,
+    personalSynergyResult: String(input?.personalSynergyResult ?? ""),
+    personalSynergyNextIssue: synergy.nextIssue,
+  });
+}
+
+function toTeamReportRecord(input?: Partial<TeamReportFields> | null): TeamReportRecord {
+  const sanitized = sanitizeTeamReport(input);
+  return {
+    projectSummary: sanitized.projectSummary,
+    teamSelfGrowthIssue: composeIssueFields(sanitized.teamSelfGrowthIssue, sanitized.teamSelfGrowthNextIssue),
+    teamSelfGrowthResult: sanitized.teamSelfGrowthResult,
+    teamSynergyIssue: composeIssueFields(sanitized.teamSynergyIssue, sanitized.teamSynergyNextIssue),
+    teamSynergyResult: sanitized.teamSynergyResult,
+  };
+}
+
+function toPersonalReportRecord(input?: Partial<PersonalReportFields> | null): PersonalReportRecord {
+  const sanitized = sanitizePersonalReport(input);
+  return {
+    projectRole: sanitized.projectRole,
+    personalSelfGrowthIssue: composeIssueFields(sanitized.personalSelfGrowthIssue, sanitized.personalSelfGrowthNextIssue),
+    personalSelfGrowthResult: sanitized.personalSelfGrowthResult,
+    personalSynergyIssue: composeIssueFields(sanitized.personalSynergyIssue, sanitized.personalSynergyNextIssue),
+    personalSynergyResult: sanitized.personalSynergyResult,
+  };
+}
+
 export async function getMonthlyReportEditorBundle(
   sessionUser: SessionUser,
   input?: { yearMonth?: string; projectId?: string },
@@ -598,8 +721,8 @@ export async function getMonthlyReportEditorBundle(
         projectOptions,
         selectedProjectId: selectedProject?.projectId ?? "",
         selectedProjectName: selectedProject?.projectName ?? "",
-        teamReport: selectedProject?.teamId ? sanitizeTeamReport(teamReport as TeamReportRecord | null) : null,
-        personalReport: sanitizePersonalReport(personalReport as PersonalReportRecord | null),
+        teamReport: selectedProject?.teamId ? hydrateTeamReport(teamReport as TeamReportRecord | null) : null,
+        personalReport: hydratePersonalReport(personalReport as PersonalReportRecord | null),
         previousState: {
           hasTeamReport: Boolean(previousTeamReport),
           hasPersonalReport: Boolean(previousPersonalReport),
@@ -639,8 +762,8 @@ export async function getMonthlyReportEditorBundle(
     projectOptions,
     selectedProjectId: selectedProject?.projectId ?? "",
     selectedProjectName: selectedProject?.projectName ?? "",
-    teamReport: selectedProject?.teamId ? sanitizeTeamReport(teamReport) : null,
-    personalReport: sanitizePersonalReport(personalReport),
+    teamReport: selectedProject?.teamId ? hydrateTeamReport(teamReport) : null,
+    personalReport: hydratePersonalReport(personalReport),
     previousState: {
       hasTeamReport: Boolean(previousTeamReport),
       hasPersonalReport: Boolean(previousPersonalReport),
@@ -703,7 +826,7 @@ async function saveMonthlyReportToDb(viewer: MonthlyReportViewer, input: SaveMon
       }
     }
 
-    const personal = sanitizePersonalReport(input.personalReport);
+    const personal = toPersonalReportRecord(input.personalReport);
     await tx.personalMonthlyReport.upsert({
       where: {
         yearMonth_projectId_userId: {
@@ -733,7 +856,7 @@ async function saveMonthlyReportToDb(viewer: MonthlyReportViewer, input: SaveMon
 
     let teamReportUpdated = false;
     if (project.teamId && canEditTeamReport(viewer) && input.teamReport) {
-      const team = sanitizeTeamReport(input.teamReport);
+      const team = toTeamReportRecord(input.teamReport);
       await tx.teamMonthlyReport.upsert({
         where: {
           yearMonth_projectId_teamId: {
@@ -818,7 +941,7 @@ async function saveMonthlyReportToFile(viewer: MonthlyReportViewer, input: SaveM
     teamName: viewer.teamName,
     createdAt: personalExisting?.createdAt ?? now,
     updatedAt: now,
-    ...sanitizePersonalReport(input.personalReport),
+    ...toPersonalReportRecord(input.personalReport),
   };
 
   data.personalReports = [
@@ -838,7 +961,7 @@ async function saveMonthlyReportToFile(viewer: MonthlyReportViewer, input: SaveM
       updatedBy: viewer.userId,
       createdAt: teamExisting?.createdAt ?? now,
       updatedAt: now,
-      ...sanitizeTeamReport(input.teamReport),
+      ...toTeamReportRecord(input.teamReport),
     };
 
     data.teamReports = [
@@ -919,7 +1042,7 @@ async function getMonthlyReportListBundleFromDb(
   });
 
   const teamReportMap = new Map(
-    teamRows.map((row) => [`${row.yearMonth}:${row.projectId}:${row.teamId}`, sanitizeTeamReport(row)] as const),
+    teamRows.map((row) => [`${row.yearMonth}:${row.projectId}:${row.teamId}`, hydrateTeamReport(row)] as const),
   );
 
   const groups = new Map<string, MonthlyReportGroupRow>();
@@ -948,7 +1071,7 @@ async function getMonthlyReportListBundleFromDb(
       userRole,
       memberType,
       projectRole: sanitizeText(row.projectRole),
-      personalReport: sanitizePersonalReport(row),
+      personalReport: hydratePersonalReport(row),
       updatedAt: row.updatedAt.toISOString(),
       canEdit: viewer.userId === row.userId,
     });
@@ -1007,7 +1130,7 @@ async function getMonthlyReportListBundleFromFile(
         projectName: project?.name ?? row.projectName,
         teamId: row.teamId,
         teamName,
-        teamReport: row.teamId ? sanitizeTeamReport(teamReportMap.get(`${row.yearMonth}:${row.projectId}:${row.teamId}`)) : null,
+        teamReport: row.teamId ? hydrateTeamReport(teamReportMap.get(`${row.yearMonth}:${row.projectId}:${row.teamId}`)) : null,
         members: [],
       });
     }
@@ -1018,7 +1141,7 @@ async function getMonthlyReportListBundleFromFile(
       userRole: row.userRole,
       memberType: row.memberType,
       projectRole: row.projectRole,
-      personalReport: sanitizePersonalReport(row),
+      personalReport: hydratePersonalReport(row),
       updatedAt: row.updatedAt,
       canEdit: viewer.userId === row.userId,
     });

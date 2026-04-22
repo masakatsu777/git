@@ -18,15 +18,19 @@ export async function POST(request: NextRequest) {
         projectSummary?: string;
         teamSelfGrowthIssue?: string;
         teamSelfGrowthResult?: string;
+        teamSelfGrowthNextIssue?: string;
         teamSynergyIssue?: string;
         teamSynergyResult?: string;
+        teamSynergyNextIssue?: string;
       };
       personalReport?: {
         projectRole?: string;
         personalSelfGrowthIssue?: string;
         personalSelfGrowthResult?: string;
+        personalSelfGrowthNextIssue?: string;
         personalSynergyIssue?: string;
         personalSynergyResult?: string;
+        personalSynergyNextIssue?: string;
       };
     };
 
@@ -38,15 +42,19 @@ export async function POST(request: NextRequest) {
         projectSummary: String(body.teamReport.projectSummary ?? ""),
         teamSelfGrowthIssue: String(body.teamReport.teamSelfGrowthIssue ?? ""),
         teamSelfGrowthResult: String(body.teamReport.teamSelfGrowthResult ?? ""),
+        teamSelfGrowthNextIssue: String(body.teamReport.teamSelfGrowthNextIssue ?? ""),
         teamSynergyIssue: String(body.teamReport.teamSynergyIssue ?? ""),
         teamSynergyResult: String(body.teamReport.teamSynergyResult ?? ""),
+        teamSynergyNextIssue: String(body.teamReport.teamSynergyNextIssue ?? ""),
       } : undefined,
       personalReport: {
         projectRole: String(body.personalReport?.projectRole ?? ""),
         personalSelfGrowthIssue: String(body.personalReport?.personalSelfGrowthIssue ?? ""),
         personalSelfGrowthResult: String(body.personalReport?.personalSelfGrowthResult ?? ""),
+        personalSelfGrowthNextIssue: String(body.personalReport?.personalSelfGrowthNextIssue ?? ""),
         personalSynergyIssue: String(body.personalReport?.personalSynergyIssue ?? ""),
         personalSynergyResult: String(body.personalReport?.personalSynergyResult ?? ""),
+        personalSynergyNextIssue: String(body.personalReport?.personalSynergyNextIssue ?? ""),
       },
     });
 

@@ -19,8 +19,10 @@ function createEmptyTeamReport(): TeamReportFields {
     projectSummary: "",
     teamSelfGrowthIssue: "",
     teamSelfGrowthResult: "",
+    teamSelfGrowthNextIssue: "",
     teamSynergyIssue: "",
     teamSynergyResult: "",
+    teamSynergyNextIssue: "",
   };
 }
 
@@ -29,13 +31,19 @@ function createEmptyPersonalReport(): PersonalReportFields {
     projectRole: "",
     personalSelfGrowthIssue: "",
     personalSelfGrowthResult: "",
+    personalSelfGrowthNextIssue: "",
     personalSynergyIssue: "",
     personalSynergyResult: "",
+    personalSynergyNextIssue: "",
   };
 }
 
 function readValue(value?: string | null) {
   return value ?? "";
+}
+
+function preferNextIssue(nextIssue: string, currentIssue: string) {
+  return readValue(nextIssue).trim() || readValue(currentIssue).trim();
 }
 
 function showAnnualGoalOnTeamSection(bundle: MonthlyReportEditorBundle) {
@@ -109,8 +117,16 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
           setMessage(`${bundle.previousYearMonth} のチーム月報はありません。`);
           return;
         }
-        setTeamReport(payload.teamReport);
-        setMessage(`${bundle.previousYearMonth} のチーム内容をコピーしました。保存すると反映されます。`);
+        setTeamReport({
+          projectSummary: payload.teamReport.projectSummary,
+          teamSelfGrowthIssue: preferNextIssue(payload.teamReport.teamSelfGrowthNextIssue, payload.teamReport.teamSelfGrowthIssue),
+          teamSelfGrowthResult: "",
+          teamSelfGrowthNextIssue: "",
+          teamSynergyIssue: preferNextIssue(payload.teamReport.teamSynergyNextIssue, payload.teamReport.teamSynergyIssue),
+          teamSynergyResult: "",
+          teamSynergyNextIssue: "",
+        });
+        setMessage(`${bundle.previousYearMonth} の次月課題を当月課題へコピーしました。保存すると反映されます。`);
         return;
       }
 
@@ -120,8 +136,16 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
         return;
       }
 
-      setPersonalReport(payload.personalReport);
-      setMessage(`${bundle.previousYearMonth} の個人内容をコピーしました。保存すると反映されます。`);
+      setPersonalReport({
+        projectRole: payload.personalReport.projectRole,
+        personalSelfGrowthIssue: preferNextIssue(payload.personalReport.personalSelfGrowthNextIssue, payload.personalReport.personalSelfGrowthIssue),
+        personalSelfGrowthResult: "",
+        personalSelfGrowthNextIssue: "",
+        personalSynergyIssue: preferNextIssue(payload.personalReport.personalSynergyNextIssue, payload.personalReport.personalSynergyIssue),
+        personalSynergyResult: "",
+        personalSynergyNextIssue: "",
+      });
+      setMessage(`${bundle.previousYearMonth} の次月課題を当月課題へコピーしました。保存すると反映されます。`);
     });
   }
 
@@ -318,7 +342,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
           <div className="flex items-center justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold text-slate-950">チームとして</h2>
-              <p className="mt-2 text-sm text-slate-600">プロジェクト概要とチームの課題・実践結果を記録します。</p>
+              <p className="mt-2 text-sm text-slate-600">プロジェクト概要と、当月課題・当月結果・次月課題を記録します。</p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               {bundle.permissions.canEditTeamReport ? (
@@ -372,7 +396,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
             </label>
             <div className="grid gap-4 lg:grid-cols-2">
               <label className="text-sm text-slate-700">
-                チーム自律的成長課題
+                チーム自律的成長 当月課題
                 <textarea
                   value={teamReport.teamSelfGrowthIssue}
                   onChange={(event) => updateTeamField("teamSelfGrowthIssue", event.target.value)}
@@ -382,7 +406,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
                 />
               </label>
               <label className="text-sm text-slate-700">
-                チーム自律的成長実践結果
+                チーム自律的成長 当月結果
                 <textarea
                   value={teamReport.teamSelfGrowthResult}
                   onChange={(event) => updateTeamField("teamSelfGrowthResult", event.target.value)}
@@ -392,7 +416,17 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
                 />
               </label>
               <label className="text-sm text-slate-700">
-                チーム協調相乗課題
+                チーム自律的成長 次月課題
+                <textarea
+                  value={teamReport.teamSelfGrowthNextIssue}
+                  onChange={(event) => updateTeamField("teamSelfGrowthNextIssue", event.target.value)}
+                  readOnly={!bundle.permissions.canEditTeamReport}
+                  rows={5}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none read-only:bg-slate-50"
+                />
+              </label>
+              <label className="text-sm text-slate-700">
+                チーム協調相乗 当月課題
                 <textarea
                   value={teamReport.teamSynergyIssue}
                   onChange={(event) => updateTeamField("teamSynergyIssue", event.target.value)}
@@ -402,10 +436,20 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
                 />
               </label>
               <label className="text-sm text-slate-700">
-                チーム協調相乗実践結果
+                チーム協調相乗 当月結果
                 <textarea
                   value={teamReport.teamSynergyResult}
                   onChange={(event) => updateTeamField("teamSynergyResult", event.target.value)}
+                  readOnly={!bundle.permissions.canEditTeamReport}
+                  rows={5}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none read-only:bg-slate-50"
+                />
+              </label>
+              <label className="text-sm text-slate-700">
+                チーム協調相乗 次月課題
+                <textarea
+                  value={teamReport.teamSynergyNextIssue}
+                  onChange={(event) => updateTeamField("teamSynergyNextIssue", event.target.value)}
                   readOnly={!bundle.permissions.canEditTeamReport}
                   rows={5}
                   className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none read-only:bg-slate-50"
@@ -420,7 +464,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-semibold text-slate-950">個人として</h2>
-            <p className="mt-2 text-sm text-slate-600">ご自身の役割と月次の取り組みを入力します。</p>
+            <p className="mt-2 text-sm text-slate-600">ご自身の役割と、当月課題・当月結果・次月課題を入力します。</p>
           </div>
           <button
             type="button"
@@ -466,7 +510,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
           </label>
           <div className="grid gap-4 lg:grid-cols-2">
             <label className="text-sm text-slate-700">
-              個人自律的成長課題
+              個人自律的成長 当月課題
               <textarea
                 value={personalReport.personalSelfGrowthIssue}
                 onChange={(event) => updatePersonalField("personalSelfGrowthIssue", event.target.value)}
@@ -475,7 +519,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
               />
             </label>
             <label className="text-sm text-slate-700">
-              個人自律的成長実践結果
+              個人自律的成長 当月結果
               <textarea
                 value={personalReport.personalSelfGrowthResult}
                 onChange={(event) => updatePersonalField("personalSelfGrowthResult", event.target.value)}
@@ -484,7 +528,16 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
               />
             </label>
             <label className="text-sm text-slate-700">
-              個人協調相乗課題
+              個人自律的成長 次月課題
+              <textarea
+                value={personalReport.personalSelfGrowthNextIssue}
+                onChange={(event) => updatePersonalField("personalSelfGrowthNextIssue", event.target.value)}
+                rows={5}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none"
+              />
+            </label>
+            <label className="text-sm text-slate-700">
+              個人協調相乗 当月課題
               <textarea
                 value={personalReport.personalSynergyIssue}
                 onChange={(event) => updatePersonalField("personalSynergyIssue", event.target.value)}
@@ -493,10 +546,19 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
               />
             </label>
             <label className="text-sm text-slate-700">
-              個人協調相乗実践結果
+              個人協調相乗 当月結果
               <textarea
                 value={personalReport.personalSynergyResult}
                 onChange={(event) => updatePersonalField("personalSynergyResult", event.target.value)}
+                rows={5}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none"
+              />
+            </label>
+            <label className="text-sm text-slate-700">
+              個人協調相乗 次月課題
+              <textarea
+                value={personalReport.personalSynergyNextIssue}
+                onChange={(event) => updatePersonalField("personalSynergyNextIssue", event.target.value)}
                 rows={5}
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none"
               />
