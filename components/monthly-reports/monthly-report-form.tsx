@@ -394,7 +394,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
                 className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none read-only:bg-slate-50"
               />
             </label>
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <label className="text-sm text-slate-700">
                 チーム自律的成長 当月課題
                 <textarea
@@ -508,7 +508,7 @@ export function MonthlyReportForm({ initialBundle }: MonthlyReportFormProps) {
               className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none"
             />
           </label>
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <label className="text-sm text-slate-700">
               個人自律的成長 当月課題
               <textarea
