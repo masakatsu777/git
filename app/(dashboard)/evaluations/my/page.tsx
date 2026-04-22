@@ -47,8 +47,11 @@ export default async function MyEvaluationPage({
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Self Review</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">自己評価</h1>
-              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-brand-200">課題認識</p>
+              <h1 className="text-3xl font-semibold sm:text-4xl">
+                <span>自己評価</span>
+                <span className="mx-3 text-slate-400">/</span>
+                <span className="text-brand-200">課題認識</span>
+              </h1>
               <p className="mt-2 text-sm text-slate-300">今の自分の実践を振り返り、できていることを並べるのではなく、結果につながっていない課題や伸ばすべき点を認識する段階です。</p>
               <p className="mt-2 text-sm text-slate-300">やっていることの確認ではなく、課題の認識に重点を置いて入力してください。</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">

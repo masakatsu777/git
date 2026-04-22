@@ -108,8 +108,11 @@ export default async function EvaluationResultPage({
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">My Result</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">マイ評価結果</h1>
-              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-brand-200">課題明確化</p>
+              <h1 className="text-3xl font-semibold sm:text-4xl">
+                <span>マイ評価結果</span>
+                <span className="mx-3 text-slate-400">/</span>
+                <span className="text-brand-200">課題明確化</span>
+              </h1>
               <p className="mt-2 text-sm text-slate-300">自己評価と結果数値をもとに、自分の課題がどこにあるかを明確にする段階です。行動と結果のつながりを見直し、次に向き合うべき課題を整理します。</p>
               <p className="mt-2 text-sm text-slate-300">課題を数値と結果で明確にし、次の見直しにつなげてください。</p>
               <p className="mt-2 text-sm text-amber-200">{getDisplayStageLabel(finalReview.displayStage)}</p>

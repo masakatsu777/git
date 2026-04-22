@@ -87,8 +87,11 @@ export default async function TeamEvaluationPage({
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Manager Review</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">リーダー確認</h1>
-              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-brand-200">重点課題設定</p>
+              <h1 className="text-3xl font-semibold sm:text-4xl">
+                <span>リーダー確認</span>
+                <span className="mx-3 text-slate-400">/</span>
+                <span className="text-brand-200">重点課題設定</span>
+              </h1>
               <p className="mt-2 text-sm text-slate-300">
                 {user.role === "employee"
                   ? "自分に対するリーダー確認内容を確認できます。"
