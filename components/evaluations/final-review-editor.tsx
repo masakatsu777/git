@@ -180,8 +180,8 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
     <section className="space-y-6 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-slate-950">最終評価確定</h2>
-          <p className="mt-1 text-sm text-slate-500">上長評価を踏まえ、自律成長力と協調相乗力を軸単位で最終確定します。</p>
+          <h2 className="text-xl font-semibold text-slate-950">方策確定</h2>
+          <p className="mt-1 text-sm text-slate-500">リーダー確認で絞った重点課題を踏まえ、自律成長力と協調相乗力の改善方策を軸単位で確定します。</p>
         </div>
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-amber-100 px-4 py-2 text-sm text-amber-700">最終確定可能</span>}
       </div>
@@ -265,15 +265,15 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
       </section>
 
       <section className="rounded-3xl border border-slate-200 p-4">
-        <h3 className="font-semibold text-slate-950">上長総括コメント</h3>
-        <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{defaults.managerComment || "上長コメントはありません。"}</p>
+        <h3 className="font-semibold text-slate-950">リーダー確認コメント</h3>
+        <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">{defaults.managerComment || "リーダー確認コメントはありません。"}</p>
       </section>
 
       <section className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-950">自律成長力の最終評価</h3>
-            <p className="mt-1 text-sm text-slate-600">自律成長力全体に対する最終コメントを入力します。</p>
+            <h3 className="text-lg font-semibold text-slate-950">自律成長力の方策</h3>
+            <p className="mt-1 text-sm text-slate-600">自律成長力について、次期に実践する方策を入力します。</p>
           </div>
           <button type="button" onClick={() => setShowSelfGrowthDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
             {showSelfGrowthDetails ? "詳細を閉じる" : "詳細を表示"}
@@ -285,7 +285,7 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           onChange={(event) => setSelfGrowthReview((current) => ({ ...current, comment: event.target.value }))}
           rows={5}
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-          placeholder="自律成長力全体に対する最終コメントを入力"
+          placeholder="自律成長力について、次期に実践する方策を入力"
         />
         {showSelfGrowthDetails && detailViewMode !== "SUMMARY" ? renderReferenceItems(selfGrowthItems, true, detailViewMode) : null}
       </section>
@@ -293,8 +293,8 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
       <section className="rounded-3xl border border-sky-200 bg-sky-50/70 p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-950">協調相乗力の最終評価</h3>
-            <p className="mt-1 text-sm text-slate-600">協調相乗力全体に対する最終コメントを入力します。</p>
+            <h3 className="text-lg font-semibold text-slate-950">協調相乗力の方策</h3>
+            <p className="mt-1 text-sm text-slate-600">協調相乗力について、次期に実践する方策を入力します。</p>
           </div>
           <button type="button" onClick={() => setShowSynergyDetails((current) => !current)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700">
             {showSynergyDetails ? "詳細を閉じる" : "詳細を表示"}
@@ -306,26 +306,26 @@ export function FinalReviewEditor({ canEdit, defaults }: FinalReviewEditorProps)
           onChange={(event) => setSynergyReview((current) => ({ ...current, comment: event.target.value }))}
           rows={5}
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-          placeholder="協調相乗力全体に対する最終コメントを入力"
+          placeholder="協調相乗力について、次期に実践する方策を入力"
         />
         {showSynergyDetails && detailViewMode !== "SUMMARY" ? renderReferenceItems(synergyItems, true, detailViewMode) : null}
       </section>
 
       <section className="rounded-3xl border border-slate-200 p-4">
-        <h3 className="font-semibold text-slate-950">最終総括コメント</h3>
+        <h3 className="font-semibold text-slate-950">方策確定コメント</h3>
         <textarea
           value={finalComment}
           disabled={!canEdit || isPending}
           onChange={(event) => setFinalComment(event.target.value)}
           rows={5}
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-          placeholder="最終評価の総括コメントを入力"
+          placeholder="重点課題に対する方策を確定し、次期の実践につながる方向性を入力"
         />
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
         <button type="button" onClick={handleSave} disabled={!canEdit || isPending} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white disabled:bg-slate-300">
-          {isPending ? "処理中..." : "最終評価を確定"}
+          {isPending ? "処理中..." : "方策を確定"}
         </button>
         <span className="text-sm text-slate-500">現在の参考評価点: {liveTotal}</span>
       </div>

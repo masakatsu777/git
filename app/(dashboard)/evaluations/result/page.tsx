@@ -109,9 +109,9 @@ export default async function EvaluationResultPage({
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">マイ評価結果</h1>
-              <p className="mt-2 text-sm text-slate-300">
-                自己評価結果を金額換算します。
-              </p>
+              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-brand-200">課題明確化</p>
+              <p className="mt-2 text-sm text-slate-300">自己評価と結果数値をもとに、自分の課題がどこにあるかを明確にする段階です。行動と結果のつながりを見直し、次に向き合うべき課題を整理します。</p>
+              <p className="mt-2 text-sm text-slate-300">課題を数値と結果で明確にし、次の見直しにつなげてください。</p>
               <p className="mt-2 text-sm text-amber-200">{getDisplayStageLabel(finalReview.displayStage)}</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                 <label className="text-sm text-slate-200">
@@ -135,10 +135,10 @@ export default async function EvaluationResultPage({
             </div>
             <div className="flex gap-3">
               <Link href="/evaluations/my" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                自己評価
+                課題認識へ
               </Link>
               <Link href={`/evaluations/finalize?evaluationPeriodId=${finalReview.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                最終評価詳細
+                方策確定へ
               </Link>
             </div>
           </div>

@@ -150,9 +150,9 @@ function getDetailTone(axis: ManagerReviewItem["axis"]) {
 function getMemberStatusLabel(status: string) {
   switch (status) {
     case "SELF_REVIEW":
-      return "自己評価中";
+      return "課題認識中";
     case "MANAGER_REVIEW":
-      return "上長評価中";
+      return "リーダー確認中";
     case "FINAL_REVIEW":
       return "最終評価中";
     case "FINALIZED":
@@ -405,8 +405,8 @@ export function ManagerReviewEditor({ canEdit, canBulkApprove, defaults, summary
     <section className="space-y-6 rounded-[1.75rem] bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-slate-950">上長評価入力</h2>
-          <p className="mt-1 text-sm text-slate-500">大分類ごとに判定、確認依頼、承認を管理しながら上長評価を進めます。</p>
+          <h2 className="text-xl font-semibold text-slate-950">重点課題設定</h2>
+          <p className="mt-1 text-sm text-slate-500">大分類ごとに確認依頼や承認を管理しながら、次期に優先して取り組む重点課題を絞ります。</p>
         </div>
         {!canEdit ? <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-500">閲覧専用</span> : <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">入力受付中</span>}
       </div>
@@ -448,14 +448,14 @@ export function ManagerReviewEditor({ canEdit, canBulkApprove, defaults, summary
             >
               <p className="font-semibold"><span style={{ color: member.userId === defaults.selectedUserId ? "#ffffff" : "#0f172a" }}>{member.name}</span></p>
               <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>状態: {getMemberStatusLabel(member.status)}</p>
-              <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>自己評価合計 {member.selfScoreTotal}</p>
+              <p className={`mt-1 ${member.userId === defaults.selectedUserId ? "text-slate-200" : "text-slate-500"}`}>課題認識合計 {member.selfScoreTotal}</p>
             </a>
           ))}
         </div>
       </section>
 
       <section className="rounded-3xl border border-slate-200 p-4">
-        <h3 className="font-semibold text-slate-950">本人の総括コメント</h3>
+        <h3 className="font-semibold text-slate-950">本人の課題認識コメント</h3>
         <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700">{defaults.selfComment || "本人の総括コメントは未入力です。"}</div>
       </section>
 
@@ -515,7 +515,7 @@ export function ManagerReviewEditor({ canEdit, canBulkApprove, defaults, summary
           onChange={(event) => setManagerComment(event.target.value)}
           rows={5}
           className="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm"
-          placeholder="半期全体の評価、期待、次期へのフィードバックを入力"
+          placeholder="半期全体を踏まえ、次期に優先して取り組む重点課題と期待を入力"
         />
       </section>
 

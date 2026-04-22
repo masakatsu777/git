@@ -67,14 +67,16 @@ export default async function FinalizeEvaluationPage({
           <p className="text-sm uppercase tracking-[0.25em] text-brand-200">Final Review</p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">最終評価確定</h1>
+              <h1 className="text-3xl font-semibold">最終評価</h1>
+              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-brand-200">方策確定</p>
               <p className="mt-2 text-sm text-slate-300">
                 {user.role === "employee"
                   ? "自分に対する最終評価内容を確認できます。"
                   : canEdit
-                    ? "管理者・役員は全員分を閲覧でき、この期間では最終評価を入力できます。"
-                    : "管理者・役員は全員分を閲覧できます。最終評価の入力は最終評価中の期間だけ可能です。"}
+                    ? "管理者・役員は全員分を閲覧でき、この期間では重点課題に対する方策を確定できます。"
+                    : "管理者・役員は全員分を閲覧できます。方策確定の入力は最終評価中の期間だけ可能です。"}
               </p>
+              <p className="mt-2 text-sm text-slate-300">重点課題を踏まえ、次期にどのような方策で改善していくかを確定する段階です。評価を確定するだけでなく、次の実践につながる具体的な方向性を定めます。</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                 <label className="text-sm text-slate-200">
                   評価期間
@@ -111,14 +113,14 @@ export default async function FinalizeEvaluationPage({
                 </button>
               </form>
               <p className="mt-3 text-sm text-slate-300">対象期間: {bundle.periodName} / 状態: {periodStatusLabel}</p>
-              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の最終評価は閲覧専用です。自己評価や上長評価の途中内容は確認できます。</p> : null}
+              {!canEdit ? <p className="mt-1 text-sm text-amber-200">この期間の最終評価は閲覧専用です。課題認識やリーダー確認の途中内容は確認できます。</p> : null}
             </div>
             <div className="flex gap-3">
               <Link href="/dashboard" className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
                 ダッシュボードへ
               </Link>
               <Link href={`/evaluations/team?evaluationPeriodId=${bundle.evaluationPeriodId}`} className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
-                上長評価
+                リーダー確認へ
               </Link>
             </div>
           </div>

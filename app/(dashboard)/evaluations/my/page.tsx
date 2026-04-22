@@ -48,7 +48,9 @@ export default async function MyEvaluationPage({
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="text-3xl font-semibold">自己評価</h1>
-              <p className="mt-2 text-sm text-slate-300">随時入力可能なので、普段からの実践指針として活用しましょう。</p>
+              <p className="mt-2 text-sm font-semibold tracking-[0.18em] text-brand-200">課題認識</p>
+              <p className="mt-2 text-sm text-slate-300">今の自分の実践を振り返り、できていることを並べるのではなく、結果につながっていない課題や伸ばすべき点を認識する段階です。</p>
+              <p className="mt-2 text-sm text-slate-300">やっていることの確認ではなく、課題の認識に重点を置いて入力してください。</p>
               <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
                 <label className="text-sm text-slate-200">
                   評価期間

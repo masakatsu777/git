@@ -22,10 +22,10 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     items.push(
       { href: "/dashboard", label: "月次" },
       { href: "/pl/annual-personal", label: "個人年度" },
-      { href: "/evaluations/my", label: "自己評価" },
-      { href: "/evaluations/result", label: "マイ評価結果" },
-      { href: "/evaluations/team", label: "上長評価" },
-      { href: "/evaluations/finalize", label: "最終評価" },
+      { href: "/evaluations/my", label: "自己評価 / 課題認識" },
+      { href: "/evaluations/result", label: "マイ評価結果 / 課題明確化" },
+      { href: "/evaluations/team", label: "リーダー確認 / 重点課題設定" },
+      { href: "/evaluations/finalize", label: "最終評価 / 方策確定" },
     );
 
     if (hasPermission(user, PERMISSIONS.salaryRead)) {

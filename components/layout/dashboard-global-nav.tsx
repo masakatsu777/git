@@ -28,7 +28,7 @@ function isActivePath(pathname: string, href: string) {
 
 function getGroupTitle(label: string) {
   if (["月次", "年度", "個人年度", "経営"].includes(label)) return "ダッシュボード";
-  if (["自己評価", "マイ評価結果", "上長評価", "最終評価"].includes(label)) return "評価";
+  if (["自己評価 / 課題認識", "マイ評価結果 / 課題明確化", "リーダー確認 / 重点課題設定", "最終評価 / 方策確定"].includes(label)) return "評価";
   if (["昇給決定", "粗利内訳", "未所属売上"].includes(label)) return "収益";
   if (["変動人件費", "単価", "社員コスト", "固定費", "その他コスト"].includes(label)) return "コスト・単価";
   if (["組織", "評価期間", "スキル", "等級給与設定", "ユーザー", "監査ログ", "本番前チェック"].includes(label)) return "設定";
